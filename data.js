@@ -403,7 +403,7 @@ const RECIPES_DB = [
   },
   // ─── ΣΝΑΚ (original) ───
   {
-    id: "r30", name: "Whey Shake + Φρούτο", meal: "snack", emoji: "💪",
+    id: "r30", name: "Πρωτεϊνούχο Σέικ + Φρούτο", meal: "snack", emoji: "💪",
     ingredients: [{ foodId: "f9", qty: 30 }, { foodId: "fr2", qty: 150 }],
     instructions: "Whey σε νερό ή 200ml γάλα. Φρούτο δίπλα."
   },
@@ -413,7 +413,7 @@ const RECIPES_DB = [
     instructions: "Φρούτο + ξηροί καρποί. Γρήγορο & θρεπτικό."
   },
   {
-    id: "r32", name: "Ριζογκοφρέτες + Whey", meal: "snack", emoji: "🌾",
+    id: "r32", name: "Ριζογκοφρέτες + Πρωτεϊνούχο Σέικ", meal: "snack", emoji: "🌾",
     ingredients: [{ foodId: "c7", qty: 2 }, { foodId: "f9", qty: 30 }],
     instructions: "Whey σε νερό. Ριζογκοφρέτες δίπλα."
   },
@@ -421,6 +421,17 @@ const RECIPES_DB = [
     id: "r33", name: "Γιαούρτι + Καρύδια + Μέλι", meal: "snack", emoji: "🫙",
     ingredients: [{ foodId: "d1", qty: 200 }, { foodId: "l3", qty: 20 }, { foodId: "o1", qty: 10 }],
     instructions: "Γιαούρτι + καρύδια + μέλι. Απλό & χορταστικό."
+  },
+  {
+    id: "r51", name: "Ομελέτα + Παξιμάδι Χαρουπί", meal: "dinner", emoji: "🍳",
+    ingredients: [
+      { foodId: "e1", qty: 2   },
+      { foodId: "l1", qty: 4   },
+      { foodId: "f8", qty: 200 },
+      { foodId: "v2", qty: 100 },
+      { foodId: "c8", qty: 1   }
+    ],
+    instructions: "Χτύπα τα αυγά με αλάτι, πιπέρι, λίγο βαλσαμικό. Ψήσε σε αντικολλητικό με ελαιόλαδο. Σερβίρισε με ντομάτα, παξιμάδι χαρουπί και κότατζ στο πλάι."
   },
 ];
 
@@ -537,7 +548,7 @@ const STANDARD_MEALS = [
   },
   {
     id: "sm4", meal: "breakfast", emoji: "🫙",
-    name: "Γιαούρτι 200g + Whey 30g + Βρώμη 5κσ",
+    name: "Γιαούρτι 200g + Πρωτεΐνη 30g + Βρώμη 5κσ",
     kcal_est: 350,
     note: "Υψηλή πρωτεΐνη, χορταστικό",
     items: ["200g γιαούρτι 2%", "30g whey isolate", "5 κ.σ. βρώμη (~50g)"]
@@ -602,7 +613,7 @@ const STANDARD_MEALS = [
   },
   {
     id: "sm17", meal: "snack", emoji: "💪",
-    name: "Σέικερ πρωτεΐνη Whey Isolate",
+    name: "Πρωτεϊνούχο Σέικ",
     kcal_est: 150,
     note: "Post-workout ή απόγευμα",
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
@@ -681,4 +692,51 @@ const STANDARD_MEALS = [
     note: "Ελαφρύ βραδινό",
     items: ["200g γιαούρτι 2%", "2 μπανάνες (~240g)"]
   },
+  {
+    id: "sm34", meal: "breakfast", emoji: "🥣",
+    name: "Overnight Oats Πρωτεΐνης (1 μπολάκι/6)",
+    kcal_est: 447,
+    note: "Ετοιμάζεις 6 μπολάκια μαζί — διαρκούν 2 μέρες στο ψυγείο",
+    items: ["300g βρώμη ÷6", "30g chia ÷6", "20g κακάο ÷6", "120g φυστικοβούτυρο ÷6", "600ml γάλα ÷6", "40g μέλι ÷6", "30g γιαούρτι στρ. garnish"]
+  },
+  {
+    id: "sm35", meal: "lunch", emoji: "🥫",
+    name: "Τοστ Γαλοπούλα & Ντομάτα",
+    kcal_est: 302,
+    note: "Γρήγορο & πλούσιο σε πρωτεΐνη",
+    items: ["2 φέτες ψωμί τοστ (~60g)", "80g γαλοπούλα φέτα", "15g μαγιονέζα light", "80g ντομάτα"]
+  },
+  {
+    id: "sm36", meal: "lunch", emoji: "🌯",
+    name: "Γύρος Κοτόπουλο Σπιτικός",
+    kcal_est: 490,
+    note: "Ψήσε το κοτόπουλο με μπαχαρικά - τζατζίκι, ντομάτα, κρεμμύδι στην πίτα",
+    items: ["150g κοτόπουλο στήθος ψητό", "1 πίτα (~70g)", "50g τζατζίκι", "50g ντομάτα", "20g κρεμμύδι"]
+  },
+  {
+    id: "sm37", meal: "dinner", emoji: "🥩",
+    name: "Μπριζόλα Χοιρινή + Σαλάτα",
+    kcal_est: 498,
+    note: "Χοιρινή χωρίς κόκκαλο - ψητή με λεμόνι, ρίγανη, σκόρδο",
+    items: ["200g μπριζόλα χοιρινή", "4 ψεκ. ελαιόλαδο", "λεμόνι, ρίγανη, σκόρδο, πιπέρι"]
+  },
+  {
+    id: "sm38", meal: "dinner", emoji: "🍳",
+    name: "Ομελέτα + Παξιμάδι Χαρουπιού + Κότατζ",
+    kcal_est: 516,
+    note: "Ελαφρύ αλλά χορταστικό βραδινό - υψηλή πρωτεΐνη",
+    items: ["2 αυγά", "4 ψεκ. ελαιόλαδο", "200g cottage cheese", "100g ντοματίνια", "1.5 παξιμάδι χαρουπιού", "βαλσαμικό ξύδι, πιπέρι"]
+  },
+];
+
+// ============================================================
+// SUPPLEMENTS — Ημερήσια συμπληρώματα & ρουτίνα
+// ============================================================
+const SUPPLEMENTS_DEFAULT = [
+  { name: "Βιταμίνη D3 2000IU",    time: "08:00", note: "Με πρωινό (λιπαρό γεύμα)", qty: "1 κάψουλα", done: false },
+  { name: "Ωμέγα-3 (EPA+DHA)",     time: "08:00", note: "Με πρωινό",                 qty: "2g",        done: false },
+  { name: "Μαγνήσιο Bisglycinate", time: "21:00", note: "Βράδυ — χαλάρωση",          qty: "300mg",     done: false },
+  { name: "Ψευδάργυρος (Zinc)",    time: "21:00", note: "Μακριά από ασβέστιο",       qty: "15mg",      done: false },
+  { name: "Whey Isolate",           time: "16:00", note: "Post-workout ή Απογευματινό", qty: "30g",     done: false },
+  { name: "Κρεατίνη Monohydrate",  time: "08:00", note: "Καθημερινά — οποτεδήποτε", qty: "5g",        done: false },
 ];

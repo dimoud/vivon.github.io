@@ -327,7 +327,7 @@ function renderProfile() {
 
 function liveUpdateName(val) {
   state.profile.name = val;
-  document.getElementById('top-app-title').textContent = val ? `🥗 ${val}` : '🥗 NutriPlan';
+  document.getElementById('top-app-title').textContent = val ? `🥗 ${val}` : '🥗 Vivon';
   saveState();
 }
 
@@ -434,6 +434,17 @@ function setPlanStartDate(dateStr) {
   showToast('📅 Έναρξη πλάνου αποθηκεύτηκε');
 }
 
+function saveDayKcalGoal(val) {
+  const v = parseInt(val);
+  if (v > 0 && v !== state.goals.kcal) {
+    state.week[state.currentDay].kcalGoal = v;
+  } else {
+    delete state.week[state.currentDay].kcalGoal;
+  }
+  saveState();
+  renderToday();
+}
+
 function saveExtraKcal() {
   const val = parseInt(document.getElementById('extra-kcal-input').value) || 0;
   state.week[state.currentDay].extraKcal = val;
@@ -475,7 +486,7 @@ function getTodayQuote() {
 
 // ── RENDER HELPERS ──
 function mealTypePill(type) {
-  const map = { breakfast: ['Πρωινό','pill-breakfast'], lunch: ['Μεσημεριανό','pill-lunch'], dinner: ['Βραδινό','pill-dinner'], snack: ['Σνακ','pill-snack'] };
+  const map = { breakfast: ['Πρωινό','pill-breakfast'], lunch: ['Μεσημεριανό','pill-lunch'], dinner: ['Βραδινό','pill-dinner'], snack: ['Προάριστο','pill-snack'], afternoon: ['Απογευματινό','pill-afternoon'] };
   const [label, cls] = map[type] || ['',''];
   return `<span class="meal-type-pill ${cls}">${label}</span>`;
 }
@@ -500,16 +511,17 @@ function renderToday() {
   const day = state.week[state.currentDay];
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const goals = state.goals;
-  const dayMacros = calcDayMacros(state.currentDay, false);   // όλα — για bars
-  const doneMacros = calcDayMacros(state.currentDay, true);   // μόνο done — για "Απομένουν"
+  const effectiveKcal = day.kcalGoal || goals.kcal;  // per-day override
+  const dayMacros = calcDayMacros(state.currentDay, false);
+  const doneMacros = calcDayMacros(state.currentDay, true);
   const remaining = {
-    kcal: Math.max(0, goals.kcal - doneMacros.kcal),
+    kcal: Math.max(0, effectiveKcal - doneMacros.kcal),
     p: Math.max(0, goals.protein - doneMacros.p),
     c: Math.max(0, goals.carbs - doneMacros.c),
     f: Math.max(0, goals.fat - doneMacros.f),
   };
   const q = getTodayQuote();
-  const kcalPct = Math.round((doneMacros.kcal / goals.kcal) * 100);
+  const kcalPct = Math.round((doneMacros.kcal / effectiveKcal) * 100);
 
   let runningKcal = 0;
   let mealsHtml = '';
@@ -640,7 +652,7 @@ function renderToday() {
           <div class="macro-card-label">Κατανάλωση</div>
           <div class="macro-card-value" style="color:#22c55e">${doneMacros.kcal}</div>
           <div class="macro-card-sub">kcal · ${day.meals.filter(m=>m.done).length}/${day.meals.length} γεύματα</div>
-          ${macroBar(doneMacros.kcal, goals.kcal, '#22c55e')}
+          ${macroBar(doneMacros.kcal, effectiveKcal, '#22c55e')}
         </div>
       </div>
 
@@ -663,6 +675,16 @@ function renderToday() {
             </button>`;
           }).join('')}
         </div>
+      </div>
+
+      <!-- Kcal ημέρας override -->
+      <div class="card card-sm fade-in" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+        <span style="font-size:0.8rem;color:var(--text2);white-space:nowrap">🎯 Kcal ημέρας:</span>
+        <input type="number" id="day-kcal-input" value="${effectiveKcal}" min="800" max="4000" step="50"
+          style="width:80px;border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:0.9rem;font-weight:700;color:var(--text1);background:var(--bg2);text-align:center"
+          onchange="saveDayKcalGoal(this.value)">
+        ${day.kcalGoal ? `<span style="font-size:0.72rem;color:#f59e0b">✏️ τροποποιημένο</span>
+          <button class="btn btn-ghost btn-sm" onclick="saveDayKcalGoal(0)" style="font-size:0.72rem">↺</button>` : `<span style="font-size:0.72rem;color:var(--text3)">default ${goals.kcal}</span>`}
       </div>
 
       <!-- Meals header + reset -->
@@ -780,8 +802,8 @@ function renderWeek() {
 // ── PAGE: RECIPES ──
 function renderRecipes(filter = '') {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const mealTypes = ['breakfast','snack','lunch','dinner'];
-  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Σνακ', lunch:'🥗 Μεσημεριανά', dinner:'🌙 Βραδινά' };
+  const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
+  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🥐 Προάριστο', lunch:'🥗 Μεσημεριανά', afternoon:'☕ Απογευματινό', dinner:'🌙 Βραδινά' };
 
   let html = `
     <div class="container">
@@ -797,7 +819,7 @@ function renderRecipes(filter = '') {
         <button class="seg-btn" onclick="filterRecipeType('breakfast',this)">Πρωινά</button>
         <button class="seg-btn" onclick="filterRecipeType('lunch',this)">Μεσ/νά</button>
         <button class="seg-btn" onclick="filterRecipeType('dinner',this)">Βραδινά</button>
-        <button class="seg-btn" onclick="filterRecipeType('snack',this)">Σνακ</button>
+        <button class="seg-btn" onclick="filterRecipeType('snack',this)">Προάριστο</button>
       </div>`;
 
   mealTypes.forEach(type => {
@@ -938,7 +960,7 @@ function renderOptimize() {
           <button class="seg-btn" onclick="builderFilterType('breakfast',this)">Πρωινά</button>
           <button class="seg-btn" onclick="builderFilterType('lunch',this)">Μεσ/νά</button>
           <button class="seg-btn" onclick="builderFilterType('dinner',this)">Βραδινά</button>
-          <button class="seg-btn" onclick="builderFilterType('snack',this)">Σνακ</button>
+          <button class="seg-btn" onclick="builderFilterType('snack',this)">Προάριστο</button>
         </div>
 
         <!-- Recipe list inline -->
@@ -1042,8 +1064,8 @@ function renderBuilderPage(typeFilter) {
   typeFilter = typeFilter || state._builderFilter || 'all';
   state._builderFilter = typeFilter;
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const mealLabels = { all:'Όλα', breakfast:'☀️ Πρωινά', snack:'🍎 Σνακ', lunch:'🥗 Μεσ/νά', dinner:'🌙 Βραδινά' };
-  const types = typeFilter === 'all' ? ['breakfast','snack','lunch','dinner'] : [typeFilter];
+  const mealLabels = { all:'Όλα', breakfast:'☀️ Πρωινά', snack:'🥐 Προάριστο', lunch:'🥗 Μεσ/νά', afternoon:'☕ Απογ/νό', dinner:'🌙 Βραδινά' };
+  const types = typeFilter === 'all' ? ['breakfast','snack','lunch','afternoon','dinner'] : [typeFilter];
 
   // Grid cards
   let gridHtml = '';
@@ -1189,7 +1211,7 @@ function builderPageApply() {
 
 function applyBuilderToDayIdx(dayIdx) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'16:00' };
+  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
   const newMeals = builderMeals.map(bm => {
     if (bm.isStandard) {
       const sm = STANDARD_MEALS.find(x => x.id === bm.id);
@@ -1220,9 +1242,9 @@ function builderPageClear() {
 function renderBuilderRecipeList(typeFilter) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const allStandard = STANDARD_MEALS;
-  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Σνακ', lunch:'🥗 Μεσ/νά', dinner:'🌙 Βραδινά' };
+  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🥐 Προάριστο', lunch:'🥗 Μεσ/νά', afternoon:'☕ Απογ/νό', dinner:'🌙 Βραδινά' };
   let html = '';
-  const types = typeFilter === 'all' ? ['breakfast','snack','lunch','dinner'] : [typeFilter];
+  const types = typeFilter === 'all' ? ['breakfast','snack','lunch','afternoon','dinner'] : [typeFilter];
   types.forEach(t => {
     const recipes = allRecipes.filter(r => r.meal === t);
     const standards = allStandard.filter(s => s.meal === t);
@@ -1505,7 +1527,7 @@ function openSwapMeal(mi, activeTab) {
   const standards = STANDARD_MEALS.filter(s => s.meal === currentType);
   const tab = activeTab || 'standard';
 
-  const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Σνακ' }[currentType] || '';
+  const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Προάριστο', afternoon:'Απογευματινό' }[currentType] || '';
 
   const standardsHTML = standards.map(s => `
     <div class="swap-row" onclick="swapMealStandard(${mi},'${s.id}')">
@@ -1592,8 +1614,8 @@ function applyScale(mi, sf) {
 
 function openAddMealModal() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const mealTypes = ['breakfast','snack','lunch','dinner'];
-  const mealLabels = { breakfast:'Πρωινό', lunch:'Μεσημεριανό', dinner:'Βραδινό', snack:'Σνακ' };
+  const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
+  const mealLabels = { breakfast:'Πρωινό', lunch:'Μεσημεριανό', dinner:'Βραδινό', snack:'Προάριστο', afternoon:'Απογευματινό' };
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Προσθήκη Γεύματος</div>
@@ -1632,7 +1654,7 @@ function addRecipeToDay(rid) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const recipe = allRecipes.find(r => r.id === rid);
   if (!recipe) return;
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'16:00' };
+  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
   state.week[state.currentDay].meals.push({
     time: typeTime[recipe.meal] || '12:00',
     type: recipe.meal,
@@ -1656,7 +1678,8 @@ function openAddRecipeModal() {
     <div class="form-group"><label>Τύπος Γεύματος</label>
       <select id="nr-meal">
         <option value="breakfast">Πρωινό</option>
-        <option value="snack">Σνακ</option>
+        <option value="snack">Προάριστο</option>
+        <option value="afternoon">Απογευματινό</option>
         <option value="lunch">Μεσημεριανό</option>
         <option value="dinner">Βραδινό</option>
       </select>
@@ -1795,7 +1818,7 @@ function builderRemove(i) {
 
 function applyBuilderToDay() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'16:00' };
+  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
   const newMeals = builderMeals.map(bm => {
     if (bm.isStandard) {
       const sm = STANDARD_MEALS.find(x => x.id === bm.id);
@@ -1903,7 +1926,7 @@ function exportDayPDF(dayIdx) {
       detailHtml = `<tr><td colspan="5" style="padding:2px 12px 5px;font-size:9px;color:#6b7280">${ingList}</td></tr>
       <tr><td colspan="5" style="padding:2px 12px 8px;font-size:8.5px;color:#9ca3af;font-style:italic">${r.instructions}</td></tr>`;
     }
-    const mealTypeLabel = { breakfast:'Πρωινό', snack:'Σνακ', lunch:'Μεσ/νό', dinner:'Βραδινό' }[m.type] || m.type;
+    const mealTypeLabel = { breakfast:'Πρωινό', snack:'Προάριστο', lunch:'Μεσ/νό', afternoon:'Απογ/νό', dinner:'Βραδινό' }[m.type] || m.type;
     const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', dinner:'#8b5cf6' }[m.type] || '#6b7280';
     return `<tr style="border-bottom:1px solid #f3f4f6">
       <td style="padding:5px 8px;font-size:9px;color:${typeColor};font-weight:700;white-space:nowrap">${mealTypeLabel}</td>
@@ -1923,7 +1946,7 @@ function exportDayPDF(dayIdx) {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #22c55e">
         <div>
           <div style="font-size:18px;font-weight:800;color:#111">${day.label}${dateLabel}</div>
-          <div style="font-size:10px;color:#6b7280;margin-top:2px">Στόχος: ${g.kcal} kcal · Πλάνο: ${tot.kcal} kcal (${pct}%) · ${p.name||'NutriPlan'}</div>
+          <div style="font-size:10px;color:#6b7280;margin-top:2px">Στόχος: ${g.kcal} kcal · Πλάνο: ${tot.kcal} kcal (${pct}%) · ${p.name||'Vivon'}</div>
         </div>
         <div style="text-align:right;font-size:11px;font-weight:700">
           <div style="color:#3b82f6">Πρωτ: ${tot.p}g</div>
@@ -2050,7 +2073,7 @@ function exportPDF() {
         }
       }
 
-      const mealTypeLabel = { breakfast:'Πρωινό', snack:'Σνακ', lunch:'Μεσ/νό', dinner:'Βραδινό' }[m.type] || m.type;
+      const mealTypeLabel = { breakfast:'Πρωινό', snack:'Προάριστο', lunch:'Μεσ/νό', afternoon:'Απογ/νό', dinner:'Βραδινό' }[m.type] || m.type;
       const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', dinner:'#8b5cf6' }[m.type] || '#6b7280';
 
       return `<tr style="border-bottom:1px solid #f3f4f6">
@@ -2121,3 +2144,50 @@ function exportPDF() {
   showToast('⏳ Άνοιγμα εκτύπωσης...');
   setTimeout(() => window.print(), 400);
 }
+
+// ── NAVIGATION & UTILITIES ──
+function navigateTo(tab) {
+  state.activeTab = tab;
+  saveState();
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById('page-' + tab);
+  if (page) page.classList.add('active');
+  const btn = document.querySelector(`.tab-item[data-tab="${tab}"]`);
+  if (btn) btn.classList.add('active');
+  if (tab === 'today')    renderToday();
+  if (tab === 'week')     renderWeek();
+  if (tab === 'profile')  renderProfile();
+  if (tab === 'recipes')  renderRecipes();
+  if (tab === 'foods')    renderFoods();
+  if (tab === 'optimize') renderOptimize();
+  if (tab === 'builder')  renderBuilderPage();
+}
+
+let _toastTimer = null;
+function showToast(msg, dur = 2200) {
+  const el = document.getElementById('toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), dur);
+}
+
+// -- INIT --
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  document.querySelectorAll('.tab-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      navigateTo(tab);
+    });
+  });
+  const overlay = document.getElementById('modal-overlay');
+  if (overlay) {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+  }
+  navigateTo(state.activeTab || 'today');
+});
