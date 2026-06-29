@@ -396,6 +396,23 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* Profile page colored sliders */
+.prof-range-amber::-webkit-slider-thumb { background: var(--amber) !important; }
+.prof-range-amber::-moz-range-thumb     { background: var(--amber) !important; }
+.prof-range-amber { accent-color: var(--amber); }
+
+.prof-range-blue::-webkit-slider-thumb { background: var(--blue) !important; }
+.prof-range-blue::-moz-range-thumb     { background: var(--blue) !important; }
+.prof-range-blue { accent-color: var(--blue); }
+
+.prof-range-green::-webkit-slider-thumb { background: var(--green-d) !important; }
+.prof-range-green::-moz-range-thumb     { background: var(--green-d) !important; }
+.prof-range-green { accent-color: var(--green-d); }
+
+.prof-range-purple::-webkit-slider-thumb { background: var(--purple) !important; }
+.prof-range-purple::-moz-range-thumb     { background: var(--purple) !important; }
+.prof-range-purple { accent-color: var(--purple); }
+
 /* Mode toggle */
 .mode-tabs {
   display: flex;
