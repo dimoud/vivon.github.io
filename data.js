@@ -1,0 +1,684 @@
+// ============================================================
+// data.js — Βάση δεδομένων τροφίμων, συνταγών, γευμάτων
+// ============================================================
+
+const PHILOSOPHY_QUOTES = [
+  // Επίκτητος
+  { text: "Οὐ τὰ πράγματα ταράττει τοὺς ἀνθρώπους, ἀλλὰ αἱ περὶ τῶν πραγμάτων δόξαι.", author: "Επίκτητος", translation: "Δεν μας ταράζουν τα πράγματα, αλλά οι απόψεις μας γι' αυτά." },
+  { text: "Κράτει τοῦ σώματος ἵνα μὴ κρατῇ σε.", author: "Επίκτητος", translation: "Κυρίαρχε στο σώμα σου, ώστε να μην σε κυριαρχεί." },
+  { text: "Πρῶτον μάθε τί εἶ, εἶτα κόσμει σεαυτόν.", author: "Επίκτητος", translation: "Πρώτα μάθε τι είσαι, έπειτα καλλώπισε τον εαυτό σου." },
+  { text: "Τῆς φύσεως ἕπου.", author: "Επίκτητος", translation: "Ακολούθησε τη φύση." },
+  { text: "Ἕκαστος τοσοῦτον ἀσχολεῖται τοῖς ἄλλοις ὅσον ἐαυτοῦ ἀμελεῖ.", author: "Επίκτητος", translation: "Ο καθένας ασχολείται με τους άλλους όσο αμελεί τον εαυτό του." },
+  { text: "Μηδὲν ἀγαν.", author: "Επίκτητος", translation: "Τίποτα σε υπερβολή." },
+  { text: "Ζήτει τίνος ἐστὶ τοῦ σώματος ἐπιμελεῖσθαι.", author: "Επίκτητος", translation: "Ζήτησε πώς να φροντίζεις το σώμα." },
+  // Αριστοτέλης
+  { text: "Ἄνθρωπος φύσει πολιτικὸν ζῷον.", author: "Αριστοτέλης", translation: "Ο άνθρωπος είναι εκ φύσεως πολιτικό ζώο." },
+  { text: "Ἀρχὴ ἥμισυ παντός.", author: "Αριστοτέλης", translation: "Η αρχή είναι το μισό του παντός." },
+  { text: "Ἡ εὐδαιμονία ἐνέργειά τις τῆς ψυχῆς.", author: "Αριστοτέλης", translation: "Η ευδαιμονία είναι ενέργεια της ψυχής." },
+  { text: "Ἡ ἀρετὴ ἐν τῷ μέσῳ ἐστίν.", author: "Αριστοτέλης", translation: "Η αρετή βρίσκεται στο μέσο." },
+  { text: "Εἰ ἓν ἁμαρτάνεις, ἐν ᾧ μάλιστα δεῖ κατορθοῦν, ἁμαρτάνεις.", author: "Αριστοτέλης", translation: "Αν σφάλεις εκεί που πρέπει να επιτύχεις, τότε πραγματικά σφάλεις." },
+  { text: "Ἐν ᾧ γὰρ ζῶμεν, ἐν τούτῳ καὶ ὑγιαίνομεν.", author: "Αριστοτέλης", translation: "Όσο ζούμε, χρειαζόμαστε και υγεία." },
+  { text: "Τελεία φιλία ἐστὶ ἡ τῶν ἀγαθῶν.", author: "Αριστοτέλης", translation: "Τέλεια φιλία είναι αυτή που βασίζεται στην αρετή." },
+  // Επίκουρος
+  { text: "Οὐκ ἔστιν ἡδέως ζῆν ἄνευ τοῦ φρονίμως καὶ καλῶς καὶ δικαίως ζῆν.", author: "Επίκουρος", translation: "Δεν μπορείς να ζεις ευχάριστα χωρίς να ζεις φρόνιμα, καλά και δίκαια." },
+  { text: "Λάθε βιώσας.", author: "Επίκουρος", translation: "Ζήσε αθόρυβα." },
+  { text: "Ἡ εὐτέλεια ἡδίστη.", author: "Επίκουρος", translation: "Η λιτότητα είναι η πιο ευχάριστη." },
+  { text: "Βέβαιον τε φιλίαν ἐπαγγέλλεσθαι καὶ ἀβέβαιον ποιεῖσθαι χαλεπόν.", author: "Επίκουρος", translation: "Να υπόσχεσαι φιλία και να μην την εκπληρώνεις είναι ανάρμοστο." },
+  { text: "Ἡ φυσικὴ πλοῦτος εὐπόριστος ὁ δὲ κενοδοξία ἀπόριστος.", author: "Επίκουρος", translation: "Ο φυσικός πλούτος είναι εύκολος στην απόκτηση· η κενοδοξία δεν χορταίνει." },
+  // Πλάτωνας
+  { text: "Σῶμα καὶ ψυχὴ ἐν ἀσκήσει συντηρεῖται.", author: "Πλάτωνας", translation: "Σώμα και ψυχή διατηρούνται με άσκηση." },
+  { text: "Ὁ ἀγύμναστος βίος οὐ βιωτός.", author: "Πλάτωνας", translation: "Η ζωή χωρίς άσκηση δεν αξίζει να ζιστεί." },
+  { text: "Ὁ νοῦς ὑγιαίνων ἐν σώματι ὑγιαίνοντι.", author: "Πλάτωνας", translation: "Υγιής νους σε υγιές σώμα." },
+  { text: "Τὸ ἄγνωστον ἑαυτοῦ πάντων χαλεπώτατον.", author: "Πλάτωνας", translation: "Το να μην γνωρίζεις τον εαυτό σου είναι το δυσκολότερο από όλα." },
+  { text: "Ψυχῆς οὖν ἐπιμελεῖσθαι πρῶτον.", author: "Πλάτωνας", translation: "Φρόντισε πρώτα για την ψυχή." },
+  // Σωκράτης / Άλλοι
+  { text: "Γνῶθι σαυτόν.", author: "Σωκράτης", translation: "Γνώρισε τον εαυτό σου." },
+  { text: "Ἓν οἶδα ὅτι οὐδὲν οἶδα.", author: "Σωκράτης", translation: "Ένα γνωρίζω: ότι δεν γνωρίζω τίποτα." },
+  { text: "Μέτρον ἄριστον.", author: "Κλεόβουλος", translation: "Το μέτρο είναι το άριστο." },
+  { text: "Ἐν ὑγιεῖ σώματι ὑγιὴς νοῦς.", author: "Αρχαία Γνώμη", translation: "Σε υγιές σώμα υγιής νους." },
+  { text: "Τὸ εὖ πράττειν χωρὶς ἀρετῆς ἀδύνατον.", author: "Δημόκριτος", translation: "Το να ζεις καλά χωρίς αρετή είναι αδύνατο." },
+  { text: "Πάντα ῥεῖ.", author: "Ηράκλειτος", translation: "Τα πάντα ρέουν." },
+  { text: "Τὸ αὐτὸ ποταμῷ δὶς οὐκ ἔστιν ἐμβῆναι.", author: "Ηράκλειτος", translation: "Δεν μπορείς να μπεις δύο φορές στο ίδιο ποτάμι." },
+  { text: "Ἐκ τῆς τέχνης σοφία, ἐκ τῆς σοφίας εὐδαιμονία.", author: "Δημόκριτος", translation: "Από την τέχνη η σοφία, από τη σοφία η ευδαιμονία." },
+  { text: "Τολμᾶν χρή, τοῖς τολμῶσι γὰρ ἡ τύχη εὐμενής.", author: "Σοφοκλής", translation: "Πρέπει να τολμάς, γιατί η τύχη ευνοεί τους τολμηρούς." },
+  { text: "Ὁ πόνος τίκτει δόξαν.", author: "Πίνδαρος", translation: "Ο κόπος γεννά τη δόξα." },
+  { text: "Σιωπῇ καὶ πόνῳ τὰ μεγάλα πράττεται.", author: "Αρχαία Γνώμη", translation: "Τα μεγάλα πράγματα γίνονται με σιωπή και κόπο." },
+];
+
+const DEFAULT_GOALS = { kcal: 1700, protein: 155, carbs: 150, fat: 45 };
+
+// Προεπιλεγμένο προφίλ χρήστη
+const DEFAULT_PROFILE = {
+  name: 'Δημήτριος',
+  photoUrl: '',
+  weight: 95.9,
+  height: 188,
+  age: 34,
+  gender: 'male',
+  activity: 1.55,
+  customBMR: 2100,   // μετρημένος BMR — παρακάμπτει τον υπολογισμό
+  useCustomBMR: true,
+};
+
+const FOODS_DB = [
+  // ΠΡΩΤΕΪΝΕΣ
+  { id: "f1",  name: "Κοτόπουλο στήθος ψητό",   unit: "g",  per100: { kcal: 165, p: 31, c: 0,  f: 3.6 }, category: "protein" },
+  { id: "f2",  name: "Κοτόπουλο μπούτι ψητό",   unit: "g",  per100: { kcal: 215, p: 26, c: 0,  f: 12  }, category: "protein" },
+  { id: "f3",  name: "Κιμάς μοσχαρίσιος 5%",    unit: "g",  per100: { kcal: 150, p: 21, c: 0,  f: 7   }, category: "protein" },
+  { id: "f4",  name: "Σολομός",                   unit: "g",  per100: { kcal: 208, p: 20, c: 0,  f: 13  }, category: "protein" },
+  { id: "f5",  name: "Τόνος σε νερό",             unit: "g",  per100: { kcal: 116, p: 26, c: 0,  f: 1   }, category: "protein" },
+  { id: "f6",  name: "Μπακαλίαρος",               unit: "g",  per100: { kcal: 82,  p: 18, c: 0,  f: 0.7 }, category: "protein" },
+  { id: "f7",  name: "Αυγό",                      unit: "τεμ",per100: { kcal: 78,  p: 6,  c: 0.6,f: 5   }, category: "protein" },
+  { id: "f8",  name: "Cottage Cheese",            unit: "g",  per100: { kcal: 98,  p: 11, c: 3.4,f: 4.3 }, category: "protein" },
+  { id: "f9",  name: "Whey Isolate",              unit: "g",  per100: { kcal: 370, p: 90, c: 3,  f: 1   }, category: "protein" },
+  { id: "f10", name: "Γαλοπούλα φέτα",            unit: "g",  per100: { kcal: 109, p: 17, c: 1,  f: 4   }, category: "protein" },
+  { id: "f11", name: "Φακές μαγειρεμένες",        unit: "g",  per100: { kcal: 116, p: 9,  c: 20, f: 0.4 }, category: "protein" },
+  { id: "f12", name: "Ρεβύθια μαγειρεμένα",       unit: "g",  per100: { kcal: 164, p: 9,  c: 27, f: 2.6 }, category: "protein" },
+  // ΥΔΑΤΑΝΘΡΑΚΕΣ
+  { id: "c1",  name: "Βρώμη",                     unit: "g",  per100: { kcal: 389, p: 17, c: 66, f: 7   }, category: "carbs" },
+  { id: "c2",  name: "Ρύζι μαγειρεμένο",          unit: "g",  per100: { kcal: 130, p: 2.7,c: 28, f: 0.3 }, category: "carbs" },
+  { id: "c3",  name: "Μακαρόνια ολικής μαγ.",     unit: "g",  per100: { kcal: 150, p: 5,  c: 30, f: 1   }, category: "carbs" },
+  { id: "c4",  name: "Πατάτα βραστή",             unit: "g",  per100: { kcal: 87,  p: 1.9,c: 20, f: 0.1 }, category: "carbs" },
+  { id: "c5",  name: "Γλυκοπατάτα",               unit: "g",  per100: { kcal: 86,  p: 1.6,c: 20, f: 0.1 }, category: "carbs" },
+  { id: "c6",  name: "Ψωμί ολικής φέτα",          unit: "g",  per100: { kcal: 247, p: 9,  c: 41, f: 4   }, category: "carbs" },
+  { id: "c7",  name: "Ριζογκοφρέτα",              unit: "τεμ",per100: { kcal: 35,  p: 0.7,c: 7,  f: 0.3 }, category: "carbs" },
+  { id: "c8",  name: "Παξιμάδι χαρουπιού",        unit: "τεμ",per100: { kcal: 70,  p: 2,  c: 14, f: 0.5 }, category: "carbs" },
+  { id: "c9",  name: "Πληγούρι μαγειρεμένο",      unit: "g",  per100: { kcal: 83,  p: 3,  c: 18, f: 0.2 }, category: "carbs" },
+  { id: "c10", name: "Κους Κους μαγειρεμένο",     unit: "g",  per100: { kcal: 112, p: 3.8,c: 23, f: 0.2 }, category: "carbs" },
+  { id: "c11", name: "Κινόα μαγειρεμένη",         unit: "g",  per100: { kcal: 120, p: 4.4,c: 22, f: 2   }, category: "carbs" },
+  // ΛΑΧΑΝΙΚΑ
+  { id: "v1",  name: "Μαρούλι",                   unit: "g",  per100: { kcal: 15,  p: 1.4,c: 2.9,f: 0.2 }, category: "veggie" },
+  { id: "v2",  name: "Ντοματίνια",                unit: "g",  per100: { kcal: 18,  p: 0.9,c: 3.9,f: 0.2 }, category: "veggie" },
+  { id: "v3",  name: "Αγγούρι",                   unit: "g",  per100: { kcal: 16,  p: 0.7,c: 3.6,f: 0.1 }, category: "veggie" },
+  { id: "v4",  name: "Κόκκινη πιπεριά",           unit: "g",  per100: { kcal: 31,  p: 1,  c: 6,  f: 0.3 }, category: "veggie" },
+  { id: "v5",  name: "Καρότο",                    unit: "g",  per100: { kcal: 41,  p: 0.9,c: 10, f: 0.2 }, category: "veggie" },
+  { id: "v6",  name: "Κολοκυθάκι",               unit: "g",  per100: { kcal: 17,  p: 1.2,c: 3.1,f: 0.3 }, category: "veggie" },
+  { id: "v7",  name: "Σπανάκι",                   unit: "g",  per100: { kcal: 23,  p: 2.9,c: 3.6,f: 0.4 }, category: "veggie" },
+  // ΛΙΠΑΡΑ
+  // Ελαιόλαδο: μετριέται σε ψεκασμούς · 1 ψεκασμός = ~0.25ml = ~0.23g λάδι
+  // 10 ψεκασμοί = 1 κ.σ. · per100 βάσει ml (884 kcal/100ml)
+  // qty στις συνταγές = ψεκασμοί · εσωτερικά 1 ψεκασμός → 0.25ml → kcal=0.25*8.84≈2.2kcal
+  { id: "l1",  name: "Ελαιόλαδο", unit: "ψεκ", per100: { kcal: 884, p: 0, c: 0, f: 100 },
+    // 1 ψεκ = 0.25ml = 0.23g → kcal_per_unit = 2.21, fat_per_unit = 0.23
+    // calcRecipeMacros θα πρέπει να γνωρίζει ότι unit="ψεκ" → qty*0.25/100 * per100
+    sprayFactor: 0.25, // ml ανά ψεκασμό
+    category: "fat" },
+  { id: "l2",  name: "Αμύγδαλα",                  unit: "g",  per100: { kcal: 579, p: 21, c: 22, f: 50  }, category: "fat" },
+  { id: "l3",  name: "Καρύδια",                   unit: "g",  per100: { kcal: 654, p: 15, c: 14, f: 65  }, category: "fat" },
+  { id: "l4",  name: "Φυστικοβούτυρο",            unit: "g",  per100: { kcal: 588, p: 25, c: 20, f: 50  }, category: "fat" },
+  { id: "l5",  name: "Ελιές",                     unit: "τεμ",per100: { kcal: 10,  p: 0.1,c: 0.3,f: 1   }, category: "fat" },
+  // ΓΑΛΑΚΤΟΚΟΜΙΚΑ
+  { id: "d1",  name: "Γιαούρτι 2%",               unit: "g",  per100: { kcal: 60,  p: 6,  c: 4.7,f: 1.5 }, category: "dairy" },
+  { id: "d2",  name: "Γάλα 1.5%",                 unit: "g",  per100: { kcal: 47,  p: 3.4,c: 4.8,f: 1.5 }, category: "dairy" },
+  { id: "d3",  name: "Κασέρι φέτα",               unit: "g",  per100: { kcal: 354, p: 26, c: 1.3,f: 27  }, category: "dairy" },
+  { id: "d4",  name: "Φέτα",                      unit: "g",  per100: { kcal: 264, p: 14, c: 4,  f: 21  }, category: "dairy" },
+  // ΦΡΟΥΤΑ
+  { id: "fr1", name: "Μπανάνα",                   unit: "g",  per100: { kcal: 89,  p: 1.1,c: 23, f: 0.3 }, category: "fruit" },
+  { id: "fr2", name: "Μήλο",                      unit: "g",  per100: { kcal: 52,  p: 0.3,c: 14, f: 0.2 }, category: "fruit" },
+  { id: "fr3", name: "Ροδάκινο",                  unit: "g",  per100: { kcal: 39,  p: 0.9,c: 10, f: 0.3 }, category: "fruit" },
+  { id: "fr4", name: "Νεκταρίνι",                 unit: "g",  per100: { kcal: 44,  p: 1.1,c: 11, f: 0.3 }, category: "fruit" },
+  { id: "fr5", name: "Ακτινίδιο",                 unit: "τεμ",per100: { kcal: 61,  p: 1.1,c: 15, f: 0.5 }, category: "fruit" },
+  // ΑΛΛΑ
+  { id: "o1",  name: "Μέλι",                      unit: "g",  per100: { kcal: 304, p: 0.3,c: 82, f: 0   }, category: "other" },
+  { id: "o2",  name: "Κακάο σκόνη",               unit: "g",  per100: { kcal: 228, p: 20, c: 55, f: 14  }, category: "other" },
+  { id: "o3",  name: "Μαύρη σοκολάτα 85%",        unit: "g",  per100: { kcal: 598, p: 8,  c: 46, f: 43  }, category: "other" },
+  { id: "o4",  name: "Ξύδι βαλσάμικο",            unit: "ml", per100: { kcal: 88,  p: 0.5,c: 17, f: 0   }, category: "other" },
+  { id: "o5",  name: "Μουστάρδα",                 unit: "g",  per100: { kcal: 66,  p: 4,  c: 6,  f: 4   }, category: "other" },
+];
+
+const RECIPES_DB = [
+  // ─── ΠΡΩΙΝΑ ───
+  {
+    id: "r1", name: "Power Oat Bowl Σοκολάτα", meal: "breakfast", emoji: "🍫",
+    ingredients: [
+      { foodId: "d2", qty: 250 }, { foodId: "c1", qty: 60 },
+      { foodId: "f9", qty: 30 },  { foodId: "o2", qty: 10 },
+      { foodId: "fr1", qty: 60 }
+    ],
+    instructions: "Βράσε βρώμη με γάλα 5'. Κρύωσε λίγο. Ανακάτεψε whey + κακάο. Μπανάνα από πάνω. Κανέλα + στέβια."
+  },
+  {
+    id: "r2", name: "Overnight Oats Βανίλια & Ροδάκινο", meal: "breakfast", emoji: "🌙",
+    ingredients: [
+      { foodId: "d1", qty: 300 }, { foodId: "c1", qty: 40 },
+      { foodId: "f9", qty: 30 },  { foodId: "fr3", qty: 150 },
+      { foodId: "o1", qty: 10 }
+    ],
+    instructions: "Βάλε όλα σε βαζάκι το βράδυ, ψυγείο. Πρωί: έτοιμο. Πρόσθεσε ροδάκινο & μέλι."
+  },
+  {
+    id: "r3", name: "Γιαούρτι Bowl Φρούτων", meal: "breakfast", emoji: "🫙",
+    ingredients: [
+      { foodId: "d1", qty: 300 }, { foodId: "c1", qty: 40 },
+      { foodId: "f9", qty: 30 },  { foodId: "fr2", qty: 100 }
+    ],
+    instructions: "Ανακάτεψε γιαούρτι + whey. Ρίξε βρώμη. Μήλο τριμμένο + κανέλα από πάνω."
+  },
+  {
+    id: "r4", name: "Τοστ Αβοκάντο & Αυγά Σκραμπλ", meal: "breakfast", emoji: "🥑",
+    ingredients: [
+      { foodId: "c6", qty: 80 },  { foodId: "f7", qty: 3 },
+      { foodId: "v2", qty: 60 },  { foodId: "v3", qty: 80 }
+    ],
+    instructions: "Ψήσε ψωμί. Αυγά σκραμπλ σε αντικολλητικό χωρίς λάδι. Ρόκα + ντοματίνια."
+  },
+  {
+    id: "r5", name: "Βρώμη με Μήλο & Κανέλα", meal: "breakfast", emoji: "🍎",
+    ingredients: [
+      { foodId: "c1", qty: 80 },  { foodId: "d2", qty: 200 },
+      { foodId: "f9", qty: 30 },  { foodId: "fr2", qty: 120 },
+      { foodId: "o1", qty: 8 }
+    ],
+    instructions: "Βρώμη με ζεστό γάλα 3'. Ανακάτεψε whey. Τριμμένο μήλο + κανέλα + μέλι."
+  },
+  {
+    id: "r6", name: "Cottage Bowl Πρωτεΐνης", meal: "breakfast", emoji: "🧀",
+    ingredients: [
+      { foodId: "f8", qty: 200 }, { foodId: "c1", qty: 40 },
+      { foodId: "fr1", qty: 80 }, { foodId: "o1", qty: 10 }
+    ],
+    instructions: "Cottage + βρώμη ωμή + μπανάνα + μέλι. Χωρίς μαγείρεμα. Έτοιμο σε 2'."
+  },
+  {
+    id: "r7", name: "Smoothie Πρωτεΐνης", meal: "breakfast", emoji: "🥤",
+    ingredients: [
+      { foodId: "d2", qty: 300 }, { foodId: "f9", qty: 30 },
+      { foodId: "fr1", qty: 100 },{ foodId: "c1", qty: 30 },
+      { foodId: "l4", qty: 15 }
+    ],
+    instructions: "Βάλε όλα στο blender. Πολτοποίησε 60 δευτ. Πίνε αμέσως."
+  },
+  {
+    id: "r8", name: "Γιαούρτι με Παξιμάδι & Ελιές", meal: "breakfast", emoji: "🫒",
+    ingredients: [
+      { foodId: "d1", qty: 200 }, { foodId: "c5", qty: 2 },
+      { foodId: "l4", qty: 30 },  { foodId: "l1", qty: 5 }
+    ],
+    instructions: "Γιαούρτι 2% + 2 παξιμάδια + ελιές + λίγο ελαιόλαδο. Γρήγορο & χορταστικό."
+  },
+  // ─── ΜΕΣΗΜΕΡΙΑΝΑ ───
+  {
+    id: "r10", name: "Σουβλάκι Κοτόπουλο + Ρύζι", meal: "lunch", emoji: "🍗",
+    ingredients: [
+      { foodId: "f1", qty: 200 }, { foodId: "c2", qty: 150 },
+      { foodId: "v2", qty: 80 },  { foodId: "v3", qty: 80 },
+      { foodId: "v4", qty: 60 },  { foodId: "l1", qty: 10 }
+    ],
+    instructions: "Μαρινάδα: λεμόνι + ρίγανη + πιπέρι + σκόρδο. Σχάρα 15'. Σέρβε με ρύζι + σαλάτα."
+  },
+  {
+    id: "r11", name: "Μακαρόνια με Κιμά", meal: "lunch", emoji: "🍝",
+    ingredients: [
+      { foodId: "c3", qty: 150 }, { foodId: "f3", qty: 150 },
+      { foodId: "v2", qty: 100 }, { foodId: "v1", qty: 80 },
+      { foodId: "v5", qty: 60 }
+    ],
+    instructions: "Κιμάς σοτέ χωρίς λάδι. Σάλτσα ντομάτα + σκόρδο + κανέλα + ρίγανη. 10'. Μαρούλι + καρότο."
+  },
+  {
+    id: "r12", name: "Μπιφτέκια Κοτόπουλο + Πουρές", meal: "lunch", emoji: "🍔",
+    ingredients: [
+      { foodId: "f1", qty: 200 }, { foodId: "c4", qty: 200 },
+      { foodId: "v4", qty: 80 },  { foodId: "v3", qty: 100 },
+      { foodId: "d2", qty: 100 }, { foodId: "l1", qty: 5 }
+    ],
+    instructions: "Κιμάς κοτόπουλου + κόκκινη πιπεριά + ρίγανη. Ψήσε 4'/πλευρά. Πουρές με γάλα + ελαιόλαδο."
+  },
+  {
+    id: "r13", name: "Σολομός + Ρύζι & Λαχανικά", meal: "lunch", emoji: "🐟",
+    ingredients: [
+      { foodId: "f4", qty: 180 }, { foodId: "c2", qty: 130 },
+      { foodId: "v4", qty: 80 },  { foodId: "v6", qty: 100 },
+      { foodId: "l1", qty: 8 }
+    ],
+    instructions: "Σολομός στο φούρνο 180° / 18'. Λεμόνι + δεντρολίβανο + πιπέρι. Σέρβε με ρύζι + ψητά λαχανικά."
+  },
+  {
+    id: "r14", name: "Ρεβύθια Σαλάτα + Ψωμί", meal: "lunch", emoji: "🫘",
+    ingredients: [
+      { foodId: "f12", qty: 250 },{ foodId: "v4", qty: 80 },
+      { foodId: "v2", qty: 100 }, { foodId: "v3", qty: 80 },
+      { foodId: "l1", qty: 10 },  { foodId: "c6", qty: 40 }
+    ],
+    instructions: "Ρεβύθια στραγγιστά + λαχανικά + ελαιόλαδο + λεμόνι + κύμινο. Σος μουστάρδας: 1κγ μουστάρδα + λεμόνι."
+  },
+  {
+    id: "r15", name: "Κοτόπουλο + Πατάτες Φούρνου", meal: "lunch", emoji: "🥔",
+    ingredients: [
+      { foodId: "f1", qty: 200 }, { foodId: "c4", qty: 250 },
+      { foodId: "v1", qty: 80 },  { foodId: "v2", qty: 80 },
+      { foodId: "l1", qty: 10 }
+    ],
+    instructions: "Πατάτες με ρίγανη + ελαιόλαδο, φούρνος 200° / 40'. Κοτόπουλο σχάρα. Σαλάτα με λεμόνι."
+  },
+  {
+    id: "r16", name: "Φακές + Λαχανικά", meal: "lunch", emoji: "🥗",
+    ingredients: [
+      { foodId: "f11", qty: 250 },{ foodId: "v5", qty: 80 },
+      { foodId: "v2", qty: 100 }, { foodId: "l1", qty: 10 },
+      { foodId: "c6", qty: 40 }
+    ],
+    instructions: "Φακές βρασμένες + καρότο + ντομάτα + ελαιόλαδο + λεμόνι. Φέτα ψωμί ολικής."
+  },
+  {
+    id: "r17", name: "Τόνος + Ρύζι & Σαλάτα", meal: "lunch", emoji: "🐠",
+    ingredients: [
+      { foodId: "f5", qty: 150 }, { foodId: "c2", qty: 150 },
+      { foodId: "v1", qty: 80 },  { foodId: "v2", qty: 80 },
+      { foodId: "l1", qty: 8 }
+    ],
+    instructions: "Τόνος νερό + λεμόνι + ρίγανη. Ρύζι βραστό. Σαλάτα μαρούλι + ντομάτα."
+  },
+  {
+    id: "r18", name: "Κοτόσουπα με Ρύζι", meal: "lunch", emoji: "🍲",
+    ingredients: [
+      { foodId: "f1", qty: 150 }, { foodId: "c2", qty: 120 },
+      { foodId: "v5", qty: 60 },  { foodId: "v6", qty: 60 }
+    ],
+    instructions: "Κοτόπουλο + λαχανικά σε νερό 45'. Αφαίρεσε κοτόπουλο, κόψε, βάλε ρύζι 15'. Πιπέρι + λεμόνι."
+  },
+  // ─── ΒΡΑΔΙΝΑ ───
+  {
+    id: "r20", name: "Μεσογειακό Μπολ Γιαουρτιού", meal: "dinner", emoji: "🫙",
+    ingredients: [
+      { foodId: "d1", qty: 200 }, { foodId: "c8", qty: 2 },
+      { foodId: "l5", qty: 5 },   { foodId: "v2", qty: 80 },
+      { foodId: "v3", qty: 80 },  { foodId: "l1", qty: 5 }
+    ],
+    instructions: "Γιαούρτι + παξιμάδια + ελιές + ντοματίνια + αγγούρι + ρίγανη + ελαιόλαδο."
+  },
+  {
+    id: "r21", name: "Ομελέτα Πιπεριάς", meal: "dinner", emoji: "🍳",
+    ingredients: [
+      { foodId: "f7", qty: 3 },   { foodId: "v4", qty: 100 },
+      { foodId: "v2", qty: 80 },  { foodId: "c6", qty: 40 }
+    ],
+    instructions: "3 αυγά + κόκκινη πιπεριά + ντοματίνια. Αντικολλητικό χωρίς λάδι. Ρίγανη + πιπέρι."
+  },
+  {
+    id: "r22", name: "Τονοσαλάτα", meal: "dinner", emoji: "🥗",
+    ingredients: [
+      { foodId: "f5", qty: 100 }, { foodId: "v1", qty: 100 },
+      { foodId: "v2", qty: 80 },  { foodId: "v3", qty: 80 },
+      { foodId: "l1", qty: 10 }
+    ],
+    instructions: "Τόνος νερό + μαρούλι + ντομάτα + αγγούρι + ελαιόλαδο + λεμόνι."
+  },
+  {
+    id: "r23", name: "Σαλάτα Κοτόπουλο", meal: "dinner", emoji: "🥙",
+    ingredients: [
+      { foodId: "f1", qty: 150 }, { foodId: "v1", qty: 100 },
+      { foodId: "v5", qty: 60 },  { foodId: "v2", qty: 80 },
+      { foodId: "d1", qty: 80 },  { foodId: "o5", qty: 10 }
+    ],
+    instructions: "Σος: γιαούρτι 0% + μουστάρδα + λεμόνι + ρίγανη. Κοτόπουλο ψητό κομμένο πάνω στη σαλάτα."
+  },
+  {
+    id: "r24", name: "Αυγά Βραστά + Σαλάτα", meal: "dinner", emoji: "🥚",
+    ingredients: [
+      { foodId: "f7", qty: 3 },   { foodId: "v1", qty: 100 },
+      { foodId: "v2", qty: 80 },  { foodId: "v3", qty: 80 },
+      { foodId: "l5", qty: 5 },   { foodId: "l1", qty: 8 }
+    ],
+    instructions: "3 αυγά βραστά + μεγάλη σαλάτα + ελιές + ελαιόλαδο + βαλσάμικο."
+  },
+  {
+    id: "r25", name: "Cottage Μπολ Βραδινό", meal: "dinner", emoji: "🧀",
+    ingredients: [
+      { foodId: "f8", qty: 200 }, { foodId: "c8", qty: 2 },
+      { foodId: "v2", qty: 100 }, { foodId: "l1", qty: 10 }
+    ],
+    instructions: "Cottage + παξιμάδια + ντομάτα + ελαιόλαδο + ρίγανη."
+  },
+  // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΜΕΣΗΜΕΡΙΑΝΩΝ ───
+  {
+    id: "r40", name: "Γεμιστά (Κιμάς + Ρύζι)", meal: "lunch", emoji: "🫑",
+    ingredients: [
+      { foodId: "f3", qty: 80 },  { foodId: "c2", qty: 80 },
+      { foodId: "v4", qty: 150 }, { foodId: "v2", qty: 100 },
+      { foodId: "l1", qty: 8 }
+    ],
+    instructions: "Πιπεριές + ντομάτες γεμιστές με κιμά + ρύζι. Φούρνος 180° / 50'. Κλασική ελληνική συνταγή."
+  },
+  {
+    id: "r41", name: "Ρεβύθια Σούπα", meal: "lunch", emoji: "🫘",
+    ingredients: [
+      { foodId: "f12", qty: 150 }, { foodId: "v5", qty: 60 },
+      { foodId: "v2", qty: 80 },  { foodId: "l1", qty: 6 },
+      { foodId: "c6", qty: 30 }
+    ],
+    instructions: "Ρεβύθια βρασμένα + καρότο + ντομάτα + ελαιόλαδο + λεμόνι. Σέρβε με ψωμί ολικής."
+  },
+  {
+    id: "r44", name: "Ψάρι Πλακί (Μπακαλίαρος)", meal: "lunch", emoji: "🐟",
+    ingredients: [
+      { foodId: "f6", qty: 180 }, { foodId: "v2", qty: 150 },
+      { foodId: "v4", qty: 80 },  { foodId: "l1", qty: 10 },
+      { foodId: "c6", qty: 30 }
+    ],
+    instructions: "Μπακαλίαρος με ντομάτα + πιπεριά + σκόρδο + ελαιόλαδο. Φούρνος 180° / 30'. Σέρβε με ψωμί."
+  },
+  {
+    id: "r45", name: "Κινόα Bowl Κοτόπουλο", meal: "lunch", emoji: "🥣",
+    ingredients: [
+      { foodId: "c11", qty: 130 }, { foodId: "f1", qty: 120 },
+      { foodId: "v7", qty: 80 },   { foodId: "v2", qty: 80 },
+      { foodId: "l1", qty: 8 }
+    ],
+    instructions: "Κινόα βρασμένη + κοτόπουλο σχάρας + σπανάκι + ντομάτα + ελαιόλαδο + λεμόνι."
+  },
+  {
+    id: "r46", name: "Σπανακόρυζο", meal: "lunch", emoji: "🌿",
+    ingredients: [
+      { foodId: "c2", qty: 100 }, { foodId: "v7", qty: 150 },
+      { foodId: "l1", qty: 8 },   { foodId: "d4", qty: 20 },
+      { foodId: "v2", qty: 80 }
+    ],
+    instructions: "Σπανάκι + ρύζι σε ελαιόλαδο + ντομάτα + άνηθο. Σέρβε με φέτα. Κλασικό ελληνικό."
+  },
+  {
+    id: "r48", name: "Κοτόπουλο Κάρυ + Ρύζι", meal: "lunch", emoji: "🍛",
+    ingredients: [
+      { foodId: "f1", qty: 140 }, { foodId: "c2", qty: 90 },
+      { foodId: "d1", qty: 60 },  { foodId: "v4", qty: 80 },
+      { foodId: "l1", qty: 5 }
+    ],
+    instructions: "Κοτόπουλο + πιπεριά + γιαούρτι + κάρυ + κουρκουμάς. Σέρβε με ρύζι. Εύκολο & νόστιμο."
+  },
+  // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΒΡΑΔΙΝΩΝ ───
+  {
+    id: "r49", name: "Αβγά Σκραμπλ με Σπανάκι", meal: "dinner", emoji: "🍳",
+    ingredients: [
+      { foodId: "f7", qty: 3 },   { foodId: "v7", qty: 150 },
+      { foodId: "v2", qty: 80 },  { foodId: "l1", qty: 6 },
+      { foodId: "d4", qty: 15 }
+    ],
+    instructions: "3 αυγά σκραμπλ + σπανάκι σοτέ + ντοματίνια + φέτα τριμμένη. Ελαφρύ & πρωτεϊνούχο."
+  },
+  // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΣΝΑΚ ───
+  {
+    id: "r50", name: "Cottage + Ριζογκοφρέτες", meal: "snack", emoji: "🧀",
+    ingredients: [{ foodId: "c7", qty: 3 }, { foodId: "f8", qty: 100 }],
+    instructions: "3 ριζογκοφρέτες + 100g cottage cheese. Υψηλή πρωτεΐνη, χαμηλές θερμίδες."
+  },
+  // ─── ΣΝΑΚ (original) ───
+  {
+    id: "r30", name: "Whey Shake + Φρούτο", meal: "snack", emoji: "💪",
+    ingredients: [{ foodId: "f9", qty: 30 }, { foodId: "fr2", qty: 150 }],
+    instructions: "Whey σε νερό ή 200ml γάλα. Φρούτο δίπλα."
+  },
+  {
+    id: "r31", name: "Μήλο + Αμύγδαλα", meal: "snack", emoji: "🍎",
+    ingredients: [{ foodId: "fr2", qty: 150 }, { foodId: "l2", qty: 20 }],
+    instructions: "Φρούτο + ξηροί καρποί. Γρήγορο & θρεπτικό."
+  },
+  {
+    id: "r32", name: "Ριζογκοφρέτες + Whey", meal: "snack", emoji: "🌾",
+    ingredients: [{ foodId: "c7", qty: 2 }, { foodId: "f9", qty: 30 }],
+    instructions: "Whey σε νερό. Ριζογκοφρέτες δίπλα."
+  },
+  {
+    id: "r33", name: "Γιαούρτι + Καρύδια + Μέλι", meal: "snack", emoji: "🫙",
+    ingredients: [{ foodId: "d1", qty: 200 }, { foodId: "l3", qty: 20 }, { foodId: "o1", qty: 10 }],
+    instructions: "Γιαούρτι + καρύδια + μέλι. Απλό & χορταστικό."
+  },
+];
+
+// Πρότυπη εβδομάδα (7 ημέρες) — βελτιστοποιημένη για ~1700 kcal/ημέρα
+// Κανόνας: αν πρωί γιαούρτι → δεκατ ΟΧΙ γιαούρτι · ποικιλία ανά ημέρα
+const DEFAULT_WEEK = [
+  {
+    // Ημ1: γιαούρτι+βρώμη / μήλο / κοτόσουπα / whey / γιαούρτι βραδ ≈ 1701 kcal
+    day: 1, label: "Ημέρα 1",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r18", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r30", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r20", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ2: smoothie / whey / μακαρόνια κιμά / μήλο / τονοσαλάτα ≈ 1673 kcal
+    day: 2, label: "Ημέρα 2",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r7",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r11", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ3: power oat / cottage+ριζογκ / κινόα bowl / whey / αβγά σπανάκι ≈ 1756 kcal
+    day: 3, label: "Ημέρα 3",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r1",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r45", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r49", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ4: τοστ αυγά / μήλο / ρεβύθια σούπα / whey / αβγά βραστά σαλάτα ≈ 1639 kcal
+    day: 4, label: "Ημέρα 4",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r4",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r41", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r24", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ5: cottage bowl / whey / σολομός light / μήλο / ομελέτα πιπεριάς ≈ 1701 kcal
+    day: 5, label: "Ημέρα 5",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r6",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r13", done: false, scaleFactor: 0.8, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r21", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ6: overnight oats / μήλο / φακές / cottage+ριζογκ / τονοσαλάτα ≈ 1608 kcal
+    day: 6, label: "Ημέρα 6",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r2",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r16", done: false, scaleFactor: 0.85, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+  {
+    // Ημ7: γιαούρτι+παξιμάδι / whey / κοτόπουλο κάρυ / μήλο / cottage βραδ ≈ 1612 kcal
+    day: 7, label: "Ημέρα 7",
+    meals: [
+      { time: "07:00", type: "breakfast", recipeId: "r8",  done: false },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "13:00", type: "lunch",     recipeId: "r48", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
+      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
+      { time: "19:30", type: "dinner",    recipeId: "r25", done: false, waterNote: "Πιες 500ml νερό 💧 — Στόχος: 2.5L ✅" },
+    ]
+  },
+];
+
+// ============================================================
+// STANDARD_MEALS — Πραγματικά στάνταρ γεύματα χρήστη
+// Οι θερμίδες είναι εκτιμητικές (+/- 10%)
+// Δομή: { id, name, emoji, meal, kcal_est, note, items[] }
+// ============================================================
+const STANDARD_MEALS = [
+
+  // ─── ΠΡΩΙΝΑ ───
+  {
+    id: "sm1", meal: "breakfast", emoji: "🫙",
+    name: "Ταχίνι 2κγ & 2 φέτες τοστ",
+    kcal_est: 250,
+    note: "Κλασικό γρήγορο πρωινό",
+    items: ["2 κγ ταχίνι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
+  },
+  {
+    id: "sm2", meal: "breakfast", emoji: "🫙",
+    name: "Γιαούρτι 2% Activia",
+    kcal_est: 120,
+    note: "Συχνά ως συμπλήρωμα πρωινού",
+    items: ["200g γιαούρτι 2% Activia"]
+  },
+  {
+    id: "sm3", meal: "breakfast", emoji: "🍯",
+    name: "Μέλι 2κγ & 2 φέτες τοστ",
+    kcal_est: 200,
+    note: "Γλυκό εναλλακτικό πρωινό",
+    items: ["2 κγ μέλι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
+  },
+  {
+    id: "sm4", meal: "breakfast", emoji: "🫙",
+    name: "Γιαούρτι 200g + Whey 30g + Βρώμη 5κσ",
+    kcal_est: 350,
+    note: "Υψηλή πρωτεΐνη, χορταστικό",
+    items: ["200g γιαούρτι 2%", "30g whey isolate", "5 κ.σ. βρώμη (~50g)"]
+  },
+  {
+    id: "sm5", meal: "breakfast", emoji: "🌾",
+    name: "Ταχίνι 2κγ & 4 ριζογκοφρέτες",
+    kcal_est: 240,
+    note: "Gluten-free εναλλακτικό",
+    items: ["2 κγ ταχίνι (~30g)", "4 ριζογκοφρέτες"]
+  },
+
+  // ─── ΣΝΑΚ / ΔΕΚΑΤΙΑΝΑ ───
+  {
+    id: "sm10", meal: "snack", emoji: "🍎",
+    name: "Μήλο & 5 αμύγδαλα",
+    kcal_est: 140,
+    note: "Ελαφρύ πρωινό σνακ",
+    items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
+  },
+  {
+    id: "sm11", meal: "snack", emoji: "🍌",
+    name: "Μπανάνα & 5 αμύγδαλα",
+    kcal_est: 170,
+    note: "Ενέργεια pre-workout",
+    items: ["1 μπανάνα (~120g)", "5 αμύγδαλα (~10g)"]
+  },
+  {
+    id: "sm12", meal: "snack", emoji: "🧀",
+    name: "3 παξιμάδια & 2 φέτες κασέρι χαμηλά λιπαρά",
+    kcal_est: 250,
+    note: "Πρωτεΐνη + υδατάνθρακες",
+    items: ["3 παξιμάδια (~90g)", "2 φέτες κασέρι light (~40g)"]
+  },
+  {
+    id: "sm13", meal: "snack", emoji: "🥪",
+    name: "Τοστ γαλοπούλα / κασέρι",
+    kcal_est: 260,
+    note: "Κλασικό δεκατιανό",
+    items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g κασέρι"]
+  },
+  {
+    id: "sm14", meal: "snack", emoji: "🥨",
+    name: "3 κριτσίνια & 2 φέτες κασέρι light",
+    kcal_est: 230,
+    note: "Τραγανό & χορταστικό",
+    items: ["3 κριτσίνια (~30g)", "2 φέτες κασέρι light (~40g)"]
+  },
+  {
+    id: "sm15", meal: "snack", emoji: "🥕",
+    name: "5 καρότα",
+    kcal_est: 100,
+    note: "Ελαφρύ & χορταστικό",
+    items: ["5 μεσαία καρότα (~250g)"]
+  },
+  {
+    id: "sm16", meal: "snack", emoji: "🥝",
+    name: "2 ακτινίδια",
+    kcal_est: 90,
+    note: "Βιταμίνη C + φυτικές ίνες",
+    items: ["2 ακτινίδια (~140g)"]
+  },
+  {
+    id: "sm17", meal: "snack", emoji: "💪",
+    name: "Σέικερ πρωτεΐνη Whey Isolate",
+    kcal_est: 150,
+    note: "Post-workout ή απόγευμα",
+    items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
+  },
+  {
+    id: "sm18", meal: "snack", emoji: "🍮",
+    name: "Φρουί Ζελέ",
+    kcal_est: 90,
+    note: "Ελαφρύ γλυκό σνακ",
+    items: ["1 φρουί ζελέ (~90g)"]
+  },
+
+  // ─── ΜΕΣΗΜΕΡΙΑΝΑ ───
+  {
+    id: "sm20", meal: "lunch", emoji: "🍗",
+    name: "Κοτόπουλο φιλέτο 250g + ρύζι 100g + σαλάτα",
+    kcal_est: 640,
+    note: "Κλασικό μεσημεριανό με υψηλή πρωτεΐνη",
+    items: ["250g κοτόπουλο φιλέτο ψητό", "100g ρύζι μαγ.", "σαλάτα ντομάτα + 1 κγ ελαιόλαδο"]
+  },
+  {
+    id: "sm21", meal: "lunch", emoji: "🍗",
+    name: "Κοτόπουλο μπούτι 250g + ρύζι 100g",
+    kcal_est: 720,
+    note: "Πιο λιπαρό, πιο γευστικό",
+    items: ["250g κοτόπουλο μπούτι ψητό", "100g ρύζι μαγ.", "λίγη σαλάτα"]
+  },
+  {
+    id: "sm22", meal: "lunch", emoji: "🐟",
+    name: "Τόνος σε νερό (2 κουτάκια) + σαλάτα",
+    kcal_est: 300,
+    note: "Ελαφρύ & υψηλή πρωτεΐνη",
+    items: ["2 κουτάκια τόνος (~160g)", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
+  },
+  {
+    id: "sm23", meal: "lunch", emoji: "🥗",
+    name: "Χωριάτικη σαλάτα + 2 αυγά",
+    kcal_est: 350,
+    note: "Καλοκαιρινό γεύμα",
+    items: ["200g ντομάτα+αγγούρι+ελιές+φέτα", "2 βραστά αυγά", "1 κσ ελαιόλαδο"]
+  },
+  {
+    id: "sm24", meal: "lunch", emoji: "🫘",
+    name: "Φακές με ρύζι (Mujadarah)",
+    kcal_est: 480,
+    note: "Πλήρης φυτική πρωτεΐνη",
+    items: ["200g φακές μαγ.", "80g ρύζι μαγ.", "1 κσ ελαιόλαδο", "κρεμμύδι"]
+  },
+
+  // ─── ΒΡΑΔΙΝΑ ───
+  {
+    id: "sm30", meal: "dinner", emoji: "🥗",
+    name: "Τυρί cottage 200g + σαλάτα",
+    kcal_est: 250,
+    note: "Ελαφρύ & πρωτεϊνούχο βραδινό",
+    items: ["200g cottage cheese", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
+  },
+  {
+    id: "sm31", meal: "dinner", emoji: "🍳",
+    name: "Ομελέτα 3 αυγών + σαλάτα",
+    kcal_est: 320,
+    note: "Γρήγορο & χορταστικό",
+    items: ["3 αυγά", "λίγο τυρί", "σαλάτα", "1 κγ ελαιόλαδο"]
+  },
+  {
+    id: "sm32", meal: "dinner", emoji: "🐟",
+    name: "Σαρδέλες κονσέρβα + ψωμί",
+    kcal_est: 380,
+    note: "Ωμέγα-3 + εύκολο",
+    items: ["1 κονσέρβα σαρδέλες (~125g)", "2 φέτες ψωμί ολικής"]
+  },
+  {
+    id: "sm33", meal: "dinner", emoji: "🧀",
+    name: "Γιαούρτι 200g + 2 μπανάνες",
+    kcal_est: 280,
+    note: "Ελαφρύ βραδινό",
+    items: ["200g γιαούρτι 2%", "2 μπανάνες (~240g)"]
+  },
+];

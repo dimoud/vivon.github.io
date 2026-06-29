@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#e8eaed">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>NutriPlan 🥗</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    @media print {
+      .bottom-bar, .top-nav, .fab, .modal-overlay, .toast { display: none !important; }
+      .page { display: none !important; }
+      #print-view { display: block !important; }
+      body { padding: 0; background: white; font-size: 10px; margin: 0; }
+      @page { margin: 8mm; }
+      /* Σελίδα 1 landscape (summary) — οι υπόλοιπες portrait */
+      #print-view > div:first-child { page-break-after: always; }
+    }
+    #print-view { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <div class="app-title" id="top-app-title">🥗 NutriPlan</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="navigateTo('optimize')">⚡</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGES -->
+  <main>
+    <div id="page-profile"  class="page"></div>
+    <div id="page-today"    class="page active"></div>
+    <div id="page-week"     class="page"></div>
+    <div id="page-recipes"  class="page"></div>
+    <div id="page-foods"    class="page"></div>
+    <div id="page-optimize" class="page"></div>
+    <div id="page-builder"  class="page"></div>
+  </main>
+
+  <!-- PRINT VIEW (generated at print time) -->
+  <div id="print-view"></div>
+
+  <!-- BOTTOM TAB BAR -->
+  <nav class="bottom-bar">
+    <button class="tab-item" data-tab="profile">
+      <span class="tab-icon">👤</span>
+      Προφίλ
+    </button>
+    <button class="tab-item active" data-tab="today">
+      <span class="tab-icon">🏠</span>
+      Σήμερα
+    </button>
+    <button class="tab-item" data-tab="week">
+      <span class="tab-icon">📅</span>
+      Εβδομάδα
+    </button>
+    <button class="tab-item" data-tab="recipes">
+      <span class="tab-icon">📖</span>
+      Συνταγές
+    </button>
+    <button class="tab-item" data-tab="builder">
+      <span class="tab-icon">🏗️</span>
+      Builder
+    </button>
+    <button class="tab-item" data-tab="optimize">
+      <span class="tab-icon">⚡</span>
+      Optimize
+    </button>
+  </nav>
+
+  <!-- MODAL -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div class="modal-sheet">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast"></div>
+
+  <!-- SCRIPTS -->
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
