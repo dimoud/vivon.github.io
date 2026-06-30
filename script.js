@@ -517,7 +517,6 @@ function renderBodyMeasurementsCard() {
       </div>
 
       ${dateChip}
-      ${chartInfo}
     </div>
 
     <!-- Κάρτα 2: Φόρμα -->
@@ -529,10 +528,11 @@ function renderBodyMeasurementsCard() {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;align-items:start">
         <div>
           <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">Ημερομηνία</div>
-          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box;overflow:hidden">
+          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
             <span style="font-size:0.85rem;flex-shrink:0">📅</span>
             <input type="date" id="bm-date" value="${today}"
-              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:100%">
+              onclick="this.showPicker()"
+              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;height:100%;cursor:pointer">
           </div>
         </div>
         <div>
@@ -560,8 +560,9 @@ function renderBodyMeasurementsCard() {
           </div>
         </div>
       </div>
-      <button class="btn btn-green btn-full" onclick="addBodyMeasurement()" style="padding:14px;font-size:0.9rem;font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px">
-        <span>💾</span> Αποθήκευση Μέτρησης
+      <button onclick="addBodyMeasurement()" style="width:100%;padding:9px 14px;font-size:0.78rem;font-weight:600;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;background:#e5e7eb;color:#374151;border:1px solid #d1d5db;cursor:pointer;letter-spacing:0.01em">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Αποθήκευση Μέτρησης
       </button>
     </div>
 
@@ -4074,17 +4075,20 @@ function renderStatsPage() {
       <div class="segment" style="margin-top:0">
         <button class="seg-btn active" id="stats-tab-overview" onclick="showStatsTab('overview')">📊 Σύνοψη</button>
         <button class="seg-btn" id="stats-tab-activity" onclick="showStatsTab('activity')">🏃 Δραστηριότητα</button>
+        <button class="seg-btn" id="stats-tab-body" onclick="showStatsTab('body')">📈 Σώμα</button>
       </div>
       <div id="stats-overview-content"></div>
       <div id="stats-activity-content" style="display:none"></div>
+      <div id="stats-body-content" style="display:none"></div>
     </div>`;
 
   renderStatsOverview();
   renderStatsActivity();
+  renderStatsBody();
 }
 
 function showStatsTab(which) {
-  ['overview','activity'].forEach(t => {
+  ['overview','activity','body'].forEach(t => {
     document.getElementById(`stats-tab-${t}`).classList.toggle('active', t === which);
     document.getElementById(`stats-${t}-content`).style.display = t === which ? '' : 'none';
   });
@@ -4117,9 +4121,9 @@ function renderStatsOverview() {
     const isToday = i === state.currentDay;
     const color = isToday ? 'var(--purple)' : (pct >= 90 ? 'var(--green-d)' : pct >= 60 ? 'var(--amber)' : 'var(--red)');
     return `
-      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1">
-        <div style="font-size:0.65rem;font-weight:700;color:${isToday?'var(--purple)':'var(--text3)'}">${d.kcal > 0 ? pct+'%' : '—'}</div>
-        <div style="width:100%;background:var(--border);border-radius:6px 6px 0 0;height:90px;position:relative;overflow:hidden;align-self:flex-end">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+        <div style="font-size:0.62rem;font-weight:700;color:${isToday?'var(--purple)':'var(--text3)'};height:14px;line-height:14px">${d.kcal > 0 ? pct+'%' : '—'}</div>
+        <div style="width:100%;background:var(--border);border-radius:5px 5px 0 0;height:80px;position:relative;overflow:hidden">
           <div style="position:absolute;bottom:0;left:0;right:0;height:${pct}%;background:${color};border-radius:4px 4px 0 0;transition:height 0.5s ease"></div>
         </div>
         <div style="font-size:0.65rem;font-weight:${isToday?'800':'600'};color:${isToday?'var(--purple)':'var(--text2)'}">${DAYS_EL[i]}</div>
@@ -4148,11 +4152,11 @@ function renderStatsOverview() {
 
     <!-- Kcal bar chart -->
     <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <h3>Θερμίδες ανά ημέρα</h3>
         <span style="font-size:0.72rem;color:var(--text3)">Στόχος: ${goals.kcal||'—'} kcal</span>
       </div>
-      <div style="display:flex;gap:5px;align-items:flex-end;height:100px">
+      <div style="display:flex;gap:5px;align-items:flex-end">
         ${barsHtml}
       </div>
     </div>
@@ -4219,6 +4223,53 @@ function renderStatsActivity() {
             ${d.stepsKcal+d.trainingKcal > 0 ? '+'+( d.stepsKcal+d.trainingKcal)+' kcal' : '0 kcal'}
           </span>
         </div>`).join('')}
+    </div>`;
+}
+
+function renderStatsBody() {
+  const log = state.bodyLog || [];
+  const el = document.getElementById('stats-body-content');
+  if (!el) return;
+
+  const latest = log.length > 0 ? log[log.length - 1] : null;
+  const weightVal = latest ? `${latest.weight} kg` : '—';
+  const fatVal    = (latest && latest.fat    != null) ? `${latest.fat}%`    : '—';
+  const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
+
+  function statCard(bg, icon, value, label, valueColor) {
+    return `<div style="flex:1;background:${bg};border-radius:14px;padding:10px 6px;display:flex;align-items:center;gap:6px;min-width:0">
+      <div style="width:28px;height:28px;background:rgba(255,255,255,0.75);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem">${icon}</div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:0.95rem;font-weight:800;color:${valueColor};line-height:1.1;white-space:nowrap">${value}</div>
+        <div style="font-size:0.62rem;color:#6b7280;font-weight:500;margin-top:2px">${label}</div>
+      </div>
+    </div>`;
+  }
+
+  const chartHtml = log.length < 2
+    ? `<div style="display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#0369a1;margin-top:10px">
+        <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid #0369a1;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem">i</span>
+        <span>Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</span>
+       </div>`
+    : `<div style="margin-top:10px">${renderBodyChart(log)}</div>`;
+
+  const dateChip = latest
+    ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:20px;padding:5px 12px;font-size:0.78rem;color:#374151;font-weight:500;margin-top:6px">
+        <span>📅</span><span>${fmtDateGr(latest.date)}</span>
+       </div>` : '';
+
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:16px;margin-top:14px">
+      <div class="card card-lg" style="padding:18px">
+        <h3 style="margin-bottom:12px">Τελευταία Μέτρηση</h3>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          ${statCard('#eff6ff','⚖️',weightVal,'Βάρος','#3b82f6')}
+          ${statCard('#fef2f2','🩸',fatVal,'Λίπος','#ef4444')}
+          ${statCard('#f0fdf4','💪',muscleVal,'Μυϊκή μάζα','#16a34a')}
+        </div>
+        ${dateChip}
+        ${chartHtml}
+      </div>
     </div>`;
 }
 
