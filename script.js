@@ -3909,7 +3909,7 @@ function exportPDF_today() {
           <div style="font-size:12px;color:#6b7280;margin-top:3px">Στόχος: ${g.kcal} kcal · Πλάνο: ${tot.kcal} kcal (${pct}%)</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:18px;font-weight:900;color:#22c55e;letter-spacing:-1px;margin-bottom:4px">VIVON</div>
+          <div style="font-size:18px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-bottom:4px">VIVON</div>
           <div style="font-size:13px;font-weight:700;color:#3b82f6">Πρωτεΐνη: ${tot.p}g</div>
           <div style="font-size:13px;font-weight:700;color:#8b5cf6">Υδατάνθρακες: ${tot.c}g</div>
           <div style="font-size:13px;font-weight:700;color:#f59e0b">Λίπος: ${tot.f}g</div>
@@ -3998,7 +3998,7 @@ function exportPDF_stats() {
           <div style="font-size:22px;font-weight:900;color:#111">Στατιστικά Εβδομάδας</div>
           <div style="font-size:12px;color:#6b7280;margin-top:3px">Αναλυτική αναφορά</div>
         </div>
-        <div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:-1px">VIVON</div>
+        <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
@@ -4085,12 +4085,12 @@ function exportPDF_body() {
       @page { size: A4 portrait; margin: 10mm; }
     </style>
     <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #22c55e">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #f5c842">
         <div>
           <div style="font-size:22px;font-weight:900;color:#111">Μετρήσεις Σώματος</div>
           <div style="font-size:12px;color:#6b7280;margin-top:3px">${p.name || ''}</div>
         </div>
-        <div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:-1px">VIVON</div>
+        <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</div>
       </div>
 
       ${latest ? `<div style="display:flex;gap:14px;margin-bottom:18px">
@@ -4284,7 +4284,7 @@ function exportPDF_week() {
         <div style="text-align:right">
           ${weekRangePrint ? `<div style="font-size:8px;color:#6b7280">${weekRangePrint}</div>` : ''}
           <div style="font-size:8px;color:#6b7280;margin-top:1px">${p.name || ''}</div>
-          <div style="font-size:15px;font-weight:900;color:#22c55e;letter-spacing:-1px;margin-top:1px">VIVON</div>
+          <div style="font-size:15px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-top:1px">VIVON</div>
         </div>
       </div>
       <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:6px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid #e5e7eb">
