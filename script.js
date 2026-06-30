@@ -282,142 +282,332 @@ function deleteBodyEntry(date) {
 function renderBodyChart(log) {
   if (!log || log.length < 2) return '<div style="font-size:0.78rem;color:var(--text3);text-align:center;padding:16px 0">Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</div>';
 
-  const W = 320, H = 130, PAD = { t: 10, r: 10, b: 28, l: 38 };
-  const iW = W - PAD.l - PAD.r, iH = H - PAD.t - PAD.b;
+  const id = 'bchart_' + Date.now();
+  const hasFat    = log.some(e => e.fat    != null);
+  const hasMuscle = log.some(e => e.muscle != null);
 
-  function linePath(vals, minV, maxV) {
-    const range = maxV - minV || 1;
-    return vals.map((v, i) => {
-      const x = PAD.l + (i / (vals.length - 1)) * iW;
-      const y = PAD.t + iH - ((v - minV) / range) * iH;
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-    }).join(' ');
-  }
-
-  function dots(vals, minV, maxV, color) {
-    const range = maxV - minV || 1;
-    return vals.map((v, i) => {
-      const x = PAD.l + (i / (vals.length - 1)) * iW;
-      const y = PAD.t + iH - ((v - minV) / range) * iH;
-      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5" fill="${color}" stroke="white" stroke-width="1.5"/>`;
-    }).join('');
-  }
-
-  function yLabels(minV, maxV, color, suffix, offsetX = 0) {
-    const steps = 4;
-    let html = '';
-    for (let i = 0; i <= steps; i++) {
-      const v = minV + ((maxV - minV) / steps) * i;
-      const y = PAD.t + iH - (i / steps) * iH;
-      html += `<text x="${PAD.l - 4 + offsetX}" y="${y.toFixed(1)}" text-anchor="end" font-size="8" fill="${color}" dominant-baseline="middle">${v.toFixed(1)}${suffix}</text>`;
-    }
-    return html;
-  }
-
-  const weights = log.map(e => e.weight);
-  const minW = Math.floor(Math.min(...weights) - 1), maxW = Math.ceil(Math.max(...weights) + 1);
-
-  const hasFat = log.some(e => e.fat !== null && e.fat !== undefined);
-  const hasMuscle = log.some(e => e.muscle !== null && e.muscle !== undefined);
-
-  const xLabels = log.map((e, i) => {
-    if (log.length <= 5 || i === 0 || i === log.length - 1 || i % Math.ceil(log.length / 4) === 0) {
-      const x = PAD.l + (i / (log.length - 1)) * iW;
-      const d = e.date.slice(5); // MM-DD
-      return `<text x="${x.toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="8" fill="#9ca3af">${d}</text>`;
-    }
-    return '';
-  }).join('');
-
-  const weightPath = linePath(weights, minW, maxW);
-  const weightDots = dots(weights, minW, maxW, '#3b82f6');
-  const weightLine = `<path d="${weightPath}" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linejoin="round"/>`;
-
-  let fatLine = '', fatDots = '', fatLabels = '';
-  if (hasFat) {
-    const fats = log.map(e => e.fat ?? null);
-    const validFats = fats.filter(v => v !== null);
-    const minF = Math.floor(Math.min(...validFats) - 1), maxF = Math.ceil(Math.max(...validFats) + 1);
-    const fatVals = fats.map(v => v !== null ? v : null);
-    // Only draw connected segments between non-null
-    const segs = [];
-    let cur = [];
-    fatVals.forEach((v, i) => {
-      if (v !== null) cur.push([i, v]);
-      else if (cur.length > 0) { segs.push(cur); cur = []; }
-    });
-    if (cur.length > 0) segs.push(cur);
-    const range = maxF - minF || 1;
-    segs.forEach(seg => {
-      if (seg.length < 1) return;
-      const d = seg.map(([i, v], si) => {
-        const x = PAD.l + (i / (log.length - 1)) * iW;
-        const y = PAD.t + iH - ((v - minF) / range) * iH;
-        return `${si === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ');
-      fatLine += `<path d="${d}" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2" stroke-linejoin="round"/>`;
-      seg.forEach(([i, v]) => {
-        const x = PAD.l + (i / (log.length - 1)) * iW;
-        const y = PAD.t + iH - ((v - minF) / range) * iH;
-        fatDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#ef4444" stroke="white" stroke-width="1.5"/>`;
-      });
-    });
-    fatLabels = yLabels(minF, maxF, '#ef4444', '%', 0);
-  }
-
-  let muscleLine = '', muscleDots = '', muscleLabels = '';
-  if (hasMuscle) {
-    const muscles = log.map(e => e.muscle ?? null);
-    const validM = muscles.filter(v => v !== null);
-    const minM = Math.floor(Math.min(...validM) - 1), maxM = Math.ceil(Math.max(...validM) + 1);
-    const range = maxM - minM || 1;
-    const segs = [];
-    let cur = [];
-    muscles.forEach((v, i) => {
-      if (v !== null) cur.push([i, v]);
-      else if (cur.length > 0) { segs.push(cur); cur = []; }
-    });
-    if (cur.length > 0) segs.push(cur);
-    segs.forEach(seg => {
-      if (seg.length < 1) return;
-      const d = seg.map(([i, v], si) => {
-        const x = PAD.l + (i / (log.length - 1)) * iW;
-        const y = PAD.t + iH - ((v - minM) / range) * iH;
-        return `${si === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ');
-      muscleLine += `<path d="${d}" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="6,2" stroke-linejoin="round"/>`;
-      seg.forEach(([i, v]) => {
-        const x = PAD.l + (i / (log.length - 1)) * iW;
-        const y = PAD.t + iH - ((v - minM) / range) * iH;
-        muscleDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="#22c55e" stroke="white" stroke-width="1.5"/>`;
-      });
-    });
-    muscleLabels = '';
-  }
-
-  const weightLabels = yLabels(minW, maxW, '#3b82f6', 'kg');
-  const gridLines = [0, 0.25, 0.5, 0.75, 1].map(t => {
-    const y = PAD.t + iH * (1 - t);
-    return `<line x1="${PAD.l}" y1="${y.toFixed(1)}" x2="${W - PAD.r}" y2="${y.toFixed(1)}" stroke="#f1f5f9" stroke-width="1"/>`;
-  }).join('');
-
-  const legendItems = [
-    `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem"><span style="display:inline-block;width:14px;height:2px;background:#3b82f6;border-radius:1px"></span>Βάρος (kg)</span>`,
-    hasFat ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem"><span style="display:inline-block;width:14px;height:2px;background:#ef4444;border-radius:1px"></span>% Λίπος</span>` : '',
-    hasMuscle ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.7rem"><span style="display:inline-block;width:14px;height:2px;background:#22c55e;border-radius:1px"></span>Μυϊκή Μάζα (%)</span>` : '',
-  ].filter(Boolean).join('&nbsp;&nbsp;');
-
-  return `<div style="overflow-x:auto">
-    <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="display:block;max-width:100%">
-      ${gridLines}
-      ${weightLabels}${fatLabels}${muscleLabels}
-      ${weightLine}${weightDots}
-      ${fatLine}${fatDots}
-      ${muscleLine}${muscleDots}
-      ${xLabels}
-    </svg>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;padding-left:${PAD.l}px">${legendItems}</div>
+  const html = `
+  <div id="${id}_wrap" style="user-select:none">
+    <!-- Period selector -->
+    <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap">
+      ${['7D','1M','3M','6M','1Y','MAX'].map(p =>
+        `<button onclick="bchart_setPeriod('${id}','${p}')" id="${id}_p_${p}"
+          style="padding:3px 9px;font-size:0.68rem;font-weight:700;border-radius:6px;border:1.5px solid #e5e7eb;background:#f9fafb;color:#374151;cursor:pointer">${p}</button>`
+      ).join('')}
+    </div>
+    <!-- Series toggles -->
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+      <button onclick="bchart_toggleSeries('${id}','weight')" id="${id}_t_weight"
+        style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #3b82f6;background:#eff6ff;color:#1d4ed8;cursor:pointer">
+        <span style="width:12px;height:2px;background:#3b82f6;border-radius:1px;display:inline-block"></span>Βάρος (kg)
+      </button>
+      ${hasFat ? `<button onclick="bchart_toggleSeries('${id}','fat')" id="${id}_t_fat"
+        style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #ef4444;background:#fef2f2;color:#b91c1c;cursor:pointer">
+        <span style="width:12px;height:2px;background:#ef4444;border-radius:1px;display:inline-block"></span>% Λίπος
+      </button>` : ''}
+      ${hasMuscle ? `<button onclick="bchart_toggleSeries('${id}','muscle')" id="${id}_t_muscle"
+        style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #22c55e;background:#f0fdf4;color:#15803d;cursor:pointer">
+        <span style="width:12px;height:2px;background:#22c55e;border-radius:1px;display:inline-block"></span>% Μυϊκή Μάζα
+      </button>` : ''}
+    </div>
+    <!-- Canvas -->
+    <div style="position:relative">
+      <canvas id="${id}" style="width:100%;height:180px;display:block;touch-action:pan-y"></canvas>
+      <div id="${id}_tip" style="display:none;position:absolute;background:rgba(17,24,39,0.88);color:#fff;font-size:0.7rem;padding:5px 9px;border-radius:8px;pointer-events:none;white-space:nowrap;z-index:10"></div>
+    </div>
+    <!-- Zoom controls -->
+    <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:6px">
+      <button onclick="bchart_zoom('${id}',0.7)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid #e5e7eb;background:#f9fafb;font-size:1rem;cursor:pointer;font-weight:700;line-height:1">+</button>
+      <button onclick="bchart_zoom('${id}',1.4)" style="width:28px;height:28px;border-radius:7px;border:1.5px solid #e5e7eb;background:#f9fafb;font-size:1rem;cursor:pointer;font-weight:700;line-height:1">−</button>
+    </div>
   </div>`;
+
+  setTimeout(() => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const state = {
+      log,
+      series: { weight: true, fat: hasFat, muscle: hasMuscle },
+      period: 'MAX',
+      zoom: 1,
+      panOffset: 0,
+      dragging: false,
+      dragStartX: 0,
+      dragStartOffset: 0,
+    };
+    canvas._bcstate = state;
+
+    function filterByPeriod(entries, period) {
+      if (period === 'MAX') return entries;
+      const days = { '7D':7,'1M':30,'3M':90,'6M':180,'1Y':365 }[period] || 9999;
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - days);
+      const cut = cutoff.toISOString().split('T')[0];
+      const filtered = entries.filter(e => e.date >= cut);
+      return filtered.length >= 2 ? filtered : entries.slice(-2);
+    }
+
+    function draw() {
+      const rect = canvas.getBoundingClientRect();
+      const W = rect.width * dpr, H = rect.height * dpr;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      const rW = rect.width, rH = rect.height;
+
+      const PAD = { t: 14, r: 12, b: 28, l: 44 };
+      const iW = rW - PAD.l - PAD.r;
+      const iH = rH - PAD.t - PAD.b;
+
+      const filtered = filterByPeriod(state.log, state.period);
+      const n = filtered.length;
+      if (n < 2) return;
+
+      // zoom & pan
+      const visibleSpan = iW / state.zoom;
+      const maxOffset = iW - visibleSpan;
+      state.panOffset = Math.max(0, Math.min(maxOffset, state.panOffset));
+      const xStart = state.panOffset;
+      const xEnd   = xStart + visibleSpan;
+
+      function toCanvasX(i) {
+        const t = i / (n - 1);
+        const rawX = t * iW;
+        return PAD.l + (rawX - xStart) * (iW / visibleSpan);
+      }
+
+      // active series
+      const active = [];
+      if (state.series.weight) active.push({ key:'weight', field:'weight', color:'#3b82f6', suffix:'kg', dash:[] });
+      if (state.series.fat && hasFat)    active.push({ key:'fat',    field:'fat',    color:'#ef4444', suffix:'%',  dash:[4,3] });
+      if (state.series.muscle && hasMuscle) active.push({ key:'muscle', field:'muscle', color:'#22c55e', suffix:'%', dash:[6,3] });
+
+      ctx.clearRect(0, 0, rW, rH);
+
+      // grid
+      ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+      for (let t = 0; t <= 4; t++) {
+        const y = PAD.t + iH * (1 - t / 4);
+        ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(rW - PAD.r, y); ctx.stroke();
+      }
+
+      // clip to chart area
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(PAD.l, PAD.t, iW, iH + 2);
+      ctx.clip();
+
+      active.forEach(s => {
+        const vals = filtered.map(e => e[s.field] ?? null);
+        const valid = vals.filter(v => v !== null);
+        if (!valid.length) return;
+        const minV = Math.min(...valid), maxV = Math.max(...valid);
+        const pad = (maxV - minV) * 0.15 || 1;
+        const lo = minV - pad, hi = maxV + pad;
+        const range = hi - lo;
+
+        function toY(v) { return PAD.t + iH - ((v - lo) / range) * iH; }
+
+        // line segments
+        ctx.save();
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = 2;
+        ctx.setLineDash(s.dash);
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        let started = false;
+        vals.forEach((v, i) => {
+          if (v === null) { started = false; return; }
+          const x = toCanvasX(i), y = toY(v);
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.restore();
+
+        // dots
+        vals.forEach((v, i) => {
+          if (v === null) return;
+          const x = toCanvasX(i), y = toY(v);
+          ctx.beginPath();
+          ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = s.color;
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+      });
+
+      ctx.restore(); // end clip
+
+      // y-axis labels — one set per active series, left side only, color-coded
+      active.forEach((s, si) => {
+        const vals = filtered.map(e => e[s.field] ?? null).filter(v => v !== null);
+        if (!vals.length) return;
+        const minV = Math.min(...vals), maxV = Math.max(...vals);
+        const pad = (maxV - minV) * 0.15 || 1;
+        const lo = minV - pad, hi = maxV + pad;
+        ctx.fillStyle = s.color;
+        ctx.font = `bold ${dpr > 1 ? 9 : 8}px system-ui,sans-serif`;
+        ctx.textAlign = 'right';
+        for (let t = 0; t <= 4; t++) {
+          const v = lo + (hi - lo) * (t / 4);
+          const y = PAD.t + iH * (1 - t / 4);
+          if (active.length === 1 || si === 0) {
+            ctx.fillText(v.toFixed(1) + s.suffix, PAD.l - 4, y + 3);
+          }
+        }
+      });
+
+      // x-axis labels
+      ctx.fillStyle = '#9ca3af';
+      ctx.font = `${dpr > 1 ? 9 : 8}px system-ui,sans-serif`;
+      ctx.textAlign = 'center';
+      const step = Math.ceil(n / 5);
+      filtered.forEach((e, i) => {
+        if (i % step !== 0 && i !== n - 1 && i !== 0) return;
+        const x = toCanvasX(i);
+        if (x < PAD.l - 5 || x > rW - PAD.r + 5) return;
+        ctx.fillText(e.date.slice(5), x, rH - 6);
+      });
+    }
+
+    canvas._bcdraw = draw;
+    draw();
+
+    // resize
+    const ro = new ResizeObserver(() => draw());
+    ro.observe(canvas);
+
+    // tooltip + pan
+    function getXFraction(clientX) {
+      const rect = canvas.getBoundingClientRect();
+      return (clientX - rect.left - 44) / (rect.width - 44 - 12);
+    }
+
+    function showTooltipAt(clientX) {
+      const filtered = filterByPeriod(state.log, state.period);
+      const n = filtered.length;
+      if (n < 2) return;
+      const rect = canvas.getBoundingClientRect();
+      const iW = rect.width - 44 - 12;
+      const visibleSpan = iW / state.zoom;
+      const xFrac = (clientX - rect.left - 44) / iW;
+      const dataFrac = (state.panOffset + xFrac * visibleSpan) / iW;
+      const idx = Math.round(dataFrac * (n - 1));
+      if (idx < 0 || idx >= n) return;
+      const e = filtered[Math.max(0, Math.min(n-1, idx))];
+      const parts = [`📅 ${fmtDateGr(e.date)}`];
+      if (state.series.weight && e.weight != null) parts.push(`⚖️ ${e.weight} kg`);
+      if (state.series.fat && hasFat && e.fat != null) parts.push(`🩸 ${e.fat}%`);
+      if (state.series.muscle && hasMuscle && e.muscle != null) parts.push(`💪 ${e.muscle}%`);
+      const tip = document.getElementById(id + '_tip');
+      if (!tip) return;
+      tip.innerHTML = parts.join('&nbsp;&nbsp;');
+      tip.style.display = 'block';
+      const tipW = tip.offsetWidth;
+      let left = clientX - rect.left + 10;
+      if (left + tipW > rect.width) left = clientX - rect.left - tipW - 10;
+      tip.style.left = left + 'px';
+      tip.style.top = '6px';
+    }
+
+    canvas.addEventListener('mousemove', e => {
+      if (state.dragging) {
+        const dx = e.clientX - state.dragStartX;
+        const rect = canvas.getBoundingClientRect();
+        const iW = rect.width - 44 - 12;
+        const pxPerData = iW / state.zoom;
+        state.panOffset = state.dragStartOffset - (dx / iW) * pxPerData;
+        draw();
+      } else {
+        showTooltipAt(e.clientX);
+      }
+    });
+    canvas.addEventListener('mousedown', e => {
+      state.dragging = true;
+      state.dragStartX = e.clientX;
+      state.dragStartOffset = state.panOffset;
+    });
+    canvas.addEventListener('mouseup', () => { state.dragging = false; });
+    canvas.addEventListener('mouseleave', () => {
+      state.dragging = false;
+      const tip = document.getElementById(id + '_tip');
+      if (tip) tip.style.display = 'none';
+    });
+
+    // touch
+    let lastTouchX = null;
+    canvas.addEventListener('touchstart', e => {
+      lastTouchX = e.touches[0].clientX;
+      state.dragStartOffset = state.panOffset;
+    }, { passive: true });
+    canvas.addEventListener('touchmove', e => {
+      if (!lastTouchX) return;
+      const dx = e.touches[0].clientX - lastTouchX;
+      const rect = canvas.getBoundingClientRect();
+      const iW = rect.width - 44 - 12;
+      state.panOffset = state.dragStartOffset - (dx / iW) * (iW / state.zoom);
+      lastTouchX = e.touches[0].clientX;
+      state.dragStartOffset = state.panOffset;
+      draw();
+    }, { passive: true });
+
+    // wheel zoom
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 0.85 : 1.18;
+      state.zoom = Math.max(1, Math.min(20, state.zoom * factor));
+      draw();
+    }, { passive: false });
+
+    // period buttons init
+    bchart_setPeriod(id, 'MAX', true);
+  }, 0);
+
+  return html;
+}
+
+function bchart_setPeriod(id, period, init) {
+  const canvas = document.getElementById(id);
+  if (!canvas || !canvas._bcstate) return;
+  canvas._bcstate.period = period;
+  canvas._bcstate.zoom = 1;
+  canvas._bcstate.panOffset = 0;
+  ['7D','1M','3M','6M','1Y','MAX'].forEach(p => {
+    const btn = document.getElementById(id + '_p_' + p);
+    if (!btn) return;
+    btn.style.background = p === period ? '#111' : '#f9fafb';
+    btn.style.color = p === period ? '#fff' : '#374151';
+    btn.style.borderColor = p === period ? '#111' : '#e5e7eb';
+  });
+  if (!init) canvas._bcdraw && canvas._bcdraw();
+}
+
+function bchart_toggleSeries(id, key) {
+  const canvas = document.getElementById(id);
+  if (!canvas || !canvas._bcstate) return;
+  const s = canvas._bcstate.series;
+  const active = Object.values(s).filter(Boolean).length;
+  if (s[key] && active === 1) return; // keep at least one
+  s[key] = !s[key];
+  const colors = { weight:'#3b82f6', fat:'#ef4444', muscle:'#22c55e' };
+  const bgs    = { weight:'#eff6ff', fat:'#fef2f2', muscle:'#f0fdf4' };
+  const btn = document.getElementById(id + '_t_' + key);
+  if (btn) {
+    btn.style.opacity = s[key] ? '1' : '0.35';
+  }
+  canvas._bcdraw && canvas._bcdraw();
+}
+
+function bchart_zoom(id, factor) {
+  const canvas = document.getElementById(id);
+  if (!canvas || !canvas._bcstate) return;
+  canvas._bcstate.zoom = Math.max(1, Math.min(20, canvas._bcstate.zoom * factor));
+  canvas._bcdraw && canvas._bcdraw();
 }
 
 function fmtDateGr(isoDate) {
@@ -987,6 +1177,17 @@ function updateSidebarAvatar() {
     avatarEl.style.padding = '';
   }
   if (nameEl && p.name) nameEl.textContent = p.name;
+  // Keep drawer in sync
+  const dAvatar = document.getElementById('drawer-avatar');
+  const dName   = document.getElementById('drawer-user-name');
+  if (dAvatar) {
+    if (p.photoUrl) {
+      dAvatar.innerHTML = `<img src="${p.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="">`;
+    } else {
+      dAvatar.textContent = (p.name || 'Δ').charAt(0).toUpperCase();
+    }
+  }
+  if (dName && p.name) dName.textContent = p.name;
 }
 
 function liveUpdateName(val) {
@@ -4027,8 +4228,8 @@ function navigateTo(tab) {
   const page = document.getElementById('page-' + tab);
   if (page) page.classList.add('active');
 
-  // Update bottom bar + sidebar
-  document.querySelectorAll('.tab-item, .sidebar-item').forEach(b => b.classList.remove('active'));
+  // Update bottom bar + sidebar + drawer
+  document.querySelectorAll('.tab-item, .sidebar-item, .drawer-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
 
   if (tab === 'today')    renderToday();
@@ -4070,52 +4271,25 @@ function renderStatsPage() {
   const el = document.getElementById('page-stats');
   if (!el) return;
 
-  el.innerHTML = `
-    <div class="container fade-in" style="padding-top:14px">
-      <div class="segment" style="margin-top:0">
-        <button class="seg-btn active" id="stats-tab-overview" onclick="showStatsTab('overview')">📊 Σύνοψη</button>
-        <button class="seg-btn" id="stats-tab-activity" onclick="showStatsTab('activity')">🏃 Δραστηριότητα</button>
-        <button class="seg-btn" id="stats-tab-body" onclick="showStatsTab('body')">📈 Σώμα</button>
-      </div>
-      <div id="stats-overview-content"></div>
-      <div id="stats-activity-content" style="display:none"></div>
-      <div id="stats-body-content" style="display:none"></div>
-    </div>`;
-
-  renderStatsOverview();
-  renderStatsActivity();
-  renderStatsBody();
-}
-
-function showStatsTab(which) {
-  ['overview','activity','body'].forEach(t => {
-    document.getElementById(`stats-tab-${t}`).classList.toggle('active', t === which);
-    document.getElementById(`stats-${t}-content`).style.display = t === which ? '' : 'none';
-  });
-}
-
-function renderBodyPage() {
-  const el = document.getElementById('page-body');
-  if (!el) return;
-  el.innerHTML = `<div class="container fade-in" style="padding-top:14px"><div id="body-page-content"></div></div>`;
-  document.getElementById('body-page-content').innerHTML = renderBodyMeasurementsCard();
-}
-
-function renderStatsOverview() {
+  // ── data ──
   const weekData = state.week.map((day, i) => {
     const m = calcDayMacros(i, false);
     const { deficit, stepsKcal, trainingKcal } = calcDayDeficit(i);
     return { day, idx: i, ...m, deficit, stepsKcal, trainingKcal };
   });
-
   const DAYS_EL = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
   const goals = state.goals;
   const avgKcal = Math.round(weekData.reduce((s,d) => s + d.kcal, 0) / 7);
   const avgP    = Math.round(weekData.reduce((s,d) => s + d.p,   0) / 7);
   const avgC    = Math.round(weekData.reduce((s,d) => s + d.c,   0) / 7);
   const avgF    = Math.round(weekData.reduce((s,d) => s + d.f,   0) / 7);
-  const totalDeficit = weekData.reduce((s,d) => s + d.deficit, 0);
+  const totalDeficit       = weekData.reduce((s,d) => s + d.deficit, 0);
+  const totalStepsKcal     = weekData.reduce((s,d) => s + d.stepsKcal, 0);
+  const totalTrainingKcal  = weekData.reduce((s,d) => s + d.trainingKcal, 0);
+  const trainingDays       = weekData.filter(d => d.day.weightTraining).length;
+  const stepsDoneDays      = weekData.filter(d => d.day.stepsDone).length;
 
+  // ── bar chart ──
   const barsHtml = weekData.map((d, i) => {
     const pct = Math.min(100, Math.round((d.kcal / (goals.kcal || 2000)) * 100));
     const isToday = i === state.currentDay;
@@ -4130,113 +4304,13 @@ function renderStatsOverview() {
       </div>`;
   }).join('');
 
-  document.getElementById('stats-overview-content').innerHTML = `
-    <!-- Summary cards -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
-      <div class="macro-card">
-        <div class="macro-card-label">Μ.Ό. Kcal/ημ</div>
-        <div class="macro-card-value" style="color:var(--green-d)">${avgKcal}</div>
-        <div class="macro-card-sub">Στόχος ${goals.kcal || '—'}</div>
-      </div>
-      <div class="macro-card">
-        <div class="macro-card-label">Μ.Ό. Πρωτεΐνη</div>
-        <div class="macro-card-value" style="color:var(--blue)">${avgP}g</div>
-        <div class="macro-card-sub">Στόχος ${goals.protein || '—'}g</div>
-      </div>
-      <div class="macro-card">
-        <div class="macro-card-label">Εβδ. Ισοζύγιο</div>
-        <div class="macro-card-value" style="color:${totalDeficit>0?'var(--green-d)':'var(--red)'}">${Math.abs(Math.round(totalDeficit))}</div>
-        <div class="macro-card-sub">${totalDeficit>0?'kcal έλλειμμα':'kcal πλεόνασμα'}</div>
-      </div>
-    </div>
-
-    <!-- Kcal bar chart -->
-    <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <h3>Θερμίδες ανά ημέρα</h3>
-        <span style="font-size:0.72rem;color:var(--text3)">Στόχος: ${goals.kcal||'—'} kcal</span>
-      </div>
-      <div style="display:flex;gap:5px;align-items:flex-end">
-        ${barsHtml}
-      </div>
-    </div>
-
-    <!-- Macros avg -->
-    <div class="card">
-      <h3 style="margin-bottom:12px">Μέσος Όρος Μακροθρεπτικών</h3>
-      ${[
-        { lbl:'🥩 Πρωτεΐνη', val:avgP, goal: goals.protein||180, color:'var(--blue)' },
-        { lbl:'🍚 Υδατάνθρακες', val:avgC, goal: goals.carbs||200, color:'var(--amber)' },
-        { lbl:'🫒 Λίπη', val:avgF, goal: goals.fat||60, color:'var(--purple)' },
-      ].map(m => {
-        const pct = Math.min(100, Math.round((m.val / m.goal) * 100));
-        return `
-          <div class="dplanner-mbar">
-            <div class="dplanner-mbar-label">
-              <span>${m.lbl}</span>
-              <span>${m.val}g / ${m.goal}g <span style="color:var(--text3)">(${pct}%)</span></span>
-            </div>
-            <div class="dplanner-mbar-track">
-              <div class="dplanner-mbar-fill" style="width:${pct}%;background:${m.color}"></div>
-            </div>
-          </div>`;
-      }).join('')}
-    </div>`;
-}
-
-function renderStatsActivity() {
-  const weekData = state.week.map((day, i) => {
-    const { stepsKcal, trainingKcal } = calcDayDeficit(i);
-    return { day, idx: i, stepsKcal, trainingKcal };
-  });
-  const DAYS_EL = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
-  const totalStepsKcal    = weekData.reduce((s,d) => s + d.stepsKcal, 0);
-  const totalTrainingKcal = weekData.reduce((s,d) => s + d.trainingKcal, 0);
-  const trainingDays      = weekData.filter(d => d.day.weightTraining).length;
-  const stepsDoneDays     = weekData.filter(d => d.day.stepsDone).length;
-
-  document.getElementById('stats-activity-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <div class="macro-card">
-        <div class="macro-card-label">Βήματα (εβδ. kcal)</div>
-        <div class="macro-card-value" style="color:var(--cyan)">${totalStepsKcal}</div>
-        <div class="macro-card-sub">${stepsDoneDays}/7 ημέρες ✅</div>
-      </div>
-      <div class="macro-card">
-        <div class="macro-card-label">Γυμναστήριο (kcal)</div>
-        <div class="macro-card-value" style="color:var(--purple)">${totalTrainingKcal}</div>
-        <div class="macro-card-sub">${trainingDays}/7 προπονήσεις</div>
-      </div>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:12px">Ανά ημέρα</h3>
-      ${weekData.map((d,i) => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:0.82rem">
-          <span style="font-weight:800;min-width:34px;color:${i===state.currentDay?'var(--purple)':'var(--text)'}">${DAYS_EL[i]}</span>
-          <span style="color:var(--text2)">
-            ${d.day.stepsDone
-              ? `<span style="color:var(--green-d)">👟 ${(d.day.stepsCount||8000).toLocaleString()}</span>`
-              : `<span style="color:var(--text3)">👟 ${(d.day.stepsCount||8000).toLocaleString()}</span>`}
-          </span>
-          <span>${d.day.weightTraining ? '🏋️' : '<span style="color:var(--text3)">—</span>'}</span>
-          <span style="font-weight:700;color:${d.stepsKcal+d.trainingKcal>0?'var(--green-d)':'var(--text3)'}">
-            ${d.stepsKcal+d.trainingKcal > 0 ? '+'+( d.stepsKcal+d.trainingKcal)+' kcal' : '0 kcal'}
-          </span>
-        </div>`).join('')}
-    </div>`;
-}
-
-function renderStatsBody() {
+  // ── body chart ──
   const log = state.bodyLog || [];
-  const el = document.getElementById('stats-body-content');
-  if (!el) return;
-
   const latest = log.length > 0 ? log[log.length - 1] : null;
   const weightVal = latest ? `${latest.weight} kg` : '—';
   const fatVal    = (latest && latest.fat    != null) ? `${latest.fat}%`    : '—';
   const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
-
-  function statCard(bg, icon, value, label, valueColor) {
+  function bodyStatCard(bg, icon, value, label, valueColor) {
     return `<div style="flex:1;background:${bg};border-radius:14px;padding:10px 6px;display:flex;align-items:center;gap:6px;min-width:0">
       <div style="width:28px;height:28px;background:rgba(255,255,255,0.75);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem">${icon}</div>
       <div style="min-width:0;flex:1">
@@ -4245,32 +4319,106 @@ function renderStatsBody() {
       </div>
     </div>`;
   }
-
-  const chartHtml = log.length < 2
+  const bodyChartHtml = log.length < 2
     ? `<div style="display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#0369a1;margin-top:10px">
         <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid #0369a1;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem">i</span>
         <span>Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</span>
        </div>`
     : `<div style="margin-top:10px">${renderBodyChart(log)}</div>`;
-
   const dateChip = latest
     ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:20px;padding:5px 12px;font-size:0.78rem;color:#374151;font-weight:500;margin-top:6px">
         <span>📅</span><span>${fmtDateGr(latest.date)}</span>
        </div>` : '';
 
   el.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:16px;margin-top:14px">
-      <div class="card card-lg" style="padding:18px">
-        <h3 style="margin-bottom:12px">Τελευταία Μέτρηση</h3>
+    <div class="container fade-in" style="padding-top:14px;display:flex;flex-direction:column;gap:14px;padding-bottom:20px">
+
+      <!-- Summary cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+        <div class="macro-card">
+          <div class="macro-card-label">Μ.Ό. Kcal/ημ</div>
+          <div class="macro-card-value" style="color:var(--green-d)">${avgKcal}</div>
+          <div class="macro-card-sub">Στόχος ${goals.kcal || '—'}</div>
+        </div>
+        <div class="macro-card">
+          <div class="macro-card-label">Μ.Ό. Πρωτεΐνη</div>
+          <div class="macro-card-value" style="color:var(--blue)">${avgP}g</div>
+          <div class="macro-card-sub">Στόχος ${goals.protein || '—'}g</div>
+        </div>
+        <div class="macro-card">
+          <div class="macro-card-label">Εβδ. Ισοζύγιο</div>
+          <div class="macro-card-value" style="color:${totalDeficit>0?'var(--green-d)':'var(--red)'}">${Math.abs(Math.round(totalDeficit))}</div>
+          <div class="macro-card-sub">${totalDeficit>0?'kcal έλλειμμα':'kcal πλεόνασμα'}</div>
+        </div>
+      </div>
+
+      <!-- Kcal bar chart -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3>Θερμίδες ανά ημέρα</h3>
+          <span style="font-size:0.72rem;color:var(--text3)">Στόχος: ${goals.kcal||'—'} kcal</span>
+        </div>
+        <div style="display:flex;gap:5px;align-items:flex-end">
+          ${barsHtml}
+        </div>
+      </div>
+
+      <!-- Macros avg -->
+      <div class="card">
+        <h3 style="margin-bottom:12px">Μέσος Όρος Μακροθρεπτικών</h3>
+        ${[
+          { lbl:'🥩 Πρωτεΐνη', val:avgP, goal: goals.protein||180, color:'var(--blue)' },
+          { lbl:'🍚 Υδατάνθρακες', val:avgC, goal: goals.carbs||200, color:'var(--amber)' },
+          { lbl:'🫒 Λίπη', val:avgF, goal: goals.fat||60, color:'var(--purple)' },
+        ].map(m => {
+          const pct = Math.min(100, Math.round((m.val / m.goal) * 100));
+          return `
+            <div class="dplanner-mbar">
+              <div class="dplanner-mbar-label">
+                <span>${m.lbl}</span>
+                <span>${m.val}g / ${m.goal}g <span style="color:var(--text3)">(${pct}%)</span></span>
+              </div>
+              <div class="dplanner-mbar-track">
+                <div class="dplanner-mbar-fill" style="width:${pct}%;background:${m.color}"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Activity -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="macro-card">
+          <div class="macro-card-label">Βήματα (εβδ. kcal)</div>
+          <div class="macro-card-value" style="color:var(--cyan)">${totalStepsKcal}</div>
+          <div class="macro-card-sub">${stepsDoneDays}/7 ημέρες ✅</div>
+        </div>
+        <div class="macro-card">
+          <div class="macro-card-label">Γυμναστήριο (kcal)</div>
+          <div class="macro-card-value" style="color:var(--purple)">${totalTrainingKcal}</div>
+          <div class="macro-card-sub">${trainingDays}/7 προπονήσεις</div>
+        </div>
+      </div>
+
+      <!-- Body measurements chart -->
+      <div class="card">
+        <h3 style="margin-bottom:12px">Εξέλιξη Σώματος</h3>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-          ${statCard('#eff6ff','⚖️',weightVal,'Βάρος','#3b82f6')}
-          ${statCard('#fef2f2','🩸',fatVal,'Λίπος','#ef4444')}
-          ${statCard('#f0fdf4','💪',muscleVal,'Μυϊκή μάζα','#16a34a')}
+          ${bodyStatCard('#eff6ff','⚖️',weightVal,'Βάρος','#3b82f6')}
+          ${bodyStatCard('#fef2f2','🩸',fatVal,'Λίπος','#ef4444')}
+          ${bodyStatCard('#f0fdf4','💪',muscleVal,'Μυϊκή μάζα','#16a34a')}
         </div>
         ${dateChip}
-        ${chartHtml}
+        ${bodyChartHtml}
       </div>
+
     </div>`;
+}
+
+function renderBodyPage() {
+  const el = document.getElementById('page-body');
+  if (!el) return;
+  el.innerHTML = `<div class="container fade-in" style="padding-top:14px"><div id="body-page-content"></div></div>`;
+  document.getElementById('body-page-content').innerHTML = renderBodyMeasurementsCard();
 }
 
 function _settingsSaveBtn(id) {
@@ -4395,11 +4543,15 @@ async function initApp() {
   checkWeekReset();
   updateSidebarAvatar();
 
-  // Update sidebar name to signed-in user's name or email
+  // Update sidebar + drawer with signed-in user's name or email
   const user = sbGetCurrentUser();
   if (user) {
     const nameEl = document.getElementById('sidebar-user-name');
     if (nameEl) nameEl.textContent = state.profile.name || user.email || 'Χρήστης';
+    const dName  = document.getElementById('drawer-user-name');
+    const dEmail = document.getElementById('drawer-user-email');
+    if (dName)  dName.textContent  = state.profile.name || user.email || 'Χρήστης';
+    if (dEmail) dEmail.textContent = user.email || '';
   }
 
   document.querySelectorAll('.tab-item, .sidebar-item').forEach(btn => {
@@ -4436,3 +4588,49 @@ async function initApp() {
 // DOMContentLoaded is intentionally empty here.
 // auth.js boots first, checks the session, then calls initApp().
 document.addEventListener('DOMContentLoaded', () => {});
+
+/* ── SIDE DRAWER ── */
+function openDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  if (!drawer) return;
+  updateDrawerUser();
+  drawer.classList.add('open');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawer-overlay');
+  if (!drawer) return;
+  drawer.classList.remove('open');
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function switchTabFromDrawer(tab) {
+  closeDrawer();
+  navigateTo(tab);
+  // Sync active state in drawer items
+  document.querySelectorAll('.drawer-item[data-tab]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+  });
+}
+
+function updateDrawerUser() {
+  const user = sbGetCurrentUser ? sbGetCurrentUser() : null;
+  const p = (typeof state !== 'undefined') ? state.profile : {};
+  const avatarEl = document.getElementById('drawer-avatar');
+  const nameEl   = document.getElementById('drawer-user-name');
+  const emailEl  = document.getElementById('drawer-user-email');
+  if (avatarEl) {
+    if (p && p.photoUrl) {
+      avatarEl.innerHTML = `<img src="${p.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="">`;
+    } else {
+      avatarEl.textContent = (p && p.name ? p.name : (user ? user.email : 'Δ')).charAt(0).toUpperCase();
+    }
+  }
+  if (nameEl) nameEl.textContent = (p && p.name) || (user && user.email) || 'Χρήστης';
+  if (emailEl) emailEl.textContent = (user && user.email) || '';
+}

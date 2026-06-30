@@ -13,7 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @media print {
-      .bottom-bar, .top-nav, .fab, .modal-overlay, .toast { display: none !important; }
+      .bottom-bar, .top-nav, .fab, .modal-overlay, .toast, .drawer, .drawer-overlay { display: none !important; }
       .page { display: none !important; }
       .app-shell { display: block !important; }
       .sidebar { display: none !important; }
@@ -87,10 +87,66 @@
             <img src="logo.png" alt="VIVON" class="topnav-logo" onerror="this.style.display='none'">
             <span id="hero-title">VIVON</span>
           </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
-            <button class="btn btn-ghost btn-sm" onclick="handleSignOut()" style="color:var(--red)">⏏</button>
+          <div style="display:flex;gap:4px;align-items:center">
+            <button class="topnav-icon-btn" id="notif-btn" title="Ειδοποιήσεις">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            </button>
+            <button class="topnav-icon-btn" id="drawer-open-btn" onclick="openDrawer()" title="Μενού">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
           </div>
+        </div>
+      </nav>
+
+      <!-- SIDE DRAWER (mobile) -->
+      <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+      <nav class="drawer" id="drawer">
+        <div class="drawer-header">
+          <div class="drawer-avatar" id="drawer-avatar">Δ</div>
+          <div class="drawer-user-info">
+            <div class="drawer-user-name" id="drawer-user-name">Χρήστης</div>
+            <div class="drawer-user-email" id="drawer-user-email">—</div>
+          </div>
+          <button class="drawer-close-btn" onclick="closeDrawer()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <div class="drawer-section-label">Κύριο</div>
+          <button class="drawer-item active" data-tab="today" onclick="switchTabFromDrawer('today')">
+            <span class="drawer-item-icon">🏠</span> Ημερήσιο
+          </button>
+          <button class="drawer-item" data-tab="week" onclick="switchTabFromDrawer('week')">
+            <span class="drawer-item-icon">📅</span> Εβδομαδιαίο
+          </button>
+          <button class="drawer-item" data-tab="builder" onclick="switchTabFromDrawer('builder')">
+            <span class="drawer-item-icon">🍽️</span> Σχεδιαστής
+          </button>
+
+          <div class="drawer-section-label">Διατροφή</div>
+          <button class="drawer-item" data-tab="ideas" onclick="switchTabFromDrawer('ideas')">
+            <span class="drawer-item-icon">💡</span> Ιδέες
+          </button>
+
+          <div class="drawer-section-label">Υγεία</div>
+          <button class="drawer-item" data-tab="body" onclick="switchTabFromDrawer('body')">
+            <span class="drawer-item-icon">⚖️</span> Μετρήσεις
+          </button>
+          <button class="drawer-item" data-tab="stats" onclick="switchTabFromDrawer('stats')">
+            <span class="drawer-item-icon">📊</span> Στατιστικά
+          </button>
+
+          <div class="drawer-section-label">Ρυθμίσεις</div>
+          <button class="drawer-item" data-tab="settings" onclick="switchTabFromDrawer('settings')">
+            <span class="drawer-item-icon">⚙️</span> Ρυθμίσεις
+          </button>
+          <button class="drawer-item" onclick="exportPDF();closeDrawer()">
+            <span class="drawer-item-icon">📤</span> Εξαγωγή PDF
+          </button>
+          <button class="drawer-item drawer-item-danger" onclick="handleSignOut()">
+            <span class="drawer-item-icon">🚪</span> Αποσύνδεση
+          </button>
         </div>
       </nav>
 
@@ -127,21 +183,15 @@
           <span class="tab-icon">💡</span>
           Ιδέες
         </button>
-        <button class="tab-item" data-tab="builder">
-          <span class="tab-icon">🏗️</span>
-          Σχεδιαστής
-        </button>
-        <button class="tab-item" data-tab="body">
-          <span class="tab-icon">⚖️</span>
-          Μετρήσεις
-        </button>
         <button class="tab-item" data-tab="stats">
           <span class="tab-icon">📊</span>
-          Στατιστικά
+          Πρόοδος
         </button>
-        <button class="tab-item" data-tab="settings">
-          <span class="tab-icon">⚙️</span>
-          Ρυθμίσεις
+        <button class="tab-item tab-menu-btn" onclick="openDrawer()">
+          <span class="tab-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </span>
+          Μενού
         </button>
       </nav>
 
