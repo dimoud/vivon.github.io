@@ -2229,7 +2229,22 @@ function renderWeek() {
         </div>
       </div>
 
+      <!-- Reset button -->
+      <div style="padding:16px 16px 32px;text-align:center">
+        <button onclick="resetWeekPlan()" style="background:none;border:1.5px solid var(--border);border-radius:10px;padding:10px 24px;font-size:0.82rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
+          🔄 Επαναφορά εβδομαδιαίου πλάνου
+        </button>
+      </div>
+
     </div>`;
+}
+
+function resetWeekPlan() {
+  if (!confirm('Επαναφορά ολόκληρου του εβδομαδιαίου πλάνου στις προεπιλογές;\n\nΌλες οι αλλαγές θα χαθούν.')) return;
+  state.week = JSON.parse(JSON.stringify(DEFAULT_WEEK));
+  saveState();
+  renderWeek();
+  showToast('✅ Εβδομαδιαίο πλάνο επαναφέρθηκε στις προεπιλογές');
 }
 
 // ── PAGE: RECIPES ──
@@ -4620,6 +4635,178 @@ function renderSettingsSupplements() {
     </div>`;
 }
 
+function renderSettingsLanguage() {
+  const el = document.getElementById('settings-language-content');
+  if (!el) return;
+  const cur = getLang();
+  el.innerHTML = `
+    <div style="margin-top:16px">
+      <div class="card card-lg fade-in" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:40px;height:40px;border-radius:10px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">🌐</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('lang_title')}</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('lang_subtitle')}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${Object.entries(LANGUAGES).map(([code, info]) => `
+            <button onclick="changeLang('${code}')" style="
+              padding:14px 12px;border-radius:12px;border:2px solid ${cur===code?'var(--green)':'var(--border)'};
+              background:${cur===code?'var(--green-bg)':'var(--bg2)'};cursor:pointer;
+              display:flex;align-items:center;gap:10px;transition:all 0.15s;
+              font-size:0.92rem;font-weight:${cur===code?'800':'600'};color:${cur===code?'var(--green-d)':'var(--text)'}">
+              <span style="font-size:1.5rem">${info.flag}</span>
+              <span>${info.label}</span>
+              ${cur===code ? '<span style="margin-left:auto;font-size:0.8rem">&#10003;</span>' : ''}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function changeLang(code) {
+  if (typeof setLang === 'function') setLang(code);
+  renderSettingsLanguage();
+  const tabMap = {
+    profile: 'settings_profile', optimize: 'settings_optimize',
+    supplements: 'settings_supplements', language: 'settings_language', feedback: 'settings_feedback'
+  };
+  Object.entries(tabMap).forEach(([tab, key]) => {
+    const btn = document.getElementById('settings-tab-' + tab);
+    if (btn) btn.innerHTML = t(key);
+  });
+  ['settings-save-top','settings-save-bottom'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) b.innerHTML = t('settings_save');
+  });
+}
+
+function renderSettingsFeedback() {
+  const el = document.getElementById('settings-feedback-content');
+  if (!el) return;
+  el.innerHTML = `
+    <div style="margin-top:16px">
+      <div class="card card-lg fade-in" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <div style="width:40px;height:40px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">&#128172;</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('feedback_title')}</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('feedback_subtitle')}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <span style="font-size:0.8rem;font-weight:600;color:var(--text2)">${t('feedback_type_label')}</span>
+          ${[['general', t('feedback_type_general'), '&#128172;'],['bug', t('feedback_type_bug'), '&#128027;'],['idea', t('feedback_type_idea'), '&#128161;']].map(([val, lbl, icon]) => `
+            <button id="fb-type-${val}" onclick="selectFeedbackType('${val}')"
+              style="padding:6px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg2);
+              cursor:pointer;font-size:0.78rem;font-weight:600;color:var(--text2);transition:all 0.15s">
+              ${icon} ${lbl}
+            </button>
+          `).join('')}
+        </div>
+        <textarea id="feedback-text" rows="4"
+          placeholder="${t('feedback_placeholder')}"
+          style="width:100%;padding:12px;border:2px solid var(--border);border-radius:12px;font-size:0.9rem;
+          font-family:inherit;background:var(--bg2);color:var(--text);resize:vertical;min-height:100px;
+          box-sizing:border-box;transition:border-color 0.15s"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <button id="feedback-send-btn" onclick="sendFeedback()"
+          class="btn btn-primary"
+          style="width:100%;margin-top:10px;padding:13px;font-size:0.95rem;font-weight:700;border-radius:12px">
+          ${t('feedback_send')}
+        </button>
+      </div>
+
+      <div class="card card-lg fade-in" style="margin-bottom:14px;background:linear-gradient(135deg,#fff7ed 0%,#fef3c7 100%);border-color:#fcd34d">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="width:40px;height:40px;border-radius:10px;background:#fef08a;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">&#10084;&#65039;</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:#92400e">${t('donate_title')}</div>
+            <div style="font-size:0.75rem;color:#a16207;margin-top:2px">${t('donate_subtitle')}</div>
+          </div>
+        </div>
+        <a href="https://www.buymeacoffee.com" target="_blank" rel="noopener"
+          style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;
+          border-radius:12px;background:#FFDD00;color:#000;font-size:0.95rem;font-weight:800;
+          text-decoration:none;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:opacity 0.15s"
+          onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          ${t('donate_btn')}
+        </a>
+        <div style="text-align:center;font-size:0.78rem;color:var(--text3);margin-bottom:10px">${t('donate_or')}</div>
+        <a href="https://www.paypal.com/donate" target="_blank" rel="noopener"
+          style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;
+          border-radius:12px;background:#0070BA;color:#fff;font-size:0.95rem;font-weight:800;
+          text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:opacity 0.15s"
+          onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+          ${t('donate_paypal')}
+        </a>
+        <div style="text-align:center;font-size:0.82rem;color:#92400e;font-weight:700;margin-top:14px">${t('donate_thanks')}</div>
+      </div>
+    </div>`;
+
+  selectFeedbackType('general');
+}
+
+let _selectedFeedbackType = 'general';
+
+function selectFeedbackType(type) {
+  _selectedFeedbackType = type;
+  ['general','bug','idea'].forEach(v => {
+    const btn = document.getElementById('fb-type-' + v);
+    if (!btn) return;
+    if (v === type) {
+      btn.style.background = 'var(--green-bg)';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green-d)';
+    } else {
+      btn.style.background = 'var(--bg2)';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text2)';
+    }
+  });
+}
+
+async function sendFeedback() {
+  const text = (document.getElementById('feedback-text')?.value || '').trim();
+  if (!text) { showToast(t('feedback_empty'), 2500); return; }
+  const btn = document.getElementById('feedback-send-btn');
+  if (btn) { btn.disabled = true; btn.textContent = t('feedback_sending'); }
+  try {
+    const user = typeof sbGetCurrentUser === 'function' ? sbGetCurrentUser() : null;
+    const payload = {
+      type: _selectedFeedbackType,
+      message: text,
+      lang: getLang(),
+      user_email: user?.email || 'anonymous',
+      created_at: new Date().toISOString(),
+      app: 'VIVON',
+    };
+    let saved = false;
+    if (typeof supabase !== 'undefined') {
+      try {
+        const { error } = await supabase.from('feedback').insert([payload]);
+        if (!error) saved = true;
+      } catch(e) {}
+    }
+    if (!saved) {
+      try {
+        const prev = JSON.parse(localStorage.getItem('vivon_feedback') || '[]');
+        prev.push(payload);
+        localStorage.setItem('vivon_feedback', JSON.stringify(prev));
+      } catch(e) {}
+    }
+    showToast(t('feedback_sent'), 3000);
+    const ta = document.getElementById('feedback-text');
+    if (ta) ta.value = '';
+  } catch(e) {
+    showToast(t('feedback_error'), 3000);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = t('feedback_send'); }
+  }
+}
+
 function showSettingsTab(which) {
   ['profile','optimize','supplements','language','feedback'].forEach(tab => {
     const btn = document.getElementById('settings-tab-' + tab);
@@ -4676,9 +4863,11 @@ function showToast(msg, dur = 2200) {
 // -- INIT --
 // Called by auth.js after the user successfully signs in.
 async function initApp() {
+  initLang();
   await loadState();
   checkWeekReset();
   updateSidebarAvatar();
+  updateUILanguage();
 
   // Update sidebar + drawer with signed-in user's name or email
   const user = sbGetCurrentUser();

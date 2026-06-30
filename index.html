@@ -68,7 +68,7 @@
         <div class="sidebar-user-avatar" id="sidebar-avatar">Δ</div>
         <div class="sidebar-user-info">
           <div class="sidebar-user-name" id="sidebar-user-name">Δημήτριος</div>
-          <div class="sidebar-user-sub">Διαιτολόγιο</div>
+          <div class="sidebar-user-sub" id="sidebar-user-sub">Διαιτολόγιο</div>
         </div>
       </div>
       <div class="sidebar-footer">
@@ -170,25 +170,25 @@
       <nav class="bottom-bar">
         <button class="tab-item active" data-tab="today">
           <span class="tab-icon">🏠</span>
-          Ημερήσιο
+          <span class="tab-label-i18n">Ημερήσιο</span>
         </button>
         <button class="tab-item" data-tab="week">
           <span class="tab-icon">📅</span>
-          Εβδομάδα
+          <span class="tab-label-i18n">Εβδομάδα</span>
         </button>
         <button class="tab-item" data-tab="ideas">
           <span class="tab-icon">💡</span>
-          Ιδέες
+          <span class="tab-label-i18n">Ιδέες</span>
         </button>
         <button class="tab-item" data-tab="stats">
           <span class="tab-icon">📊</span>
-          Πρόοδος
+          <span class="tab-label-i18n">Πρόοδος</span>
         </button>
         <button class="tab-item tab-menu-btn" onclick="openDrawer()">
           <span class="tab-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </span>
-          Μενού
+          <span class="tab-label-i18n">Μενού</span>
         </button>
       </nav>
 
@@ -209,6 +209,7 @@
   <div id="auth-screen" class="auth-screen"></div>
 
   <!-- SCRIPTS -->
+  <script src="i18n.js"></script>
   <script src="data.js"></script>
   <script src="supabase.js"></script>
   <script src="script.js"></script>
