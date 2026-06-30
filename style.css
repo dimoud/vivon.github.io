@@ -1077,13 +1077,19 @@ input[type="range"]::-moz-range-thumb {
 .goal-slider {
   transition: opacity 0.2s;
   cursor: pointer;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .goal-slider::-webkit-slider-thumb {
-  transition: transform 0.12s cubic-bezier(.4,0,.2,1), box-shadow 0.12s;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: transform 0.08s cubic-bezier(.4,0,.2,1), box-shadow 0.08s;
+  will-change: transform;
 }
 .goal-slider:active::-webkit-slider-thumb {
-  transform: scale(1.25);
-  box-shadow: 0 0 0 4px rgba(0,0,0,0.08);
+  transform: scale(1.22);
+  box-shadow: 0 0 0 6px rgba(0,0,0,0.07);
 }
 .goal-slider--locked {
   opacity: 0.35;

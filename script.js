@@ -4506,6 +4506,10 @@ function navigateTo(tab) {
   const legacyMap = { profile: 'settings', optimize: 'settings', recipes: 'ideas', foods: 'ideas' };
   if (legacyMap[tab]) tab = legacyMap[tab];
 
+  // Flush + confirm save only when leaving settings
+  if (state.activeTab === 'settings' && tab !== 'settings') {
+    flushSettingsWithConfirm();
+  }
 
   state.activeTab = tab;
   saveState();
@@ -4713,9 +4717,18 @@ function renderBodyPage() {
 }
 
 let _autoSaveTimer = null;
+let _settingsDirty = false;
 function autoSaveSettings() {
+  _settingsDirty = true;
   clearTimeout(_autoSaveTimer);
-  _autoSaveTimer = setTimeout(() => syncToSupabase().then(() => showToast(t('settings_saved'), 1800)).catch(() => {}), 1200);
+  _autoSaveTimer = setTimeout(() => syncToSupabase().catch(() => {}), 1200);
+}
+function flushSettingsWithConfirm() {
+  if (!_settingsDirty) return Promise.resolve();
+  return syncToSupabase().then(() => {
+    _settingsDirty = false;
+    showToast(t('settings_saved'), 1800);
+  }).catch(() => {});
 }
 
 function renderSettingsPage() {
