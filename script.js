@@ -110,6 +110,15 @@ async function loadState() {
       console.error('Failed to load from Supabase:', e);
     }
   }
+  // Migrate old array-based supplements to new object structure
+  if (Array.isArray(state.supplements)) {
+    state.supplements = { ...SUPPLEMENTS_STATE_DEFAULT };
+  }
+  if (!state.supplements || typeof state.supplements !== 'object' || Array.isArray(state.supplements)) {
+    state.supplements = { ...SUPPLEMENTS_STATE_DEFAULT };
+  }
+  if (!state.supplements.done) state.supplements.done = {};
+  if (!state.supplements.activeIds) state.supplements.activeIds = [];
 }
 
 function checkWeekReset() {
@@ -1219,9 +1228,11 @@ function renderToday() {
         <div class="meal-card-header">
           <div class="meal-emoji">${emoji}</div>
           <div class="meal-meta">
-            <div class="meal-time-badge">🕐 ${mealDisplayTimes[meal.type] || meal.time}</div>
+            <div class="meal-time-row">
+              <div class="meal-time-badge">🕐 ${mealDisplayTimes[meal.type] || meal.time}</div>
+              ${mealTypePill(meal.type)}
+            </div>
             <div class="meal-name">${name}</div>
-            ${mealTypePill(meal.type)}
           </div>
           <button class="meal-check ${meal.done ? 'checked' : ''}" onclick="toggleMealDone(${mi})">
             ${meal.done ? '✓' : ''}
@@ -1280,67 +1291,34 @@ function renderToday() {
         </div>
       </div>
 
-      <!-- Activity & Deficit -->
-      ${(() => {
-        const hasTraining = !!day.weightTraining;
-        const { stepsKcal, trainingKcal, totalActivityKcal, stepsCount, stepsDone } = calcDayActivityKcal(state.currentDay);
-        const { totalBurn, consumed, deficit } = calcDayDeficit(state.currentDay);
-        const deficitColor = deficit >= 0 ? '#22c55e' : '#ef4444';
-        const deficitLabel = deficit >= 0 ? `−${deficit} kcal έλλειμμα` : `+${Math.abs(deficit)} kcal πλεόνασμα`;
-        return `<div class="card card-sm fade-in" style="margin-bottom:10px">
-          <div class="section-title" style="margin-bottom:10px">🏃 Δραστηριότητα & Έλλειμμα</div>
-          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
-            <div>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;justify-content:space-between">
-                <span style="font-size:0.82rem;color:var(--text2);white-space:nowrap">👣 Βήματα:</span>
-                <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
-                  <span style="font-size:0.82rem;font-weight:700;color:var(--text1)">${stepsCount.toLocaleString()}</span>
-                  ${stepsDone ? `<span style="font-size:0.72rem;color:var(--text3)">~${stepsKcal} kcal</span>` : ''}
-                  <label class="toggle-switch" style="flex-shrink:0">
-                    <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-              </div>
-              <input type="range" min="1000" max="20000" step="500" value="${stepsCount}"
-                style="width:100%;accent-color:var(--primary)"
-                oninput="saveDayStepsCount(this.value)">
-              <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3);margin-top:1px">
-                <span>1k</span><span>5k</span><span>8k</span><span>10k</span><span>15k</span><span>20k</span>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;justify-content:space-between">
-              <span style="font-size:0.82rem;color:var(--text2);white-space:nowrap">🏋️ Προπόνηση βαρών (1h):</span>
-              <div style="display:flex;align-items:center;gap:8px">
-                ${hasTraining ? `<span style="font-size:0.72rem;color:var(--text3)">~${trainingKcal} kcal</span>` : ''}
-                <label class="toggle-switch" style="flex-shrink:0">
-                  <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div style="background:var(--bg2);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-            <div style="font-size:0.78rem;color:var(--text2)">
-              🔥 Καύση: <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; 🍽️ Κατανάλωση: <strong>${consumed} kcal</strong>
-            </div>
-            <div style="font-size:1rem;font-weight:900;color:${deficitColor}">${deficitLabel}</div>
-          </div>
-        </div>`;
-      })()}
-
-
       <!-- Kcal ημέρας override -->
       <div class="card card-sm fade-in" style="padding:8px 12px;margin-bottom:10px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
           <span style="font-size:0.7rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">🎯 Kcal ημέρας</span>
           <div style="display:flex;align-items:center;gap:6px">
-            <input type="number" id="day-kcal-input" value="${effectiveKcal}" min="800" max="4000" step="50"
-              style="width:60px;border:none;border-radius:6px;padding:2px 6px;font-size:0.82rem;font-weight:700;color:var(--text1);background:var(--bg2);text-align:center"
-              onchange="saveDayKcalGoal(this.value)">
+            <span id="day-kcal-display" style="font-size:0.88rem;font-weight:700;color:var(--text1)">${effectiveKcal}</span>
             ${day.kcalGoal
-              ? `<button class="btn btn-ghost btn-sm" onclick="saveDayKcalGoal(0)" style="font-size:0.68rem;padding:2px 6px">↺</button>`
+              ? `<button class="btn btn-ghost btn-sm" onclick="saveDayKcalGoal(0)" style="font-size:0.68rem;padding:2px 6px" title="Επαναφορά default">↺</button>`
               : `<span style="font-size:0.68rem;color:var(--text3)">default</span>`}
+          </div>
+        </div>
+        <div style="position:relative;margin-bottom:4px">
+          <input type="range" id="day-kcal-slider"
+            min="${goals.kcal - 500}" max="${goals.kcal + 500}" step="50"
+            value="${effectiveKcal}"
+            style="width:100%;accent-color:var(--green)"
+            oninput="
+              document.getElementById('day-kcal-display').textContent = this.value;
+              const offset = this.value - ${goals.kcal};
+              const el = document.getElementById('day-kcal-offset');
+              el.textContent = offset === 0 ? 'default' : (offset > 0 ? '+' + offset : offset) + ' kcal';
+              el.style.color = offset === 0 ? 'var(--text3)' : offset > 0 ? '#f59e0b' : 'var(--green)';
+            "
+            onchange="saveDayKcalGoal(this.value)">
+          <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:var(--text3);margin-top:1px">
+            <span>${goals.kcal - 500}</span>
+            <span id="day-kcal-offset" style="font-weight:700;color:${day.kcalGoal ? (day.kcalGoal > goals.kcal ? '#f59e0b' : 'var(--green)') : 'var(--text3)'}">${day.kcalGoal ? (day.kcalGoal - goals.kcal > 0 ? '+' : '') + (day.kcalGoal - goals.kcal) + ' kcal' : 'default'}</span>
+            <span>${goals.kcal + 500}</span>
           </div>
         </div>
         <div style="height:4px;border-radius:2px;background:var(--border);overflow:hidden">
@@ -1351,6 +1329,88 @@ function renderToday() {
           <span>${effectiveKcal} kcal</span>
         </div>
       </div>
+
+      <!-- Activity & Deficit -->
+      ${(() => {
+        const hasTraining = !!day.weightTraining;
+        const { stepsKcal, trainingKcal, stepsCount, stepsDone } = calcDayActivityKcal(state.currentDay);
+        const { totalBurn, consumed, deficit } = calcDayDeficit(state.currentDay);
+        const deficitPos = deficit >= 0;
+        const deficitColor = deficitPos ? '#22c55e' : '#ef4444';
+        const weeklyStepsKcal = stepsKcal * 7;
+        const weeklyTrainingKcal = trainingKcal * 7;
+        const stepsSliderPct = Math.min(100, Math.round((stepsCount - 1000) / (20000 - 1000) * 100));
+        const motivMsg = deficitPos
+          ? { icon: '🎯', title: 'Στη σωστή πορεία!', text: 'Το ημερήσιο έλλειμμα σε βοηθά να πετύχεις τους στόχους σου.' }
+          : { icon: '⚠️', title: 'Πλεόνασμα σήμερα', text: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.' };
+        return `
+        <div class="act-section fade-in">
+          <div class="act-header">
+            <span class="act-header-icon">🏃</span>
+            <span class="act-header-title">ΔΡΑΣΤΗΡΙΟΤΗΤΑ & ΕΛΛΕΙΜΜΑ</span>
+          </div>
+
+          <!-- Προπόνηση -->
+          <div class="act-card">
+            <div class="act-row-top">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="act-icon-badge" style="background:#ede9fe">🏋️</span>
+                <span class="act-label">Προπόνηση</span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            ${hasTraining ? `
+            <div class="act-big-num">${weeklyTrainingKcal.toLocaleString()} <span class="act-big-unit">kcal/εβδ.</span></div>
+            <div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px">~${trainingKcal} kcal σήμερα · 1h βαρά</div>` : ''}
+          </div>
+
+          <!-- Βήματα / NEAT -->
+          <div class="act-card">
+            <div class="act-row-top">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span class="act-icon-badge" style="background:#fef3c7">🔥</span>
+                <span class="act-label">Πρόσθετη βασική <span style="color:var(--text3);font-weight:500">(NEAT)</span></span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="act-big-num">${(stepsCount).toLocaleString()} <span class="act-big-unit">βήματα</span></div>
+            ${stepsDone ? `<div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px">~${stepsKcal} kcal σήμερα · ~${weeklyStepsKcal} kcal/εβδ.</div>` : '<div style="height:6px"></div>'}
+            <input type="range" min="1000" max="20000" step="500" value="${stepsCount}"
+              class="act-slider"
+              oninput="saveDayStepsCount(this.value)">
+            <div class="act-slider-ticks">
+              <span>0k</span><span>2k</span><span>5k</span><span style="color:${stepsCount>=7000?'var(--green-d)':'var(--text3)'}">7k</span><span>10k</span><span>15k</span><span>20k+</span>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="act-card">
+            <div style="font-size:0.82rem;color:var(--text2);padding-bottom:10px;border-bottom:1px solid var(--border)">
+              🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
+            </div>
+            <div style="padding-top:10px">
+              <div style="font-size:1.6rem;font-weight:900;color:${deficitColor}">${deficitPos ? '−' : '+'}${Math.abs(deficit)} kcal</div>
+              <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? 'Έλλειμμα' : 'Πλεόνασμα'}</div>
+            </div>
+          </div>
+
+          <!-- Motivational -->
+          <div class="act-motiv">
+            <span class="act-motiv-icon">${motivMsg.icon}</span>
+            <div>
+              <div style="font-weight:700;font-size:0.88rem">${motivMsg.title}</div>
+              <div style="font-size:0.78rem;color:var(--text2);margin-top:2px">${motivMsg.text}</div>
+            </div>
+          </div>
+        </div>`;
+      })()}
+
 
       <!-- Meals header + reset -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -1423,21 +1483,45 @@ function renderToday() {
       })()}
 
       <!-- Supplements -->
-      <div class="card fade-in">
-        <div class="section-title">💊 Συμπληρώματα & Ρουτίνα</div>
-        ${state.supplements.map((s,si) => `
-          <div class="supp-item">
-            <button class="supp-check ${s.done?'checked':''}" onclick="toggleSupp(${si})">${s.done?'✓':''}</button>
-            <div class="supp-info">
-              <div class="supp-name">${s.name}</div>
-              <div class="supp-note">${s.note}</div>
+      ${(() => {
+        const supp = state.supplements || {};
+        if (!supp.enabled) return '';
+        const activeIds = supp.activeIds || [];
+        if (activeIds.length === 0) return `<div class="card fade-in" style="padding:14px 16px">
+          <div class="section-title" style="margin-bottom:6px">💊 Συμπληρώματα</div>
+          <div style="font-size:0.8rem;color:var(--text3)">Δεν έχεις επιλέξει συμπληρώματα. Πήγαινε στις <strong>Ρυθμίσεις → Συμπληρώματα</strong>.</div>
+        </div>`;
+        const done = supp.done || {};
+        const active = SUPPLEMENTS_LIBRARY.filter(s => activeIds.includes(s.id));
+        return `<div class="card fade-in">
+          <div class="section-title" style="margin-bottom:10px">💊 Συμπληρώματα</div>
+          ${active.map(s => {
+            const isDone = !!done[s.id];
+            return `<div class="supp-item">
+              <button class="supp-check ${isDone?'checked':''}" onclick="toggleSupp('${s.id}')">${isDone?'✓':''}</button>
+              <div class="supp-info" style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="supp-name">${s.name}</span>
+                  <span style="font-size:0.68rem;color:var(--text3);font-weight:600">${s.timing}</span>
+                </div>
+                <div class="supp-note">${s.intake} · ${s.qty}</div>
+              </div>
+              <button onclick="toggleSuppInfo('${s.id}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:1rem;padding:4px;flex-shrink:0">ℹ️</button>
             </div>
-            ${s.qty ? `<span class="supp-qty">${s.qty}</span>` : ''}
-          </div>`).join('')}
-        <div style="margin-top:12px;font-size:0.72rem;color:var(--text3)">
-          ⚠️ Μαγνήσιο + Ψευδάργυρος μακριά από ασβέστιο. D3 με λιπαρό γεύμα.
-        </div>
-      </div>
+            <div id="supp-info-${s.id}" class="supp-guide" style="display:none">
+              <div class="supp-guide-row"><span class="supp-guide-label">Ιδανική ώρα</span><span>${s.timing}</span></div>
+              <div class="supp-guide-row"><span class="supp-guide-label">Τρόπος</span><span>${s.intake}</span></div>
+              <div class="supp-guide-row"><span class="supp-guide-label">✅ Βελτιώνει</span><span>${s.boosts}</span></div>
+              <div class="supp-guide-row"><span class="supp-guide-label">⚠️ Μειώνει</span><span>${s.reduces}</span></div>
+              <div class="supp-guide-row"><span class="supp-guide-label">🚫 Αποφύγετε</span><span>${s.avoid}</span></div>
+              <div class="supp-guide-row"><span class="supp-guide-label">☕ Καφές/Τσάι</span><span>${s.drinks}</span></div>
+              ${s.gap !== '—' ? `<div class="supp-guide-row"><span class="supp-guide-label">⏱ Απόσταση</span><span>${s.gap}</span></div>` : ''}
+              <div class="supp-guide-tip">${s.tip}</div>
+              <div style="margin-top:6px;font-size:0.65rem;color:var(--text3)">Τεκμηρίωση: <strong>${s.evidence}</strong> · ${s.ideal}</div>
+            </div>`;
+          }).join('')}
+        </div>`;
+      })()}
     </div>`;
 }
 
@@ -2741,18 +2825,17 @@ function openFoodDetail(fid) {
     <button class="btn btn-ghost btn-full" onclick="closeModal()">Κλείσιμο</button>`);
 }
 
-function openSwapMeal(mi, activeTab) {
+function openSwapMeal(mi) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const currentType = state.week[state.currentDay].meals[mi].type;
   const snackTypes = currentType === 'afternoon' ? ['afternoon', 'snack'] : [currentType];
   const recipes = allRecipes.filter(r => snackTypes.includes(r.meal));
   const standards = STANDARD_MEALS.filter(s => snackTypes.includes(s.meal));
-  const tab = activeTab || 'standard';
-
   const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Δεκατιανό', afternoon:'Απογευματινό' }[currentType] || '';
 
-  const standardsHTML = standards.map(s => `
-    <div class="swap-row" onclick="swapMealStandard(${mi},'${s.id}')">
+  const standardItems = standards.map(s => ({
+    key: 'std:' + s.id,
+    html: `<div class="swap-row" data-name="${s.name.toLowerCase()}" onclick="swapMealStandard(${mi},'${s.id}')">
       <div class="swap-row-left">
         <span class="swap-emoji">${s.emoji}</span>
         <div>
@@ -2762,33 +2845,55 @@ function openSwapMeal(mi, activeTab) {
         </div>
       </div>
       <div class="swap-kcal">~${s.kcal_est}<br><span>kcal</span></div>
-    </div>`).join('');
+    </div>`
+  }));
 
-  const recipesHTML = recipes.map(r => {
+  const recipeItems = recipes.map(r => {
     const m = calcRecipeMacros(r);
-    return `<div class="swap-row" onclick="swapMeal(${mi},'${r.id}')">
-      <div class="swap-row-left">
-        <span class="swap-emoji">${r.emoji}</span>
-        <div>
-          <div class="swap-name">${r.name}</div>
-          <div class="swap-items">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div>
+    return {
+      key: 'rec:' + r.id,
+      html: `<div class="swap-row" data-name="${r.name.toLowerCase()}" onclick="swapMeal(${mi},'${r.id}')">
+        <div class="swap-row-left">
+          <span class="swap-emoji">${r.emoji}</span>
+          <div>
+            <div class="swap-name">${r.name}</div>
+            <div class="swap-items">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div>
+          </div>
         </div>
-      </div>
-      <div class="swap-kcal">${m.kcal}<br><span>kcal</span></div>
-    </div>`;
-  }).join('');
+        <div class="swap-kcal">${m.kcal}<br><span>kcal</span></div>
+      </div>`
+    };
+  });
+
+  const allItems = [...standardItems, ...recipeItems];
+  const listHTML = allItems.map(i => i.html).join('');
 
   openModal(`
-    <div class="modal-handle"></div>
-    <div class="modal-title">🔄 Επιλογή Γεύματος — ${mealTypeLabel}</div>
-    <div class="swap-tabs">
-      <button class="swap-tab ${tab==='standard'?'active':''}" onclick="openSwapMeal(${mi},'standard')">⭐ Στάνταρ</button>
-      <button class="swap-tab ${tab==='recipes'?'active':''}" onclick="openSwapMeal(${mi},'recipes')">📖 Συνταγές</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="modal-title" style="margin:0">Επιλογή Γεύματος — ${mealTypeLabel}</div>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
     </div>
-    <div class="swap-list">
-      ${tab === 'standard' ? (standardsHTML || '<div class="empty-state"><p>Δεν υπάρχουν στάνταρ γεύματα για αυτή την κατηγορία</p></div>') : recipesHTML}
+    <div class="swap-search-wrap">
+      <input class="swap-search" id="swap-search-input" type="text" placeholder="Αναζήτηση γεύματος..." oninput="filterSwapList(this.value)" autocomplete="off">
+    </div>
+    <div class="swap-list" id="swap-list-inner">
+      ${listHTML || '<div class="empty-state"><p>Δεν βρέθηκαν γεύματα</p></div>'}
     </div>`);
+
+  setTimeout(() => {
+    const inp = document.getElementById('swap-search-input');
+    if (inp) inp.focus();
+  }, 100);
 }
+
+window.filterSwapList = function(query) {
+  const q = query.toLowerCase().trim();
+  const rows = document.querySelectorAll('#swap-list-inner .swap-row');
+  rows.forEach(row => {
+    const name = (row.dataset.name || '') + row.textContent.toLowerCase();
+    row.style.display = (!q || name.includes(q)) ? '' : 'none';
+  });
+};
 
 function swapMeal(mi, rid) {
   state.week[state.currentDay].meals[mi].recipeId = rid;
@@ -3965,14 +4070,66 @@ function renderSettingsPage() {
       <div class="segment" style="margin-top:14px">
         <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">👤 Προφίλ</button>
         <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">⚡ Βελτίωση</button>
+        <button class="seg-btn" id="settings-tab-supplements" onclick="showSettingsTab('supplements')">💊 Συμπληρώματα</button>
       </div>
       <div id="settings-profile-content"></div>
       <div id="settings-optimize-content" style="display:none"></div>
+      <div id="settings-supplements-content" style="display:none"></div>
       ${_settingsSaveBtn('settings-save-bottom')}
     </div>`;
-  // Render into sub-containers
   renderProfileInto(document.getElementById('settings-profile-content'));
   renderOptimizeInto(document.getElementById('settings-optimize-content'));
+  renderSettingsSupplements();
+}
+
+function renderSettingsSupplements() {
+  const el = document.getElementById('settings-supplements-content');
+  if (!el) return;
+  const supp = state.supplements || {};
+  const enabled = !!supp.enabled;
+  const activeIds = supp.activeIds || [];
+  el.innerHTML = `
+    <div style="margin-top:16px">
+      <div class="card card-sm" style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:0.9rem;font-weight:700">Συμπληρώματα διατροφής</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">Ενεργοποίησε για να εμφανίζονται στην ημερήσια σελίδα</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${enabled ? 'checked' : ''} onchange="toggleSuppFeature(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      ${enabled ? `
+      <div style="font-size:0.72rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Επίλεξε τα συμπληρώματά σου</div>
+      ${SUPPLEMENTS_LIBRARY.map(s => {
+        const isActive = activeIds.includes(s.id);
+        return `<div class="card card-sm" style="margin-bottom:8px;padding:10px 14px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.88rem;font-weight:700">${s.name}</div>
+              <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">${s.timing} · ${s.qty}</div>
+              <div style="font-size:0.68rem;margin-top:3px">${s.ideal}</div>
+            </div>
+            <label class="toggle-switch" style="flex-shrink:0">
+              <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSuppActive('${s.id}')">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>`;
+      }).join('')}` : ''}
+    </div>`;
+}
+
+function showSettingsTab(which) {
+  ['profile','optimize','supplements'].forEach(t => {
+    const btn = document.getElementById('settings-tab-' + t);
+    const content = document.getElementById('settings-' + t + '-content');
+    if (btn) btn.classList.toggle('active', t === which);
+    if (content) content.style.display = t === which ? '' : 'none';
+  });
 }
 
 async function saveSettingsToCloud() {
@@ -3992,13 +4149,6 @@ async function saveSettingsToCloud() {
       if (b) { b.disabled = false; b.innerHTML = '💾 Αποθήκευση ρυθμίσεων'; }
     });
   }
-}
-
-function showSettingsTab(which) {
-  document.getElementById('settings-tab-profile').classList.toggle('active', which === 'profile');
-  document.getElementById('settings-tab-optimize').classList.toggle('active', which === 'optimize');
-  document.getElementById('settings-profile-content').style.display  = which === 'profile'  ? '' : 'none';
-  document.getElementById('settings-optimize-content').style.display = which === 'optimize' ? '' : 'none';
 }
 
 // Wrappers: temporarily mount a hidden page, render, move innerHTML (onclick attrs survive)
