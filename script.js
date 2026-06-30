@@ -1949,11 +1949,14 @@ function renderWeek() {
   }
 
   function weekBalance() {
-    if (avgPct >= 88 && avgPct <= 108) return { emoji:'😊', label:'Πολύ καλή επιλογή!', sub:'Συνέχισε έτσι', color:'#22c55e' };
-    if (avgPct < 88) return { emoji:'😟', label:'Λίγο χαμηλά', sub:'Αύξησε λίγο τις θερμίδες', color:'#f59e0b' };
-    return { emoji:'⚠️', label:'Λίγο ψηλά', sub:'Προσπάθησε να μειώσεις', color:'#ef4444' };
+    if (avgPct >= 88 && avgPct <= 108) return { label:'Εξαιρετική ισορροπία', sub:'Συνέχισε έτσι', color:'#22c55e', bg:'rgba(34,197,94,0.08)' };
+    if (avgPct < 88) return { label:'Λίγο χαμηλά', sub:'Αύξησε λίγο τις θερμίδες', color:'#f59e0b', bg:'rgba(245,158,11,0.08)' };
+    return { label:'Λίγο υπερβολικά', sub:'Μείωσε λίγο τις θερμίδες', color:'#ef4444', bg:'rgba(239,68,68,0.08)' };
   }
   const bal = weekBalance();
+  const balScore = Math.min(Math.round(avgPct), 999);
+  const balArcR = 22, balCirc = 2 * Math.PI * balArcR;
+  const balDash = Math.min(avgPct, 100) / 100 * balCirc;
 
   function getWeekRange() {
     if (!state.planStartDate) return '';
@@ -2089,11 +2092,17 @@ function renderWeek() {
             ${macroRow('Λίπος', avgF, state.goals.fat || 60, '#f59e0b')}
           </div>
           <!-- Balance -->
-          <div style="background:var(--bg);border-radius:12px;padding:16px 20px;min-width:160px;text-align:center;border:1px solid var(--border)">
-            <div style="font-size:0.7rem;font-weight:800;color:${bal.color};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Ισορροπία εβδομάδας</div>
-            <div style="font-size:2rem;margin-bottom:6px">${bal.emoji}</div>
-            <div style="font-size:0.85rem;font-weight:800;color:${bal.color}">${bal.label}</div>
-            <div style="font-size:0.72rem;color:var(--text3);margin-top:2px">${bal.sub}</div>
+          <div style="background:${bal.bg};border-radius:12px;padding:14px 18px;min-width:160px;text-align:center;border:1px solid ${bal.color}33;display:flex;flex-direction:column;align-items:center;gap:6px">
+            <div style="font-size:0.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em">Ισορροπία εβδομάδας</div>
+            <svg width="60" height="60" viewBox="0 0 60 60">
+              <circle cx="30" cy="30" r="${balArcR}" fill="none" stroke="var(--border)" stroke-width="5"/>
+              <circle cx="30" cy="30" r="${balArcR}" fill="none" stroke="${bal.color}" stroke-width="5"
+                stroke-dasharray="${balDash} ${balCirc}" stroke-dashoffset="${balCirc * 0.25}"
+                stroke-linecap="round" style="transition:stroke-dasharray 0.5s ease"/>
+              <text x="30" y="35" text-anchor="middle" font-size="13" font-weight="800" fill="${bal.color}" font-family="inherit">${balScore}%</text>
+            </svg>
+            <div style="font-size:0.78rem;font-weight:700;color:${bal.color};line-height:1.2">${bal.label}</div>
+            <div style="font-size:0.68rem;color:var(--text3);line-height:1.3">${bal.sub}</div>
           </div>
         </div>
       </div>
