@@ -2197,8 +2197,8 @@ select:focus, textarea:focus {
   justify-content: center;
   padding: 16px;
   background: url('back.png') center center / cover no-repeat;
+  overflow-y: auto;
 }
-
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -2207,6 +2207,7 @@ select:focus, textarea:focus {
   padding: 40px 36px 32px;
   box-shadow: none;
   border: none;
+  margin: auto;
 }
 
 /* ── Logo area ── */
@@ -2455,6 +2456,7 @@ select:focus, textarea:focus {
   .auth-card { padding: 20px 14px 20px; }
   .auth-logo-img { height: 140px; }
   .auth-input { font-size: 16px; }
+  .auth-disclaimer-box { max-height: 90px; }
 }
 
 /* Hide native date picker icon so all input wrappers stay the same height */

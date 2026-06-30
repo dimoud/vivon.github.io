@@ -170,17 +170,18 @@ function updateUILanguage() {
   const sidebarLogout = document.querySelector('.sidebar-footer .btn:last-child');
   if (sidebarLogout) sidebarLogout.textContent = t('sidebar_logout');
 
-  // Drawer sections
-  _setTextContentAll('.drawer-section-label', [
-    t('drawer_main'), t('drawer_nutrition'), t('drawer_health'), t('drawer_settings')
-  ]);
-  _setTextContent('.drawer-item[data-tab="today"]',   '🏠 ' + t('nav_today'));
-  _setTextContent('.drawer-item[data-tab="week"]',    '📅 ' + t('nav_week'));
-  _setTextContent('.drawer-item[data-tab="builder"]', '🍽️ ' + t('drawer_plan'));
-  _setTextContent('.drawer-item[data-tab="ideas"]',   '💡 ' + t('nav_ideas'));
-  _setTextContent('.drawer-item[data-tab="body"]',    '⚖️ ' + t('nav_body'));
-  _setTextContent('.drawer-item[data-tab="stats"]',   '📊 ' + t('nav_stats'));
-  _setTextContent('.drawer-item[data-tab="settings"]','⚙️ ' + t('nav_settings'));
+  // Drawer item labels
+  const _setDrawerLabel = (tab, label) => {
+    const el = document.querySelector(`.drawer-item[data-tab="${tab}"] .drawer-item-label`);
+    if (el) el.textContent = label;
+  };
+  _setDrawerLabel('today',    t('nav_today'));
+  _setDrawerLabel('week',     t('nav_week'));
+  _setDrawerLabel('builder',  t('drawer_plan'));
+  _setDrawerLabel('ideas',    t('nav_ideas'));
+  _setDrawerLabel('body',     t('nav_body'));
+  _setDrawerLabel('stats',    t('nav_stats'));
+  _setDrawerLabel('settings', t('nav_settings'));
 
   // Re-render settings page if currently open
   if (typeof renderSettingsPage === 'function' && document.getElementById('page-settings').classList.contains('active')) {

@@ -1128,6 +1128,14 @@ function renderProfile() {
         ${state.planStartDate ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--text3)">
           Ημ1: ${formatPlanDay(0)} &nbsp;·&nbsp; Ημ4: ${formatPlanDay(3)} &nbsp;·&nbsp; Ημ7: ${formatPlanDay(6)}
         </div>` : ''}
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button class="btn btn-ghost btn-sm" style="flex:1" onclick="saveState();showToast('✅ Αποθηκεύτηκε!')">
+            💾 Αποθήκευση
+          </button>
+          <button id="ai-generate-btn" class="btn btn-green btn-sm" style="flex:2;font-weight:800" onclick="generateWeekWithAI()">
+            ✨ Δημιουργία Πλάνου με AI
+          </button>
+        </div>
       </div>
 
       <!-- ΕΚΤΥΠΩΣΗ & ΣΥΝΟΨΗ -->
@@ -2056,6 +2064,7 @@ function renderWeek() {
           </div>
           ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
           <div style="display:flex;gap:5px;margin-left:auto">
+            <button id="ai-optimize-btn" class="btn btn-ghost btn-sm" onclick="optimizeWeekWithAI()" title="Βελτιστοποίηση πλάνου με AI">✨ AI</button>
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
             <button class="btn btn-ghost btn-sm" onclick="copyDay()">📋</button>
           </div>
@@ -2394,6 +2403,17 @@ function renderOptimize() {
         <div style="margin-top:10px;font-size:0.72rem;color:var(--text3);text-align:center">
           Για αλλαγή στόχων πήγαινε στις <button class="btn btn-ghost btn-sm" style="font-size:0.72rem;padding:4px 10px" onclick="showSettingsTab('profile');document.querySelectorAll('[data-tab=settings]').forEach(b=>b.click())">⚙️ Ρυθμίσεις</button>
         </div>
+      </div>
+
+      <!-- AI Optimization -->
+      <div class="card card-lg fade-in" style="margin-bottom:14px">
+        <div class="section-title">✨ AI Βελτιστοποίηση Εβδομάδας</div>
+        <div style="font-size:0.8rem;color:var(--text2);margin-bottom:12px;line-height:1.5">
+          Αναλύει το τρέχον πλάνο και αναδιατάσσει τα γεύματα ώστε να αποφύγει επαναλήψεις (π.χ. γιαούρτι πρωί <em>και</em> βράδυ) και να μεγιστοποιήσει την ποικιλία.
+        </div>
+        <button id="ai-optimize-btn-settings" class="btn btn-green" style="width:100%;font-size:0.95rem;font-weight:800;padding:12px" onclick="optimizeWeekWithAI()">
+          ✨ Βελτιστοποίηση με AI
+        </button>
       </div>
 
       <!-- Mode + Apply -->
@@ -4591,20 +4611,17 @@ function renderSettingsPage() {
     <div class="container fade-in" style="padding-top:14px">
       <div class="segment" style="margin-top:0;flex-wrap:wrap;gap:4px">
         <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">${t('settings_profile')}</button>
-        <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">${t('settings_optimize')}</button>
         <button class="seg-btn" id="settings-tab-supplements" onclick="showSettingsTab('supplements')">${t('settings_supplements')}</button>
         <button class="seg-btn" id="settings-tab-language" onclick="showSettingsTab('language')">${t('settings_language')}</button>
         <button class="seg-btn" id="settings-tab-feedback" onclick="showSettingsTab('feedback')">${t('settings_feedback')}</button>
       </div>
       <div id="settings-profile-content"></div>
-      <div id="settings-optimize-content" style="display:none"></div>
       <div id="settings-supplements-content" style="display:none"></div>
       <div id="settings-language-content" style="display:none"></div>
       <div id="settings-feedback-content" style="display:none"></div>
       ${_settingsSaveBtn('settings-save-bottom')}
     </div>`;
   renderProfileInto(document.getElementById('settings-profile-content'));
-  renderOptimizeInto(document.getElementById('settings-optimize-content'));
   renderSettingsSupplements();
   renderSettingsLanguage();
   renderSettingsFeedback();
@@ -4826,7 +4843,7 @@ async function sendFeedback() {
 }
 
 function showSettingsTab(which) {
-  ['profile','optimize','supplements','language','feedback'].forEach(tab => {
+  ['profile','supplements','language','feedback'].forEach(tab => {
     const btn = document.getElementById('settings-tab-' + tab);
     const content = document.getElementById('settings-' + tab + '-content');
     if (btn) btn.classList.toggle('active', tab === which);
