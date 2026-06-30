@@ -84,7 +84,10 @@ function _applyAIWeek(optimized) {
 async function _callGemini(prompt) {
   const response = await fetch(GEMINI_PROXY_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    },
     body: JSON.stringify({ prompt })
   });
   if (!response.ok) {
@@ -105,7 +108,10 @@ async function _callGemini(prompt) {
 async function _callGeminiObject(prompt) {
   const response = await fetch(GEMINI_PROXY_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    },
     body: JSON.stringify({ prompt })
   });
   if (!response.ok) {
@@ -278,8 +284,9 @@ ${_FORMAT}`;
 
     const generated = await _callGemini(prompt);
     _applyAIWeek(generated);
+    state.programCreated = true;
     saveState();
-    renderWeek();
+    navigateTo('today');
     showToast('✅ Νέο πλάνο δημιουργήθηκε με AI!');
 
   } catch (e) {

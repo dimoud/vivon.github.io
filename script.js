@@ -6,9 +6,10 @@
 let state = {
   profile: { ...DEFAULT_PROFILE },
   goals: { ...DEFAULT_GOALS },
-  week: JSON.parse(JSON.stringify(DEFAULT_WEEK)),
+  week: JSON.parse(JSON.stringify(EMPTY_WEEK)),
   weekCreatedAt: Date.now(),
   currentDay: 0,
+  programCreated: false,
   supplements: JSON.parse(JSON.stringify(SUPPLEMENTS_STATE_DEFAULT)),
   favorites: [],
   customFoods: [],
@@ -89,9 +90,10 @@ function _freshState() {
   return {
     profile: { ...DEFAULT_PROFILE },
     goals: { ...DEFAULT_GOALS },
-    week: JSON.parse(JSON.stringify(DEFAULT_WEEK)),
+    week: JSON.parse(JSON.stringify(EMPTY_WEEK)),
     weekCreatedAt: Date.now(),
     currentDay: 0,
+    programCreated: false,
     supplements: JSON.parse(JSON.stringify(SUPPLEMENTS_STATE_DEFAULT)),
     favorites: [],
     customFoods: [],
@@ -411,7 +413,17 @@ function renderBodyChart(log) {
       ctx.scale(dpr, dpr);
       const rW = rect.width, rH = rect.height;
 
-      const PAD = { t: 14, r: 12, b: 28, l: 44 };
+      // active series (computed early to determine padding)
+      const active = [];
+      if (state.series.weight) active.push({ key:'weight', field:'weight', color:'#3b82f6', suffix:'kg', dash:[], axis:'left' });
+      if (state.series.fat && hasFat)    active.push({ key:'fat',    field:'fat',    color:'#ef4444', suffix:'%',  dash:[4,3], axis: state.series.weight ? 'right' : 'left' });
+      if (state.series.muscle && hasMuscle) active.push({ key:'muscle', field:'muscle', color:'#22c55e', suffix:'%', dash:[6,3], axis: state.series.weight ? 'right' : 'left' });
+
+      const hasPctSeries = active.some(s => s.suffix === '%');
+      const hasKgSeries  = active.some(s => s.suffix === 'kg');
+      const dualAxis = hasPctSeries && hasKgSeries;
+
+      const PAD = { t: 14, r: dualAxis ? 44 : 12, b: 28, l: 44 };
       const iW = rW - PAD.l - PAD.r;
       const iH = rH - PAD.t - PAD.b;
 
@@ -431,12 +443,6 @@ function renderBodyChart(log) {
         const rawX = t * iW;
         return PAD.l + (rawX - xStart) * (iW / visibleSpan);
       }
-
-      // active series
-      const active = [];
-      if (state.series.weight) active.push({ key:'weight', field:'weight', color:'#3b82f6', suffix:'kg', dash:[] });
-      if (state.series.fat && hasFat)    active.push({ key:'fat',    field:'fat',    color:'#ef4444', suffix:'%',  dash:[4,3] });
-      if (state.series.muscle && hasMuscle) active.push({ key:'muscle', field:'muscle', color:'#22c55e', suffix:'%', dash:[6,3] });
 
       ctx.clearRect(0, 0, rW, rH);
 
@@ -497,8 +503,11 @@ function renderBodyChart(log) {
 
       ctx.restore(); // end clip
 
-      // y-axis labels — one set per active series, left side only, color-coded
-      active.forEach((s, si) => {
+      // y-axis labels — left axis for kg (or sole series), right axis for % when dual
+      const leftSeries  = active.find(s => s.axis === 'left');
+      const rightSeries = dualAxis ? active.find(s => s.axis === 'right') : null;
+      [[leftSeries, 'left'], [rightSeries, 'right']].forEach(([s, side]) => {
+        if (!s) return;
         const vals = filtered.map(e => e[s.field] ?? null).filter(v => v !== null);
         if (!vals.length) return;
         const minV = Math.min(...vals), maxV = Math.max(...vals);
@@ -506,12 +515,15 @@ function renderBodyChart(log) {
         const lo = minV - pad, hi = maxV + pad;
         ctx.fillStyle = s.color;
         ctx.font = `bold ${dpr > 1 ? 9 : 8}px system-ui,sans-serif`;
-        ctx.textAlign = 'right';
         for (let t = 0; t <= 4; t++) {
           const v = lo + (hi - lo) * (t / 4);
           const y = PAD.t + iH * (1 - t / 4);
-          if (active.length === 1 || si === 0) {
+          if (side === 'left') {
+            ctx.textAlign = 'right';
             ctx.fillText(v.toFixed(1) + s.suffix, PAD.l - 4, y + 3);
+          } else {
+            ctx.textAlign = 'left';
+            ctx.fillText(v.toFixed(1) + s.suffix, rW - PAD.r + 4, y + 3);
           }
         }
       });
@@ -537,9 +549,17 @@ function renderBodyChart(log) {
     ro.observe(canvas);
 
     // tooltip + pan
+    function getPadR() {
+      const s = canvas._bcstate.series;
+      const hasPct = (s.fat && hasFat) || (s.muscle && hasMuscle);
+      const hasKg  = s.weight;
+      return (hasPct && hasKg) ? 44 : 12;
+    }
+
     function getXFraction(clientX) {
       const rect = canvas.getBoundingClientRect();
-      return (clientX - rect.left - 44) / (rect.width - 44 - 12);
+      const padR = getPadR();
+      return (clientX - rect.left - 44) / (rect.width - 44 - padR);
     }
 
     function showTooltipAt(clientX) {
@@ -547,7 +567,8 @@ function renderBodyChart(log) {
       const n = filtered.length;
       if (n < 2) return;
       const rect = canvas.getBoundingClientRect();
-      const iW = rect.width - 44 - 12;
+      const padR = getPadR();
+      const iW = rect.width - 44 - padR;
       const visibleSpan = iW / state.zoom;
       const xFrac = (clientX - rect.left - 44) / iW;
       const dataFrac = (state.panOffset + xFrac * visibleSpan) / iW;
@@ -573,7 +594,7 @@ function renderBodyChart(log) {
       if (state.dragging) {
         const dx = e.clientX - state.dragStartX;
         const rect = canvas.getBoundingClientRect();
-        const iW = rect.width - 44 - 12;
+        const iW = rect.width - 44 - getPadR();
         const pxPerData = iW / state.zoom;
         state.panOffset = state.dragStartOffset - (dx / iW) * pxPerData;
         draw();
@@ -603,7 +624,7 @@ function renderBodyChart(log) {
       if (!lastTouchX) return;
       const dx = e.touches[0].clientX - lastTouchX;
       const rect = canvas.getBoundingClientRect();
-      const iW = rect.width - 44 - 12;
+      const iW = rect.width - 44 - getPadR();
       state.panOffset = state.dragStartOffset - (dx / iW) * (iW / state.zoom);
       lastTouchX = e.touches[0].clientX;
       state.dragStartOffset = state.panOffset;
@@ -1171,11 +1192,21 @@ function renderProfile() {
         ${state.planStartDate ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--text3)">
           Ημ1: ${formatPlanDay(0)} &nbsp;·&nbsp; Ημ4: ${formatPlanDay(3)} &nbsp;·&nbsp; Ημ7: ${formatPlanDay(6)}
         </div>` : ''}
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <button id="ai-generate-btn" class="btn btn-green btn-full" style="font-weight:800" onclick="generateWeekWithAI()">
-            ✨ Δημιουργία Πλάνου με AI
-          </button>
-        </div>
+        ${(() => {
+          const p = state.profile;
+          const profileReady = p.weight > 0 && p.height > 0 && p.age > 0;
+          if (!profileReady) return `
+            <div style="margin-top:14px;padding:10px 12px;background:var(--amber-bg,#fffbeb);border:1.5px solid var(--amber,#f59e0b);border-radius:var(--radius-sm);font-size:0.8rem;color:var(--amber,#b45309)">
+              ⚠️ Συμπλήρωσε πρώτα <strong>βάρος, ύψος και ηλικία</strong> στα στοιχεία σου παραπάνω.
+            </div>
+            <button class="btn btn-full" style="font-weight:800;margin-top:10px;opacity:0.4;cursor:not-allowed;background:var(--green)" disabled>
+              ✨ Δημιουργία Πλάνου με AI
+            </button>`;
+          return `
+            <button id="ai-generate-btn" class="btn btn-green btn-full" style="font-weight:800;margin-top:14px" onclick="generateWeekWithAI()">
+              ✨ Δημιουργία Πλάνου με AI
+            </button>`;
+        })()}
       </div>
 
       <!-- ΕΚΤΥΠΩΣΗ & ΣΥΝΟΨΗ -->
@@ -1447,19 +1478,99 @@ function saveDayStepsCount(val) {
   const v = parseInt(val);
   state.week[state.currentDay].stepsCount = isNaN(v) ? 8000 : Math.max(0, v);
   saveState();
-  renderToday();
+  updateActivitySection();
 }
 
 function saveDayStepsDone(checked) {
   state.week[state.currentDay].stepsDone = !!checked;
   saveState();
-  renderToday();
+  updateActivitySection();
 }
 
 function saveDayTraining(checked) {
   state.week[state.currentDay].weightTraining = !!checked;
   saveState();
-  renderToday();
+  updateActivitySection();
+}
+
+function updateActivitySection() {
+  const el = document.getElementById('act-section');
+  if (!el) return;
+  const day = state.week[state.currentDay];
+  const hasTraining = !!day.weightTraining;
+  const { stepsKcal, trainingKcal, stepsCount, stepsDone } = calcDayActivityKcal(state.currentDay);
+  const { totalBurn, consumed, deficit } = calcDayDeficit(state.currentDay);
+  const deficitPos = deficit >= 0;
+  const deficitColor = deficitPos ? '#22c55e' : '#ef4444';
+  const weeklyStepsKcal = stepsKcal * 7;
+  const motivMsg = deficitPos
+    ? { icon: '🎯', title: 'Στη σωστή πορεία!', text: 'Το ημερήσιο έλλειμμα σε βοηθά να πετύχεις τους στόχους σου.' }
+    : { icon: '⚠️', title: 'Πλεόνασμα σήμερα', text: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.' };
+
+  el.innerHTML = `
+    <div class="card card-sm" style="padding:14px 16px;margin-bottom:10px">
+      <div class="act-header" style="margin-bottom:14px">
+        <span class="act-header-icon">🏃</span>
+        <span class="act-header-title">ΔΡΑΣΤΗΡΙΟΤΗΤΑ & ΕΛΛΕΙΜΜΑ</span>
+      </div>
+      <div class="act-inner-row">
+        <div class="act-row-top">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="act-icon-badge" style="background:#ede9fe">🏋️</span>
+            <span class="act-label">Προπόνηση</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        ${hasTraining ? `<div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px">~${trainingKcal} kcal σήμερα · 1h βαρά</div>` : ''}
+      </div>
+      <div class="act-divider"></div>
+      <div class="act-inner-row">
+        <div class="act-row-top">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="act-icon-badge" style="background:#fef3c7">🔥</span>
+            <span class="act-label">Πρόσθετη βασική <span style="color:var(--text3);font-weight:500">(NEAT)</span></span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="act-big-num" id="act-steps-display">${stepsCount.toLocaleString()} <span class="act-big-unit">βήματα</span></div>
+        ${stepsDone ? `<div id="act-steps-kcal" style="font-size:0.72rem;color:var(--text3);margin-bottom:6px">~${stepsKcal} kcal σήμερα · ~${weeklyStepsKcal} kcal/εβδ.</div>` : '<div id="act-steps-kcal" style="height:6px"></div>'}
+        <input type="range" id="act-steps-slider" min="1000" max="20000" step="500" value="${stepsCount}"
+          class="act-slider"
+          oninput="onStepsSliderInput(this.value)"
+          onchange="saveDayStepsCount(this.value)">
+        <div class="act-slider-ticks">
+          <span>0k</span><span>2k</span><span>5k</span><span style="color:${stepsCount>=7000?'var(--green-d)':'var(--text3)'}">7k</span><span>10k</span><span>15k</span><span>20k+</span>
+        </div>
+      </div>
+      <div class="act-divider"></div>
+      <div class="act-inner-row">
+        <div style="font-size:0.78rem;color:var(--text2);margin-bottom:10px">
+          🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
+        </div>
+        <div style="font-size:1.6rem;font-weight:900;color:${deficitColor}">${deficitPos ? '−' : '+'}${Math.abs(deficit)} kcal</div>
+        <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? 'Έλλειμμα' : 'Πλεόνασμα'}</div>
+      </div>
+      <div class="act-divider"></div>
+      <div class="act-motiv" style="margin-bottom:0">
+        <span class="act-motiv-icon">${motivMsg.icon}</span>
+        <div>
+          <div style="font-weight:700;font-size:0.88rem">${motivMsg.title}</div>
+          <div style="font-size:0.78rem;color:var(--text2);margin-top:2px">${motivMsg.text}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function onStepsSliderInput(val) {
+  const v = parseInt(val);
+  const stepsEl = document.getElementById('act-steps-display');
+  if (stepsEl) stepsEl.innerHTML = v.toLocaleString() + ' <span class="act-big-unit">βήματα</span>';
 }
 
 function saveDayKcalGoal(val) {
@@ -1730,91 +1841,7 @@ function renderToday() {
       </div>
 
       <!-- Activity & Deficit -->
-      ${(() => {
-        const hasTraining = !!day.weightTraining;
-        const { stepsKcal, trainingKcal, stepsCount, stepsDone } = calcDayActivityKcal(state.currentDay);
-        const { totalBurn, consumed, deficit } = calcDayDeficit(state.currentDay);
-        const deficitPos = deficit >= 0;
-        const deficitColor = deficitPos ? '#22c55e' : '#ef4444';
-        const weeklyStepsKcal = stepsKcal * 7;
-        const weeklyTrainingKcal = trainingKcal * 7;
-        const stepsSliderPct = Math.min(100, Math.round((stepsCount - 1000) / (20000 - 1000) * 100));
-        const motivMsg = deficitPos
-          ? { icon: '🎯', title: 'Στη σωστή πορεία!', text: 'Το ημερήσιο έλλειμμα σε βοηθά να πετύχεις τους στόχους σου.' }
-          : { icon: '⚠️', title: 'Πλεόνασμα σήμερα', text: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.' };
-        return `
-        <div class="act-section fade-in">
-          <div class="card card-sm" style="padding:14px 16px;margin-bottom:10px">
-            <div class="act-header" style="margin-bottom:14px">
-              <span class="act-header-icon">🏃</span>
-              <span class="act-header-title">ΔΡΑΣΤΗΡΙΟΤΗΤΑ & ΕΛΛΕΙΜΜΑ</span>
-            </div>
-
-            <!-- Προπόνηση -->
-            <div class="act-inner-row">
-              <div class="act-row-top">
-                <div style="display:flex;align-items:center;gap:10px">
-                  <span class="act-icon-badge" style="background:#ede9fe">🏋️</span>
-                  <span class="act-label">Προπόνηση</span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-              ${hasTraining ? `
-              <div class="act-big-num">${weeklyTrainingKcal.toLocaleString()} <span class="act-big-unit">kcal/εβδ.</span></div>
-              <div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px">~${trainingKcal} kcal σήμερα · 1h βαρά</div>` : ''}
-            </div>
-
-            <div class="act-divider"></div>
-
-            <!-- Βήματα / NEAT -->
-            <div class="act-inner-row">
-              <div class="act-row-top">
-                <div style="display:flex;align-items:center;gap:10px">
-                  <span class="act-icon-badge" style="background:#fef3c7">🔥</span>
-                  <span class="act-label">Πρόσθετη βασική <span style="color:var(--text3);font-weight:500">(NEAT)</span></span>
-                </div>
-                <label class="toggle-switch">
-                  <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-              <div class="act-big-num">${(stepsCount).toLocaleString()} <span class="act-big-unit">βήματα</span></div>
-              ${stepsDone ? `<div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px">~${stepsKcal} kcal σήμερα · ~${weeklyStepsKcal} kcal/εβδ.</div>` : '<div style="height:6px"></div>'}
-              <input type="range" min="1000" max="20000" step="500" value="${stepsCount}"
-                class="act-slider"
-                oninput="saveDayStepsCount(this.value)">
-              <div class="act-slider-ticks">
-                <span>0k</span><span>2k</span><span>5k</span><span style="color:${stepsCount>=7000?'var(--green-d)':'var(--text3)'}">7k</span><span>10k</span><span>15k</span><span>20k+</span>
-              </div>
-            </div>
-
-            <div class="act-divider"></div>
-
-            <!-- Summary -->
-            <div class="act-inner-row">
-              <div style="font-size:0.78rem;color:var(--text2);margin-bottom:10px">
-                🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
-              </div>
-              <div style="font-size:1.6rem;font-weight:900;color:${deficitColor}">${deficitPos ? '−' : '+'}${Math.abs(deficit)} kcal</div>
-              <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? 'Έλλειμμα' : 'Πλεόνασμα'}</div>
-            </div>
-
-            <div class="act-divider"></div>
-
-            <!-- Motivational -->
-            <div class="act-motiv" style="margin-bottom:0">
-              <span class="act-motiv-icon">${motivMsg.icon}</span>
-              <div>
-                <div style="font-weight:700;font-size:0.88rem">${motivMsg.title}</div>
-                <div style="font-size:0.78rem;color:var(--text2);margin-top:2px">${motivMsg.text}</div>
-              </div>
-            </div>
-          </div>
-        </div>`;
-      })()}
+      <div class="act-section fade-in" id="act-section"></div>
 
 
       <!-- Meals header + reset -->
@@ -1928,6 +1955,7 @@ function renderToday() {
         </div>`;
       })()}
     </div>`;
+  updateActivitySection();
 }
 
 // ── PAGE: WEEK ──
@@ -3070,6 +3098,7 @@ function builderApplyWeekToSchedule() {
   state._builderSavedDays = [];
   state._builderWeek = null;
   builderMeals = [];
+  state.programCreated = true;
   saveState();
   showToast('✅ Το πρόγραμμα ενημερώθηκε!');
   renderBuilderPage(state._builderFilter || 'breakfast');
@@ -3080,6 +3109,7 @@ function applyBuilderToDayIdx(dayIdx) {
   const newMeals = _builderMealsToMealList();
   state.week[dayIdx].meals = newMeals;
   builderMeals = [];
+  state.programCreated = true;
   saveState();
   closeModal();
   showToast(`✅ Αποθηκεύτηκε — Η${dayIdx+1}!`);
@@ -4470,10 +4500,12 @@ function exportPDF_week() {
 }
 
 // ── NAVIGATION & UTILITIES ──
+
 function navigateTo(tab) {
   // Map legacy tabs to new structure
   const legacyMap = { profile: 'settings', optimize: 'settings', recipes: 'ideas', foods: 'ideas' };
   if (legacyMap[tab]) tab = legacyMap[tab];
+
 
   state.activeTab = tab;
   saveState();
