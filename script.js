@@ -2677,7 +2677,7 @@ function renderBuilderPage(typeFilter) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div style="flex:1">
-          <h2 class="dplanner-topcard-title">Day Planner</h2>
+          <h2 class="dplanner-topcard-title">Σχεδιαστής</h2>
           <p class="dplanner-topcard-sub">Σχεδίασε τα γεύματά σου για σήμερα</p>
         </div>
         <button class="dplanner-topcard-icon-btn" onclick="exportPDF()" title="PDF">
@@ -2700,76 +2700,40 @@ function renderBuilderPage(typeFilter) {
           Προεπισκόπηση
         </button>` : ''}
       </div>
-      <button class="dplanner-btn-save" onclick="builderPageApply()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Αποθήκευση πλάνου
-      </button>
       <button class="dplanner-btn-clear" onclick="builderPageClear()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        Καθαρισμός πλάνου
+        Καθαρισμός επιλογής
       </button>
     </div>
 
-    <!-- SAVE DESTINATION CARD (mobile) -->
+    <!-- WEEK PLAN CARD (mobile) -->
     <div class="dplanner-daycard">
-      <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800;margin-bottom:12px">Πού θέλεις να αποθηκεύσεις;</div>
-
-      <button class="dplanner-dest-row" onclick="builderPageApply()">
-        <div class="dplanner-dest-icon" style="background:#dcfce7">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        </div>
-        <div class="dplanner-dest-info">
-          <div class="dplanner-dest-name">Επιλογή συγκεκριμένης ημερομηνίας</div>
-          <div class="dplanner-dest-sub">Επίλεξε ημερομηνία από το ημερολόγιο</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-
-      <button class="dplanner-dest-row" onclick="builderSaveToDaySlot()">
-        <div class="dplanner-dest-icon" style="background:#dcfce7">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        </div>
-        <div class="dplanner-dest-info">
-          <div class="dplanner-dest-name">Αποθήκευση ως Ημέρας (Day 1, Day 2…)</div>
-          <div class="dplanner-dest-sub">Δημιούργησε την δική σου σειρά ημερών</div>
-        </div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-
-    <!-- WEEK OVERVIEW CARD (mobile) -->
-    <div class="dplanner-daycard">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800">Επισκόπηση εβδομάδας</div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800">Δημιουργία εβδομαδιαίου πλάνου</div>
       </div>
+      <div style="font-size:0.75rem;color:var(--text3);margin-bottom:14px">Επίλεξε γεύματα και αποθήκευσέ τα σε κάθε μέρα. Πάτα ξανά σε μια μέρα για αποεπιλογή.</div>
       <div class="dplanner-week-grid">
-        ${state.week.map((d, i) => {
-          const hasMeals = d.meals && d.meals.length > 0;
-          const shortDay = state.planStartDate ? (() => { const dt = new Date(state.planStartDate); dt.setDate(dt.getDate()+i); return ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'][dt.getDay()]; })() : d.label.slice(0,3);
-          const dayNum = `Day ${i+1}`;
-          return `<button class="dplanner-week-day ${hasMeals ? 'has-meals' : ''} ${applyDayIdx === i ? 'selected' : ''}"
-            onclick="state._builderApplyDay=${i};renderBuilderPage('${typeFilter}')">
-            <div class="dplanner-week-day-check">
-              ${hasMeals
-                ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
-                : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>`}
-            </div>
-            <div class="dplanner-week-day-name">${shortDay}</div>
-            <div class="dplanner-week-day-num">${dayNum}</div>
-          </button>`;
-        }).join('')}
+        ${(() => {
+          const saved = state._builderSavedDays || [];
+          return state.week.map((d, i) => {
+            const isSaved = saved.includes(i);
+            return `<button class="dplanner-week-day ${isSaved ? 'has-meals' : ''}"
+              onclick="builderSaveToDay(${i},'${typeFilter}')">
+              <div class="dplanner-week-day-check">
+                ${isSaved
+                  ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+                  : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>`}
+              </div>
+              <div class="dplanner-week-day-name">Η${i+1}</div>
+            </button>`;
+          }).join('');
+        })()}
       </div>
-      <div class="dplanner-week-legend">
-        <span class="dplanner-week-legend-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="background:var(--green-d);border-radius:50%;padding:1px"><polyline points="20 6 9 17 4 12"/></svg>
-          Αποθηκευμένο
-        </span>
-        <span class="dplanner-week-legend-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
-          Δεν έχει αποθηκευτεί
-        </span>
-      </div>
+      ${(state._builderSavedDays && state._builderSavedDays.length > 0) ? `
+      <button class="dplanner-btn-apply" onclick="builderApplyWeekToSchedule()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Εφαρμογή στο πρόγραμμα (${state._builderSavedDays.length} ημέρες)
+      </button>` : ''}
     </div>
 
     <!-- 3 COLUMNS -->
@@ -2949,43 +2913,66 @@ function builderPageApply() {
   applyBuilderToDayIdx(dayIdx);
 }
 
-function builderSaveToDaySlot() {
-  if (!builderMeals.length) { showToast('⚠️ Δεν επιλέχτηκαν γεύματα'); return; }
-  openModal(`<div class="modal-handle"></div>
-    <div class="modal-title">📅 Αποθήκευση σε ημέρα</div>
-    <p style="font-size:0.82rem;color:var(--text2);margin-bottom:14px">Επίλεξε σε ποια ημέρα να εφαρμοστεί το πλάνο.</p>
-    <div class="recipes-grid">
-      ${state.week.map((d,i) => {
-        const hasMeals = d.meals && d.meals.length > 0;
-        const dayLabel = state.planStartDate ? formatPlanDay(i) : `Ημ${i+1}`;
-        return `<div class="recipe-card ${hasMeals ? 'favorite' : ''}" onclick="applyBuilderToDayIdx(${i})">
-          <div class="recipe-card-emoji">${hasMeals ? '✅' : '📅'}</div>
-          <div class="recipe-card-name">${d.label}<br><span style="font-size:0.68rem;color:var(--text3)">${dayLabel}</span></div>
-        </div>`;
-      }).join('')}
-    </div>`);
-}
-
-function applyBuilderToDayIdx(dayIdx) {
+function _builderMealsToMealList() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const typeTime = getMealTimes();
-  const newMeals = builderMeals.map(bm => {
+  return builderMeals.map(bm => {
     if (bm.isStandard) {
-      const sm = STANDARD_MEALS.find(x => x.id === bm.id);
-      if (!sm) return null;
+      const sm = STANDARD_MEALS.find(x => x.id === bm.id); if (!sm) return null;
       return { time: typeTime[sm.meal]||'12:00', type: sm.meal, standardId: sm.id, done: false, scaleFactor: 1 };
     } else {
-      const r = allRecipes.find(x => x.id === bm.id);
-      if (!r) return null;
+      const r = allRecipes.find(x => x.id === bm.id); if (!r) return null;
       return { time: typeTime[r.meal]||'12:00', type: r.meal, recipeId: r.id, done: false, scaleFactor: 1 };
     }
   }).filter(Boolean);
+}
+
+function builderSaveToDay(dayIdx, typeFilter) {
+  if (!builderMeals.length) { showToast('⚠️ Επίλεξε πρώτα γεύματα'); return; }
+  if (!state._builderSavedDays) state._builderSavedDays = [];
+  if (!state._builderWeek) state._builderWeek = state.week.map(d => ({ ...d, meals: [] }));
+
+  // Toggle: αν η μέρα είναι ήδη αποθηκευμένη → αφαίρεση
+  if (state._builderSavedDays.includes(dayIdx)) {
+    state._builderSavedDays = state._builderSavedDays.filter(i => i !== dayIdx);
+    state._builderWeek[dayIdx].meals = [];
+    showToast(`↩ Η${dayIdx+1} αφαιρέθηκε`);
+    renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
+    return;
+  }
+
+  state._builderWeek[dayIdx].meals = _builderMealsToMealList();
+  state._builderSavedDays.push(dayIdx);
+  showToast(`✅ Η${dayIdx+1} αποθηκεύτηκε στο σχέδιο`);
+  renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
+}
+
+function builderApplyWeekToSchedule() {
+  if (!state._builderSavedDays || !state._builderSavedDays.length) {
+    showToast('⚠️ Δεν έχεις αποθηκεύσει καμία ημέρα'); return;
+  }
+  if (!confirm(`Να αντικατασταθεί το τρέχον εβδομαδιαίο πρόγραμμα για ${state._builderSavedDays.length} ημέρα/ες;`)) return;
+  state._builderSavedDays.forEach(i => {
+    if (state._builderWeek && state._builderWeek[i]) {
+      state.week[i].meals = state._builderWeek[i].meals;
+    }
+  });
+  state._builderSavedDays = [];
+  state._builderWeek = null;
+  builderMeals = [];
+  saveState();
+  showToast('✅ Το πρόγραμμα ενημερώθηκε!');
+  renderBuilderPage(state._builderFilter || 'breakfast');
+}
+
+function applyBuilderToDayIdx(dayIdx) {
+  // desktop: άμεση αποθήκευση στο state.week (παλιά συμπεριφορά desktop)
+  const newMeals = _builderMealsToMealList();
   state.week[dayIdx].meals = newMeals;
   builderMeals = [];
   saveState();
   closeModal();
-  const dayName = state.week[dayIdx].label || `Ημέρα ${dayIdx+1}`;
-  showToast(`✅ Αποθηκεύτηκε στη ${dayName}!`);
+  showToast(`✅ Αποθηκεύτηκε — Η${dayIdx+1}!`);
   renderBuilderPage(state._builderFilter || 'breakfast');
 }
 
@@ -4376,7 +4363,7 @@ function navigateTo(tab) {
   if (tab === 'today')    renderToday();
   if (tab === 'week')     renderWeek();
   if (tab === 'ideas')    renderIdeasPage();
-  if (tab === 'builder')  { state._builderFilter = 'breakfast'; renderBuilderPage('breakfast'); }
+  if (tab === 'builder')  { state._builderFilter = 'breakfast'; state._builderSavedDays = []; state._builderWeek = null; builderMeals = []; renderBuilderPage('breakfast'); }
   if (tab === 'body')     renderBodyPage();
   if (tab === 'stats')    renderStatsPage();
   if (tab === 'settings') renderSettingsPage();
@@ -4563,7 +4550,7 @@ function renderBodyPage() {
 }
 
 function _settingsSaveBtn(id) {
-  return `<button id="${id}" class="btn btn-primary" style="width:100%;padding:13px;font-size:0.97rem;font-weight:700;border-radius:12px" onclick="saveSettingsToCloud()">💾 Αποθήκευση ρυθμίσεων</button>`;
+  return `<button id="${id}" class="btn btn-primary" style="width:100%;padding:13px;font-size:0.97rem;font-weight:700;border-radius:12px" onclick="saveSettingsToCloud()">${t('settings_save')}</button>`;
 }
 
 function renderSettingsPage() {
@@ -4571,19 +4558,25 @@ function renderSettingsPage() {
   if (!el) return;
   el.innerHTML = `
     <div class="container fade-in" style="padding-top:14px">
-      <div class="segment" style="margin-top:0">
-        <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">👤 Προφίλ</button>
-        <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">⚡ Βελτίωση</button>
-        <button class="seg-btn" id="settings-tab-supplements" onclick="showSettingsTab('supplements')">💊 Συμπληρώματα</button>
+      <div class="segment" style="margin-top:0;flex-wrap:wrap;gap:4px">
+        <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">${t('settings_profile')}</button>
+        <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">${t('settings_optimize')}</button>
+        <button class="seg-btn" id="settings-tab-supplements" onclick="showSettingsTab('supplements')">${t('settings_supplements')}</button>
+        <button class="seg-btn" id="settings-tab-language" onclick="showSettingsTab('language')">${t('settings_language')}</button>
+        <button class="seg-btn" id="settings-tab-feedback" onclick="showSettingsTab('feedback')">${t('settings_feedback')}</button>
       </div>
       <div id="settings-profile-content"></div>
       <div id="settings-optimize-content" style="display:none"></div>
       <div id="settings-supplements-content" style="display:none"></div>
+      <div id="settings-language-content" style="display:none"></div>
+      <div id="settings-feedback-content" style="display:none"></div>
       ${_settingsSaveBtn('settings-save-bottom')}
     </div>`;
   renderProfileInto(document.getElementById('settings-profile-content'));
   renderOptimizeInto(document.getElementById('settings-optimize-content'));
   renderSettingsSupplements();
+  renderSettingsLanguage();
+  renderSettingsFeedback();
 }
 
 function renderSettingsSupplements() {
@@ -4628,29 +4621,32 @@ function renderSettingsSupplements() {
 }
 
 function showSettingsTab(which) {
-  ['profile','optimize','supplements'].forEach(t => {
-    const btn = document.getElementById('settings-tab-' + t);
-    const content = document.getElementById('settings-' + t + '-content');
-    if (btn) btn.classList.toggle('active', t === which);
-    if (content) content.style.display = t === which ? '' : 'none';
+  ['profile','optimize','supplements','language','feedback'].forEach(tab => {
+    const btn = document.getElementById('settings-tab-' + tab);
+    const content = document.getElementById('settings-' + tab + '-content');
+    if (btn) btn.classList.toggle('active', tab === which);
+    if (content) content.style.display = tab === which ? '' : 'none';
   });
+  // Hide save button on feedback tab (has its own send action)
+  const saveBtn = document.getElementById('settings-save-bottom');
+  if (saveBtn) saveBtn.style.display = which === 'feedback' ? 'none' : '';
 }
 
 async function saveSettingsToCloud() {
   const btns = ['settings-save-top', 'settings-save-bottom'];
   btns.forEach(id => {
     const b = document.getElementById(id);
-    if (b) { b.disabled = true; b.textContent = 'Αποθήκευση...'; }
+    if (b) { b.disabled = true; b.textContent = t('settings_saving'); }
   });
   try {
     await syncToSupabase();
-    showToast('✅ Οι ρυθμίσεις αποθηκεύτηκαν!', 2500);
+    showToast(t('settings_saved'), 2500);
   } catch (e) {
-    showToast('❌ Σφάλμα αποθήκευσης. Δοκιμάστε ξανά.', 3000);
+    showToast(t('settings_save_error'), 3000);
   } finally {
     btns.forEach(id => {
       const b = document.getElementById(id);
-      if (b) { b.disabled = false; b.innerHTML = '💾 Αποθήκευση ρυθμίσεων'; }
+      if (b) { b.disabled = false; b.innerHTML = t('settings_save'); }
     });
   }
 }
