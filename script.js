@@ -76,11 +76,15 @@ async function syncToSupabase() {
   }
 }
 
+let _isNewUser = false;
+
 async function loadState() {
   // 1. Load from localStorage first for instant render
+  let hasLocal = false;
   try {
     const raw = localStorage.getItem('nutriApp_v2');
     if (raw) {
+      hasLocal = true;
       const saved = JSON.parse(raw);
       state = {
         ...state,
@@ -105,6 +109,9 @@ async function loadState() {
         };
         // Update localStorage cache with fresh cloud data
         try { localStorage.setItem('nutriApp_v2', JSON.stringify(state)); } catch(e) {}
+      } else if (!hasLocal) {
+        // No data in cloud and no local cache → brand new user
+        _isNewUser = true;
       }
     } catch(e) {
       console.error('Failed to load from Supabase:', e);
@@ -4910,8 +4917,13 @@ async function initApp() {
   }
   // Map legacy saved tabs to new tabs
   const legacyMap = { profile: 'settings', optimize: 'settings', recipes: 'ideas', foods: 'ideas' };
-  const savedTab = state.activeTab || 'today';
-  navigateTo(legacyMap[savedTab] || savedTab);
+  if (_isNewUser) {
+    _isNewUser = false;
+    navigateTo('settings');
+  } else {
+    const savedTab = state.activeTab || 'today';
+    navigateTo(legacyMap[savedTab] || savedTab);
+  }
 
   // Κρύψιμο top nav με scroll-down
   let lastScrollY = window.scrollY;
