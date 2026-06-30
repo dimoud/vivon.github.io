@@ -1202,7 +1202,16 @@ function renderToday() {
           <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f}g</div><div class="macro-chip-lbl">λίπος</div></div>
         </div>
         <div class="meal-ingredients">${ingHtml}</div>
-        <div class="recipe-instructions">${recipe.instructions}</div>`;
+        ${(recipe.instructions || recipe.serving) ? `
+        <button class="recipe-expand-btn" onclick="toggleRecipeExpand(this)" aria-expanded="false">
+          📋 Συνταγή &amp; Σερβίρισμα <span class="recipe-expand-arrow">▼</span>
+        </button>
+        <div class="recipe-expand-body">
+          <div>
+            ${recipe.instructions ? `<div class="recipe-instructions">${recipe.instructions.replace(/\n/g,'<br>')}</div>` : ''}
+            ${recipe.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${recipe.serving}</div>` : ''}
+          </div>
+        </div>` : ''}`;
     }
 
     mealsHtml += `
@@ -2585,6 +2594,13 @@ function goToDay(i) {
   state.currentDay = i;
   saveState();
   navigateTo('today');
+}
+
+function toggleRecipeExpand(btn) {
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !expanded);
+  const body = btn.nextElementSibling;
+  body.classList.toggle('open', !expanded);
 }
 
 function toggleMealDone(mi) {

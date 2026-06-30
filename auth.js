@@ -193,12 +193,19 @@
   }
 
   function showAuthScreen() {
+    // Hide app immediately — no lag
+    const shell = document.getElementById('app-shell');
+    if (shell) shell.classList.add('app-hidden');
     const el = document.getElementById('auth-screen');
     if (el) { el.style.display = 'flex'; renderAuthScreen(); }
   }
+
   function hideAuthScreen() {
     const el = document.getElementById('auth-screen');
     if (el) el.style.display = 'none';
+    // Reveal app shell
+    const shell = document.getElementById('app-shell');
+    if (shell) shell.classList.remove('app-hidden');
   }
 
   // ── Tab switching ─────────────────────────────────────────
@@ -342,9 +349,11 @@
   // ── Sign-out (called from app UI) ─────────────────────────
 
   window.handleSignOut = async function () {
-    await sbSignOut();
+    // Hide app and show auth immediately — no lag
+    showAuthScreen();
     try { localStorage.removeItem('nutriApp_v2'); } catch (e) {}
-    // onAuthStateChange SIGNED_OUT fires → showAuthScreen
+    await sbSignOut();
+    // onAuthStateChange SIGNED_OUT also fires but showAuthScreen already ran
   };
 
   // ── Entry point ───────────────────────────────────────────
