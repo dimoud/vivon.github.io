@@ -1302,13 +1302,14 @@ function renderBuilderPage(typeFilter) {
       <span class="dplanner-lib-section-icon ${t}">${meta.icon}</span>
       <span class="dplanner-lib-section-label">${meta.label.toUpperCase()}</span>
     </div>`;
+    libHtml += `<div class="dplanner-lib-grid">`;
     standards.forEach(s => {
       const sel = builderMeals.find(x => x.id === s.id && x.isStandard);
       libHtml += `<div class="dplanner-meal-card ${sel ? 'selected-dp' : ''}" onclick="builderPageToggle('${s.id}',true)">
         <div class="dplanner-meal-emoji">${s.emoji}</div>
         <div class="dplanner-meal-info">
           <div class="dplanner-meal-name">${s.name}</div>
-          <div class="dplanner-meal-meta">⭐ Στάνταρ</div>
+          <div class="dplanner-meal-meta">Π:${s.p||'?'}g · Υ:${s.c||'?'}g · Λ:${s.f||'?'}g</div>
         </div>
         <div class="dplanner-meal-kcal">~${s.kcal_est} kcal</div>
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${s.id}',true)">${sel ? '✕' : '+'}</button>
@@ -1327,6 +1328,7 @@ function renderBuilderPage(typeFilter) {
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${r.id}',false)">${sel ? '✕' : '+'}</button>
       </div>`;
     });
+    libHtml += `</div>`;
   });
   if (!libHtml) libHtml = '<div class="empty-state"><div class="empty-icon">🍽️</div><p>Δεν βρέθηκαν γεύματα</p></div>';
 
@@ -1338,7 +1340,12 @@ function renderBuilderPage(typeFilter) {
   builderMeals.forEach(bm => {
     if (bm.isStandard) {
       const sm = STANDARD_MEALS.find(s => s.id === bm.id);
-      if (sm) totalKcal += sm.kcal_est;
+      if (sm) {
+        totalKcal += sm.kcal_est;
+        totalP += sm.p || 0;
+        totalC += sm.c || 0;
+        totalF += sm.f || 0;
+      }
     } else {
       const r = allRecipes.find(x => x.id === bm.id);
       if (r) { const m = calcRecipeMacros(r); totalKcal += m.kcal; totalP += m.p; totalC += m.c; totalF += m.f; }
