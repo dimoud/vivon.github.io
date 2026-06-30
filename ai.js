@@ -3,6 +3,20 @@
 // ============================================================
 
 const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/quick-endpoint';
+const AI_COOLDOWN_MS = 3 * 60 * 1000; // 3 λεπτά
+const AI_LAST_CALL_KEY = 'vivon_ai_last_call';
+
+function _checkRateLimit() {
+  const last = parseInt(localStorage.getItem(AI_LAST_CALL_KEY) || '0', 10);
+  const elapsed = Date.now() - last;
+  if (elapsed < AI_COOLDOWN_MS) {
+    const remaining = Math.ceil((AI_COOLDOWN_MS - elapsed) / 1000);
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    throw new Error(`Περίμενε ${mins}:${String(secs).padStart(2,'0')} λεπτά πριν την επόμενη βελτιστοποίηση`);
+  }
+  localStorage.setItem(AI_LAST_CALL_KEY, Date.now().toString());
+}
 
 // ── Shared helpers ──────────────────────────────────────────
 
@@ -115,6 +129,7 @@ async function optimizeWeekWithAI() {
   btns.forEach(b => { b.disabled = true; b.innerHTML = '⏳ Βελτιστοποίηση...'; });
 
   try {
+    _checkRateLimit();
     const recipesByType = _buildRecipesByType();
     const recipeGroups  = _buildRecipeGroups();
 
@@ -169,6 +184,7 @@ async function generateWeekWithAI() {
   if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Δημιουργία...'; }
 
   try {
+    _checkRateLimit();
     const recipesByType = _buildRecipesByType();
     const recipeGroups  = _buildRecipeGroups();
     const g = state.goals;
