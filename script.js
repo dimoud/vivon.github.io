@@ -1713,7 +1713,7 @@ function renderWeek() {
             </div>
 
             <!-- Προβλέψεις απώλειας -->
-            <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="week-deficit-grid" style="margin-top:14px">
               <!-- Πρόβλεψη βάσει TDEE συντήρησης -->
               <div style="background:#f0fdf4;border-radius:10px;padding:12px;border:1.5px solid #bbf7d0;text-align:center">
                 <div style="font-size:0.62rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">📐 Βάσει TDEE Συντήρησης</div>
@@ -1739,7 +1739,7 @@ function renderWeek() {
 
       <!-- Footer stats -->
       <div style="padding:0 16px">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)">
+        <div class="week-footer-grid" style="background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)">
           <div style="text-align:center">
             <div style="font-size:1.3rem;margin-bottom:2px">🔥</div>
             <div style="font-size:0.7rem;color:var(--text3);margin-bottom:2px">Σύνολο εβδομάδας</div>
