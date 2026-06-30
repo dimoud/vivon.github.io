@@ -41,7 +41,8 @@ html {
 
 body {
   font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
+  background: linear-gradient(160deg, #edf0f4 0%, #e4e8ee 40%, #eaedf2 100%);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   font-size: 15px;
@@ -317,7 +318,7 @@ h3 { font-size: 0.95rem; }
 /* ── MOBILE GLOBAL OPTIMIZATIONS ── */
 @media (max-width: 600px) {
   body { font-size: 14px; }
-  .container { padding: 0 10px; }
+  .container { padding: 0 6px; }
 
   /* Cards — smaller padding on mobile */
   .card { padding: 14px; margin-bottom: 10px; }
@@ -377,8 +378,9 @@ h3 { font-size: 0.95rem; }
   .segment { padding: 2px; }
   .seg-btn { padding: 6px 4px; font-size: 0.7rem; }
 
-  /* Recipe cards — 2 columns always */
-  .recipes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  /* Recipe cards — 2 columns always, padded within ideas page */
+  .recipes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 12px; }
+  .section-title { padding: 0 12px; }
   .recipe-card { padding: 10px; }
   .recipe-card-emoji { font-size: 1.6rem; }
   .recipe-card-name { font-size: 0.7rem; }
@@ -396,20 +398,26 @@ h3 { font-size: 0.95rem; }
   h1 { font-size: 1.25rem; }
   h2 { font-size: 1rem; }
 
-  /* ── Recipes card: mobile card styling ── */
+  /* ── Ideas page: no container, tabs bar flush to edges ── */
+  .ideas-page-wrap { max-width: 100%; padding: 0; }
+  .ideas-tabs-bar { padding: 10px 12px 0; }
+  .ideas-tabs-bar .segment { margin-bottom: 10px; }
+  .foods-wrap { max-width: 100%; padding: 0 12px; }
+
+  /* ── Recipes card: edge-to-edge white card ── */
   .rc-card {
-    background: var(--card); border-radius: 18px;
-    box-shadow: var(--shadow-lg); padding: 18px 16px 20px;
-    margin: 8px 0 16px;
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    padding: 14px 14px 14px;
+    margin: 0 0 12px;
   }
-  .rc-title { font-size: 1.15rem; }
-  .rc-new-btn { border-radius: 14px; padding: 10px 18px; font-size: 0.88rem; }
-  .rc-search input { box-shadow: none; border-radius: 14px; border-color: var(--border); }
-  .rc-search-icon { color: var(--green-d); width: 20px; height: 20px; }
-  .recipe-filter-pills {
-    flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
-  }
-  .recipe-filter-pills::-webkit-scrollbar { display: none; }
+  .rc-title { font-size: 1.05rem; }
+  .rc-new-btn { border-radius: 8px; padding: 8px 14px; font-size: 0.82rem; }
+  .rc-search { margin-bottom: 10px; }
+  .rc-search input { box-shadow: none; border-radius: 8px; border-color: var(--border); padding: 9px 14px 9px 38px; }
+  .rc-search-icon { color: var(--green-d); width: 16px; height: 16px; left: 12px; }
+  .recipe-filter-pills { flex-wrap: wrap; gap: 5px; }
   .recipe-pill { flex-shrink: 0; }
 }
 
@@ -694,7 +702,7 @@ h3 { font-size: 0.95rem; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 18px;
-  border-radius: 24px;
+  border-radius: 10px;
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -1057,11 +1065,17 @@ input:focus, select:focus, textarea:focus { border-color: var(--green-d); backgr
 textarea { resize: vertical; min-height: 80px; }
 select { cursor: pointer; }
 
+/* ── IDEAS PAGE WRAP ── */
+.ideas-page-wrap { max-width: 860px; margin: 0 auto; padding: 0 14px; }
+.ideas-tabs-bar { padding: 14px 0 0; }
+.ideas-tabs-bar .segment { margin-bottom: 14px; }
+.foods-wrap { max-width: 860px; margin: 0 auto; padding: 0 14px; }
+
 /* ── RECIPES CARD ── */
-.rc-card { padding: 0; }
+.rc-card { padding: 16px; background: var(--card); border-radius: 14px; box-shadow: var(--shadow-lg); margin-bottom: 16px; }
 .rc-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 .rc-title { font-size: 1rem; font-weight: 800; color: var(--text); }
 .rc-new-btn {
@@ -1087,20 +1101,25 @@ select { cursor: pointer; }
 .recipe-filter-pills {
   display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0;
 }
+.recipe-filter-pills-break {
+  width: 100%; height: 0; flex-basis: 100%;
+}
 .recipe-pill {
-  border: 1.5px solid var(--border); border-radius: 50px;
-  padding: 5px 12px; font-size: 0.75rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 3px;
+  border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 4px 9px; font-size: 0.68rem; font-weight: 600;
   color: var(--text2); background: var(--card); cursor: pointer;
   white-space: nowrap; transition: all var(--transition);
 }
+.recipe-pill svg { flex-shrink: 0; }
 .recipe-pill.active {
   border-color: var(--green-d); color: var(--green-d); background: var(--green-bg);
 }
 
 /* ── SEGMENT PILLS ── */
-.segment { display: flex; background: var(--bg); border-radius: 24px; padding: 3px; margin-bottom: 14px; }
+.segment { display: flex; background: var(--bg); border-radius: 10px; padding: 3px; margin-bottom: 14px; }
 .seg-btn {
-  flex: 1; padding: 7px; border-radius: 20px;
+  flex: 1; padding: 7px; border-radius: 8px;
   font-size: 0.75rem; font-weight: 700; text-align: center;
   cursor: pointer; border: none; background: none; color: var(--text3);
   transition: all var(--transition);
@@ -2066,3 +2085,12 @@ select:focus, textarea:focus {
   .auth-logo-img { height: 140px; }
   .auth-input { font-size: 16px; }
 }
+
+/* Hide native date picker icon so all input wrappers stay the same height */
+input[type="date"]::-webkit-calendar-picker-indicator { display: none; }
+input[type="date"]::-webkit-inner-spin-button { display: none; }
+input[type="date"] { -webkit-appearance: none; appearance: none; }
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }

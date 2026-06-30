@@ -420,56 +420,45 @@ function renderBodyChart(log) {
   </div>`;
 }
 
+function fmtDateGr(isoDate) {
+  if (!isoDate) return '';
+  const months = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  const [y, m, d] = isoDate.split('-');
+  return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
+}
+
 function renderBodyMeasurementsCard() {
   const log = state.bodyLog || [];
   const today = new Date().toISOString().split('T')[0];
   const latest = log.length > 0 ? log[log.length - 1] : null;
 
-  // ── Stat cards (top 3) ──
-  const weightCard = latest
-    ? `<div style="flex:1;background:#eff6ff;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">🏋️</span>
-        <span style="font-size:1.35rem;font-weight:800;color:#3b82f6;line-height:1">${latest.weight} kg</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Βάρος</span>
-       </div>`
-    : `<div style="flex:1;background:#eff6ff;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">🏋️</span>
-        <span style="font-size:1rem;font-weight:600;color:#9ca3af">—</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Βάρος</span>
-       </div>`;
+  // ── Stat cards: icon box left | value+label right ──
+  function statCard(bg, iconSvg, value, label, valueColor) {
+    return `<div style="flex:1;background:${bg};border-radius:14px;padding:10px 6px;display:flex;align-items:center;gap:6px;min-width:0">
+      <div style="width:28px;height:28px;background:rgba(255,255,255,0.75);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.85rem">${iconSvg}</div>
+      <div style="min-width:0;flex:1">
+        <div style="font-size:0.95rem;font-weight:800;color:${valueColor};line-height:1.1;white-space:nowrap">${value}</div>
+        <div style="font-size:0.62rem;color:#6b7280;font-weight:500;margin-top:2px;line-height:1.2">${label}</div>
+      </div>
+    </div>`;
+  }
 
-  const fatCard = latest && latest.fat !== null && latest.fat !== undefined
-    ? `<div style="flex:1;background:#fef2f2;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">🩸</span>
-        <span style="font-size:1.35rem;font-weight:800;color:#ef4444;line-height:1">${latest.fat}%</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Λίπος</span>
-       </div>`
-    : `<div style="flex:1;background:#fef2f2;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">🩸</span>
-        <span style="font-size:1rem;font-weight:600;color:#9ca3af">—</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Λίπος</span>
-       </div>`;
+  const weightVal = latest ? `${latest.weight} kg` : '—';
+  const fatVal    = (latest && latest.fat    != null) ? `${latest.fat}%`    : '—';
+  const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
 
-  const muscleCard = latest && latest.muscle !== null && latest.muscle !== undefined
-    ? `<div style="flex:1;background:#f0fdf4;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">💪</span>
-        <span style="font-size:1.35rem;font-weight:800;color:#16a34a;line-height:1">${latest.muscle}%</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Μυϊκή μάζα</span>
-       </div>`
-    : `<div style="flex:1;background:#f0fdf4;border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:4px">
-        <span style="font-size:1.5rem">💪</span>
-        <span style="font-size:1rem;font-weight:600;color:#9ca3af">—</span>
-        <span style="font-size:0.72rem;color:#6b7280;font-weight:500">Μυϊκή μάζα</span>
-       </div>`;
+  const weightCard = statCard('#eff6ff', '⚖️', weightVal, 'Βάρος',      '#3b82f6');
+  const fatCard    = statCard('#fef2f2', '🩸',  fatVal,    'Λίπος',      '#ef4444');
+  const muscleCard = statCard('#f0fdf4', '💪',  muscleVal, 'Μυϊκή μάζα','#16a34a');
 
   const dateChip = latest
-    ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:20px;padding:6px 14px;font-size:0.78rem;color:#374151;font-weight:500;margin-top:4px">
-        <span>📅</span><span>${latest.date}</span>
+    ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:20px;padding:5px 12px;font-size:0.78rem;color:#374151;font-weight:500;margin-top:6px">
+        <span style="font-size:0.8rem">📅</span><span>${fmtDateGr(latest.date)}</span>
        </div>` : '';
 
   const chartInfo = log.length < 2
-    ? `<div style="display:flex;align-items:center;gap:8px;background:#eff6ff;border-radius:10px;padding:10px 14px;font-size:0.8rem;color:#3b82f6;margin-top:8px">
-        <span style="font-size:1rem">ℹ️</span>
+    ? `<div style="display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#0369a1;margin-top:10px">
+        <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid #0369a1;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem">i</span>
         <span>Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</span>
        </div>`
     : `<div style="margin-top:10px">${renderBodyChart(log)}</div>`;
@@ -478,45 +467,52 @@ function renderBodyMeasurementsCard() {
   const historyRows = log.length === 0
     ? `<div style="font-size:0.8rem;color:var(--text3);text-align:center;padding:16px 0">Δεν υπάρχουν μετρήσεις ακόμα</div>`
     : [...log].reverse().slice(0, 8).map(e => {
-        const fatBadge = e.fat !== null && e.fat !== undefined
-          ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font-size:1rem">🩸</span><span style="font-size:0.78rem;font-weight:700;color:#ef4444">${e.fat}%</span><span style="font-size:0.62rem;color:#9ca3af">Λίπος</span></div>` : '';
-        const muscleBadge = e.muscle !== null && e.muscle !== undefined
-          ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font-size:1rem">💪</span><span style="font-size:0.78rem;font-weight:700;color:#16a34a">${e.muscle}%</span><span style="font-size:0.62rem;color:#9ca3af">Μυϊκή μάζα</span></div>` : '';
-        return `<div style="display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:10px">
-          <div style="font-size:0.75rem;color:#6b7280;min-width:76px;font-weight:500">${e.date}</div>
-          <div style="display:flex;align-items:center;gap:6px;flex:1">
-            <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
-              <span style="font-size:1rem">🏋️</span>
-              <span style="font-size:0.78rem;font-weight:700;color:#3b82f6">${e.weight} kg</span>
-              <span style="font-size:0.62rem;color:#9ca3af">Βάρος</span>
-            </div>
-            ${fatBadge}
-            ${muscleBadge}
-          </div>
-          <button onclick="deleteBodyEntry('${e.date}')" style="border:none;background:none;cursor:pointer;color:#d1d5db;font-size:1rem;padding:4px 6px;flex-shrink:0">✕</button>
-          <span style="color:#d1d5db;font-size:1rem">›</span>
+        const weightCol = `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:48px">
+          <span style="font-size:0.85rem">⚖️</span>
+          <span style="font-size:0.8rem;font-weight:700;color:#3b82f6;white-space:nowrap">${e.weight} kg</span>
+          <span style="font-size:0.6rem;color:#9ca3af">Βάρος</span>
+        </div>`;
+        const fatCol = (e.fat != null)
+          ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:36px">
+              <span style="font-size:0.85rem">🩸</span>
+              <span style="font-size:0.8rem;font-weight:700;color:#ef4444">${e.fat}%</span>
+              <span style="font-size:0.6rem;color:#9ca3af">Λίπος</span>
+             </div>` : '';
+        const muscleCol = (e.muscle != null)
+          ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:48px">
+              <span style="font-size:0.85rem">💪</span>
+              <span style="font-size:0.8rem;font-weight:700;color:#16a34a">${e.muscle}%</span>
+              <span style="font-size:0.6rem;color:#9ca3af">Μυϊκή μάζα</span>
+             </div>` : '';
+        return `<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;gap:8px">
+          <div style="font-size:0.73rem;color:#6b7280;font-weight:500;min-width:68px;flex-shrink:0">${fmtDateGr(e.date)}</div>
+          <div style="display:flex;align-items:center;gap:10px;flex:1">${weightCol}${fatCol}${muscleCol}</div>
+          <button onclick="deleteBodyEntry('${e.date}')" style="border:none;background:none;cursor:pointer;color:#d1d5db;font-size:0.85rem;padding:4px;flex-shrink:0" title="Διαγραφή">✕</button>
+          <span style="color:#d1d5db;font-size:1rem;flex-shrink:0">›</span>
         </div>`;
       }).join('');
 
   const showAll = log.length > 8
-    ? `<div style="text-align:center;padding-top:10px">
-        <span style="font-size:0.8rem;color:#16a34a;font-weight:600;cursor:pointer">Προβολή όλων των μετρήσεων ›</span>
+    ? `<div style="text-align:center;padding-top:12px">
+        <span style="font-size:0.82rem;color:#16a34a;font-weight:600;cursor:pointer">Προβολή όλων των μετρήσεων ›</span>
        </div>` : '';
+
+  const todayDisplay = fmtDateGr(today);
 
   return `
   <div style="display:flex;flex-direction:column;gap:12px;padding-bottom:16px">
 
     <!-- Κάρτα 1: Header + Stats -->
-    <div class="card card-lg fade-in" style="padding:20px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
-        <div style="width:44px;height:44px;background:#f1f5f9;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">📊</div>
+    <div class="card card-lg fade-in" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:42px;height:42px;background:linear-gradient(135deg,#e0e7ff,#f0fdf4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">📊</div>
         <div>
-          <div style="font-size:1rem;font-weight:800;color:#111;letter-spacing:0.02em">ΜΕΤΡΗΣΕΙΣ ΣΩΜΑΤΟΣ</div>
-          <div style="font-size:0.75rem;color:#9ca3af;margin-top:2px">Παρακολούθησε την πρόοδό σου</div>
+          <div style="font-size:0.95rem;font-weight:800;color:#111;letter-spacing:0.02em">ΜΕΤΡΗΣΕΙΣ ΣΩΜΑΤΟΣ</div>
+          <div style="font-size:0.72rem;color:#9ca3af;margin-top:2px">Παρακολούθησε την πρόοδό σου</div>
         </div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-bottom:14px">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
         ${weightCard}${fatCard}${muscleCard}
       </div>
 
@@ -525,58 +521,58 @@ function renderBodyMeasurementsCard() {
     </div>
 
     <!-- Κάρτα 2: Φόρμα -->
-    <div class="card card-lg fade-in" style="padding:20px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-        <span style="font-size:1.2rem;color:#16a34a;font-weight:800">+</span>
+    <div class="card card-lg fade-in" style="padding:18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:28px;height:28px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#16a34a;line-height:1">+</div>
         <span style="font-size:0.95rem;font-weight:800;color:#16a34a;letter-spacing:0.03em">ΝΕΑ ΜΕΤΡΗΣΗ</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-        <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Ημερομηνία</label>
-          <div style="position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none">📅</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;align-items:start">
+        <div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">Ημερομηνία</div>
+          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box;overflow:hidden">
+            <span style="font-size:0.85rem;flex-shrink:0">📅</span>
             <input type="date" id="bm-date" value="${today}"
-              style="width:100%;padding:10px 10px 10px 32px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;box-sizing:border-box">
+              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;-webkit-appearance:none;appearance:none;height:100%">
           </div>
         </div>
-        <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">Βάρος (kg)</label>
-          <div style="position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none">🏋️</span>
+        <div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">Βάρος (kg)</div>
+          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
+            <span style="font-size:0.85rem;flex-shrink:0">⚖️</span>
             <input type="number" id="bm-weight" placeholder="π.χ. 95.5" step="0.1" min="30" max="300"
-              style="width:100%;padding:10px 10px 10px 32px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;box-sizing:border-box">
+              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
-        <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">% Λίπους <span style="color:#9ca3af;font-weight:400">(προαιρετικό)</span></label>
-          <div style="position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none">🩸</span>
+        <div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% Λίπους</div>
+          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
+            <span style="font-size:0.85rem;flex-shrink:0">🩸</span>
             <input type="number" id="bm-fat" placeholder="π.χ. 22.5" step="0.1" min="3" max="60"
-              style="width:100%;padding:10px 10px 10px 32px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;box-sizing:border-box">
+              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
-        <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem;font-weight:600;color:#374151;margin-bottom:6px;display:block">% Μυϊκής Μάζας <span style="color:#9ca3af;font-weight:400">(προαιρετικό)</span></label>
-          <div style="position:relative">
-            <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.9rem;pointer-events:none">💪</span>
+        <div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% Μυϊκής Μάζας</div>
+          <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
+            <span style="font-size:0.85rem;flex-shrink:0">💪</span>
             <input type="number" id="bm-muscle" placeholder="π.χ. 38.0" step="0.1" min="10" max="80"
-              style="width:100%;padding:10px 10px 10px 32px;border:1.5px solid #e5e7eb;border-radius:10px;font-size:0.85rem;background:#fff;box-sizing:border-box">
+              style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
       </div>
-      <button class="btn btn-green btn-full" onclick="addBodyMeasurement()" style="padding:14px;font-size:0.95rem;font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <button class="btn btn-green btn-full" onclick="addBodyMeasurement()" style="padding:14px;font-size:0.9rem;font-weight:700;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px">
         <span>💾</span> Αποθήκευση Μέτρησης
       </button>
     </div>
 
     <!-- Κάρτα 3: Ιστορικό -->
-    <div class="card card-lg fade-in" style="padding:20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+    <div class="card card-lg fade-in" style="padding:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:1.1rem">📋</span>
-          <span style="font-size:0.9rem;font-weight:800;color:#111">ΙΣΤΟΡΙΚΟ ΜΕΤΡΗΣΕΩΝ</span>
+          <div style="width:32px;height:32px;background:#f1f5f9;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.95rem">📋</div>
+          <span style="font-size:0.85rem;font-weight:800;color:#111;letter-spacing:0.02em">ΙΣΤΟΡΙΚΟ ΜΕΤΡΗΣΕΩΝ</span>
         </div>
-        ${log.length > 0 ? `<span style="background:#f1f5f9;border-radius:20px;padding:3px 10px;font-size:0.72rem;color:#6b7280;font-weight:600">${log.length} μετρήσεις</span>` : ''}
+        ${log.length > 0 ? `<span style="background:#f1f5f9;border-radius:20px;padding:4px 10px;font-size:0.7rem;color:#6b7280;font-weight:600">${log.length} μετρήσεις</span>` : ''}
       </div>
       ${historyRows}
       ${showAll}
@@ -661,7 +657,10 @@ function renderProfile() {
     <div class="container" style="padding-top:16px;padding-bottom:24px">
 
       <!-- AVATAR + NAME HEADER -->
-      <div class="card card-lg fade-in" style="padding:24px 20px 20px">
+      <div class="card card-lg fade-in" style="padding:24px 20px 20px;position:relative">
+        <button onclick="saveProfile()" title="Επεξεργασία προφίλ" style="position:absolute;top:10px;right:10px;background:transparent;border:none;cursor:pointer;padding:4px;color:var(--text3);line-height:1;display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
         <div style="display:flex;align-items:center;gap:18px">
           <div style="position:relative;flex-shrink:0">
             <div id="profile-avatar" onclick="triggerPhotoUpload()" style="width:88px;height:88px;border-radius:50%;background:var(--green-bg);display:flex;align-items:center;justify-content:center;font-size:2.4rem;overflow:hidden;border:3px solid var(--green);cursor:pointer">
@@ -680,9 +679,6 @@ function renderProfile() {
               oninput="liveUpdateName(this.value)">
             <div style="font-size:0.8rem;color:var(--text3);display:flex;align-items:center;gap:4px">Πάτα για επεξεργασία ✏️</div>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="saveProfile()" style="flex-shrink:0;border-radius:20px;gap:5px">
-            ✏️ Επεξεργασία προφίλ
-          </button>
         </div>
       </div>
 
@@ -711,7 +707,7 @@ function renderProfile() {
       <!-- ΣΩΜΑΤΙΚΑ ΣΤΟΙΧΕΙΑ -->
       <div class="card card-lg fade-in">
         <div class="section-title">🏃 Σωματικά Στοιχεία</div>
-        <div class="profile-body-grid" style="margin-bottom:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Βάρος (kg)</label>
             <input type="number" id="prof-weight" value="${p.weight}" step="0.1" min="30" max="300"
@@ -724,14 +720,14 @@ function renderProfile() {
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
               oninput="liveUpdateProfile()">
           </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Ηλικία</label>
             <input type="number" id="prof-age" value="${p.age}" step="1" min="15" max="100"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
               oninput="liveUpdateProfile()">
           </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Φύλο</label>
             <select id="prof-gender" style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;background:var(--bg2)" onchange="liveUpdateProfile()">
@@ -739,6 +735,8 @@ function renderProfile() {
               <option value="female" ${p.gender==='female'?'selected':''}>👤 Γυναίκα</option>
             </select>
           </div>
+        </div>
+        <div style="margin-bottom:14px">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Επίπεδο Δραστηριότητας (προπονήσεις)</label>
             <select id="prof-activity" style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;background:var(--bg2)" onchange="liveUpdateProfile()">
@@ -763,50 +761,82 @@ function renderProfile() {
 
       <!-- ΘΕΡΜΙΔΕΣ ΣΥΝΤΗΡΗΣΗΣ (TDEE) -->
       <div class="card card-lg fade-in">
-        <div class="section-title">🌿 Θερμίδες Συντήρησης (TDEE)</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div style="width:40px;height:40px;border-radius:10px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">🌿</div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:0.03em">Θερμίδες Συντήρησης (TDEE)</div>
+        </div>
 
-        <!-- Προτεινόμενο TDEE breakdown -->
-        <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
-          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:8px">🔢 Αυτόματος Υπολογισμός</div>
-          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text2);margin-bottom:4px">
-            <span>BMR (Mifflin-St Jeor)</span><strong id="td-bmr">${bmr} kcal</strong>
+        <!-- Αυτόματος Υπολογισμός block -->
+        <div style="background:var(--bg2);border-radius:var(--radius);padding:16px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div style="width:36px;height:36px;border-radius:8px;background:#1a56db;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">🔢</div>
+            <div style="font-size:0.95rem;font-weight:700;color:var(--text)">Αυτόματος Υπολογισμός</div>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text2);margin-bottom:4px">
-            <span id="td-act-lbl">× Συντελεστής δραστηριότητας (${parseFloat(p.activity||1.50).toFixed(2)})</span>
-            <strong id="td-act">${Math.round(bmr * (p.activity||1.50))} kcal</strong>
+
+          <!-- BMR row -->
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="width:32px;height:32px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">🔥</div>
+            <div style="flex:1;font-size:0.85rem;color:var(--text2)">BMR (Mifflin-St Jeor)</div>
+            <strong id="td-bmr" style="font-size:0.95rem;color:var(--text);white-space:nowrap">${bmr} kcal</strong>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text2);margin-bottom:8px">
-            <span id="td-steps-lbl">+ Διόρθωση βημάτων (${(p.dailySteps||0).toLocaleString()} βήμ/ημ)</span>
-            <strong id="td-steps">+${calcStepAdjustment(p.dailySteps||0)} kcal</strong>
+
+          <!-- Activity row -->
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+            <div style="width:32px;height:32px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">🏃</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.85rem;color:var(--text2)" id="td-act-lbl">× Συντελεστής δραστηριότητας</div>
+              <div style="font-size:0.75rem;color:var(--blue)">(${parseFloat(p.activity||1.50).toFixed(2)})</div>
+            </div>
+            <strong id="td-act" style="font-size:0.95rem;color:var(--text);white-space:nowrap">${Math.round(bmr * (p.activity||1.50))} kcal</strong>
           </div>
-          <div style="display:flex;justify-content:space-between;font-size:1rem;font-weight:900;color:var(--green-d);border-top:1.5px solid var(--border);padding-top:8px">
-            <span>= Προτεινόμενο TDEE</span><span id="td-result">${suggestedTDEE} kcal</span>
+
+          <!-- Steps row -->
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1.5px dashed var(--border)">
+            <div style="width:32px;height:32px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">📊</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:0.85rem;color:var(--text2)" id="td-steps-lbl">+ Διόρθωση βημάτων</div>
+              <div style="font-size:0.75rem;color:var(--blue)">(${(p.dailySteps||0).toLocaleString()} βήμ/ημ)</div>
+            </div>
+            <strong id="td-steps" style="font-size:0.95rem;color:var(--blue);white-space:nowrap">+${calcStepAdjustment(p.dailySteps||0)} kcal</strong>
+          </div>
+
+          <!-- TDEE result row -->
+          <div style="display:flex;align-items:center;gap:12px;padding:14px 0 2px;background:var(--bg2)">
+            <div style="width:32px;height:32px;border-radius:50%;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;color:var(--green-d);flex-shrink:0">=</div>
+            <div style="flex:1;font-size:0.95rem;font-weight:700;color:var(--green-d)">Προτεινόμενο TDEE</div>
+            <strong id="td-result" style="font-size:1.15rem;font-weight:900;color:var(--green-d);white-space:nowrap">${suggestedTDEE} kcal</strong>
           </div>
         </div>
 
         <!-- Toggle χειροκίνητης τιμής -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${p.useCustomTDEE?'12px':'0'}">
-          <div>
-            <div style="font-size:0.9rem;font-weight:700">Χειροκίνητη Τιμή TDEE</div>
-            <div style="font-size:0.72rem;color:var(--text3)">Παράκαμψη αυτόματου υπολογισμού</div>
+        <div style="background:var(--bg2);border-radius:var(--radius);padding:14px 16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;${p.useCustomTDEE?'margin-bottom:12px':''}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:32px;height:32px;border-radius:50%;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">🎯</div>
+              <div>
+                <div style="font-size:0.9rem;font-weight:700;color:var(--text)">Χειροκίνητη Τιμή TDEE</div>
+                <div style="font-size:0.72rem;color:var(--text3)">Παράκαμψη αυτόματου υπολογισμού</div>
+              </div>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="prof-use-custom-tdee" ${p.useCustomTDEE?'checked':''} onchange="toggleCustomTDEE(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
           </div>
-          <label class="toggle-switch">
-            <input type="checkbox" id="prof-use-custom-tdee" ${p.useCustomTDEE?'checked':''} onchange="toggleCustomTDEE(this.checked)">
-            <span class="toggle-slider"></span>
-          </label>
+          ${p.useCustomTDEE ? `
+          <div style="border-top:1px solid var(--border);padding-top:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <input type="number" id="prof-custom-tdee" value="${p.customTDEE||suggestedTDEE}" min="1000" max="7000" step="50"
+                style="flex:1;padding:10px 12px;border:2px solid var(--green);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:#f0fdf4"
+                oninput="updateCustomTDEE(this.value)">
+              <span style="font-size:0.82rem;color:var(--text2);white-space:nowrap">kcal/ημέρα</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" style="font-size:0.72rem" onclick="resetToSuggestedTDEE()">↺ Επιστροφή σε αυτόματο (${suggestedTDEE} kcal)</button>
+          </div>` : `
+          <div style="border-top:1px solid var(--border);padding-top:10px;margin-top:2px;font-size:0.82rem;color:var(--text3)">
+            Ενεργό TDEE: <strong style="color:var(--green-d)">${p.useCustomTDEE ? (p.customTDEE||suggestedTDEE) : suggestedTDEE} kcal/ημέρα</strong>
+          </div>`}
         </div>
-        ${p.useCustomTDEE ? `
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <input type="number" id="prof-custom-tdee" value="${p.customTDEE||suggestedTDEE}" min="1000" max="7000" step="50"
-            style="flex:1;padding:10px 12px;border:2px solid var(--green);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:#f0fdf4"
-            oninput="updateCustomTDEE(this.value)">
-          <span style="font-size:0.82rem;color:var(--text2);white-space:nowrap">kcal/ημέρα</span>
-        </div>
-        <button class="btn btn-ghost btn-sm" style="font-size:0.72rem" onclick="resetToSuggestedTDEE()">↺ Επιστροφή σε αυτόματο (${suggestedTDEE} kcal)</button>
-        ` : `
-        <div style="margin-top:10px;font-size:0.78rem;color:var(--text3)">
-          Ενεργό TDEE: <strong style="color:var(--green-d)">${suggestedTDEE} kcal/ημέρα</strong>
-        </div>`}
       </div>
 
       <!-- ΗΜΕΡΗΣΙΟΙ ΣΤΟΧΟΙ -->
@@ -877,11 +907,11 @@ function renderProfile() {
         <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px">
           Επίλεξε ώρα <strong>πρώτου γεύματος</strong>. Τα υπόλοιπα τοποθετούνται αυτόματα κάθε 3 ώρες.
         </p>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <label style="font-size:0.82rem;font-weight:700;color:var(--text);white-space:nowrap">1ο Γεύμα (Πρωινό)</label>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <label style="font-size:0.75rem;font-weight:700;color:var(--text);white-space:nowrap">1ο Γεύμα (Πρωινό)</label>
           <input type="time" id="prof-first-meal-time"
             value="${p.firstMealTime || '08:00'}"
-            style="flex:1;padding:10px 12px;border:2px solid var(--green);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;background:var(--bg2)"
+            style="flex:1;padding:6px 9px;border:2px solid var(--green);border-radius:var(--radius-sm);font-size:0.82rem;font-weight:700;background:var(--bg2)"
             oninput="updateFirstMealTime(this.value)">
         </div>
         <div id="meal-times-preview" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.8rem">
@@ -1649,7 +1679,13 @@ function renderWeek() {
     afternoon:  { label:'Απογευματινό', color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
     dinner:     { label:'Βραδινό',      color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
   };
-  const dayNames = ['Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο','Κυριακή'];
+  const dayNamesLong = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+  function getDayTitle(di) {
+    if (!state.planStartDate) return `Ημ${di+1}`;
+    const d = new Date(state.planStartDate);
+    d.setDate(d.getDate() + di);
+    return dayNamesLong[d.getDay()];
+  }
 
   // ── Εβδομαδιαία stats ──
   let totalKcal = 0, totalP = 0, totalC = 0, totalF = 0, daysWithMeals = 0;
@@ -1778,7 +1814,7 @@ function renderWeek() {
 
     return `<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);border-top:${borderTop};box-shadow:var(--shadow);overflow:hidden;min-width:0">
       <div style="padding:10px 10px 8px;border-bottom:1px solid var(--border)">
-        <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${dayNames[di]}</div>
+        <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${getDayTitle(di)}</div>
         ${dateStr}
         <div style="margin-top:6px">
           <div style="font-size:1rem;font-weight:900;color:${barColor}">${m.kcal > 0 ? m.kcal.toLocaleString() : '—'} kcal</div>
@@ -1870,11 +1906,17 @@ function renderWeek() {
         const deficitColor = weeklyDeficit >= 0 ? '#22c55e' : '#ef4444';
         const kgEquiv = (weeklyDeficit / 7700).toFixed(2);
         const kgColor = parseFloat(kgEquiv) >= 0 ? '#22c55e' : '#ef4444';
-        const dayNames7 = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
+        const dayNames7Short = ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'];
+        function getShortDayTitle(di) {
+          if (!state.planStartDate) return `Η${di+1}`;
+          const d = new Date(state.planStartDate);
+          d.setDate(d.getDate() + di);
+          return dayNames7Short[d.getDay()];
+        }
         const barCells = dayDeficits.map((dd, i) => {
           const dColor = dd.deficit >= 0 ? '#22c55e' : '#ef4444';
           return `<div style="text-align:center;flex:1">
-            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:3px">${dayNames7[i]}</div>
+            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:3px">${getShortDayTitle(i)}</div>
             <div style="font-size:0.7rem;font-weight:800;color:${dColor}">${dd.deficit >= 0 ? '-' : '+'}${Math.abs(dd.deficit)}</div>
             <div style="font-size:0.55rem;color:var(--text3)">${dd.stepsDone ? `👣${(dd.stepsCount/1000).toFixed(1)}k` : ''}${dd.hasTraining ? ' 🏋️' : ''}</div>
           </div>`;
@@ -1923,35 +1965,30 @@ function renderWeek() {
           <div style="background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)">
             <div style="font-size:0.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">🏃 Εβδομαδιαία Δραστηριότητα & Έλλειμμα</div>
             <div style="display:flex;gap:0;margin-bottom:14px">${barCells}</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-              <div style="font-size:0.78rem;color:var(--text2)">
-                🔥 Συνολική καύση: <strong>${weeklyBurn.toLocaleString()} kcal</strong><br>
-                🍽️ Συνολική κατανάλωση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong>
-              </div>
-              <div style="text-align:right">
-                <div style="font-size:1.3rem;font-weight:900;color:${deficitColor}">${weeklyDeficit >= 0 ? '−' : '+'}${Math.abs(weeklyDeficit).toLocaleString()} kcal</div>
-                <div style="font-size:0.72rem;color:${kgColor};font-weight:700">≈ ${parseFloat(kgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(kgEquiv))} kg εκτιμ.</div>
-                <div style="font-size:0.62rem;color:var(--text3)">εβδομαδιαίο ${weeklyDeficit >= 0 ? 'έλλειμμα' : 'πλεόνασμα'}</div>
-              </div>
+            <div style="font-size:0.78rem;color:var(--text2)">
+              🔥 Συνολική καύση: <strong>${weeklyBurn.toLocaleString()} kcal</strong><br>
+              🍽️ Συνολική κατανάλωση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong>
             </div>
 
             <!-- Προβλέψεις απώλειας -->
-            <div class="week-deficit-grid" style="margin-top:14px">
+            <div class="week-deficit-grid" style="margin-top:10px">
               <!-- Πρόβλεψη βάσει TDEE συντήρησης -->
-              <div style="background:#f0fdf4;border-radius:10px;padding:12px;border:1.5px solid #bbf7d0;text-align:center">
-                <div style="font-size:0.62rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">📐 Βάσει TDEE Συντήρησης</div>
-                <div style="font-size:0.7rem;color:#166534;margin-bottom:6px">TDEE: <strong>${tdee.toLocaleString()} kcal</strong> · Στόχος: <strong>${goalKcalPerDay.toLocaleString()} kcal</strong></div>
-                <div style="font-size:1.15rem;font-weight:900;color:${tdeeColor}">${tdeeWeeklyDeficit >= 0 ? '−' : '+'}${Math.abs(tdeeWeeklyDeficit).toLocaleString()} kcal</div>
-                <div style="font-size:0.72rem;font-weight:700;color:${tdeeColor};margin-top:2px">≈ ${parseFloat(tdeeKgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(tdeeKgEquiv))} kg</div>
-                <div style="font-size:0.58rem;color:#166534;margin-top:3px">θεωρητική πρόβλεψη</div>
+              <div style="background:#f0fdf4;border-radius:8px;padding:8px 10px;border:1.5px solid #bbf7d0">
+                <div style="font-size:0.6rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">📐 Βάσει TDEE</div>
+                <div style="font-size:0.65rem;color:#166534;margin-bottom:3px">TDEE: <strong>${tdee.toLocaleString()}</strong> · Στόχος: <strong>${goalKcalPerDay.toLocaleString()} kcal</strong></div>
+                <div style="display:flex;align-items:baseline;gap:6px">
+                  <div style="font-size:1rem;font-weight:900;color:${tdeeColor}">${tdeeWeeklyDeficit >= 0 ? '−' : '+'}${Math.abs(tdeeWeeklyDeficit).toLocaleString()} kcal</div>
+                  <div style="font-size:0.7rem;font-weight:700;color:${tdeeColor}">≈ ${parseFloat(tdeeKgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(tdeeKgEquiv))} kg</div>
+                </div>
               </div>
               <!-- Πρόβλεψη βάσει πραγματικής καύσης -->
-              <div style="background:#eff6ff;border-radius:10px;padding:12px;border:1.5px solid #bfdbfe;text-align:center">
-                <div style="font-size:0.62rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">🏃 Βάσει Πραγματικής Καύσης</div>
-                <div style="font-size:0.7rem;color:#1e3a8a;margin-bottom:6px">Καύση: <strong>${weeklyBurn.toLocaleString()} kcal</strong> · Κατ/ση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong></div>
-                <div style="font-size:1.15rem;font-weight:900;color:${deficitColor}">${weeklyDeficit >= 0 ? '−' : '+'}${Math.abs(weeklyDeficit).toLocaleString()} kcal</div>
-                <div style="font-size:0.72rem;font-weight:700;color:${kgColor};margin-top:2px">≈ ${parseFloat(kgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(kgEquiv))} kg</div>
-                <div style="font-size:0.58rem;color:#1e3a8a;margin-top:3px">με βήματα & προπόνηση</div>
+              <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;border:1.5px solid #bfdbfe">
+                <div style="font-size:0.6rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">🏃 Πραγματική Καύση</div>
+                <div style="font-size:0.65rem;color:#1e3a8a;margin-bottom:3px">Καύση: <strong>${weeklyBurn.toLocaleString()}</strong> · Κατ/ση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong></div>
+                <div style="display:flex;align-items:baseline;gap:6px">
+                  <div style="font-size:1rem;font-weight:900;color:${deficitColor}">${weeklyDeficit >= 0 ? '−' : '+'}${Math.abs(weeklyDeficit).toLocaleString()} kcal</div>
+                  <div style="font-size:0.7rem;font-weight:700;color:${kgColor}">≈ ${parseFloat(kgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(kgEquiv))} kg</div>
+                </div>
               </div>
             </div>
 
@@ -2000,8 +2037,7 @@ function renderRecipes(filter = '') {
   const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Δεκατιανό', lunch:'🥗 Μεσημεριανά', afternoon:'☕ Απογευματινό', dinner:'🌙 Βραδινά' };
 
   let html = `
-    <div class="container">
-      <div class="rc-card">
+    <div class="rc-card">
         <div class="rc-header">
           <span class="rc-title">📖 Συνταγές</span>
           <button class="rc-new-btn" onclick="openAddRecipeModal()">+ Νέα συνταγή</button>
@@ -2012,11 +2048,12 @@ function renderRecipes(filter = '') {
         </div>
         <div class="recipe-filter-pills">
           <button class="recipe-pill active" onclick="filterRecipeType('all',this)">Όλες</button>
-          <button class="recipe-pill" onclick="filterRecipeType('breakfast',this)">☀️ Πρωινά</button>
-          <button class="recipe-pill" onclick="filterRecipeType('snack',this)">🍎 Δεκατιανό</button>
-          <button class="recipe-pill" onclick="filterRecipeType('lunch',this)">☀️ Μεσημεριανά</button>
-          <button class="recipe-pill" onclick="filterRecipeType('afternoon',this)">☕ Απογευματινό</button>
-          <button class="recipe-pill" onclick="filterRecipeType('dinner',this)">🌙 Βραδινά</button>
+          <button class="recipe-pill" onclick="filterRecipeType('breakfast',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Πρωινά</button>
+          <button class="recipe-pill" onclick="filterRecipeType('snack',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 2c-1 2-1.5 4-1.5 6s.5 4 1.5 6"/><path d="M2 12h20"/></svg> Δεκατιανά</button>
+          <button class="recipe-pill" onclick="filterRecipeType('lunch',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Μεση/νό</button>
+          <div class="recipe-filter-pills-break"></div>
+          <button class="recipe-pill" onclick="filterRecipeType('afternoon',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg> Απογευματινά</button>
+          <button class="recipe-pill" onclick="filterRecipeType('dinner',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Βραδινά</button>
         </div>
       </div>`;
 
@@ -2038,7 +2075,7 @@ function renderRecipes(filter = '') {
         }).join('')}
       </div>`;
   });
-  html += '</div></div>';
+  html += '</div>';
   document.getElementById('page-recipes').innerHTML = html;
 }
 
@@ -2061,7 +2098,7 @@ function renderFoods(filter = '') {
   const q = filter.toLowerCase();
 
   let html = `
-    <div class="container">
+    <div class="foods-wrap">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <h2>🔬 Λεξικό Τροφών</h2>
         <button class="btn btn-green btn-sm" onclick="openAddFoodModal()">➕ Νέα</button>
@@ -2100,26 +2137,30 @@ function renderOptimize() {
     <div class="container">
       <h2 style="margin-bottom:14px">⚡ Βελτιστοποίηση & Πλάνο</h2>
 
-      <!-- Goals sliders -->
-      <div class="card card-lg fade-in">
-        <div class="section-title">🎯 Ημερήσιοι Στόχοι</div>
-        <div class="slider-row">
-          <div class="slider-label"><span>🔥 Θερμίδες</span><strong id="sl-kcal-val">${g.kcal} kcal</strong></div>
-          <input type="range" id="sl-kcal" min="1000" max="3500" step="50" value="${g.kcal}" oninput="updateGoal('kcal',this.value)">
+      <!-- Τρέχοντες στόχοι (read-only, από ρυθμίσεις) -->
+      <div class="card card-lg fade-in" style="margin-bottom:14px">
+        <div class="section-title">🎯 Τρέχοντες Στόχοι</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.82rem">
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:10px;text-align:center">
+            <div style="font-size:0.68rem;color:var(--text3);margin-bottom:2px">🔥 Θερμίδες</div>
+            <strong style="color:var(--amber)">${g.kcal} kcal</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:10px;text-align:center">
+            <div style="font-size:0.68rem;color:var(--text3);margin-bottom:2px">🥩 Πρωτεΐνη</div>
+            <strong style="color:var(--blue)">${g.protein}g</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:10px;text-align:center">
+            <div style="font-size:0.68rem;color:var(--text3);margin-bottom:2px">🍚 Υδατάνθρακες</div>
+            <strong style="color:var(--green-d)">${g.carbs}g</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:10px;text-align:center">
+            <div style="font-size:0.68rem;color:var(--text3);margin-bottom:2px">🫒 Λίπος</div>
+            <strong style="color:var(--purple)">${g.fat}g</strong>
+          </div>
         </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>🥩 Πρωτεΐνη</span><strong id="sl-prot-val">${g.protein}g</strong></div>
-          <input type="range" id="sl-prot" min="80" max="300" step="5" value="${g.protein}" oninput="updateGoal('protein',this.value)">
+        <div style="margin-top:10px;font-size:0.72rem;color:var(--text3);text-align:center">
+          Για αλλαγή στόχων πήγαινε στις <button class="btn btn-ghost btn-sm" style="font-size:0.72rem;padding:4px 10px" onclick="showSettingsTab('profile');document.querySelectorAll('[data-tab=settings]').forEach(b=>b.click())">⚙️ Ρυθμίσεις</button>
         </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>🍚 Υδατάνθρακες</span><strong id="sl-carb-val">${g.carbs}g</strong></div>
-          <input type="range" id="sl-carb" min="50" max="400" step="5" value="${g.carbs}" oninput="updateGoal('carbs',this.value)">
-        </div>
-        <div class="slider-row">
-          <div class="slider-label"><span>🫒 Λίπος</span><strong id="sl-fat-val">${g.fat}g</strong></div>
-          <input type="range" id="sl-fat" min="20" max="200" step="5" value="${g.fat}" oninput="updateGoal('fat',this.value)">
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="resetGoals()">↺ Reset</button>
       </div>
 
       <!-- Mode + Apply -->
@@ -3820,7 +3861,13 @@ function exportPDF_week() {
     afternoon: { label:'Απογευματινό', color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
     dinner:    { label:'Βραδινό',      color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
   };
-  const dayNamesP = ['Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο','Κυριακή'];
+  const dayNamesAllP = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+  function getPdfDayTitle(di) {
+    if (!state.planStartDate) return `Ημ${di+1}`;
+    const d = new Date(state.planStartDate);
+    d.setDate(d.getDate() + di);
+    return dayNamesAllP[d.getDay()];
+  }
 
   const weekCols = state.week.map((day, di) => {
     const tot = calcDayMacros(di, false);
@@ -3867,7 +3914,7 @@ function exportPDF_week() {
 
     return `<div style="flex:1;min-width:0;background:#fff;border-radius:6px;border:1px solid #e5e7eb;border-top:3px solid ${barColor};overflow:hidden">
       <div style="padding:5px 6px 4px;border-bottom:1px solid #f3f4f6">
-        <div style="font-weight:900;font-size:10px;color:#111">${dayNamesP[di]}</div>
+        <div style="font-weight:900;font-size:10px;color:#111">${getPdfDayTitle(di)}</div>
         ${dateStr}
         <div style="margin-top:3px">
           <div style="font-size:11px;font-weight:900;color:${barColor}">${tot.kcal > 0 ? tot.kcal.toLocaleString() : '—'} kcal</div>
@@ -3997,10 +4044,12 @@ function renderIdeasPage() {
   if (!el) return;
   // Render sub-tabs: Συνταγές | Τρόφιμα
   el.innerHTML = `
-    <div class="container fade-in">
-      <div class="segment" style="margin-top:14px">
-        <button class="seg-btn active" id="ideas-tab-recipes" onclick="showIdeasTab('recipes')">📖 Συνταγές</button>
-        <button class="seg-btn" id="ideas-tab-foods" onclick="showIdeasTab('foods')">🥦 Τρόφιμα</button>
+    <div class="fade-in ideas-page-wrap">
+      <div class="ideas-tabs-bar">
+        <div class="segment">
+          <button class="seg-btn active" id="ideas-tab-recipes" onclick="showIdeasTab('recipes')">📖 Συνταγές</button>
+          <button class="seg-btn" id="ideas-tab-foods" onclick="showIdeasTab('foods')">🥦 Τρόφιμα</button>
+        </div>
       </div>
       <div id="ideas-recipes-content"></div>
       <div id="ideas-foods-content" style="display:none"></div>
@@ -4182,8 +4231,7 @@ function renderSettingsPage() {
   if (!el) return;
   el.innerHTML = `
     <div class="container fade-in" style="padding-top:14px">
-      ${_settingsSaveBtn('settings-save-top')}
-      <div class="segment" style="margin-top:14px">
+      <div class="segment" style="margin-top:0">
         <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">👤 Προφίλ</button>
         <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">⚡ Βελτίωση</button>
         <button class="seg-btn" id="settings-tab-supplements" onclick="showSettingsTab('supplements')">💊 Συμπληρώματα</button>
