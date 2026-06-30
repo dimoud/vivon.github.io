@@ -100,6 +100,67 @@ async function _callGemini(prompt) {
   return result;
 }
 
+// ── Estimate nutrition for a food/recipe with AI ────────────
+
+async function _callGeminiObject(prompt) {
+  const response = await fetch(GEMINI_PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('Δεν βρέθηκε έγκυρο JSON στην απάντηση');
+  return JSON.parse(jsonMatch[0]);
+}
+
+async function estimateFoodCaloriesWithAI(foodName, unit) {
+  const btn = document.getElementById('ai-estimate-food-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
+  try {
+    const per = unit === 'τεμ' ? 'ανά τεμάχιο' : 'ανά 100' + (unit || 'g');
+    const result = await _callGeminiObject(
+      `Είσαι διατροφολόγος. Εκτίμησε τα μακροθρεπτικά του τροφίμου "${foodName}" ${per}.\n` +
+      `Επίστρεψε ΜΟΝΟ JSON object χωρίς markdown:\n{"kcal": <number>, "p": <number>, "c": <number>, "f": <number>}`
+    );
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = Math.round(val * 10) / 10; };
+    set('nf-kcal', result.kcal ?? 0);
+    set('nf-p',    result.p    ?? 0);
+    set('nf-c',    result.c    ?? 0);
+    set('nf-f',    result.f    ?? 0);
+    showToast('✅ AI εκτίμηση θερμίδων!');
+  } catch (e) {
+    showToast('❌ ' + (e.message || 'Σφάλμα AI'));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✨ AI'; }
+  }
+}
+
+async function estimateRecipeCaloriesWithAI(recipeName) {
+  const btn = document.getElementById('ai-estimate-recipe-btn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳...'; }
+  try {
+    const result = await _callGeminiObject(
+      `Είσαι διατροφολόγος. Εκτίμησε τα μακροθρεπτικά της συνταγής/γεύματος "${recipeName}" για μία μερίδα.\n` +
+      `Επίστρεψε ΜΟΝΟ JSON object χωρίς markdown:\n{"kcal": <number>, "p": <number>, "c": <number>, "f": <number>}`
+    );
+    ['kcal','p','c','f'].forEach(k => {
+      const el = document.getElementById('nr-' + k);
+      if (el) el.value = Math.round((result[k] ?? 0) * 10) / 10;
+    });
+    showToast('✅ AI εκτίμηση θερμίδων!');
+  } catch (e) {
+    showToast('❌ ' + (e.message || 'Σφάλμα AI'));
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '✨ AI'; }
+  }
+}
+
 const _RULES = `ΚΑΝΟΝΕΣ:
 1. Αν πρωινό hasYogurt:true → βραδινό ΚΑΙ σνακ ΔΕΝ πρέπει να έχουν hasYogurt:true
 2. Μέγιστη επανάληψη ίδιου recipeId: 2 φορές σε ΟΛΗ την εβδομάδα

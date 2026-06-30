@@ -211,20 +211,20 @@ async function sbSaveSupplements(userId, supplements) {
 
 async function sbSaveCustomFoods(userId, customFoods) {
   const { data: existing } = await _supabase.from('custom_foods').select('id').eq('user_id', userId).maybeSingle();
-  await _supabase.from('custom_foods').upsert({
-    ...(existing ? { id: existing.id } : {}),
-    user_id: userId,
-    data:    customFoods,
-  }, { onConflict: 'id' });
+  if (existing) {
+    await _supabase.from('custom_foods').update({ data: customFoods }).eq('id', existing.id);
+  } else {
+    await _supabase.from('custom_foods').insert({ user_id: userId, data: customFoods });
+  }
 }
 
 async function sbSaveCustomRecipes(userId, customRecipes) {
   const { data: existing } = await _supabase.from('custom_recipes').select('id').eq('user_id', userId).maybeSingle();
-  await _supabase.from('custom_recipes').upsert({
-    ...(existing ? { id: existing.id } : {}),
-    user_id: userId,
-    data:    customRecipes,
-  }, { onConflict: 'id' });
+  if (existing) {
+    await _supabase.from('custom_recipes').update({ data: customRecipes }).eq('id', existing.id);
+  } else {
+    await _supabase.from('custom_recipes').insert({ user_id: userId, data: customRecipes });
+  }
 }
 
 async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab }) {

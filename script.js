@@ -231,6 +231,15 @@ function calcDayDeficit(dayIdx) {
 
 // ── COMPUTED MACROS ──
 function calcRecipeMacros(recipe, scaleFactor = 1) {
+  if (recipe.fixedMacros) {
+    const m = recipe.fixedMacros;
+    return {
+      kcal: Math.round(m.kcal * scaleFactor),
+      p:    Math.round(m.p    * scaleFactor),
+      c:    Math.round(m.c    * scaleFactor),
+      f:    Math.round(m.f    * scaleFactor),
+    };
+  }
   let kcal = 0, p = 0, c = 0, f = 0;
   const allFoods = [...FOODS_DB, ...state.customFoods];
   recipe.ingredients.forEach(ing => {
@@ -3601,6 +3610,16 @@ function openAddRecipeModal() {
       </select>
     </div>
     <div class="form-group"><label>Οδηγίες</label><textarea id="nr-inst" placeholder="Βήμα 1..."></textarea></div>
+    <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px">
+      <span style="font-size:0.82rem;color:var(--text2)">Θερμίδες ανά μερίδα</span>
+      <button id="ai-estimate-recipe-btn" class="btn btn-ghost btn-sm" onclick="estimateRecipeCaloriesWithAI(document.getElementById('nr-name').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="form-group"><label>Θερμίδες</label><input type="number" id="nr-kcal" placeholder="0"></div>
+      <div class="form-group"><label>Πρωτεΐνη (g)</label><input type="number" id="nr-p" placeholder="0"></div>
+      <div class="form-group"><label>Υδατάνθρακες (g)</label><input type="number" id="nr-c" placeholder="0"></div>
+      <div class="form-group"><label>Λίπος (g)</label><input type="number" id="nr-f" placeholder="0"></div>
+    </div>
     <div class="section-title">Υλικά (1ο)</div>
     <div style="display:flex;gap:8px">
       <select id="nr-food1" style="flex:1">${allFoods.map(f=>`<option value="${f.id}">${f.name}</option>`).join('')}</select>
@@ -3614,13 +3633,18 @@ function openAddRecipeModal() {
 function saveNewRecipe() {
   const name = document.getElementById('nr-name').value.trim();
   if (!name) { showToast('⚠️ Βάλε όνομα!'); return; }
+  const kcal = parseFloat(document.getElementById('nr-kcal').value) || 0;
+  const p    = parseFloat(document.getElementById('nr-p').value)    || 0;
+  const c    = parseFloat(document.getElementById('nr-c').value)    || 0;
+  const f    = parseFloat(document.getElementById('nr-f').value)    || 0;
   const newRecipe = {
     id: 'cr_' + Date.now(),
     name,
     emoji: document.getElementById('nr-emoji').value || '🍽️',
     meal: document.getElementById('nr-meal').value,
     instructions: document.getElementById('nr-inst').value,
-    ingredients: [{ foodId: document.getElementById('nr-food1').value, qty: parseInt(document.getElementById('nr-qty1').value) || 100 }]
+    ingredients: [{ foodId: document.getElementById('nr-food1').value, qty: parseInt(document.getElementById('nr-qty1').value) || 100 }],
+    ...(kcal || p || c || f ? { fixedMacros: { kcal, p, c, f } } : {}),
   };
   state.customRecipes.push(newRecipe);
   saveState();
@@ -3643,6 +3667,10 @@ function openAddFoodModal() {
     </div>
     <div class="form-group"><label>Μονάδα</label>
       <select id="nf-unit"><option value="g">γραμμάρια (g)</option><option value="ml">ml</option><option value="τεμ">τεμάχια</option></select>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="font-size:0.82rem;color:var(--text2)">Θρεπτικά στοιχεία</span>
+      <button id="ai-estimate-food-btn" class="btn btn-ghost btn-sm" onclick="estimateFoodCaloriesWithAI(document.getElementById('nf-name').value, document.getElementById('nf-unit').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-group"><label>Θερμίδες</label><input type="number" id="nf-kcal" placeholder="0"></div>
