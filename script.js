@@ -2666,7 +2666,6 @@ function renderBuilderPage(typeFilter) {
   const applyDayLabel = state.planStartDate
     ? (() => { const d = new Date(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months=['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου']; const dayNames=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο']; return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
     : state.week[applyDayIdx].label;
-  const mealCount = builderMeals.length;
 
   document.getElementById('page-builder').innerHTML = `
   <div class="dplanner-wrap">
@@ -2674,68 +2673,102 @@ function renderBuilderPage(typeFilter) {
     <!-- TOP CARD (mobile-first) -->
     <div class="dplanner-topcard">
       <div class="dplanner-topcard-header">
-        <div>
+        <button class="dplanner-back-btn" onclick="navigateTo('today')" title="Πίσω">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div style="flex:1">
           <h2 class="dplanner-topcard-title">Day Planner</h2>
           <p class="dplanner-topcard-sub">Σχεδίασε τα γεύματά σου για σήμερα</p>
         </div>
-        <button class="dplanner-topcard-icon-btn" onclick="navigateTo('week')" title="Εβδομαδιαία προβολή">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <button class="dplanner-topcard-icon-btn" onclick="exportPDF()" title="PDF">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+          <span style="font-size:0.65rem;font-weight:700;display:block;margin-top:1px">PDF</span>
         </button>
       </div>
-      ${mealCount > 0 ? `
-      <div class="dplanner-status-row" onclick="dpHighlightType('all')">
+      <div class="dplanner-status-row ${totalKcal > 0 ? '' : 'dplanner-status-empty'}">
         <div class="dplanner-status-left">
-          <div class="dplanner-status-check">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="dplanner-status-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#dcfce7"/><path d="M3 11c0 0 2-3 9-3s9 3 9 3v2c0 4.42-3.58 8-8 8H11c-4.42 0-8-3.58-8-8v-2z" fill="none"/><ellipse cx="12" cy="13" rx="5" ry="4" fill="none" stroke="var(--green-d)" stroke-width="1.5"/></svg>
           </div>
           <div>
-            <div class="dplanner-status-title">Το πλάνο είναι έτοιμο</div>
-            <div class="dplanner-status-meta">${mealCount} γεύματα &nbsp;·&nbsp; ${totalKcal} kcal</div>
+            <div class="dplanner-status-title">${totalKcal > 0 ? 'Το πλάνο είναι έτοιμο!' : 'Επίλεξε γεύματα'}</div>
+            <div class="dplanner-status-meta">${builderMeals.length} γεύματα &nbsp;·&nbsp; ${totalKcal} kcal</div>
           </div>
         </div>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>` : `
-      <div class="dplanner-status-row dplanner-status-empty">
-        <div class="dplanner-status-left">
-          <div class="dplanner-status-check dplanner-status-check--empty">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
-          <div>
-            <div class="dplanner-status-title" style="color:var(--text2)">Επίλεξε γεύματα</div>
-            <div class="dplanner-status-meta">0 γεύματα &nbsp;·&nbsp; 0 kcal</div>
-          </div>
-        </div>
-      </div>`}
-      <button class="dplanner-btn-clear" onclick="builderPageClear()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        Καθαρισμός πλάνου
-      </button>
+        ${totalKcal > 0 ? `<button class="dplanner-preview-btn" onclick="dpHighlightType('all')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Προεπισκόπηση
+        </button>` : ''}
+      </div>
       <button class="dplanner-btn-save" onclick="builderPageApply()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Αποθήκευση πλάνου
       </button>
+      <button class="dplanner-btn-clear" onclick="builderPageClear()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Καθαρισμός πλάνου
+      </button>
     </div>
 
-    <!-- DAY SELECTOR CARD (mobile) -->
+    <!-- SAVE DESTINATION CARD (mobile) -->
     <div class="dplanner-daycard">
-      <div class="dplanner-daycard-header">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        <div>
-          <div class="dplanner-daycard-title">Αποθήκευση πλάνου σε ημέρα</div>
-          <div class="dplanner-daycard-sub">Επίλεξε την ημέρα που θέλεις να εφαρμοστεί το πλάνο</div>
+      <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800;margin-bottom:12px">Πού θέλεις να αποθηκεύσεις;</div>
+
+      <button class="dplanner-dest-row" onclick="builderPageApply()">
+        <div class="dplanner-dest-icon" style="background:#dcfce7">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
-      </div>
-      <div class="dplanner-daycard-nav">
-        <button class="dplanner-nav-btn" onclick="state._builderApplyDay=Math.max(0,${applyDayIdx}-1);renderBuilderPage('${typeFilter}')">‹</button>
-        <div class="dplanner-daycard-label">
-          ${applyDayLabel}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="dplanner-dest-info">
+          <div class="dplanner-dest-name">Επιλογή συγκεκριμένης ημερομηνίας</div>
+          <div class="dplanner-dest-sub">Επίλεξε ημερομηνία από το ημερολόγιο</div>
         </div>
-        <button class="dplanner-nav-btn" onclick="state._builderApplyDay=Math.min(${state.week.length-1},${applyDayIdx}+1);renderBuilderPage('${typeFilter}')">›</button>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+
+      <button class="dplanner-dest-row" onclick="builderSaveToDaySlot()">
+        <div class="dplanner-dest-icon" style="background:#dcfce7">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+        <div class="dplanner-dest-info">
+          <div class="dplanner-dest-name">Αποθήκευση ως Ημέρας (Day 1, Day 2…)</div>
+          <div class="dplanner-dest-sub">Δημιούργησε την δική σου σειρά ημερών</div>
+        </div>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+
+    <!-- WEEK OVERVIEW CARD (mobile) -->
+    <div class="dplanner-daycard">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800">Επισκόπηση εβδομάδας</div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       </div>
-      <div class="dplanner-daycard-info">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Το πλάνο θα αποθηκευτεί και θα εφαρμοστεί για την επιλεγμένη ημέρα.
+      <div class="dplanner-week-grid">
+        ${state.week.map((d, i) => {
+          const hasMeals = d.meals && d.meals.length > 0;
+          const shortDay = state.planStartDate ? (() => { const dt = new Date(state.planStartDate); dt.setDate(dt.getDate()+i); return ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'][dt.getDay()]; })() : d.label.slice(0,3);
+          const dayNum = `Day ${i+1}`;
+          return `<button class="dplanner-week-day ${hasMeals ? 'has-meals' : ''} ${applyDayIdx === i ? 'selected' : ''}"
+            onclick="state._builderApplyDay=${i};renderBuilderPage('${typeFilter}')">
+            <div class="dplanner-week-day-check">
+              ${hasMeals
+                ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+                : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>`}
+            </div>
+            <div class="dplanner-week-day-name">${shortDay}</div>
+            <div class="dplanner-week-day-num">${dayNum}</div>
+          </button>`;
+        }).join('')}
+      </div>
+      <div class="dplanner-week-legend">
+        <span class="dplanner-week-legend-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="background:var(--green-d);border-radius:50%;padding:1px"><polyline points="20 6 9 17 4 12"/></svg>
+          Αποθηκευμένο
+        </span>
+        <span class="dplanner-week-legend-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+          Δεν έχει αποθηκευτεί
+        </span>
       </div>
     </div>
 
