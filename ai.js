@@ -3,7 +3,7 @@
 // ============================================================
 
 const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/quick-endpoint';
-const AI_COOLDOWN_MS = 3 * 60 * 1000; // 3 λεπτά
+const AI_COOLDOWN_MS = 30 * 1000; // 30 δευτερόλεπτα
 const AI_LAST_CALL_KEY = 'vivon_ai_last_call';
 
 function _checkRateLimit() {
@@ -287,7 +287,7 @@ ${_FORMAT}`;
     state.programCreated = true;
     saveState();
     navigateTo('today');
-    showToast('✅ Νέο πλάνο δημιουργήθηκε με AI!');
+    showToast('✅ Το εβδομαδιαίο πλάνο δημιουργήθηκε επιτυχώς!', 4000);
 
   } catch (e) {
     console.error('AI generate error:', e);
