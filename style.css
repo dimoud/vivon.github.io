@@ -103,6 +103,7 @@ h3 { font-size: 0.95rem; }
   position: relative;
 }
 .app-title { font-size: 1.05rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 6px; }
+.topnav-logo { height: 36px; width: auto; vertical-align: middle; object-fit: contain; }
 
 /* ── APP SHELL (sidebar layout) ── */
 .app-shell {
@@ -279,6 +280,122 @@ h3 { font-size: 0.95rem; }
 /* ── PAGES ── */
 .page { display: none; padding-top: 12px; }
 .page.active { display: block; }
+
+/* ── WEEK PAGE HEADER ── */
+.week-page-header {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 12px;
+}
+@media (max-width: 600px) {
+  .week-page-header { padding: 12px 14px; }
+  .week-page-header h1 { font-size: 1.15rem !important; }
+}
+
+/* ── WEEK SUMMARY INNER ── */
+.week-summary-inner { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .week-summary-inner {
+    flex-direction: column;
+    gap: 12px !important;
+  }
+  .week-summary-inner > div { min-width: 0 !important; width: 100%; }
+}
+
+/* ── MOBILE GLOBAL OPTIMIZATIONS ── */
+@media (max-width: 600px) {
+  body { font-size: 14px; }
+  .container { padding: 0 10px; }
+
+  /* Cards — smaller padding on mobile */
+  .card { padding: 14px; margin-bottom: 10px; }
+  .card-lg { padding: 16px; }
+  .card-sm { padding: 10px 12px; }
+
+  /* Bigger touch targets for buttons */
+  .btn { padding: 10px 16px; min-height: 42px; }
+  .btn-sm { padding: 8px 12px; font-size: 0.78rem; min-height: 36px; }
+  .meal-check { width: 36px; height: 36px; }
+  .supp-check { width: 32px; height: 32px; }
+
+  /* Meal cards — reduce inner padding */
+  .meal-card-header { padding: 12px 12px 8px; gap: 10px; }
+  .meal-emoji { font-size: 1.7rem; }
+  .meal-name { font-size: 0.92rem; }
+  .meal-ingredients { padding: 10px 12px; }
+  .meal-actions { padding: 0 12px 12px; gap: 6px; }
+  .meal-actions .btn { flex: 1; }
+
+  /* Macros row */
+  .macro-chip-val { font-size: 0.88rem; }
+  .macro-chip-lbl { font-size: 0.6rem; }
+
+  /* Tab bar */
+  .tab-item { font-size: 0.62rem; padding: 6px 2px 8px; }
+  .tab-item .tab-icon { font-size: 1.2rem; }
+
+  /* Top nav */
+  .top-nav-inner { padding: 8px 12px; }
+  #hero-title { font-size: 1.2rem; }
+
+  /* Dashboard grid */
+  .dashboard-grid { gap: 8px; }
+  .macro-card { padding: 12px; }
+  .macro-card-value { font-size: 1.35rem; }
+
+  /* Kcal hero */
+  .kcal-hero { padding: 16px; }
+  .kcal-hero-left .big-num { font-size: 2.4rem; }
+  .kcal-ring { width: 76px; height: 76px; }
+
+  /* Modal */
+  .modal-sheet { padding: 16px 16px 24px; border-radius: 20px 20px 0 0; }
+  .modal-title { font-size: 1.05rem; }
+
+  /* Week summary strip — stack vertically */
+  .week-summary-inner { flex-direction: column; gap: 12px; }
+
+  /* Segment pills — smaller */
+  .segment { padding: 2px; }
+  .seg-btn { padding: 6px 4px; font-size: 0.7rem; }
+
+  /* Recipe cards — 2 columns always */
+  .recipes-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .recipe-card { padding: 10px; }
+  .recipe-card-emoji { font-size: 1.6rem; }
+  .recipe-card-name { font-size: 0.7rem; }
+
+  /* FAB — slightly smaller */
+  .fab { width: 46px; height: 46px; font-size: 1.3rem; bottom: 84px; right: 12px; }
+
+  /* Toast */
+  .toast { bottom: 86px; font-size: 0.78rem; max-width: calc(100vw - 32px); white-space: normal; text-align: center; }
+
+  /* Week days grid header */
+  .dplanner-topbar { padding: 10px 14px; }
+  .dplanner-topbar-left h2 { font-size: 1rem; }
+
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: 1rem; }
+}
+
+/* ── PROFILE GRIDS ── */
+.profile-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.profile-body-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 480px) {
+  .profile-stats-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .profile-stats-grid .card { padding: 12px 8px; }
+  .profile-body-grid { grid-template-columns: 1fr 1fr; }
+}
 
 /* ── QUOTE BANNER ── */
 .quote-banner {
@@ -793,6 +910,28 @@ select { cursor: pointer; }
 
 /* ── WEEK GRID ── */
 .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 14px; }
+@media (max-width: 480px) {
+  .week-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .week-day-btn { padding: 8px 2px; font-size: 0.65rem; }
+  .week-day-btn .wday { font-size: 0.9rem; }
+}
+
+/* ── 7-DAY WEEK PAGE GRID (Εβδομαδιαίο tab) ── */
+.week-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .week-days-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+  .week-days-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+}
+@media (max-width: 380px) {
+  .week-days-grid { grid-template-columns: 1fr; }
+}
 
 /* ── WEEK OVERVIEW (Εβδομαδιαίο tab) ── */
 .week-overview-grid {

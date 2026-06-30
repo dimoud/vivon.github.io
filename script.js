@@ -24,18 +24,18 @@ let state = {
 function getMealTimes() {
   const first = (state.profile && state.profile.firstMealTime) ? state.profile.firstMealTime : '08:00';
   const [h, m] = first.split(':').map(Number);
-  const addHours = (hours) => {
-    const total = h * 60 + m + hours * 60;
+  const addMins = (mins) => {
+    const total = h * 60 + m + mins;
     const hh = Math.floor(total / 60) % 24;
     const mm = total % 60;
     return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
   };
   return {
     breakfast: first,
-    snack:     addHours(3),
-    lunch:     addHours(6),
-    afternoon: addHours(9),
-    dinner:    addHours(12),
+    snack:     addMins(3 * 60),    // +3h
+    lunch:     addMins(5 * 60),    // +5h
+    afternoon: addMins(8 * 60),    // +8h (απόγευμα, όχι βραδινό)
+    dinner:    addMins(11 * 60),   // +11h
   };
 }
 
@@ -571,7 +571,7 @@ function renderProfile() {
       </div>
 
       <!-- STAT CHIPS: BMI / BMR / TDEE -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px" id="profile-stats-card">
+      <div class="profile-stats-grid" id="profile-stats-card">
         <div class="card fade-in" style="margin:0;padding:16px 12px;text-align:center">
           <div style="width:44px;height:44px;border-radius:50%;background:#fff3e0;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 8px">⚖️</div>
           <div class="bmi-val" style="font-size:1.55rem;font-weight:900;color:${bmiCol};line-height:1">${bmi}</div>
@@ -595,7 +595,7 @@ function renderProfile() {
       <!-- ΣΩΜΑΤΙΚΑ ΣΤΟΙΧΕΙΑ -->
       <div class="card card-lg fade-in">
         <div class="section-title">🏃 Σωματικά Στοιχεία</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+        <div class="profile-body-grid" style="margin-bottom:14px">
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Βάρος (kg)</label>
             <input type="number" id="prof-weight" value="${p.weight}" step="0.1" min="30" max="300"
@@ -775,7 +775,7 @@ function renderProfile() {
             const add = n => { const tot=h*60+m+n*60; return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); };
             return [
               ['🌅 Πρωινό', t.breakfast],
-              ['🍎 Πρόαριστο', add(3)],
+              ['🍎 Δεκατιανό', add(3)],
               ['☀️ Μεσημεριανό', add(6)],
               ['🧃 Απογευματινό', add(9)],
               ['🌙 Βραδινό', add(12)],
@@ -940,7 +940,7 @@ function updateFirstMealTime(val) {
   if (preview) {
     const [h, m] = val.split(':').map(Number);
     const add = n => { const tot = h*60+m+n*60; return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); };
-    const slots = [['🌅 Πρωινό',val],['🍎 Πρόαριστο',add(3)],['☀️ Μεσημεριανό',add(6)],['🧃 Απογευματινό',add(9)],['🌙 Βραδινό',add(12)]];
+    const slots = [['🌅 Πρωινό',val],['🍎 Δεκατιανό',add(3)],['☀️ Μεσημεριανό',add(5)],['🧃 Απογευματινό',add(8)],['🌙 Βραδινό',add(11)]];
     preview.innerHTML = slots.map(([lbl,time])=>`<div style="background:var(--bg2);border-radius:var(--radius-sm);padding:6px 10px;display:flex;justify-content:space-between"><span style="color:var(--text2)">${lbl}</span><strong style="color:var(--text)">${time}</strong></div>`).join('');
   }
   // Re-render ημερήσιου/εβδομαδιαίου ώστε οι ώρες να φαίνονται αμέσως
@@ -1107,7 +1107,7 @@ function getTodayQuote() {
 
 // ── RENDER HELPERS ──
 function mealTypePill(type) {
-  const map = { breakfast: ['Πρωινό','pill-breakfast'], lunch: ['Μεσημεριανό','pill-lunch'], dinner: ['Βραδινό','pill-dinner'], snack: ['Προάριστο','pill-snack'], afternoon: ['Απογευματινό','pill-afternoon'] };
+  const map = { breakfast: ['Πρωινό','pill-breakfast'], lunch: ['Μεσημεριανό','pill-lunch'], dinner: ['Βραδινό','pill-dinner'], snack: ['Δεκατιανό','pill-snack'], afternoon: ['Απογευματινό','pill-afternoon'] };
   const [label, cls] = map[type] || ['',''];
   return `<span class="meal-type-pill ${cls}">${label}</span>`;
 }
@@ -1580,28 +1580,28 @@ function renderWeek() {
     <div style="padding:0 0 24px;background:var(--bg);min-height:100vh">
 
       <!-- Header -->
-      <div style="background:var(--card);border-bottom:1px solid var(--border);padding:16px 20px 14px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div class="week-page-header">
         <div>
-          <h1 style="font-size:1.6rem;font-weight:900;color:var(--text);margin-bottom:4px">Εβδομαδιαίο Πρόγραμμα</h1>
-          <div style="font-size:0.8rem;color:var(--text3)">7 ημέρες · <strong style="color:var(--text2)">${avgKcal.toLocaleString()} kcal/ημέρα</strong> κατά μέσο όρο</div>
+          <h1 style="font-size:1.4rem;font-weight:900;color:var(--text);margin-bottom:4px">Εβδομαδιαίο Πρόγραμμα</h1>
+          <div style="font-size:0.78rem;color:var(--text3)">7 ημέρες · <strong style="color:var(--text2)">${avgKcal.toLocaleString()} kcal/ημέρα</strong></div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <div style="display:flex;align-items:center;gap:4px;background:var(--bg);border-radius:10px;padding:6px 10px;border:1px solid var(--border)">
-            <button onclick="shiftWeek(-1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:0 4px">‹</button>
-            <button class="btn btn-ghost btn-sm" onclick="goToToday()" style="font-size:0.75rem;padding:4px 10px">Σήμερα</button>
-            <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:0 4px">›</button>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:10px;padding:4px 8px;border:1px solid var(--border)">
+            <button onclick="shiftWeek(-1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">‹</button>
+            <button class="btn btn-ghost btn-sm" onclick="goToToday()">Σήμερα</button>
+            <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">›</button>
           </div>
-          ${weekRange ? `<div style="font-size:0.82rem;font-weight:700;color:var(--text2);white-space:nowrap">${weekRange}</div>` : ''}
-          <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-sm" onclick="exportPDF()" style="gap:4px">🖨️ PDF</button>
-            <button class="btn btn-ghost btn-sm" onclick="copyDay()">📋 Αντιγραφή</button>
+          ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
+          <div style="display:flex;gap:5px;margin-left:auto">
+            <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="copyDay()">📋</button>
           </div>
         </div>
       </div>
 
       <!-- Summary strip -->
       <div style="background:var(--card);border-bottom:1px solid var(--border);padding:16px 20px">
-        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div class="week-summary-inner" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
           <!-- Gauge -->
           <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
             ${weekGauge(avgPct)}
@@ -1627,8 +1627,8 @@ function renderWeek() {
       </div>
 
       <!-- 7-day grid -->
-      <div style="padding:16px 16px 8px;overflow-x:auto">
-        <div style="display:grid;grid-template-columns:repeat(7,minmax(145px,1fr));gap:10px;min-width:1020px">
+      <div style="padding:12px 12px 8px">
+        <div class="week-days-grid">
           ${cols}
         </div>
       </div>
@@ -2005,7 +2005,7 @@ function renderBuilderPage(typeFilter) {
   const _mt = getMealTimes();
   const mealTypeMeta = {
     breakfast:  { label: 'Πρωινό',        icon: '🌅', cls: 'breakfast', color: '#f59e0b', time: _mt.breakfast },
-    snack:      { label: 'Πρόαριστο',     icon: '🍎', cls: 'snack',     color: '#22c55e', time: _mt.snack },
+    snack:      { label: 'Δεκατιανό',     icon: '🍎', cls: 'snack',     color: '#22c55e', time: _mt.snack },
     lunch:      { label: 'Μεσημεριανό',   icon: '☀️', cls: 'lunch',     color: '#3b82f6', time: _mt.lunch },
     afternoon:  { label: 'Απογευματινό',  icon: '🧃', cls: 'afternoon', color: '#06b6d4', time: _mt.afternoon },
     dinner:     { label: 'Βραδινό',       icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: _mt.dinner },
@@ -2013,7 +2013,7 @@ function renderBuilderPage(typeFilter) {
   const filterLabels = [
     { key: 'all',       label: 'Όλα' },
     { key: 'breakfast', label: 'Πρωινό' },
-    { key: 'snack',     label: 'Πρόαριστο' },
+    { key: 'snack',     label: 'Δεκατιανό' },
     { key: 'lunch',     label: 'Μεσημεριανό' },
     { key: 'afternoon', label: 'Απογευματινό' },
     { key: 'dinner',    label: 'Βραδινό' },
@@ -2389,7 +2389,7 @@ function builderPageClear() {
 function renderBuilderRecipeList(typeFilter) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const allStandard = STANDARD_MEALS;
-  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🥐 Προάριστο', lunch:'🥗 Μεσ/νά', afternoon:'☕ Απογ/νό', dinner:'🌙 Βραδινά' };
+  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Δεκατιανό', lunch:'🥗 Μεσ/νά', afternoon:'☕ Απογ/νό', dinner:'🌙 Βραδινά' };
   let html = '';
   const types = typeFilter === 'all' ? ['breakfast','snack','lunch','afternoon','dinner'] : [typeFilter];
   types.forEach(t => {
@@ -2693,7 +2693,7 @@ function openSwapMeal(mi, activeTab) {
   const standards = STANDARD_MEALS.filter(s => snackTypes.includes(s.meal));
   const tab = activeTab || 'standard';
 
-  const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Προάριστο', afternoon:'Απογευματινό' }[currentType] || '';
+  const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Δεκατιανό', afternoon:'Απογευματινό' }[currentType] || '';
 
   const standardsHTML = standards.map(s => `
     <div class="swap-row" onclick="swapMealStandard(${mi},'${s.id}')">
@@ -2781,7 +2781,7 @@ function applyScale(mi, sf) {
 function openAddMealModal() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
-  const mealLabels = { breakfast:'Πρωινό', lunch:'Μεσημεριανό', dinner:'Βραδινό', snack:'Προάριστο', afternoon:'Απογευματινό' };
+  const mealLabels = { breakfast:'Πρωινό', lunch:'Μεσημεριανό', dinner:'Βραδινό', snack:'Δεκατιανό', afternoon:'Απογευματινό' };
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Προσθήκη Γεύματος</div>
@@ -2844,7 +2844,7 @@ function openAddRecipeModal() {
     <div class="form-group"><label>Τύπος Γεύματος</label>
       <select id="nr-meal">
         <option value="breakfast">Πρωινό</option>
-        <option value="snack">Προάριστο</option>
+        <option value="snack">Δεκατιανό</option>
         <option value="afternoon">Απογευματινό</option>
         <option value="lunch">Μεσημεριανό</option>
         <option value="dinner">Βραδινό</option>
@@ -3095,7 +3095,7 @@ function exportDayPDF(dayIdx) {
         detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:8.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
       }
     }
-    const mealTypeLabel = { breakfast:'Πρωινό', snack:'Προάριστο', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' }[m.type] || m.type;
+    const mealTypeLabel = { breakfast:'Πρωινό', snack:'Δεκατιανό', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' }[m.type] || m.type;
     const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', afternoon:'#06b6d4', dinner:'#8b5cf6' }[m.type] || '#6b7280';
     const rowBg = { breakfast:'#fffbeb', snack:'#f0fdf4', lunch:'#eff6ff', afternoon:'#ecfeff', dinner:'#f5f3ff' }[m.type] || '#fff';
     return `<tr style="border-bottom:1px solid #e5e7eb;background:${rowBg}">
