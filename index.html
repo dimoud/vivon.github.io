@@ -8,6 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>VIVON</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @media print {
       .bottom-bar, .top-nav, .fab, .modal-overlay, .toast { display: none !important; }
@@ -69,7 +71,8 @@
         </div>
       </div>
       <div class="sidebar-footer">
-        <button class="btn btn-ghost btn-sm" onclick="exportPDF()" style="width:100%">🖨️ PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportPDF()" style="width:100%;margin-bottom:6px">🖨️ PDF</button>
+        <button class="btn btn-ghost btn-sm" onclick="handleSignOut()" style="width:100%;color:var(--red)">⏏ Αποσύνδεση</button>
       </div>
     </nav>
 
@@ -83,6 +86,7 @@
           <div id="hero-title">VIVON</div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="handleSignOut()" style="color:var(--red)">⏏</button>
           </div>
         </div>
       </nav>
@@ -151,8 +155,13 @@
   <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
+  <!-- AUTH SCREEN (shown before login, hidden after) -->
+  <div id="auth-screen" class="auth-screen"></div>
+
   <!-- SCRIPTS -->
   <script src="data.js"></script>
+  <script src="supabase.js"></script>
   <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

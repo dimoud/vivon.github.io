@@ -39,44 +39,101 @@ function getMealTimes() {
   };
 }
 
-// ── LOCALSTORAGE ──
+// ── PERSISTENCE (localStorage cache + Supabase cloud) ──
+
+let _saveTimer = null;
+
 function saveState() {
+  // Fast local cache for instant UI on reload
   try { localStorage.setItem('nutriApp_v2', JSON.stringify(state)); } catch(e) {}
+  // Debounced cloud save (1.5 s after last change)
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(syncToSupabase, 1500);
 }
-function loadState() {
+
+async function syncToSupabase() {
+  const user = sbGetCurrentUser();
+  if (!user) return;
+  const weekKey = getISOWeekKey();
+  try {
+    await Promise.all([
+      sbSaveProfile(user.id, state.profile),
+      sbSaveGoals(user.id, state.goals),
+      sbSaveWeekPlan(user.id, weekKey, state.week),
+      sbSaveBodyLog(user.id, state.bodyLog),
+      sbSaveSupplements(user.id, state.supplements),
+      sbSaveCustomFoods(user.id, state.customFoods),
+      sbSaveCustomRecipes(user.id, state.customRecipes),
+      sbSaveUserState(user.id, {
+        favorites:    state.favorites,
+        dayTemplates: state.dayTemplates,
+        optimizeMode: state.optimizeMode,
+        activeTab:    state.activeTab,
+      }),
+    ]);
+  } catch(e) {
+    console.error('Supabase sync error:', e);
+  }
+}
+
+async function loadState() {
+  // 1. Load from localStorage first for instant render
   try {
     const raw = localStorage.getItem('nutriApp_v2');
     if (raw) {
       const saved = JSON.parse(raw);
-      // Deep merge profile so new keys (weight, height, etc.) survive old saves
       state = {
         ...state,
         ...saved,
         profile: { ...state.profile, ...(saved.profile || {}) },
         goals:   { ...state.goals,   ...(saved.goals   || {}) },
       };
-      // Αν δεν υπάρχει weekCreatedAt στο παλιό save, ορίζουμε τώρα
-      if (!state.weekCreatedAt) {
-        state.weekCreatedAt = Date.now();
-        saveState();
-      }
     }
   } catch(e) {}
+
+  // 2. Fetch from Supabase (source of truth) and overwrite
+  const user = sbGetCurrentUser();
+  if (user) {
+    try {
+      const cloud = await sbLoadUserData(user.id);
+      if (cloud && Object.keys(cloud).length > 0) {
+        state = {
+          ...state,
+          ...cloud,
+          profile: { ...state.profile, ...(cloud.profile || {}) },
+          goals:   { ...state.goals,   ...(cloud.goals   || {}) },
+        };
+        // Update localStorage cache with fresh cloud data
+        try { localStorage.setItem('nutriApp_v2', JSON.stringify(state)); } catch(e) {}
+      }
+    } catch(e) {
+      console.error('Failed to load from Supabase:', e);
+    }
+  }
 }
 
 function checkWeekReset() {
-  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
-  if (!state.weekCreatedAt || (Date.now() - state.weekCreatedAt) >= MS_PER_WEEK) {
-    // Reset όλα τα ημερήσια done flags (γεύματα, συμπληρώματα, βήματα, γυμναστήριο)
+  const weekKey = getISOWeekKey();
+  // Use weekKey stored in state to detect week change (replaces time-based check)
+  const storedKey = state.weekKey;
+  if (storedKey && storedKey !== weekKey) {
+    // New week — archive old week is already in Supabase under the old weekKey.
+    // Reset all daily done flags.
     state.week.forEach(day => {
       if (day.meals) day.meals.forEach(m => { m.done = false; });
       day.stepsDone = false;
       day.weightTraining = false;
+      day.extraKcal = 0;
     });
     if (state.supplements) state.supplements.forEach(s => { s.done = false; });
+    state.weekKey = weekKey;
     state.weekCreatedAt = Date.now();
     saveState();
     showToast('Νέα εβδομάδα! Τα ημερήσια checkboxes έγιναν reset.', 4000);
+  } else if (!storedKey) {
+    // First run — stamp the current week key
+    state.weekKey = weekKey;
+    if (!state.weekCreatedAt) state.weekCreatedAt = Date.now();
   }
 }
 
@@ -3886,10 +3943,19 @@ function showToast(msg, dur = 2200) {
 }
 
 // -- INIT --
-document.addEventListener('DOMContentLoaded', () => {
-  loadState();
+// Called by auth.js after the user successfully signs in.
+async function initApp() {
+  await loadState();
   checkWeekReset();
   updateSidebarAvatar();
+
+  // Update sidebar name to signed-in user's name or email
+  const user = sbGetCurrentUser();
+  if (user) {
+    const nameEl = document.getElementById('sidebar-user-name');
+    if (nameEl) nameEl.textContent = state.profile.name || user.email || 'Χρήστης';
+  }
+
   document.querySelectorAll('.tab-item, .sidebar-item').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.getAttribute('data-tab');
@@ -3907,7 +3973,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTab = state.activeTab || 'today';
   navigateTo(legacyMap[savedTab] || savedTab);
 
-  // Κρύψιμο top nav (+ VIVON μέσα) με scroll-down
+  // Κρύψιμο top nav με scroll-down
   let lastScrollY = window.scrollY;
   const topNav = document.querySelector('.top-nav');
   window.addEventListener('scroll', () => {
@@ -3919,4 +3985,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     lastScrollY = currentScrollY;
   }, { passive: true });
-});
+}
+
+// DOMContentLoaded is intentionally empty here.
+// auth.js boots first, checks the session, then calls initApp().
+document.addEventListener('DOMContentLoaded', () => {});
