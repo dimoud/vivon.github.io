@@ -12,11 +12,10 @@
     @media print {
       .bottom-bar, .top-nav, .fab, .modal-overlay, .toast { display: none !important; }
       .page { display: none !important; }
+      .app-shell { display: block !important; }
+      .sidebar { display: none !important; }
       #print-view { display: block !important; }
-      body { padding: 0; background: white; font-size: 10px; margin: 0; }
-      @page { margin: 8mm; }
-      /* Σελίδα 1 landscape (summary) — οι υπόλοιπες portrait */
-      #print-view > div:first-child { page-break-after: always; }
+      body { padding: 0; background: white; margin: 0; }
     }
     #print-view { display: none; }
   </style>
@@ -29,8 +28,8 @@
     <!-- SIDEBAR (desktop) -->
     <nav class="sidebar" id="sidebar">
       <div class="sidebar-logo">
-        <div class="sidebar-brand-title">VIVON</div>
         <img src="../logo.png" alt="VIVON" class="sidebar-logo-img">
+        <div class="sidebar-brand-title">VIVON</div>
       </div>
       <div class="sidebar-nav">
         <button class="sidebar-item active" data-tab="today">
@@ -49,6 +48,10 @@
           <span class="sidebar-icon">🏗️</span>
           <span class="sidebar-label">Σχεδιαστής</span>
         </button>
+        <button class="sidebar-item" data-tab="body">
+          <span class="sidebar-icon">⚖️</span>
+          <span class="sidebar-label">Μετρήσεις</span>
+        </button>
         <button class="sidebar-item" data-tab="stats">
           <span class="sidebar-icon">📊</span>
           <span class="sidebar-label">Στατιστικά</span>
@@ -59,9 +62,9 @@
         </button>
       </div>
       <div class="sidebar-user">
-        <div class="sidebar-user-avatar">Δ</div>
+        <div class="sidebar-user-avatar" id="sidebar-avatar">Δ</div>
         <div class="sidebar-user-info">
-          <div class="sidebar-user-name">Δημήτριος</div>
+          <div class="sidebar-user-name" id="sidebar-user-name">Δημήτριος</div>
           <div class="sidebar-user-sub">Διαιτολόγιο</div>
         </div>
       </div>
@@ -90,6 +93,7 @@
         <div id="page-week"     class="page"></div>
         <div id="page-ideas"    class="page"></div>
         <div id="page-builder"  class="page"></div>
+        <div id="page-body"     class="page"></div>
         <div id="page-stats"    class="page"></div>
         <div id="page-settings" class="page"></div>
         <!-- legacy pages kept for internal renders -->
@@ -119,6 +123,10 @@
         <button class="tab-item" data-tab="builder">
           <span class="tab-icon">🏗️</span>
           Σχεδιαστής
+        </button>
+        <button class="tab-item" data-tab="body">
+          <span class="tab-icon">⚖️</span>
+          Μετρήσεις
         </button>
         <button class="tab-item" data-tab="stats">
           <span class="tab-icon">📊</span>

@@ -125,27 +125,28 @@ h3 { font-size: 0.95rem; }
 }
 
 .sidebar-logo {
-  padding: 20px 20px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--border);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
+}
+.sidebar-logo-img {
+  height: 70px;
+  width: 70px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 .sidebar-brand-title {
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: 0.15em;
   background: linear-gradient(135deg, #f5c842 0%, #ffd700 40%, #b8860b 70%, #f5c842 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: none;
   filter: drop-shadow(0 1px 2px rgba(180,140,0,0.35));
-}
-.sidebar-logo-img {
-  height: 60px;
-  object-fit: contain;
 }
 
 .sidebar-user {
@@ -168,6 +169,7 @@ h3 { font-size: 0.95rem; }
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(109,40,217,0.3);
+  overflow: hidden;
 }
 .sidebar-user-name {
   font-size: 0.85rem;
@@ -1027,6 +1029,7 @@ select { cursor: pointer; }
 .dplanner-cols {
   display: grid;
   grid-template-columns: minmax(400px, 38%) 1fr minmax(280px, 22%);
+  gap: 16px;
   flex: 1;
 }
 

@@ -7,6 +7,7 @@ let state = {
   profile: { ...DEFAULT_PROFILE },
   goals: { ...DEFAULT_GOALS },
   week: JSON.parse(JSON.stringify(DEFAULT_WEEK)),
+  weekCreatedAt: Date.now(),
   currentDay: 0,
   supplements: JSON.parse(JSON.stringify(SUPPLEMENTS_DEFAULT)),
   favorites: [],
@@ -17,6 +18,26 @@ let state = {
   optimizeMode: 1,
   bodyLog: [],
 };
+
+// ── MEAL TIME HELPER ──
+// Επιστρέφει ώρες γευμάτων βάσει firstMealTime του profile (+3h ανά γεύμα)
+function getMealTimes() {
+  const first = (state.profile && state.profile.firstMealTime) ? state.profile.firstMealTime : '08:00';
+  const [h, m] = first.split(':').map(Number);
+  const addHours = (hours) => {
+    const total = h * 60 + m + hours * 60;
+    const hh = Math.floor(total / 60) % 24;
+    const mm = total % 60;
+    return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+  };
+  return {
+    breakfast: first,
+    snack:     addHours(3),
+    lunch:     addHours(6),
+    afternoon: addHours(9),
+    dinner:    addHours(12),
+  };
+}
 
 // ── LOCALSTORAGE ──
 function saveState() {
@@ -34,8 +55,29 @@ function loadState() {
         profile: { ...state.profile, ...(saved.profile || {}) },
         goals:   { ...state.goals,   ...(saved.goals   || {}) },
       };
+      // Αν δεν υπάρχει weekCreatedAt στο παλιό save, ορίζουμε τώρα
+      if (!state.weekCreatedAt) {
+        state.weekCreatedAt = Date.now();
+        saveState();
+      }
     }
   } catch(e) {}
+}
+
+function checkWeekReset() {
+  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  if (!state.weekCreatedAt || (Date.now() - state.weekCreatedAt) >= MS_PER_WEEK) {
+    // Reset όλα τα ημερήσια done flags (γεύματα, συμπληρώματα, βήματα, γυμναστήριο)
+    state.week.forEach(day => {
+      if (day.meals) day.meals.forEach(m => { m.done = false; });
+      day.stepsDone = false;
+      day.weightTraining = false;
+    });
+    if (state.supplements) state.supplements.forEach(s => { s.done = false; });
+    state.weekCreatedAt = Date.now();
+    saveState();
+    showToast('Νέα εβδομάδα! Τα ημερήσια checkboxes έγιναν reset.', 4000);
+  }
 }
 
 // ── ACTIVITY & DEFICIT CALCULATIONS ──
@@ -148,8 +190,7 @@ function addBodyMeasurement() {
     state.profile.weight = latest.weight;
   }
   saveState();
-  // Ανανέωση stats tab (όπου είναι η κάρτα μετρήσεων)
-  const bodyCard = document.getElementById('stats-body-content');
+  const bodyCard = document.getElementById('body-page-content');
   if (bodyCard) bodyCard.innerHTML = renderBodyMeasurementsCard();
   showToast('✅ Μέτρηση αποθηκεύτηκε!');
 }
@@ -158,7 +199,7 @@ function deleteBodyEntry(date) {
   if (!state.bodyLog) return;
   state.bodyLog = state.bodyLog.filter(e => e.date !== date);
   saveState();
-  const bodyCard = document.getElementById('stats-body-content');
+  const bodyCard = document.getElementById('body-page-content');
   if (bodyCard) bodyCard.innerHTML = renderBodyMeasurementsCard();
   showToast('🗑 Εγγραφή διαγράφηκε');
 }
@@ -657,6 +698,35 @@ function renderProfile() {
         </div>
       </div>
 
+      <!-- ΩΡΕΣ ΓΕΥΜΑΤΩΝ -->
+      <div class="card card-lg fade-in">
+        <div class="section-title">🕐 Ώρες Γευμάτων</div>
+        <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px">
+          Επίλεξε ώρα <strong>πρώτου γεύματος</strong>. Τα υπόλοιπα τοποθετούνται αυτόματα κάθε 3 ώρες.
+        </p>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <label style="font-size:0.82rem;font-weight:700;color:var(--text);white-space:nowrap">1ο Γεύμα (Πρωινό)</label>
+          <input type="time" id="prof-first-meal-time"
+            value="${p.firstMealTime || '08:00'}"
+            style="flex:1;padding:10px 12px;border:2px solid var(--green);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;background:var(--bg2)"
+            onchange="updateFirstMealTime(this.value)">
+        </div>
+        <div id="meal-times-preview" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.8rem">
+          ${(()=>{
+            const t = { breakfast: p.firstMealTime||'08:00' };
+            const [h,m] = (p.firstMealTime||'08:00').split(':').map(Number);
+            const add = n => { const tot=h*60+m+n*60; return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); };
+            return [
+              ['🌅 Πρωινό', t.breakfast],
+              ['🍎 Πρόαριστο', add(3)],
+              ['☀️ Μεσημεριανό', add(6)],
+              ['🧃 Απογευματινό', add(9)],
+              ['🌙 Βραδινό', add(12)],
+            ].map(([lbl,time])=>`<div style="background:var(--bg2);border-radius:var(--radius-sm);padding:6px 10px;display:flex;justify-content:space-between"><span style="color:var(--text2)">${lbl}</span><strong style="color:var(--text)">${time}</strong></div>`).join('');
+          })()}
+        </div>
+      </div>
+
       <!-- ΕΝΑΡΞΗ ΠΛΑΝΟΥ -->
       <div class="card card-lg fade-in">
         <div class="section-title">📅 Έναρξη Πλάνου</div>
@@ -700,9 +770,25 @@ function renderProfile() {
   }
 }
 
+function updateSidebarAvatar() {
+  const p = state.profile;
+  const avatarEl = document.getElementById('sidebar-avatar');
+  const nameEl = document.getElementById('sidebar-user-name');
+  if (!avatarEl) return;
+  if (p.photoUrl) {
+    avatarEl.innerHTML = `<img src="${p.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="photo">`;
+    avatarEl.style.padding = '0';
+  } else {
+    avatarEl.innerHTML = (p.name || 'Δ').charAt(0).toUpperCase();
+    avatarEl.style.padding = '';
+  }
+  if (nameEl && p.name) nameEl.textContent = p.name;
+}
+
 function liveUpdateName(val) {
   state.profile.name = val;
   document.getElementById('top-app-title').textContent = val ? `🥗 ${val}` : '🥗 Vivon';
+  updateSidebarAvatar();
   saveState();
 }
 
@@ -781,6 +867,20 @@ function updateGoalFromProfile(key, val) {
   saveState();
 }
 
+function updateFirstMealTime(val) {
+  if (!val) return;
+  state.profile.firstMealTime = val;
+  saveState();
+  // Ανανέωση preview χωρίς πλήρες re-render
+  const preview = document.getElementById('meal-times-preview');
+  if (preview) {
+    const [h, m] = val.split(':').map(Number);
+    const add = n => { const tot = h*60+m+n*60; return String(Math.floor(tot/60)%24).padStart(2,'0')+':'+String(tot%60).padStart(2,'0'); };
+    const slots = [['🌅 Πρωινό',val],['🍎 Πρόαριστο',add(3)],['☀️ Μεσημεριανό',add(6)],['🧃 Απογευματινό',add(9)],['🌙 Βραδινό',add(12)]];
+    preview.innerHTML = slots.map(([lbl,time])=>`<div style="background:var(--bg2);border-radius:var(--radius-sm);padding:6px 10px;display:flex;justify-content:space-between"><span style="color:var(--text2)">${lbl}</span><strong style="color:var(--text)">${time}</strong></div>`).join('');
+  }
+}
+
 function toggleCustomTDEE(val) {
   state.profile.useCustomTDEE = val;
   if (val && (!state.profile.customTDEE || state.profile.customTDEE === 0)) {
@@ -855,6 +955,7 @@ function handlePhotoUpload(input) {
     state.profile.photoUrl = e.target.result;
     saveState();
     renderProfile();
+    updateSidebarAvatar();
     showToast('✅ Φωτογραφία αποθηκεύτηκε');
   };
   reader.readAsDataURL(file);
@@ -1390,12 +1491,7 @@ function renderWeek() {
         ${dateStr}
         <div style="margin-top:6px">
           <div style="font-size:1rem;font-weight:900;color:${barColor}">${m.kcal > 0 ? m.kcal.toLocaleString() : '—'} kcal</div>
-          <div style="font-size:0.65rem;color:${barColor};font-weight:700">${m.kcal > 0 ? pct+'%' : ''}</div>
         </div>
-        <div style="height:4px;background:#e5e7eb;border-radius:2px;margin-top:6px;overflow:hidden">
-          <div style="height:4px;width:${Math.min(pct,100)}%;background:${barColor};border-radius:2px"></div>
-        </div>
-        <div style="font-size:0.6rem;color:var(--text3);margin-top:4px">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div>
       </div>
       <div style="padding:8px 8px 10px">
         ${mealSections || '<div style="font-size:0.65rem;color:var(--text3);text-align:center;padding:12px 0">Κανένα γεύμα</div>'}
@@ -1776,12 +1872,13 @@ function renderBuilderPage(typeFilter) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const savedTemplates = state.dayTemplates || [];
 
+  const _mt = getMealTimes();
   const mealTypeMeta = {
-    breakfast:  { label: 'Πρωινό',        icon: '🌅', cls: 'breakfast', color: '#f59e0b', time: '08:00' },
-    snack:      { label: 'Πρόαριστο',     icon: '🍎', cls: 'snack',     color: '#22c55e', time: '10:30' },
-    lunch:      { label: 'Μεσημεριανό',   icon: '☀️', cls: 'lunch',     color: '#3b82f6', time: '13:30' },
-    afternoon:  { label: 'Απογευματινό',  icon: '🧃', cls: 'afternoon', color: '#06b6d4', time: '16:30' },
-    dinner:     { label: 'Βραδινό',       icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: '20:00' },
+    breakfast:  { label: 'Πρωινό',        icon: '🌅', cls: 'breakfast', color: '#f59e0b', time: _mt.breakfast },
+    snack:      { label: 'Πρόαριστο',     icon: '🍎', cls: 'snack',     color: '#22c55e', time: _mt.snack },
+    lunch:      { label: 'Μεσημεριανό',   icon: '☀️', cls: 'lunch',     color: '#3b82f6', time: _mt.lunch },
+    afternoon:  { label: 'Απογευματινό',  icon: '🧃', cls: 'afternoon', color: '#06b6d4', time: _mt.afternoon },
+    dinner:     { label: 'Βραδινό',       icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: _mt.dinner },
   };
   const filterLabels = [
     { key: 'all',       label: 'Όλα' },
@@ -2131,7 +2228,7 @@ function builderPageApply() {
 
 function applyBuilderToDayIdx(dayIdx) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
+  const typeTime = getMealTimes();
   const newMeals = builderMeals.map(bm => {
     if (bm.isStandard) {
       const sm = STANDARD_MEALS.find(x => x.id === bm.id);
@@ -2593,7 +2690,7 @@ function addRecipeToDay(rid) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const recipe = allRecipes.find(r => r.id === rid);
   if (!recipe) return;
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
+  const typeTime = getMealTimes();
   state.week[state.currentDay].meals.push({
     time: typeTime[recipe.meal] || '12:00',
     type: recipe.meal,
@@ -2757,7 +2854,7 @@ function builderRemove(i) {
 
 function applyBuilderToDay() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const typeTime = { breakfast:'08:00', lunch:'13:00', dinner:'20:00', snack:'11:00', afternoon:'16:00' };
+  const typeTime = getMealTimes();
   const newMeals = builderMeals.map(bm => {
     if (bm.isStandard) {
       const sm = STANDARD_MEALS.find(x => x.id === bm.id);
@@ -2929,6 +3026,318 @@ function exportDayPDF(dayIdx) {
 
 // ── PDF EXPORT ──
 function exportPDF() {
+  const tab = state.activeTab || 'week';
+
+  if (tab === 'today') {
+    exportPDF_today();
+    return;
+  }
+  if (tab === 'stats') {
+    exportPDF_stats();
+    return;
+  }
+  if (tab === 'body') {
+    exportPDF_body();
+    return;
+  }
+  // Default: weekly (tab === 'week' ή οποιοδήποτε άλλο)
+  exportPDF_week();
+}
+
+function exportPDF_today() {
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  const allFoodsForPrint = [...FOODS_DB, ...state.customFoods];
+  const g = state.goals;
+  const di = state.currentDay;
+  const day = state.week[di];
+  const tot = calcDayMacros(di, false);
+  const pct = Math.min(100, Math.round((tot.kcal / g.kcal) * 100));
+  const barColor = pct > 105 ? '#ef4444' : pct > 95 ? '#22c55e' : '#f59e0b';
+  const dateLabel = state.planStartDate ? ` · ${formatPlanDay(di)}` : '';
+  const extraKcal = day.extraKcal || 0;
+  const mealTypeLabel = { breakfast:'Πρωινό', snack:'Δεκατιανό', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' };
+  const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', afternoon:'#06b6d4', dinner:'#8b5cf6' };
+  const rowBg = { breakfast:'#fffbeb', snack:'#f0fdf4', lunch:'#eff6ff', afternoon:'#ecfeff', dinner:'#f5f3ff' };
+
+  const mealRows = day.meals.map(m => {
+    let name = '', kcal = 0, macStr = '', detailHtml = '';
+    if (m.standardId) {
+      const sm = STANDARD_MEALS.find(s => s.id === m.standardId);
+      if (!sm) return '';
+      name = sm.emoji + ' ' + sm.name;
+      kcal = Math.round(sm.kcal_est * (m.scaleFactor||1));
+      macStr = '— / — / —';
+      const itemsList = sm.items.join(' · ') + (sm.note ? ' · ' + sm.note : '');
+      detailHtml = `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:10px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${itemsList}</td></tr>`;
+    } else {
+      const r = allRecipes.find(x => x.id === m.recipeId);
+      if (!r) return '';
+      const mac = calcRecipeMacros(r, m.scaleFactor||1);
+      name = r.emoji + ' ' + r.name;
+      kcal = mac.kcal;
+      macStr = `Π:${mac.p}g / Υ:${mac.c}g / Λ:${mac.f}g`;
+      const ingList = r.ingredients.map(ing => {
+        const food = allFoodsForPrint.find(f => f.id === ing.foodId);
+        if (!food) return '';
+        let qty = ing.qty * (m.scaleFactor||1);
+        if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
+        else qty = Math.round(qty);
+        if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
+        return food.name + ' ' + qty + food.unit;
+      }).filter(Boolean).join(' · ');
+      detailHtml = `<tr><td colspan="5" style="padding:1px 12px 4px;font-size:10px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${ingList}</td></tr>`;
+      if (r.instructions) {
+        detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:9.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
+      }
+    }
+    const tl = mealTypeLabel[m.type] || m.type;
+    const tc = typeColor[m.type] || '#6b7280';
+    const rb = rowBg[m.type] || '#fff';
+    return `<tr style="border-bottom:1px solid #e5e7eb;background:${rb}">
+      <td style="padding:8px 10px;font-size:11px;color:${tc};font-weight:700;white-space:nowrap;vertical-align:top">${tl}</td>
+      <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#111;vertical-align:top">${name}</td>
+      <td style="padding:8px 10px;font-size:12px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;vertical-align:top">${kcal}</td>
+      <td style="padding:8px 10px;font-size:10.5px;color:#6b7280;white-space:nowrap;vertical-align:top">${macStr}</td>
+      <td style="padding:8px 10px;font-size:10.5px;color:#9ca3af;vertical-align:top">${m.time||''}</td>
+    </tr>${detailHtml}`;
+  }).join('');
+
+  const extraRow = extraKcal > 0
+    ? `<tr style="background:#fef2f2"><td colspan="5" style="padding:8px 10px;font-size:10px;color:#ef4444;font-weight:700">⚠️ Επιπλέον εκτός πλάνου: +${extraKcal} kcal</td></tr>`
+    : '';
+
+  const pv = document.getElementById('print-view');
+  pv.innerHTML = `
+    <style>
+      @page { size: A4 portrait; margin: 10mm; }
+    </style>
+    <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:3px solid #22c55e">
+        <div>
+          <div style="font-size:22px;font-weight:900;color:#111">${day.label}${dateLabel}</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:3px">Στόχος: ${g.kcal} kcal · Πλάνο: ${tot.kcal} kcal (${pct}%)</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:18px;font-weight:900;color:#22c55e;letter-spacing:-1px;margin-bottom:4px">VIVON</div>
+          <div style="font-size:13px;font-weight:700;color:#3b82f6">Πρωτεΐνη: ${tot.p}g</div>
+          <div style="font-size:13px;font-weight:700;color:#8b5cf6">Υδατάνθρακες: ${tot.c}g</div>
+          <div style="font-size:13px;font-weight:700;color:#f59e0b">Λίπος: ${tot.f}g</div>
+        </div>
+      </div>
+      <div style="height:7px;background:#e5e7eb;border-radius:3px;margin-bottom:14px">
+        <div style="height:7px;width:${pct}%;background:${barColor};border-radius:3px"></div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1">
+            <th style="padding:9px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700;width:95px">ΓΕΥΜΑ</th>
+            <th style="padding:9px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">ΣΥΝΤΑΓΗ / ΠΕΡΙΓΡΑΦΗ</th>
+            <th style="padding:9px 10px;text-align:right;font-size:10.5px;color:#475569;font-weight:700;width:60px">KCAL</th>
+            <th style="padding:9px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700;width:140px">MACROS</th>
+            <th style="padding:9px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700;width:50px">ΩΡΑ</th>
+          </tr>
+        </thead>
+        <tbody>${mealRows}${extraRow}</tbody>
+        <tfoot>
+          <tr style="background:#f0fdf4;border-top:2px solid #22c55e">
+            <td colspan="2" style="padding:10px;font-weight:800;font-size:13px;color:#111">ΣΥΝΟΛΟ ΗΜΕΡΑΣ</td>
+            <td style="padding:10px;font-weight:800;font-size:14px;color:#22c55e;text-align:right">${tot.kcal + extraKcal}</td>
+            <td style="padding:10px;font-size:11px;color:#374151">Π:${tot.p}g · Υ:${tot.c}g · Λ:${tot.f}g</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
+  showToast('⏳ Άνοιγμα εκτύπωσης...');
+  setTimeout(() => window.print(), 400);
+}
+
+function exportPDF_stats() {
+  const g = state.goals;
+  const DAYS_EL = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
+  const weekData = state.week.map((day, i) => {
+    const m = calcDayMacros(i, false);
+    const { deficit, stepsKcal, trainingKcal } = calcDayDeficit(i);
+    return { day, idx: i, ...m, deficit, stepsKcal, trainingKcal };
+  });
+  const avgKcal = Math.round(weekData.reduce((s,d) => s + d.kcal, 0) / 7);
+  const avgP    = Math.round(weekData.reduce((s,d) => s + d.p,   0) / 7);
+  const avgC    = Math.round(weekData.reduce((s,d) => s + d.c,   0) / 7);
+  const avgF    = Math.round(weekData.reduce((s,d) => s + d.f,   0) / 7);
+  const totalDeficit = weekData.reduce((s,d) => s + d.deficit, 0);
+  const totalStepsKcal    = weekData.reduce((s,d) => s + d.stepsKcal, 0);
+  const totalTrainingKcal = weekData.reduce((s,d) => s + d.trainingKcal, 0);
+  const trainingDays      = weekData.filter(d => d.day.weightTraining).length;
+  const stepsDoneDays     = weekData.filter(d => d.day.stepsDone).length;
+
+  function barRow(label, val, goal, col) {
+    const pct = Math.min(100, Math.round((val / goal) * 100));
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px">
+        <span style="color:#374151">${label}</span>
+        <span style="color:#6b7280">${val}g / ${goal}g <span style="color:${col}">${pct}%</span></span>
+      </div>
+      <div style="height:7px;background:#e5e7eb;border-radius:4px;overflow:hidden">
+        <div style="height:7px;width:${pct}%;background:${col};border-radius:4px"></div>
+      </div>
+    </div>`;
+  }
+
+  const dayRows = weekData.map((d, i) => {
+    const pct = Math.min(100, Math.round((d.kcal / (g.kcal || 2000)) * 100));
+    const col = pct >= 90 ? '#22c55e' : pct >= 60 ? '#f59e0b' : '#ef4444';
+    return `<tr style="border-bottom:1px solid #e5e7eb">
+      <td style="padding:8px 10px;font-size:13px;font-weight:800;color:#111">${DAYS_EL[i]}</td>
+      <td style="padding:8px 10px;font-size:12px;color:#374151">${d.kcal > 0 ? d.kcal.toLocaleString()+' kcal' : '—'}</td>
+      <td style="padding:8px 10px;font-size:12px;color:${col};font-weight:700">${d.kcal > 0 ? pct+'%' : '—'}</td>
+      <td style="padding:8px 10px;font-size:11px;color:#6b7280">Π:${d.p}g Υ:${d.c}g Λ:${d.f}g</td>
+      <td style="padding:8px 10px;font-size:11px;color:#6b7280">${d.day.stepsDone ? '👟 '+( d.day.stepsCount||8000).toLocaleString() : '—'} ${d.day.weightTraining ? '🏋️' : ''}</td>
+      <td style="padding:8px 10px;font-size:12px;font-weight:700;color:${d.deficit>0?'#22c55e':'#ef4444'}">${d.deficit > 0 ? '-' : '+'}${Math.abs(Math.round(d.deficit))} kcal</td>
+    </tr>`;
+  }).join('');
+
+  const pv = document.getElementById('print-view');
+  pv.innerHTML = `
+    <style>
+      @page { size: A4 portrait; margin: 10mm; }
+    </style>
+    <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #22c55e">
+        <div>
+          <div style="font-size:22px;font-weight:900;color:#111">Στατιστικά Εβδομάδας</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:3px">Αναλυτική αναφορά</div>
+        </div>
+        <div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:-1px">VIVON</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
+        <div style="background:#eff6ff;border-radius:10px;padding:12px 14px;text-align:center">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Μ.Ό. Kcal/ημέρα</div>
+          <div style="font-size:22px;font-weight:900;color:#22c55e">${avgKcal.toLocaleString()}</div>
+          <div style="font-size:10px;color:#9ca3af">Στόχος ${g.kcal||'—'}</div>
+        </div>
+        <div style="background:#eff6ff;border-radius:10px;padding:12px 14px;text-align:center">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Μ.Ό. Πρωτεΐνη</div>
+          <div style="font-size:22px;font-weight:900;color:#3b82f6">${avgP}g</div>
+          <div style="font-size:10px;color:#9ca3af">Στόχος ${g.protein||'—'}g</div>
+        </div>
+        <div style="background:${totalDeficit>0?'#f0fdf4':'#fef2f2'};border-radius:10px;padding:12px 14px;text-align:center">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Εβδ. Ισοζύγιο</div>
+          <div style="font-size:22px;font-weight:900;color:${totalDeficit>0?'#22c55e':'#ef4444'}">${Math.abs(Math.round(totalDeficit))}</div>
+          <div style="font-size:10px;color:#9ca3af">${totalDeficit>0?'kcal έλλειμμα':'kcal πλεόνασμα'}</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:18px">
+        <div style="font-size:13px;font-weight:800;color:#111;margin-bottom:12px">Μέσος Όρος Μακροθρεπτικών</div>
+        ${barRow('🥩 Πρωτεΐνη', avgP, g.protein||180, '#3b82f6')}
+        ${barRow('🍚 Υδατάνθρακες', avgC, g.carbs||200, '#f59e0b')}
+        ${barRow('🫒 Λίπη', avgF, g.fat||60, '#8b5cf6')}
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:18px">
+        <div style="padding:12px 14px;font-size:13px;font-weight:800;color:#111;border-bottom:1px solid #e5e7eb">Ανά Ημέρα</div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f8fafc">
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">ΗΜΕΡΑ</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">KCAL</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">%</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">MACROS</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">ΔΡΑΣΤΗΡΙΟΤΗΤΑ</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10.5px;color:#475569;font-weight:700">ΙΣΟΖΥΓΙΟ</th>
+            </tr>
+          </thead>
+          <tbody>${dayRows}</tbody>
+        </table>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:#ecfeff;border-radius:10px;padding:12px 14px;text-align:center">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Βήματα (εβδ. kcal)</div>
+          <div style="font-size:20px;font-weight:900;color:#06b6d4">${totalStepsKcal}</div>
+          <div style="font-size:10px;color:#9ca3af">${stepsDoneDays}/7 ημέρες ✅</div>
+        </div>
+        <div style="background:#f5f3ff;border-radius:10px;padding:12px 14px;text-align:center">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Γυμναστήριο (kcal)</div>
+          <div style="font-size:20px;font-weight:900;color:#8b5cf6">${totalTrainingKcal}</div>
+          <div style="font-size:10px;color:#9ca3af">${trainingDays}/7 προπονήσεις</div>
+        </div>
+      </div>
+    </div>`;
+  showToast('⏳ Άνοιγμα εκτύπωσης...');
+  setTimeout(() => window.print(), 400);
+}
+
+function exportPDF_body() {
+  const log = state.bodyLog || [];
+  const p = state.profile;
+
+  const logRows = log.length === 0
+    ? '<tr><td colspan="4" style="padding:12px;text-align:center;color:#9ca3af;font-size:12px">Δεν υπάρχουν μετρήσεις</td></tr>'
+    : [...log].reverse().map(e => {
+        const fatStr = e.fat !== null && e.fat !== undefined ? `${e.fat}%` : '—';
+        const muscleStr = e.muscle !== null && e.muscle !== undefined ? `${e.muscle}%` : '—';
+        return `<tr style="border-bottom:1px solid #e5e7eb">
+          <td style="padding:9px 12px;font-size:12px;font-weight:700;color:#374151">${e.date}</td>
+          <td style="padding:9px 12px;font-size:13px;font-weight:800;color:#111">${e.weight} kg</td>
+          <td style="padding:9px 12px;font-size:12px;color:#ef4444">${fatStr}</td>
+          <td style="padding:9px 12px;font-size:12px;color:#16a34a">${muscleStr}</td>
+        </tr>`;
+      }).join('');
+
+  const latest = log.length > 0 ? log[log.length - 1] : null;
+
+  const pv = document.getElementById('print-view');
+  pv.innerHTML = `
+    <style>
+      @page { size: A4 portrait; margin: 10mm; }
+    </style>
+    <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #22c55e">
+        <div>
+          <div style="font-size:22px;font-weight:900;color:#111">Μετρήσεις Σώματος</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:3px">${p.name || ''}</div>
+        </div>
+        <div style="font-size:20px;font-weight:900;color:#22c55e;letter-spacing:-1px">VIVON</div>
+      </div>
+
+      ${latest ? `<div style="display:flex;gap:14px;margin-bottom:18px">
+        <div style="background:#eff6ff;border-radius:10px;padding:12px 18px;text-align:center;flex:1">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">Τελευταίο Βάρος</div>
+          <div style="font-size:24px;font-weight:900;color:#3b82f6">${latest.weight} kg</div>
+          <div style="font-size:10px;color:#9ca3af">${latest.date}</div>
+        </div>
+        ${latest.fat !== null && latest.fat !== undefined ? `<div style="background:#fef2f2;border-radius:10px;padding:12px 18px;text-align:center;flex:1">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">% Λίπους</div>
+          <div style="font-size:24px;font-weight:900;color:#ef4444">${latest.fat}%</div>
+        </div>` : ''}
+        ${latest.muscle !== null && latest.muscle !== undefined ? `<div style="background:#f0fdf4;border-radius:10px;padding:12px 18px;text-align:center;flex:1">
+          <div style="font-size:10px;color:#6b7280;margin-bottom:4px">% Μυϊκής Μάζας</div>
+          <div style="font-size:24px;font-weight:900;color:#16a34a">${latest.muscle}%</div>
+        </div>` : ''}
+      </div>` : ''}
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+        <div style="padding:12px 14px;font-size:13px;font-weight:800;color:#111;border-bottom:1px solid #e5e7eb">Ιστορικό Μετρήσεων</div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:#f8fafc">
+              <th style="padding:9px 12px;text-align:left;font-size:11px;color:#475569;font-weight:700">ΗΜΕΡΟΜΗΝΙΑ</th>
+              <th style="padding:9px 12px;text-align:left;font-size:11px;color:#475569;font-weight:700">ΒΑΡΟΣ</th>
+              <th style="padding:9px 12px;text-align:left;font-size:11px;color:#475569;font-weight:700">% ΛΙΠΟΥΣ</th>
+              <th style="padding:9px 12px;text-align:left;font-size:11px;color:#475569;font-weight:700">% ΜΥΪΚΗΣ</th>
+            </tr>
+          </thead>
+          <tbody>${logRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  showToast('⏳ Άνοιγμα εκτύπωσης...');
+  setTimeout(() => window.print(), 400);
+}
+
+function exportPDF_week() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const p = state.profile;
   const g = state.goals;
@@ -2985,13 +3394,13 @@ function exportPDF() {
 
   function printMacroBar(label, val, goal, col) {
     const pct = Math.min(100, Math.round((val / goal) * 100));
-    return `<div style="margin-bottom:7px">
-      <div style="display:flex;justify-content:space-between;font-size:9px;font-weight:700;margin-bottom:3px">
+    return `<div style="margin-bottom:5px">
+      <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:700;margin-bottom:2px">
         <span style="color:#374151">${label}</span>
         <span style="color:#6b7280">${val}g / ${goal}g &nbsp;<span style="color:${col}">${pct}%</span></span>
       </div>
-      <div style="height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden">
-        <div style="height:5px;width:${pct}%;background:${col};border-radius:3px"></div>
+      <div style="height:4px;background:#e5e7eb;border-radius:3px;overflow:hidden">
+        <div style="height:4px;width:${pct}%;background:${col};border-radius:3px"></div>
       </div>
     </div>`;
   }
@@ -3011,7 +3420,7 @@ function exportPDF() {
     const pct = Math.round((tot.kcal / g.kcal) * 100);
     const allDone = day.meals.length > 0 && day.meals.every(me => me.done);
     const barColor = pct > 105 ? '#ef4444' : pct > 90 ? '#22c55e' : '#f59e0b';
-    const dateStr = state.planStartDate ? `<div style="font-size:7.5px;color:#6b7280;font-weight:600;margin-top:1px">${formatPlanDay(di)}</div>` : '';
+    const dateStr = state.planStartDate ? `<div style="font-size:9px;color:#6b7280;font-weight:600;margin-top:1px">${formatPlanDay(di)}</div>` : '';
 
     const byType = {};
     day.meals.forEach(me => {
@@ -3036,213 +3445,111 @@ function exportPDF() {
           const mac = calcRecipeMacros(r, me.scaleFactor||1);
           name = r.name; emoji = r.emoji; kcal = mac.kcal;
         }
-        return `<div style="margin-bottom:5px">
-          <div style="font-size:7px;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">${meta.label}</div>
-          <div style="background:${meta.bg};border-left:2.5px solid ${meta.border};border-radius:0 5px 5px 0;padding:5px 6px">
-            <div style="display:flex;align-items:center;gap:4px;margin-bottom:1px">
-              <span style="font-size:15px;flex-shrink:0;line-height:1">${emoji}</span>
-              <span style="font-size:7.5px;font-weight:700;color:#111;line-height:1.25;flex:1">${name}</span>
+        return `<div style="margin-bottom:4px">
+          <div style="font-size:7.5px;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px">${meta.label}</div>
+          <div style="background:${meta.bg};border-left:2px solid ${meta.border};border-radius:0 4px 4px 0;padding:3px 5px">
+            <div style="display:flex;align-items:center;gap:3px;margin-bottom:1px">
+              <span style="font-size:13px;flex-shrink:0;line-height:1">${emoji}</span>
+              <span style="font-size:8.5px;font-weight:700;color:#111;line-height:1.2;flex:1">${name}</span>
             </div>
-            <div style="font-size:7px;color:${meta.color};font-weight:700">${kcal} kcal</div>
+            <div style="font-size:7.5px;color:${meta.color};font-weight:700">${kcal} kcal</div>
           </div>
         </div>`;
       }).join('');
     }).join('');
 
-    return `<div style="flex:1;min-width:0;background:#fff;border-radius:8px;border:1px solid #e5e7eb;border-top:3px solid ${barColor};overflow:hidden">
-      <div style="padding:7px 7px 5px;border-bottom:1px solid #f3f4f6">
-        <div style="font-weight:900;font-size:9.5px;color:#111">${dayNamesP[di]}</div>
+    return `<div style="flex:1;min-width:0;background:#fff;border-radius:6px;border:1px solid #e5e7eb;border-top:3px solid ${barColor};overflow:hidden">
+      <div style="padding:5px 6px 4px;border-bottom:1px solid #f3f4f6">
+        <div style="font-weight:900;font-size:10px;color:#111">${dayNamesP[di]}</div>
         ${dateStr}
-        <div style="margin-top:4px">
+        <div style="margin-top:3px">
           <div style="font-size:11px;font-weight:900;color:${barColor}">${tot.kcal > 0 ? tot.kcal.toLocaleString() : '—'} kcal</div>
-          <div style="font-size:7.5px;color:${barColor};font-weight:700">${tot.kcal > 0 ? pct+'%' : ''}</div>
+          <div style="font-size:8px;color:${barColor};font-weight:700">${tot.kcal > 0 ? pct+'%' : ''}</div>
         </div>
-        <div style="height:3px;background:#e5e7eb;border-radius:2px;margin-top:4px;overflow:hidden">
-          <div style="height:3px;width:${Math.min(pct,100)}%;background:${barColor};border-radius:2px"></div>
+        <div style="height:2px;background:#e5e7eb;border-radius:2px;margin-top:3px;overflow:hidden">
+          <div style="height:2px;width:${Math.min(pct,100)}%;background:${barColor};border-radius:2px"></div>
         </div>
       </div>
-      <div style="padding:5px 5px 7px">
-        ${mealCards || '<div style="font-size:7.5px;color:#9ca3af;text-align:center;padding:10px 0">Κανένα γεύμα</div>'}
-        ${allDone ? `<div style="margin-top:4px;text-align:center"><span style="font-size:7px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 7px">✓ Ολοκληρώθηκε</span></div>` : ''}
+      <div style="padding:4px 5px 5px">
+        ${mealCards || '<div style="font-size:8px;color:#9ca3af;text-align:center;padding:8px 0">Κανένα γεύμα</div>'}
+        ${allDone ? `<div style="margin-top:3px;text-align:center"><span style="font-size:7.5px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:1px 6px">✓ Ολοκλ.</span></div>` : ''}
       </div>
     </div>`;
   }).join('');
 
   const summaryPage = `
-    <div style="padding:9mm 10mm 8mm;font-family:'Helvetica Neue',Arial,sans-serif;background:#f8fafc;min-height:188mm;box-sizing:border-box">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid #e5e7eb">
+    <div style="padding:5mm 5mm 4mm;font-family:'Helvetica Neue',Arial,sans-serif;background:#f8fafc;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb">
         <div>
-          <div style="font-size:22px;font-weight:900;color:#111;letter-spacing:-0.5px">Εβδομαδιαίο Πρόγραμμα</div>
-          <div style="font-size:10px;color:#6b7280;margin-top:2px">7 ημέρες · <strong style="color:#374151">${avgKcalW.toLocaleString()} kcal/ημέρα</strong> κατά μέσο όρο</div>
+          <div style="font-size:18px;font-weight:900;color:#111;letter-spacing:-0.5px">Εβδομαδιαίο Πρόγραμμα</div>
+          <div style="font-size:9px;color:#6b7280;margin-top:1px">7 ημέρες · <strong style="color:#374151">${avgKcalW.toLocaleString()} kcal/ημέρα</strong> κατά μέσο όρο</div>
         </div>
         <div style="text-align:right">
-          ${weekRangePrint ? `<div style="font-size:9px;color:#6b7280">${weekRangePrint}</div>` : ''}
-          <div style="font-size:9px;color:#6b7280;margin-top:1px">${p.name || ''}</div>
-          <div style="font-size:18px;font-weight:900;color:#22c55e;letter-spacing:-1px;margin-top:2px">VIVON</div>
+          ${weekRangePrint ? `<div style="font-size:8px;color:#6b7280">${weekRangePrint}</div>` : ''}
+          <div style="font-size:8px;color:#6b7280;margin-top:1px">${p.name || ''}</div>
+          <div style="font-size:15px;font-weight:900;color:#22c55e;letter-spacing:-1px;margin-top:1px">VIVON</div>
         </div>
       </div>
-      <div style="display:flex;align-items:stretch;gap:10px;margin-bottom:9px;background:#fff;border-radius:10px;padding:9px 14px;border:1px solid #e5e7eb">
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;min-width:88px">
-          ${printGauge(avgPctW, 78)}
-          <div style="font-size:8px;font-weight:800;color:#111;margin-top:3px">Μέση πρόσληψη</div>
-          <div style="font-size:11px;font-weight:900;color:#111">${avgKcalW.toLocaleString()} kcal</div>
-          <div style="font-size:7.5px;color:#9ca3af">Στόχος: ${g.kcal.toLocaleString()} kcal</div>
+      <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:6px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid #e5e7eb">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;min-width:76px">
+          ${printGauge(avgPctW, 66)}
+          <div style="font-size:7px;font-weight:800;color:#111;margin-top:2px">Μέση πρόσληψη</div>
+          <div style="font-size:10px;font-weight:900;color:#111">${avgKcalW.toLocaleString()} kcal</div>
+          <div style="font-size:6.5px;color:#9ca3af">Στόχος: ${g.kcal.toLocaleString()} kcal</div>
         </div>
         <div style="width:1px;background:#f3f4f6;flex-shrink:0"></div>
-        <div style="flex:1;padding:0 6px">
-          <div style="font-size:8px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px">Μακροθρεπτικά (μέσος όρος)</div>
+        <div style="flex:1;padding:0 5px">
+          <div style="font-size:7px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px">Μακροθρεπτικά (μέσος όρος)</div>
           ${printMacroBar('Πρωτεΐνη', avgPW, g.protein || 160, '#3b82f6')}
           ${printMacroBar('Υδατάνθρακες', avgCW, g.carbs || 200, '#8b5cf6')}
           ${printMacroBar('Λίπος', avgFW, g.fat || 60, '#f59e0b')}
         </div>
         <div style="width:1px;background:#f3f4f6;flex-shrink:0"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:105px;text-align:center">
-          <div style="font-size:8px;font-weight:800;color:${balColor};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px">Ισορροπία εβδομάδας</div>
-          <div style="font-size:22px;margin-bottom:4px">${balEmoji}</div>
-          <div style="font-size:9px;font-weight:800;color:${balColor}">${balLabel}</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-top:2px">${balSub}</div>
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:95px;text-align:center">
+          <div style="font-size:7px;font-weight:800;color:${balColor};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px">Ισορροπία εβδομάδας</div>
+          <div style="font-size:18px;margin-bottom:3px">${balEmoji}</div>
+          <div style="font-size:8px;font-weight:800;color:${balColor}">${balLabel}</div>
+          <div style="font-size:6.5px;color:#9ca3af;margin-top:1px">${balSub}</div>
         </div>
       </div>
-      <div style="display:flex;gap:5px;align-items:flex-start;margin-bottom:9px">
+      <div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:6px">
         ${weekCols}
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-        <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:8px 10px;text-align:center">
-          <div style="font-size:14px;margin-bottom:2px">🔥</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:2px">Σύνολο εβδομάδας</div>
-          <div style="font-size:11px;font-weight:900;color:#111">${totalKcalW.toLocaleString()} kcal</div>
-          <div style="font-size:7px;color:#9ca3af">Μέσ. ${avgKcalW.toLocaleString()} kcal/ημέρα</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
+          <div style="font-size:12px;margin-bottom:1px">🔥</div>
+          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">Σύνολο εβδομάδας</div>
+          <div style="font-size:10px;font-weight:900;color:#111">${totalKcalW.toLocaleString()} kcal</div>
+          <div style="font-size:6.5px;color:#9ca3af">Μέσ. ${avgKcalW.toLocaleString()} kcal/ημ.</div>
         </div>
-        <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:8px 10px;text-align:center">
-          <div style="font-size:14px;margin-bottom:2px">🌿</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:2px">Ποικιλία τροφών</div>
-          <div style="font-size:11px;font-weight:900;color:#111">${uniqueFoodsW.size} διαφ. τρόφιμα</div>
-          <div style="font-size:7px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? 'Καλή ποικιλία!' : 'Δοκίμασε περισσότερα'}</div>
+        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
+          <div style="font-size:12px;margin-bottom:1px">🌿</div>
+          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">Ποικιλία τροφών</div>
+          <div style="font-size:10px;font-weight:900;color:#111">${uniqueFoodsW.size} διαφ. τρόφιμα</div>
+          <div style="font-size:6.5px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? 'Καλή ποικιλία!' : 'Δοκίμασε περισσότερα'}</div>
         </div>
-        <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:8px 10px;text-align:center">
-          <div style="font-size:14px;margin-bottom:2px">💧</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:2px">Ενυδάτωση</div>
-          <div style="font-size:11px;font-weight:900;color:#111">${(state.profile.weight * 0.035).toFixed(1)}L νερό</div>
-          <div style="font-size:7px;color:#9ca3af">Στόχος: ${Math.round(state.profile.weight * 35)}ml/ημέρα</div>
+        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
+          <div style="font-size:12px;margin-bottom:1px">💧</div>
+          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">Ενυδάτωση</div>
+          <div style="font-size:10px;font-weight:900;color:#111">${(state.profile.weight * 0.035).toFixed(1)}L νερό</div>
+          <div style="font-size:6.5px;color:#9ca3af">Στόχος: ${Math.round(state.profile.weight * 35)}ml/ημ.</div>
         </div>
-        <div style="background:#fff;border-radius:8px;border:1px solid #e5e7eb;padding:8px 10px;text-align:center">
-          <div style="font-size:14px;margin-bottom:2px">🎯</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:2px">Πρόοδος στόχου</div>
-          <div style="font-size:11px;font-weight:900;color:${parseFloat(weightChangeW) <= 0 ? '#22c55e' : '#ef4444'}">${parseFloat(weightChangeW) > 0 ? '+' : ''}${weightChangeW} kg</div>
-          <div style="font-size:7px;color:#9ca3af">Αυτή την εβδομάδα</div>
+        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
+          <div style="font-size:12px;margin-bottom:1px">🎯</div>
+          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">Πρόοδος στόχου</div>
+          <div style="font-size:10px;font-weight:900;color:${parseFloat(weightChangeW) <= 0 ? '#22c55e' : '#ef4444'}">${parseFloat(weightChangeW) > 0 ? '+' : ''}${weightChangeW} kg</div>
+          <div style="font-size:6.5px;color:#9ca3af">Αυτή την εβδομάδα</div>
         </div>
       </div>
     </div>`;
 
-  // ── ΣΕΛΙΔΑ 2+: Portrait — ανά ημέρα, λεπτομέρειες για όλα τα γεύματα ──
-  const allFoodsForPrint = [...FOODS_DB, ...state.customFoods];
-  const dayPages = state.week.map((day, di) => {
-    const tot = calcDayMacros(di, false);
-    const pct = Math.min(100, Math.round((tot.kcal / g.kcal) * 100));
-    const barColor = pct > 105 ? '#ef4444' : pct > 95 ? '#22c55e' : '#f59e0b';
-
-    const mealRows = day.meals.map(m => {
-      let name = '', kcal = 0, macStr = '', detailHtml = '';
-
-      if (m.standardId) {
-        const sm = STANDARD_MEALS.find(s => s.id === m.standardId);
-        if (!sm) return '';
-        name = sm.emoji + ' ' + sm.name;
-        kcal = Math.round(sm.kcal_est * (m.scaleFactor||1));
-        macStr = '— / — / —';
-        const itemsList = sm.items.join(' · ') + (sm.note ? ' · ' + sm.note : '');
-        detailHtml = `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:9px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${itemsList}</td></tr>`;
-      } else {
-        const r = allRecipes.find(x => x.id === m.recipeId);
-        if (!r) return '';
-        const mac = calcRecipeMacros(r, m.scaleFactor||1);
-        name = r.emoji + ' ' + r.name;
-        kcal = mac.kcal;
-        macStr = `Π:${mac.p}g / Υ:${mac.c}g / Λ:${mac.f}g`;
-        const ingList = r.ingredients.map(ing => {
-          const food = allFoodsForPrint.find(f => f.id === ing.foodId);
-          if (!food) return '';
-          let qty = ing.qty * (m.scaleFactor||1);
-          if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
-          else qty = Math.round(qty);
-          if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
-          return food.name + ' ' + qty + food.unit;
-        }).filter(Boolean).join(' · ');
-        detailHtml = `<tr><td colspan="5" style="padding:1px 12px 4px;font-size:9px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${ingList}</td></tr>`;
-        if (r.instructions) {
-          detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:8.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
-        }
-      }
-
-      const mealTypeLabel = { breakfast:'Πρωινό', snack:'Δεκατιανό', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' }[m.type] || m.type;
-      const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', afternoon:'#06b6d4', dinner:'#8b5cf6' }[m.type] || '#6b7280';
-      const rowBg = { breakfast:'#fffbeb', snack:'#f0fdf4', lunch:'#eff6ff', afternoon:'#ecfeff', dinner:'#f5f3ff' }[m.type] || '#fff';
-
-      return `<tr style="border-bottom:1px solid #e5e7eb;background:${rowBg}">
-        <td style="padding:6px 8px;font-size:9.5px;color:${typeColor};font-weight:700;white-space:nowrap;vertical-align:top">${mealTypeLabel}</td>
-        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#111;vertical-align:top">${name}</td>
-        <td style="padding:6px 8px;font-size:10px;font-weight:700;color:#374151;text-align:right;white-space:nowrap;vertical-align:top">${kcal}</td>
-        <td style="padding:6px 8px;font-size:9px;color:#6b7280;white-space:nowrap;vertical-align:top">${macStr}</td>
-        <td style="padding:6px 8px;font-size:9px;color:#9ca3af;vertical-align:top">${m.time||''}</td>
-      </tr>${detailHtml}`;
-    }).join('');
-
-    const extraKcal = day.extraKcal || 0;
-    const extraRow = extraKcal > 0
-      ? `<tr style="background:#fef2f2"><td colspan="5" style="padding:6px 8px;font-size:9px;color:#ef4444;font-weight:700">⚠️ Επιπλέον εκτός πλάνου: +${extraKcal} kcal</td></tr>`
-      : '';
-    const dateLabel = state.planStartDate ? ` · ${formatPlanDay(di)}` : '';
-
-    return `
-      <div style="page-break-before:always;padding:10mm 12mm;font-family:'Helvetica Neue',Arial,sans-serif;min-height:277mm;box-sizing:border-box">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #22c55e">
-          <div>
-            <div style="font-size:17px;font-weight:800;color:#111">${day.label}${dateLabel}</div>
-            <div style="font-size:10px;color:#6b7280;margin-top:2px">Στόχος: ${g.kcal} kcal · Πλάνο: ${tot.kcal} kcal (${pct}%)</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:11px;font-weight:700;color:#3b82f6">Πρωτεΐνη: ${tot.p}g</div>
-            <div style="font-size:11px;font-weight:700;color:#8b5cf6">Υδατάνθρακες: ${tot.c}g</div>
-            <div style="font-size:11px;font-weight:700;color:#f59e0b">Λίπος: ${tot.f}g</div>
-          </div>
-        </div>
-        <div style="height:6px;background:#e5e7eb;border-radius:3px;margin-bottom:12px">
-          <div style="height:6px;width:${pct}%;background:${barColor};border-radius:3px"></div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;font-size:9.5px">
-          <thead>
-            <tr style="background:#f1f5f9;border-bottom:2px solid #cbd5e1">
-              <th style="padding:7px 8px;text-align:left;font-size:9px;color:#475569;font-weight:700;width:85px">ΓΕΥΜΑ</th>
-              <th style="padding:7px 8px;text-align:left;font-size:9px;color:#475569;font-weight:700">ΣΥΝΤΑΓΗ / ΠΕΡΙΓΡΑΦΗ</th>
-              <th style="padding:7px 8px;text-align:right;font-size:9px;color:#475569;font-weight:700;width:55px">KCAL</th>
-              <th style="padding:7px 8px;text-align:left;font-size:9px;color:#475569;font-weight:700;width:130px">MACROS</th>
-              <th style="padding:7px 8px;text-align:left;font-size:9px;color:#475569;font-weight:700;width:45px">ΩΡΑ</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${mealRows}
-            ${extraRow}
-          </tbody>
-          <tfoot>
-            <tr style="background:#f0fdf4;border-top:2px solid #22c55e">
-              <td colspan="2" style="padding:8px;font-weight:800;font-size:11px;color:#111">ΣΥΝΟΛΟ ΗΜΕΡΑΣ</td>
-              <td style="padding:8px;font-weight:800;font-size:12px;color:#22c55e;text-align:right">${tot.kcal + extraKcal}</td>
-              <td style="padding:8px;font-size:9.5px;color:#374151">Π:${tot.p}g · Υ:${tot.c}g · Λ:${tot.f}g</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>`;
-  }).join('');
-
   const pv = document.getElementById('print-view');
   pv.innerHTML = `
     <style>
-      @page :first { size: A4 landscape; }
-      @page { size: A4 portrait; margin: 0; }
+      @page { size: A4 landscape; margin: 5mm; }
+      * { box-sizing: border-box; }
     </style>
-    ${summaryPage}
-    ${dayPages}`;
+    ${summaryPage}`;
   showToast('⏳ Άνοιγμα εκτύπωσης...');
   setTimeout(() => window.print(), 400);
 }
@@ -3257,7 +3564,7 @@ function navigateTo(tab) {
   saveState();
 
   // Show/hide pages (only the new top-level pages)
-  const newPages = ['today','week','ideas','builder','stats','settings'];
+  const newPages = ['today','week','ideas','builder','body','stats','settings'];
   newPages.forEach(p => {
     const el = document.getElementById('page-' + p);
     if (el) el.classList.remove('active');
@@ -3273,6 +3580,7 @@ function navigateTo(tab) {
   if (tab === 'week')     renderWeek();
   if (tab === 'ideas')    renderIdeasPage();
   if (tab === 'builder')  renderBuilderPage();
+  if (tab === 'body')     renderBodyPage();
   if (tab === 'stats')    renderStatsPage();
   if (tab === 'settings') renderSettingsPage();
 }
@@ -3309,24 +3617,28 @@ function renderStatsPage() {
     <div class="container fade-in" style="padding-top:14px">
       <div class="segment" style="margin-top:0">
         <button class="seg-btn active" id="stats-tab-overview" onclick="showStatsTab('overview')">📊 Σύνοψη</button>
-        <button class="seg-btn" id="stats-tab-body" onclick="showStatsTab('body')">⚖️ Μετρήσεις</button>
         <button class="seg-btn" id="stats-tab-activity" onclick="showStatsTab('activity')">🏃 Δραστηριότητα</button>
       </div>
       <div id="stats-overview-content"></div>
-      <div id="stats-body-content" style="display:none"></div>
       <div id="stats-activity-content" style="display:none"></div>
     </div>`;
 
   renderStatsOverview();
   renderStatsActivity();
-  document.getElementById('stats-body-content').innerHTML = renderBodyMeasurementsCard();
 }
 
 function showStatsTab(which) {
-  ['overview','body','activity'].forEach(t => {
+  ['overview','activity'].forEach(t => {
     document.getElementById(`stats-tab-${t}`).classList.toggle('active', t === which);
     document.getElementById(`stats-${t}-content`).style.display = t === which ? '' : 'none';
   });
+}
+
+function renderBodyPage() {
+  const el = document.getElementById('page-body');
+  if (!el) return;
+  el.innerHTML = `<div class="container fade-in" style="padding-top:14px"><div id="body-page-content"></div></div>`;
+  document.getElementById('body-page-content').innerHTML = renderBodyMeasurementsCard();
 }
 
 function renderStatsOverview() {
@@ -3503,6 +3815,8 @@ function showToast(msg, dur = 2200) {
 // -- INIT --
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  checkWeekReset();
+  updateSidebarAvatar();
   document.querySelectorAll('.tab-item, .sidebar-item').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.getAttribute('data-tab');

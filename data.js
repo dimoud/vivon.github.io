@@ -59,6 +59,7 @@ const DEFAULT_PROFILE = {
   dailySteps: 8000,  // μέσος αριθμός βημάτων/ημέρα για TDEE
   useCustomTDEE: false,  // αν true, χρησιμοποιεί customTDEE αντί υπολογισμού
   customTDEE: 0,         // χειροκίνητα εισαγμένο TDEE (0 = αχρησιμοποίητο)
+  firstMealTime: '08:00', // ώρα πρώτου γεύματος — τα υπόλοιπα ακολουθούν ανά 3h
 };
 
 const FOODS_DB = [
