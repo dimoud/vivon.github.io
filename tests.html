@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VIVON — Test Suite</title>
+  <style>
+    body { font-family: monospace; padding: 24px; background: #0f172a; color: #e2e8f0; margin: 0; }
+    h1 { color: #38bdf8; margin-bottom: 4px; }
+    .subtitle { color: #64748b; margin-bottom: 24px; font-size: 13px; }
+    .suite { margin-bottom: 20px; }
+    .suite-name { color: #94a3b8; font-size: 13px; font-weight: bold; text-transform: uppercase;
+                  letter-spacing: .08em; margin-bottom: 6px; border-bottom: 1px solid #1e293b; padding-bottom: 4px; }
+    .test { padding: 4px 0; font-size: 14px; display: flex; align-items: flex-start; gap: 8px; }
+    .pass { color: #4ade80; }
+    .fail { color: #f87171; }
+    .icon { flex-shrink: 0; width: 16px; }
+    .msg  { color: #fbbf24; font-size: 12px; margin-left: 24px; }
+    #summary { margin-top: 24px; padding: 12px 16px; border-radius: 8px; font-size: 15px; font-weight: bold; }
+    .summary-pass { background: #14532d; color: #4ade80; }
+    .summary-fail { background: #7f1d1d; color: #fca5a5; }
+  </style>
+</head>
+<body>
+
+<h1>VIVON Test Suite</h1>
+<p class="subtitle">Unit tests for pure calculation and utility functions — runs in the browser with no build step.</p>
+<div id="output"></div>
+<div id="summary"></div>
+
+<!--
+  Load stubs BEFORE data.js / script.js so browser globals exist.
+  We mock window.supabase so supabase.js doesn't crash, and skip auth.js
+  (it only sets up UI event listeners that don't affect the functions under test).
+-->
+<script>
+// ── stubs so supabase.js and script.js initialise without errors ──
+window.supabase = {
+  createClient: () => ({
+    auth: {
+      signUp: async () => ({}),
+      signInWithPassword: async () => ({}),
+      signOut: async () => {},
+      resetPasswordForEmail: async () => ({}),
+      onAuthStateChange: () => {},
+      getSession: async () => ({ data: { session: null } }),
+    },
+    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({}), order: () => ({ maybeSingle: async () => ({}) }) }) }) }),
+  }),
+};
+// Prevent supabase.js from touching _supabase at module level
+window._currentUser = null;
+
+// Prevent script.js from calling DOM / saveState on load
+window.localStorage = { getItem: () => null, setItem: () => {} };
+</script>
+<script src="data.js"></script>
+<script src="supabase.js"></script>
+<script src="script.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// Micro test runner
+// ══════════════════════════════════════════════════════════════════
+const results = [];
+let currentSuite = '';
+
+function suite(name) { currentSuite = name; }
+
+function test(name, fn) {
+  try {
+    fn();
+    results.push({ suite: currentSuite, name, pass: true });
+  } catch (e) {
+    results.push({ suite: currentSuite, name, pass: false, msg: e.message });
+  }
+}
+
+function assert(condition, msg) {
+  if (!condition) throw new Error(msg || 'Assertion failed');
+}
+
+function assertEq(actual, expected, label) {
+  if (actual !== expected)
+    throw new Error(`${label || ''}: expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
+}
+
+function assertNear(actual, expected, tol, label) {
+  if (Math.abs(actual - expected) > tol)
+    throw new Error(`${label || ''}: expected ≈${expected} (±${tol}), got ${actual}`);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 1 — BMR (Mifflin-St Jeor)
+// ══════════════════════════════════════════════════════════════════
+suite('BMR (Mifflin-St Jeor)');
+
+test('male reference profile', () => {
+  // 10*95.9 + 6.25*188 - 5*34 + 5 = 959 + 1175 - 170 + 5 = 1969
+  const bmr = calcBMR({ gender: 'male', weight: 95.9, height: 188, age: 34 });
+  assertEq(bmr, 1969, 'male BMR');
+});
+
+test('female reference profile', () => {
+  // 10*60 + 6.25*165 - 5*30 - 161 = 600 + 1031.25 - 150 - 161 = 1320
+  const bmr = calcBMR({ gender: 'female', weight: 60, height: 165, age: 30 });
+  assertEq(bmr, 1320, 'female BMR');
+});
+
+test('male low body weight', () => {
+  const bmr = calcBMR({ gender: 'male', weight: 55, height: 170, age: 25 });
+  // 10*55 + 6.25*170 - 5*25 + 5 = 550 + 1062.5 - 125 + 5 = 1493
+  assertEq(bmr, 1493, 'low-weight male');
+});
+
+test('returns integer', () => {
+  const bmr = calcBMR({ gender: 'male', weight: 75.7, height: 177, age: 28 });
+  assertEq(bmr, Math.round(bmr), 'must be integer');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 2 — BMI
+// ══════════════════════════════════════════════════════════════════
+suite('BMI');
+
+test('normal weight', () => {
+  // 70 / (1.75^2) = 70/3.0625 ≈ 22.9
+  assertEq(calcBMI(70, 175), '22.9', 'normal BMI');
+});
+
+test('obese', () => {
+  // 100 / (1.70^2) = 100/2.89 ≈ 34.6
+  assertEq(calcBMI(100, 170), '34.6', 'obese BMI');
+});
+
+test('bmiLabel — underweight', () => {
+  assertEq(bmiLabel(17).label, 'Λιποβαρής');
+});
+
+test('bmiLabel — normal', () => {
+  assertEq(bmiLabel(22).label, 'Κανονικό');
+});
+
+test('bmiLabel — overweight', () => {
+  assertEq(bmiLabel(27).label, 'Υπέρβαρος');
+});
+
+test('bmiLabel — obese', () => {
+  assertEq(bmiLabel(32).label, 'Παχυσαρκία');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 3 — Step calorie adjustment (tiered)
+// ══════════════════════════════════════════════════════════════════
+suite('Step Adjustment (calcStepAdjustment)');
+
+const stepCases = [
+  [0,     0],
+  [3999,  0],
+  [4000,  80],
+  [5999,  80],
+  [6000,  150],
+  [7999,  150],
+  [8000,  250],
+  [9999,  250],
+  [10000, 350],
+  [11999, 350],
+  [12000, 450],
+  [15000, 450],
+];
+stepCases.forEach(([steps, expected]) => {
+  test(`${steps} steps → ${expected} kcal`, () => {
+    assertEq(calcStepAdjustment(steps), expected, `steps=${steps}`);
+  });
+});
+
+test('null / undefined input treated as 0', () => {
+  assertEq(calcStepAdjustment(null), 0);
+  assertEq(calcStepAdjustment(undefined), 0);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 4 — TDEE (suggested and custom)
+// ══════════════════════════════════════════════════════════════════
+suite('TDEE');
+
+const profileA = { gender: 'male', weight: 95.9, height: 188, age: 34, activity: 1.50, dailySteps: 8000 };
+
+test('calcSuggestedTDEE uses BMR * activity + stepAdj', () => {
+  const bmr = calcBMR(profileA);          // 1969
+  const stepAdj = calcStepAdjustment(8000); // 250
+  const expected = Math.round(bmr * 1.50 + stepAdj);
+  assertEq(calcSuggestedTDEE(profileA), expected, 'suggestedTDEE');
+});
+
+test('calcTDEE falls back to suggested when useCustomTDEE=false', () => {
+  const p = { ...profileA, useCustomTDEE: false, customTDEE: 9999 };
+  assertEq(calcTDEE(p), calcSuggestedTDEE(p));
+});
+
+test('calcTDEE uses customTDEE when useCustomTDEE=true', () => {
+  const p = { ...profileA, useCustomTDEE: true, customTDEE: 2200 };
+  assertEq(calcTDEE(p), 2200);
+});
+
+test('calcTDEE falls back to suggested when customTDEE=0 (even if flag set)', () => {
+  const p = { ...profileA, useCustomTDEE: true, customTDEE: 0 };
+  assertEq(calcTDEE(p), calcSuggestedTDEE(p));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 5 — Activity kcal helpers
+// ══════════════════════════════════════════════════════════════════
+suite('Activity kcal helpers');
+
+test('calcStepsKcal scales linearly with weight', () => {
+  // 70kg reference: steps * 0.04
+  assertEq(calcStepsKcal(8000, 70), Math.round(8000 * 0.04), '70 kg');
+  // 95.9 kg: steps * 0.04 * (95.9/70)
+  assertEq(calcStepsKcal(8000, 95.9), Math.round(8000 * 0.04 * (95.9 / 70)), '95.9 kg');
+});
+
+test('calcWeightTrainingKcal scales with weight', () => {
+  assertEq(calcWeightTrainingKcal(70), Math.round(5 * 60), '70 kg baseline');
+  assertEq(calcWeightTrainingKcal(140), Math.round(5 * 60 * 2), 'double weight');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 6 — Ideal protein
+// ══════════════════════════════════════════════════════════════════
+suite('Ideal protein');
+
+test('calcIdealProtein = round(w * 1.9)', () => {
+  assertEq(calcIdealProtein(95.9), Math.round(95.9 * 1.9));
+  assertEq(calcIdealProtein(60), Math.round(60 * 1.9));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 7 — Meal times
+// ══════════════════════════════════════════════════════════════════
+suite('Meal times (getMealTimes)');
+
+test('breakfast equals firstMealTime', () => {
+  state.profile.firstMealTime = '08:00';
+  assertEq(getMealTimes().breakfast, '08:00');
+});
+
+test('lunch is +5h from breakfast', () => {
+  state.profile.firstMealTime = '08:00';
+  assertEq(getMealTimes().lunch, '13:00');
+});
+
+test('dinner is +11h from breakfast', () => {
+  state.profile.firstMealTime = '08:00';
+  assertEq(getMealTimes().dinner, '19:00');
+});
+
+test('wraps midnight correctly', () => {
+  state.profile.firstMealTime = '22:00';
+  // dinner = 22:00 + 11h = 09:00 next day (mod 24)
+  assertEq(getMealTimes().dinner, '09:00');
+});
+
+test('snack is +3h from breakfast', () => {
+  state.profile.firstMealTime = '07:30';
+  assertEq(getMealTimes().snack, '10:30');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 8 — Recipe macro calculation
+// ══════════════════════════════════════════════════════════════════
+suite('Recipe macros (calcRecipeMacros)');
+
+// Minimal single-ingredient recipe: 200g chicken breast (f1: kcal=165, p=31 per 100g)
+const chickenRecipe = {
+  ingredients: [{ foodId: 'f1', qty: 200 }]
+};
+
+test('200g chicken breast — kcal', () => {
+  assertEq(calcRecipeMacros(chickenRecipe).kcal, 330);
+});
+
+test('200g chicken breast — protein', () => {
+  assertEq(calcRecipeMacros(chickenRecipe).p, 62);
+});
+
+test('200g chicken breast — fat', () => {
+  // 3.6 * 2 = 7.2 → Math.round = 7
+  assertEq(calcRecipeMacros(chickenRecipe).f, 7);
+});
+
+test('scaleFactor doubles macros', () => {
+  const base = calcRecipeMacros(chickenRecipe);
+  const scaled = calcRecipeMacros(chickenRecipe, 2);
+  assertEq(scaled.kcal, base.kcal * 2, 'kcal * 2');
+  assertEq(scaled.p,    base.p    * 2, 'p * 2');
+});
+
+// Unit = 'τεμ' (egg, f7: kcal=78, p=6 per unit)
+const eggRecipe = { ingredients: [{ foodId: 'f7', qty: 3 }] };
+
+test('3 eggs (τεμ) — kcal', () => {
+  assertEq(calcRecipeMacros(eggRecipe).kcal, 234);
+});
+
+test('3 eggs (τεμ) — protein', () => {
+  assertEq(calcRecipeMacros(eggRecipe).p, 18);
+});
+
+// Unit = 'ψεκ' (spray oil, l1: kcal=884/100ml, sprayFactor=0.25ml)
+const sprayRecipe = { ingredients: [{ foodId: 'l1', qty: 4 }] }; // 4 sprays
+
+test('4 sprays of olive oil — kcal (4 * 0.25ml * 884/100)', () => {
+  const expected = Math.round(4 * 0.25 * 884 / 100);
+  assertEq(calcRecipeMacros(sprayRecipe).kcal, expected);
+});
+
+test('unknown foodId is skipped gracefully', () => {
+  const r = { ingredients: [{ foodId: 'DOES_NOT_EXIST', qty: 100 }] };
+  const m = calcRecipeMacros(r);
+  assertEq(m.kcal, 0);
+  assertEq(m.p,    0);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 9 — FOODS_DB integrity
+// ══════════════════════════════════════════════════════════════════
+suite('FOODS_DB integrity');
+
+test('no duplicate IDs', () => {
+  const ids = FOODS_DB.map(f => f.id);
+  const unique = new Set(ids);
+  assertEq(unique.size, ids.length, `${ids.length - unique.size} duplicate IDs`);
+});
+
+test('all entries have required fields', () => {
+  FOODS_DB.forEach(f => {
+    assert(f.id,   `missing id on food: ${JSON.stringify(f)}`);
+    assert(f.name, `missing name on ${f.id}`);
+    assert(f.unit, `missing unit on ${f.id}`);
+    assert(f.per100, `missing per100 on ${f.id}`);
+    assert(f.per100.kcal !== undefined, `missing kcal on ${f.id}`);
+  });
+});
+
+test('all kcal values are non-negative', () => {
+  FOODS_DB.forEach(f => {
+    assert(f.per100.kcal >= 0, `negative kcal on ${f.id}`);
+  });
+});
+
+test('FOODS_DB has expected number of entries (sanity)', () => {
+  assert(FOODS_DB.length >= 30, `only ${FOODS_DB.length} foods — expected at least 30`);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 10 — DEFAULT_GOALS / DEFAULT_PROFILE shape
+// ══════════════════════════════════════════════════════════════════
+suite('Defaults');
+
+test('DEFAULT_GOALS has all macro keys', () => {
+  ['kcal', 'protein', 'carbs', 'fat'].forEach(k => {
+    assert(DEFAULT_GOALS[k] !== undefined, `missing ${k}`);
+  });
+});
+
+test('DEFAULT_PROFILE has required fields', () => {
+  ['name', 'weight', 'height', 'age', 'gender', 'activity'].forEach(k => {
+    assert(DEFAULT_PROFILE[k] !== undefined, `missing ${k}`);
+  });
+});
+
+test('DEFAULT_PROFILE activity is a valid Mifflin multiplier', () => {
+  const valid = [1.20, 1.35, 1.50, 1.65, 1.80];
+  assert(valid.includes(DEFAULT_PROFILE.activity),
+    `activity ${DEFAULT_PROFILE.activity} not in valid set`);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// Render results
+// ══════════════════════════════════════════════════════════════════
+(function render() {
+  const out = document.getElementById('output');
+  const suites = [...new Set(results.map(r => r.suite))];
+
+  suites.forEach(suiteName => {
+    const tests = results.filter(r => r.suite === suiteName);
+    const div = document.createElement('div');
+    div.className = 'suite';
+    div.innerHTML = `<div class="suite-name">${suiteName}</div>`;
+    tests.forEach(t => {
+      const pass = t.pass;
+      div.innerHTML += `
+        <div class="test">
+          <span class="icon ${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'}</span>
+          <span class="${pass ? 'pass' : 'fail'}">${t.name}</span>
+        </div>
+        ${!pass ? `<div class="msg">${t.msg}</div>` : ''}
+      `;
+    });
+    out.appendChild(div);
+  });
+
+  const passed = results.filter(r => r.pass).length;
+  const total  = results.length;
+  const failed = total - passed;
+  const summary = document.getElementById('summary');
+  summary.className = `summary-${failed === 0 ? 'pass' : 'fail'}`;
+  summary.textContent = failed === 0
+    ? `✓ All ${total} tests passed`
+    : `✗ ${failed} of ${total} tests failed`;
+})();
+</script>
+</body>
+</html>
