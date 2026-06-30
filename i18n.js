@@ -89,6 +89,32 @@ const I18N = {
   donate_revolut:  { el: '🔄 Δωρεά μέσω Revolut', en: '🔄 Donate via Revolut', es: '🔄 Donar vía Revolut', fr: '🔄 Don via Revolut' },
   donate_or:       { el: 'ή', en: 'or', es: 'o', fr: 'ou' },
   donate_thanks:   { el: 'Κάθε βοήθεια μετράει! 🙏', en: 'Every bit helps! 🙏', es: '¡Cualquier ayuda cuenta! 🙏', fr: 'Chaque aide compte ! 🙏' },
+
+  // ── Disclaimer (shown at registration) ──
+  disclaimer_title: {
+    el: '⚠️ Σημαντική Ανακοίνωση',
+    en: '⚠️ Important Notice',
+    es: '⚠️ Aviso Importante',
+    fr: '⚠️ Avis Important',
+  },
+  disclaimer_body: {
+    el: 'Το VIVON είναι εφαρμογή καταγραφής διατροφής και προσωπικής παρακολούθησης. ΔΕΝ παρέχει ιατρικές, διαιτολογικές ή άλλες επαγγελματικές συμβουλές. Οι πληροφορίες και υπολογισμοί στην εφαρμογή είναι ενδεικτικοί και ενδέχεται να περιέχουν ανακρίβειες. ΔΕΝ αντικαθιστούν τη γνώμη ιατρού, διαιτολόγου ή άλλου ειδικού. Χρησιμοποιείτε την εφαρμογή αποκλειστικά με δική σας ευθύνη. Σε περίπτωση υγειονομικών ανησυχιών, συμβουλευτείτε πάντα ειδικό.',
+    en: 'VIVON is a personal nutrition tracking app. It does NOT provide medical, dietary, or professional advice of any kind. All information and calculations are indicative only and may contain inaccuracies. Nothing in this app should be considered a substitute for advice from a qualified doctor, dietitian, or healthcare professional. You use this app entirely at your own risk. If you have any health concerns, always consult a qualified professional.',
+    es: 'VIVON es una aplicación personal de seguimiento nutricional. NO proporciona asesoramiento médico, dietético ni profesional de ningún tipo. Toda la información y los cálculos son meramente indicativos y pueden contener inexactitudes. Nada en esta aplicación debe considerarse un sustituto del consejo de un médico, dietista u otro profesional de la salud. Usas esta aplicación bajo tu propia responsabilidad. Si tienes alguna preocupación de salud, consulta siempre a un profesional.',
+    fr: 'VIVON est une application personnelle de suivi nutritionnel. Elle ne fournit AUCUN conseil médical, diététique ou professionnel. Toutes les informations et calculs sont indicatifs et peuvent contenir des inexactitudes. Rien dans cette application ne remplace l\'avis d\'un médecin, diététicien ou autre professionnel de santé qualifié. Vous utilisez cette application entièrement à vos propres risques. En cas de préoccupation de santé, consultez toujours un professionnel qualifié.',
+  },
+  disclaimer_check: {
+    el: 'Διάβασα και αποδέχομαι τους παραπάνω όρους. Κατανοώ ότι η εφαρμογή δεν παρέχει ιατρικές συμβουλές.',
+    en: 'I have read and accept the above notice. I understand this app does not provide medical advice.',
+    es: 'He leído y acepto el aviso anterior. Entiendo que esta aplicación no proporciona asesoramiento médico.',
+    fr: 'J\'ai lu et j\'accepte l\'avis ci-dessus. Je comprends que cette application ne fournit pas de conseils médicaux.',
+  },
+  disclaimer_required: {
+    el: 'Πρέπει να αποδεχτείς τους όρους για να εγγραφείς.',
+    en: 'You must accept the notice to create an account.',
+    es: 'Debes aceptar el aviso para crear una cuenta.',
+    fr: 'Vous devez accepter l\'avis pour créer un compte.',
+  },
 };
 
 // ── Current language (default: Greek) ──

@@ -2409,6 +2409,30 @@ select:focus, textarea:focus {
   margin: 0 0 4px;
   line-height: 1.5;
 }
+.auth-disclaimer-box {
+  background: #fffbeb;
+  border: 1.5px solid #f59e0b;
+  border-radius: 10px;
+  padding: 11px 13px 10px;
+  max-height: 130px;
+  overflow-y: auto;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: #78350f;
+}
+.auth-disclaimer-title {
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+  color: #92400e;
+}
+.auth-disclaimer-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  cursor: pointer;
+  padding: 2px 0;
+}
 
 @media (max-width: 480px) {
   .auth-card { padding: 20px 14px 20px; }

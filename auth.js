@@ -136,6 +136,14 @@
                       tabindex="-1">${ICONS.eye}</button>
             </div>
           </div>
+          <div class="auth-disclaimer-box" id="auth-disclaimer-box">
+            <div class="auth-disclaimer-title" id="auth-disclaimer-title"></div>
+            <div class="auth-disclaimer-body" id="auth-disclaimer-body"></div>
+          </div>
+          <label class="auth-disclaimer-check-row">
+            <input type="checkbox" id="auth-disclaimer-check" style="flex-shrink:0;width:16px;height:16px;accent-color:var(--primary,#4f8ef7);cursor:pointer">
+            <span id="auth-disclaimer-check-label" style="font-size:0.78rem;line-height:1.4;color:var(--text-secondary,#666);cursor:pointer"></span>
+          </label>
           <div id="auth-error-register" class="auth-error" style="display:none">
             ${ICONS.shield} <span></span>
           </div>
@@ -191,6 +199,7 @@
         </form>
 
       </div>`;
+    _renderDisclaimer();
   }
 
   function showAuthScreen() {
@@ -225,7 +234,46 @@
     });
     const tabs = document.getElementById('auth-tabs');
     if (tabs) tabs.style.display = (tab === 'reset' || tab === 'reset-new') ? 'none' : '';
+
+    if (tab === 'register') _renderDisclaimer();
   };
+
+  function _disclaimerLang() {
+    // Use saved language if available, otherwise browser locale, otherwise Greek
+    let lang = 'el';
+    try { lang = localStorage.getItem('vivon_lang') || 'el'; } catch(e) {}
+    const supported = ['el', 'en', 'es', 'fr'];
+    if (!supported.includes(lang)) {
+      const bl = (navigator.language || '').split('-')[0].toLowerCase();
+      lang = supported.includes(bl) ? bl : 'el';
+    }
+    return lang;
+  }
+
+  function _renderDisclaimer() {
+    const lang = _disclaimerLang();
+    const D = {
+      title: { el: '⚠️ Σημαντική Ανακοίνωση', en: '⚠️ Important Notice', es: '⚠️ Aviso Importante', fr: '⚠️ Avis Important' },
+      body: {
+        el: 'Το VIVON είναι εφαρμογή καταγραφής διατροφής και προσωπικής παρακολούθησης. ΔΕΝ παρέχει ιατρικές, διαιτολογικές ή άλλες επαγγελματικές συμβουλές. Οι πληροφορίες και υπολογισμοί στην εφαρμογή είναι ενδεικτικοί και ενδέχεται να περιέχουν ανακρίβειες. ΔΕΝ αντικαθιστούν τη γνώμη ιατρού, διαιτολόγου ή άλλου ειδικού. Χρησιμοποιείτε την εφαρμογή αποκλειστικά με δική σας ευθύνη. Σε περίπτωση υγειονομικών ανησυχιών, συμβουλευτείτε πάντα ειδικό.',
+        en: 'VIVON is a personal nutrition tracking app. It does NOT provide medical, dietary, or professional advice of any kind. All information and calculations are indicative only and may contain inaccuracies. Nothing in this app should be considered a substitute for advice from a qualified doctor, dietitian, or healthcare professional. You use this app entirely at your own risk. If you have any health concerns, always consult a qualified professional.',
+        es: 'VIVON es una aplicación personal de seguimiento nutricional. NO proporciona asesoramiento médico, dietético ni profesional de ningún tipo. Toda la información y los cálculos son meramente indicativos y pueden contener inexactitudes. Nada en esta aplicación debe considerarse un sustituto del consejo de un médico, dietista u otro profesional de la salud. Usas esta aplicación bajo tu propia responsabilidad. Si tienes alguna preocupación de salud, consulta siempre a un profesional.',
+        fr: 'VIVON est une application personnelle de suivi nutritionnel. Elle ne fournit AUCUN conseil médical, diététique ou professionnel. Toutes les informations et calculs sont indicatifs et peuvent contenir des inexactitudes. Rien dans cette application ne remplace l\'avis d\'un médecin, diététicien ou autre professionnel de santé qualifié. Vous utilisez cette application entièrement à vos propres risques. En cas de préoccupation de santé, consultez toujours un professionnel qualifié.',
+      },
+      check: {
+        el: 'Διάβασα και αποδέχομαι τους παραπάνω όρους. Κατανοώ ότι η εφαρμογή δεν παρέχει ιατρικές συμβουλές.',
+        en: 'I have read and accept the above notice. I understand this app does not provide medical advice.',
+        es: 'He leído y acepto el aviso anterior. Entiendo que esta aplicación no proporciona asesoramiento médico.',
+        fr: 'J\'ai lu et j\'accepte l\'avis ci-dessus. Je comprends que cette application ne fournit pas de conseils médicaux.',
+      },
+    };
+    const title = document.getElementById('auth-disclaimer-title');
+    const body  = document.getElementById('auth-disclaimer-body');
+    const label = document.getElementById('auth-disclaimer-check-label');
+    if (title) title.textContent = D.title[lang] || D.title.en;
+    if (body)  body.textContent  = D.body[lang]  || D.body.en;
+    if (label) label.textContent = D.check[lang]  || D.check.en;
+  }
 
   // ── Password visibility toggle ────────────────────────────
 
@@ -257,6 +305,20 @@
     const name  = document.getElementById('auth-name-register').value.trim();
     const email = document.getElementById('auth-email-register').value.trim();
     const pass  = document.getElementById('auth-pass-register').value;
+
+    const disclaimerCheck = document.getElementById('auth-disclaimer-check');
+    if (!disclaimerCheck || !disclaimerCheck.checked) {
+      const lang = _disclaimerLang();
+      const required = {
+        el: 'Πρέπει να αποδεχτείς τους όρους για να εγγραφείς.',
+        en: 'You must accept the notice to create an account.',
+        es: 'Debes aceptar el aviso para crear una cuenta.',
+        fr: 'Vous devez accepter l\'avis pour créer un compte.',
+      };
+      showError('register', required[lang] || required.en);
+      return;
+    }
+
     setLoading('register', true);
     clearMsg('register');
 
