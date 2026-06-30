@@ -2,16 +2,7 @@
 // ai.js — Gemini AI for meal plan generation & optimization
 // ============================================================
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-
-function _getGeminiKey() {
-  return localStorage.getItem('vivon_gemini_key') || '';
-}
-
-function setGeminiKey(key) {
-  localStorage.setItem('vivon_gemini_key', key.trim());
-  showToast('✅ API Key αποθηκεύτηκε!');
-}
+const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/gemini-proxy';
 
 // ── Shared helpers ──────────────────────────────────────────
 
@@ -77,15 +68,10 @@ function _applyAIWeek(optimized) {
 }
 
 async function _callGemini(prompt) {
-  const key = _getGeminiKey();
-  if (!key) throw new Error('Δεν έχει οριστεί Gemini API Key — πήγαινε Ρυθμίσεις → Βελτιστοποίηση');
-  const response = await fetch(`${GEMINI_API_URL}?key=${key}`, {
+  const response = await fetch(GEMINI_PROXY_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
-    })
+    body: JSON.stringify({ prompt })
   });
   if (!response.ok) {
     const err = await response.json();
