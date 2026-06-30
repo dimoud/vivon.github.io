@@ -2,7 +2,7 @@
 // ai.js — Gemini AI for meal plan generation & optimization
 // ============================================================
 
-const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/gemini-proxy';
+const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/quick-endpoint';
 
 // ── Shared helpers ──────────────────────────────────────────
 
