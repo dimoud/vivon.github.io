@@ -2480,12 +2480,12 @@ function renderBuilderPage(typeFilter) {
     dinner:     { label: 'Βραδινό',       icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: _mt.dinner },
   };
   const filterLabels = [
-    { key: 'all',       label: 'Όλα' },
-    { key: 'breakfast', label: 'Πρωινό' },
-    { key: 'snack',     label: 'Δεκατιανό' },
-    { key: 'lunch',     label: 'Μεσημεριανό' },
-    { key: 'afternoon', label: 'Απογευματινό' },
-    { key: 'dinner',    label: 'Βραδινό' },
+    { key: 'all',       label: 'Όλες',        icon: '' },
+    { key: 'breakfast', label: 'Πρωινά',      icon: '☀️' },
+    { key: 'snack',     label: 'Δεκατιανά',   icon: '🍎' },
+    { key: 'lunch',     label: 'Μεσ/νό',      icon: '🥗' },
+    { key: 'afternoon', label: 'Απογ/νά',     icon: '☕' },
+    { key: 'dinner',    label: 'Βραδινά',     icon: '🌙' },
   ];
   const allMealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealTypes = typeFilter === 'all' ? allMealTypes : [typeFilter];
@@ -2660,18 +2660,82 @@ function renderBuilderPage(typeFilter) {
     ? `${state.week[state.currentDay].label} · ${formatPlanDay(state.currentDay)}`
     : state.week[state.currentDay].label;
 
+  if (typeof state._builderApplyDay === 'undefined') state._builderApplyDay = state.currentDay || 0;
+  const applyDayIdx = Math.max(0, Math.min(state.week.length - 1, state._builderApplyDay || 0));
+  state._builderApplyDay = applyDayIdx;
+  const applyDayLabel = state.planStartDate
+    ? (() => { const d = new Date(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months=['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου']; const dayNames=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο']; return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
+    : state.week[applyDayIdx].label;
+  const mealCount = builderMeals.length;
+
   document.getElementById('page-builder').innerHTML = `
   <div class="dplanner-wrap">
 
-    <!-- TOP BAR -->
-    <div class="dplanner-topbar">
-      <div class="dplanner-topbar-left">
-        <h2>Day Planner</h2>
-        <p>Σχεδίασε τα γεύματά σου για σήμερα</p>
+    <!-- TOP CARD (mobile-first) -->
+    <div class="dplanner-topcard">
+      <div class="dplanner-topcard-header">
+        <div>
+          <h2 class="dplanner-topcard-title">Day Planner</h2>
+          <p class="dplanner-topcard-sub">Σχεδίασε τα γεύματά σου για σήμερα</p>
+        </div>
+        <button class="dplanner-topcard-icon-btn" onclick="navigateTo('week')" title="Εβδομαδιαία προβολή">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </button>
       </div>
-      <div class="dplanner-topbar-actions">
-        <button class="btn btn-ghost btn-sm" style="color:var(--red)" onclick="builderPageClear()">🗑 Καθαρισμός πλάνου</button>
-        <button class="btn btn-green btn-sm" onclick="builderPageApply()">✓ Αποθήκευση πλάνου</button>
+      ${mealCount > 0 ? `
+      <div class="dplanner-status-row" onclick="dpHighlightType('all')">
+        <div class="dplanner-status-left">
+          <div class="dplanner-status-check">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="dplanner-status-title">Το πλάνο είναι έτοιμο</div>
+            <div class="dplanner-status-meta">${mealCount} γεύματα &nbsp;·&nbsp; ${totalKcal} kcal</div>
+          </div>
+        </div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>` : `
+      <div class="dplanner-status-row dplanner-status-empty">
+        <div class="dplanner-status-left">
+          <div class="dplanner-status-check dplanner-status-check--empty">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="dplanner-status-title" style="color:var(--text2)">Επίλεξε γεύματα</div>
+            <div class="dplanner-status-meta">0 γεύματα &nbsp;·&nbsp; 0 kcal</div>
+          </div>
+        </div>
+      </div>`}
+      <button class="dplanner-btn-clear" onclick="builderPageClear()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        Καθαρισμός πλάνου
+      </button>
+      <button class="dplanner-btn-save" onclick="builderPageApply()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Αποθήκευση πλάνου
+      </button>
+    </div>
+
+    <!-- DAY SELECTOR CARD (mobile) -->
+    <div class="dplanner-daycard">
+      <div class="dplanner-daycard-header">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div>
+          <div class="dplanner-daycard-title">Αποθήκευση πλάνου σε ημέρα</div>
+          <div class="dplanner-daycard-sub">Επίλεξε την ημέρα που θέλεις να εφαρμοστεί το πλάνο</div>
+        </div>
+      </div>
+      <div class="dplanner-daycard-nav">
+        <button class="dplanner-nav-btn" onclick="state._builderApplyDay=Math.max(0,${applyDayIdx}-1);renderBuilderPage('${typeFilter}')">‹</button>
+        <div class="dplanner-daycard-label">
+          ${applyDayLabel}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <button class="dplanner-nav-btn" onclick="state._builderApplyDay=Math.min(${state.week.length-1},${applyDayIdx}+1);renderBuilderPage('${typeFilter}')">›</button>
+      </div>
+      <div class="dplanner-daycard-info">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Το πλάνο θα αποθηκευτεί και θα εφαρμοστεί για την επιλεγμένη ημέρα.
       </div>
     </div>
 
@@ -2688,9 +2752,9 @@ function renderBuilderPage(typeFilter) {
               value="${window._builderSearch || ''}"
               oninput="window._builderSearch=this.value;renderBuilderPage('${typeFilter}')">
           </div>
-          <div class="dplanner-filter-row">
-            ${filterLabels.map(fl => `<button class="dplanner-filter-btn ${typeFilter===fl.key?'active':''}"
-              onclick="renderBuilderPage('${fl.key}')">${fl.label}</button>`).join('')}
+          <div class="recipe-filter-pills" style="margin-top:8px">
+            ${filterLabels.map(fl => `<button class="recipe-pill ${typeFilter===fl.key?'active':''}"
+              onclick="renderBuilderPage('${fl.key}')">${fl.icon ? fl.icon+' ' : ''}${fl.label}</button>`).join('')}
           </div>
         </div>
         <div class="dplanner-col-body">${libHtml}</div>
@@ -2797,6 +2861,12 @@ function renderBuilderPage(typeFilter) {
       </div>
 
     </div>
+
+    <!-- FLOATING KCAL BUBBLE (mobile only) -->
+    <div class="builder-kcal-bubble" id="builder-kcal-bubble" style="${totalKcal > 0 ? '' : 'opacity:0;pointer-events:none'}">
+      🔥 ${totalKcal} kcal
+    </div>
+
   </div>`;
 }
 
@@ -2809,20 +2879,41 @@ function builderPageToggle(id, isStandard) {
   if (idx >= 0) builderMeals.splice(idx, 1);
   else builderMeals.push({ id, isStandard });
   renderBuilderPage(state._builderFilter || 'all');
+  _updateBuilderBubble();
+}
+
+function _updateBuilderBubble() {
+  const bubble = document.getElementById('builder-kcal-bubble');
+  if (!bubble) return;
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  let total = 0;
+  builderMeals.forEach(bm => {
+    if (bm.isStandard) {
+      const sm = STANDARD_MEALS.find(s => s.id === bm.id);
+      if (sm) total += sm.kcal_est;
+    } else {
+      const r = allRecipes.find(x => x.id === bm.id);
+      if (r) total += calcRecipeMacros(r).kcal;
+    }
+  });
+  if (total > 0) {
+    bubble.textContent = '🔥 ' + total + ' kcal';
+    bubble.style.opacity = '1';
+    bubble.style.pointerEvents = 'auto';
+    bubble.classList.add('builder-kcal-bubble--pop');
+    setTimeout(() => bubble.classList.remove('builder-kcal-bubble--pop'), 300);
+  } else {
+    bubble.style.opacity = '0';
+    bubble.style.pointerEvents = 'none';
+  }
 }
 
 function builderPageApply() {
   if (!builderMeals.length) { showToast('⚠️ Δεν επιλέχτηκαν γεύματα'); return; }
-  // Επιλογή ημέρας
-  openModal(`<div class="modal-handle"></div>
-    <div class="modal-title">📅 Σε ποια ημέρα να εφαρμοστεί;</div>
-    <p style="font-size:0.82rem;color:var(--text2);margin-bottom:14px">Επίλεξε ημέρα ή αποθήκευσε ως πρότυπο.</p>
-    <div class="recipes-grid">
-      ${state.week.map((d,i) => {
-        const dl = state.planStartDate ? '<br><span style=\'font-size:0.68rem;color:var(--text3)\'>' + formatPlanDay(i) + '</span>' : '';
-        return '<div class=\'recipe-card\' onclick=\'applyBuilderToDayIdx(' + i + ')\' ><div class=\'recipe-card-emoji\'>📅</div><div class=\'recipe-card-name\'>' + d.label + dl + '</div></div>';
-      }).join('')}
-    </div>`);
+  const dayIdx = typeof state._builderApplyDay !== 'undefined'
+    ? Math.max(0, Math.min(state.week.length - 1, state._builderApplyDay))
+    : state.currentDay;
+  applyBuilderToDayIdx(dayIdx);
 }
 
 function applyBuilderToDayIdx(dayIdx) {
@@ -3447,6 +3538,7 @@ function saveNewFood() {
 
 // ── DAY BUILDER ──
 let builderMeals = [];
+if (typeof state._builderApplyDay === 'undefined') state._builderApplyDay = 0;
 function openDayBuilder() {
   builderMeals = [];
   renderBuilderModal();
@@ -4235,7 +4327,7 @@ function navigateTo(tab) {
   if (tab === 'today')    renderToday();
   if (tab === 'week')     renderWeek();
   if (tab === 'ideas')    renderIdeasPage();
-  if (tab === 'builder')  renderBuilderPage();
+  if (tab === 'builder')  { state._builderFilter = 'breakfast'; renderBuilderPage('breakfast'); }
   if (tab === 'body')     renderBodyPage();
   if (tab === 'stats')    renderStatsPage();
   if (tab === 'settings') renderSettingsPage();
