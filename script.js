@@ -3896,21 +3896,46 @@ function renderStatsActivity() {
     </div>`;
 }
 
+function _settingsSaveBtn(id) {
+  return `<button id="${id}" class="btn btn-primary" style="width:100%;padding:13px;font-size:0.97rem;font-weight:700;border-radius:12px" onclick="saveSettingsToCloud()">💾 Αποθήκευση ρυθμίσεων</button>`;
+}
+
 function renderSettingsPage() {
   const el = document.getElementById('page-settings');
   if (!el) return;
   el.innerHTML = `
     <div class="container fade-in" style="padding-top:14px">
-      <div class="segment" style="margin-top:0">
+      ${_settingsSaveBtn('settings-save-top')}
+      <div class="segment" style="margin-top:14px">
         <button class="seg-btn active" id="settings-tab-profile" onclick="showSettingsTab('profile')">👤 Προφίλ</button>
         <button class="seg-btn" id="settings-tab-optimize" onclick="showSettingsTab('optimize')">⚡ Βελτίωση</button>
       </div>
       <div id="settings-profile-content"></div>
       <div id="settings-optimize-content" style="display:none"></div>
+      ${_settingsSaveBtn('settings-save-bottom')}
     </div>`;
   // Render into sub-containers
   renderProfileInto(document.getElementById('settings-profile-content'));
   renderOptimizeInto(document.getElementById('settings-optimize-content'));
+}
+
+async function saveSettingsToCloud() {
+  const btns = ['settings-save-top', 'settings-save-bottom'];
+  btns.forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.disabled = true; b.textContent = 'Αποθήκευση...'; }
+  });
+  try {
+    await syncToSupabase();
+    showToast('✅ Οι ρυθμίσεις αποθηκεύτηκαν!', 2500);
+  } catch (e) {
+    showToast('❌ Σφάλμα αποθήκευσης. Δοκιμάστε ξανά.', 3000);
+  } finally {
+    btns.forEach(id => {
+      const b = document.getElementById(id);
+      if (b) { b.disabled = false; b.innerHTML = '💾 Αποθήκευση ρυθμίσεων'; }
+    });
+  }
 }
 
 function showSettingsTab(which) {
