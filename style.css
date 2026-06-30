@@ -32,7 +32,12 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
+  max-width: 100%;
+}
 
 body {
   font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
@@ -42,6 +47,8 @@ body {
   font-size: 15px;
   line-height: 1.5;
   padding-bottom: 0;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* ── TYPOGRAPHY ── */
@@ -109,6 +116,8 @@ h3 { font-size: 0.95rem; }
 .app-shell {
   display: flex;
   min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 .app-shell.app-hidden {
   visibility: hidden;
@@ -1241,7 +1250,7 @@ select { cursor: pointer; }
 /* 3-column grid */
 .dplanner-cols {
   display: grid;
-  grid-template-columns: minmax(400px, 38%) 1fr minmax(280px, 22%);
+  grid-template-columns: minmax(0, 38%) 1fr minmax(0, 22%);
   gap: 16px;
   flex: 1;
   min-height: 0;

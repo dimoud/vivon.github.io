@@ -27,9 +27,11 @@ async function sbSignOut() {
   await _supabase.auth.signOut();
 }
 
+const APP_URL = 'https://www.vivon.top/';
+
 async function sbResetPassword(email) {
   const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + window.location.pathname,
+    redirectTo: APP_URL,
   });
   return { error };
 }
