@@ -95,7 +95,13 @@ async function _callGemini(prompt) {
     throw new Error(err.error?.message || `HTTP ${response.status}`);
   }
   const data = await response.json();
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (data.error) {
+    const code = data.error.code;
+    if (code === 429) throw new Error('Το AI όριο χρήσης εξαντλήθηκε. Δοκίμασε αύριο ή αναβάθμισε το Gemini API plan.');
+    throw new Error(data.error.message || `Gemini error ${code}`);
+  }
+  const rawText = (data.candidates?.[0]?.content?.parts?.[0]?.text || '')
+    .replace(/```json\s*/gi, '').replace(/```\s*/g, '');
   const jsonMatch = rawText.match(/\[[\s\S]*\]/);
   if (!jsonMatch) throw new Error('Δεν βρέθηκε έγκυρο JSON στην απάντηση');
   const result = JSON.parse(jsonMatch[0]);
@@ -119,7 +125,8 @@ async function _callGeminiObject(prompt) {
     throw new Error(err.error?.message || `HTTP ${response.status}`);
   }
   const data = await response.json();
-  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const rawText = (data.candidates?.[0]?.content?.parts?.[0]?.text || '')
+    .replace(/```json\s*/gi, '').replace(/```\s*/g, '');
   const jsonMatch = rawText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('Δεν βρέθηκε έγκυρο JSON στην απάντηση');
   return JSON.parse(jsonMatch[0]);
