@@ -442,14 +442,6 @@ function renderProfile() {
     1.80: 'Πολύ έντονη (6–7 προπονήσεις/εβδ.)',
   };
 
-  // Macro balance quality label
-  const kcalFromMacros = g.protein * 4 + g.carbs * 4 + g.fat * 9;
-  const diff = Math.abs(kcalFromMacros - g.kcal);
-  const macroQuality = diff < 50
-    ? { text: 'Εξαιρετική ισορροπία μακροθρεπτικών!', color: '#16a34a', bg: '#dcfce7', icon: '✅' }
-    : diff < 150
-      ? { text: 'Καλή ισορροπία μακροθρεπτικών', color: '#f59e0b', bg: '#fef3c7', icon: '⚠️' }
-      : { text: `Διαφορά ${diff} kcal από macros`, color: '#ef4444', bg: '#fee2e2', icon: '❌' };
 
   document.getElementById('page-profile').innerHTML = `
     <div class="container" style="padding-top:16px;padding-bottom:24px">
