@@ -1345,67 +1345,73 @@ function renderToday() {
           : { icon: '⚠️', title: 'Πλεόνασμα σήμερα', text: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.' };
         return `
         <div class="act-section fade-in">
-          <div class="act-header">
-            <span class="act-header-icon">🏃</span>
-            <span class="act-header-title">ΔΡΑΣΤΗΡΙΟΤΗΤΑ & ΕΛΛΕΙΜΜΑ</span>
-          </div>
+          <div class="card card-sm" style="padding:14px 16px;margin-bottom:10px">
+            <div class="act-header" style="margin-bottom:14px">
+              <span class="act-header-icon">🏃</span>
+              <span class="act-header-title">ΔΡΑΣΤΗΡΙΟΤΗΤΑ & ΕΛΛΕΙΜΜΑ</span>
+            </div>
 
-          <!-- Προπόνηση -->
-          <div class="act-card">
-            <div class="act-row-top">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span class="act-icon-badge" style="background:#ede9fe">🏋️</span>
-                <span class="act-label">Προπόνηση</span>
+            <!-- Προπόνηση -->
+            <div class="act-inner-row">
+              <div class="act-row-top">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="act-icon-badge" style="background:#ede9fe">🏋️</span>
+                  <span class="act-label">Προπόνηση</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
               </div>
-              <label class="toggle-switch">
-                <input type="checkbox" ${hasTraining ? 'checked' : ''} onchange="saveDayTraining(this.checked)">
-                <span class="toggle-slider"></span>
-              </label>
+              ${hasTraining ? `
+              <div class="act-big-num">${weeklyTrainingKcal.toLocaleString()} <span class="act-big-unit">kcal/εβδ.</span></div>
+              <div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px">~${trainingKcal} kcal σήμερα · 1h βαρά</div>` : ''}
             </div>
-            ${hasTraining ? `
-            <div class="act-big-num">${weeklyTrainingKcal.toLocaleString()} <span class="act-big-unit">kcal/εβδ.</span></div>
-            <div style="font-size:0.72rem;color:var(--text3);margin-bottom:4px">~${trainingKcal} kcal σήμερα · 1h βαρά</div>` : ''}
-          </div>
 
-          <!-- Βήματα / NEAT -->
-          <div class="act-card">
-            <div class="act-row-top">
-              <div style="display:flex;align-items:center;gap:10px">
-                <span class="act-icon-badge" style="background:#fef3c7">🔥</span>
-                <span class="act-label">Πρόσθετη βασική <span style="color:var(--text3);font-weight:500">(NEAT)</span></span>
+            <div class="act-divider"></div>
+
+            <!-- Βήματα / NEAT -->
+            <div class="act-inner-row">
+              <div class="act-row-top">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="act-icon-badge" style="background:#fef3c7">🔥</span>
+                  <span class="act-label">Πρόσθετη βασική <span style="color:var(--text3);font-weight:500">(NEAT)</span></span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
               </div>
-              <label class="toggle-switch">
-                <input type="checkbox" ${stepsDone ? 'checked' : ''} onchange="saveDayStepsDone(this.checked)">
-                <span class="toggle-slider"></span>
-              </label>
+              <div class="act-big-num">${(stepsCount).toLocaleString()} <span class="act-big-unit">βήματα</span></div>
+              ${stepsDone ? `<div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px">~${stepsKcal} kcal σήμερα · ~${weeklyStepsKcal} kcal/εβδ.</div>` : '<div style="height:6px"></div>'}
+              <input type="range" min="1000" max="20000" step="500" value="${stepsCount}"
+                class="act-slider"
+                oninput="saveDayStepsCount(this.value)">
+              <div class="act-slider-ticks">
+                <span>0k</span><span>2k</span><span>5k</span><span style="color:${stepsCount>=7000?'var(--green-d)':'var(--text3)'}">7k</span><span>10k</span><span>15k</span><span>20k+</span>
+              </div>
             </div>
-            <div class="act-big-num">${(stepsCount).toLocaleString()} <span class="act-big-unit">βήματα</span></div>
-            ${stepsDone ? `<div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px">~${stepsKcal} kcal σήμερα · ~${weeklyStepsKcal} kcal/εβδ.</div>` : '<div style="height:6px"></div>'}
-            <input type="range" min="1000" max="20000" step="500" value="${stepsCount}"
-              class="act-slider"
-              oninput="saveDayStepsCount(this.value)">
-            <div class="act-slider-ticks">
-              <span>0k</span><span>2k</span><span>5k</span><span style="color:${stepsCount>=7000?'var(--green-d)':'var(--text3)'}">7k</span><span>10k</span><span>15k</span><span>20k+</span>
-            </div>
-          </div>
 
-          <!-- Summary -->
-          <div class="act-card">
-            <div style="font-size:0.82rem;color:var(--text2);padding-bottom:10px;border-bottom:1px solid var(--border)">
-              🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
-            </div>
-            <div style="padding-top:10px">
+            <div class="act-divider"></div>
+
+            <!-- Summary -->
+            <div class="act-inner-row">
+              <div style="font-size:0.78rem;color:var(--text2);margin-bottom:10px">
+                🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
+              </div>
               <div style="font-size:1.6rem;font-weight:900;color:${deficitColor}">${deficitPos ? '−' : '+'}${Math.abs(deficit)} kcal</div>
               <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? 'Έλλειμμα' : 'Πλεόνασμα'}</div>
             </div>
-          </div>
 
-          <!-- Motivational -->
-          <div class="act-motiv">
-            <span class="act-motiv-icon">${motivMsg.icon}</span>
-            <div>
-              <div style="font-weight:700;font-size:0.88rem">${motivMsg.title}</div>
-              <div style="font-size:0.78rem;color:var(--text2);margin-top:2px">${motivMsg.text}</div>
+            <div class="act-divider"></div>
+
+            <!-- Motivational -->
+            <div class="act-motiv" style="margin-bottom:0">
+              <span class="act-motiv-icon">${motivMsg.icon}</span>
+              <div>
+                <div style="font-weight:700;font-size:0.88rem">${motivMsg.title}</div>
+                <div style="font-size:0.78rem;color:var(--text2);margin-top:2px">${motivMsg.text}</div>
+              </div>
             </div>
           </div>
         </div>`;

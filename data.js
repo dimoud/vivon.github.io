@@ -198,7 +198,7 @@ const RECIPES_DB = [
     serving: "Πίνε αμέσως. Μπορείς να προσθέσεις παγάκια για πιο δροσερό αποτέλεσμα."
   },
   {
-    id: "r8", name: "Γιαούρτι με Παξιμάδι & Ελιές", meal: "breakfast", emoji: "🫒",
+    id: "r8", name: "Γιαούρτι με Παξιμάδι & Ελιές", meal: "dinner", emoji: "🫒",
     ingredients: [
       { foodId: "d1", qty: 200 }, { foodId: "c5", qty: 2 },
       { foodId: "l4", qty: 30 },  { foodId: "l1", qty: 5 }
@@ -483,7 +483,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r18", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r30", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r30", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r20", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -494,7 +494,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r7",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r11", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -505,7 +505,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r1",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r45", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r49", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -516,7 +516,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r4",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r41", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r24", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -527,7 +527,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r6",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r13", done: false, scaleFactor: 0.8, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r21", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -538,7 +538,7 @@ const DEFAULT_WEEK = [
       { time: "07:00", type: "breakfast", recipeId: "r2",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r16", done: false, scaleFactor: 0.85, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },
@@ -546,10 +546,10 @@ const DEFAULT_WEEK = [
     // Ημ7: γιαούρτι+παξιμάδι / whey / κοτόπουλο κάρυ / μήλο / cottage βραδ ≈ 1612 kcal
     day: 7, label: "Ημέρα 7",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r8",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
+      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
       { time: "13:00", type: "lunch",     recipeId: "r48", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
       { time: "19:30", type: "dinner",    recipeId: "r25", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
     ]
   },

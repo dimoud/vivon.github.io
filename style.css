@@ -546,7 +546,7 @@ h3 { font-size: 0.95rem; }
 .pill-lunch     { background: var(--purple-bg); color: #5b21b6; }
 .pill-dinner    { background: var(--red-bg);    color: #991b1b; }
 .pill-snack      { background: var(--cyan-bg);   color: #0e7490; }
-.pill-afternoon  { background: var(--amber-bg); color: #92400e; }
+.pill-afternoon  { background: var(--cyan-bg);  color: #0e7490; }
 
 .meal-check {
   width: 32px; height: 32px;
@@ -699,6 +699,9 @@ h3 { font-size: 0.95rem; }
 
 /* ── ACTIVITY SECTION ── */
 .act-section { margin-bottom: 14px; }
+.act-inner-row { padding: 12px 0; }
+.act-inner-row:first-of-type { padding-top: 0; }
+.act-divider { height: 1px; background: var(--border); margin: 0; }
 .act-header {
   display: flex;
   align-items: center;
