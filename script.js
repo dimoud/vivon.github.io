@@ -1957,7 +1957,124 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
       extraKcal: 0,
     });
   }
+
+  // Optimise each day independently to hit calorie + protein targets
+  const targets = state?.goals || DEFAULT_GOALS;
+  week.forEach(day => _optimiseDayMacros(day, targets));
+
   return week;
+}
+
+/**
+ * Adjust meal scaleFactor values so the day hits calorie + protein targets.
+ * Priority: 1-protein  2-calories  3-fat  4-carbs
+ * Scale bounds: 0.6–1.6 (realistic portion range).
+ * Strategy:
+ *   Pass 1 — global uniform scale to hit kcal target
+ *   Pass 2 — protein fine-tune: shift scale on high-protein meals to nail protein target
+ *            while keeping kcal within ±50 kcal tolerance
+ */
+function _optimiseDayMacros(day, targets) {
+  const KCAL_TOL  = 50;
+  const PROT_TOL  = 5;
+  const SF_MIN    = 0.6;
+  const SF_MAX    = 1.6;
+
+  const allMeals = [...RECIPES_DB, ...(state?.customRecipes || []), ...STANDARD_MEALS];
+
+  // Helper: get base macros (at scaleFactor=1) for a meal slot object
+  function baseMacros(m) {
+    if (m.standardId) {
+      const sm = STANDARD_MEALS.find(s => s.id === m.standardId);
+      if (sm) return { kcal: sm.kcal_est || 0, p: sm.p || 0, c: sm.c || 0, f: sm.f || 0 };
+    }
+    if (m.recipeId) {
+      const r = allMeals.find(x => x.id === m.recipeId);
+      if (r && r.kcal_est) return { kcal: r.kcal_est || 0, p: r.p || 0, c: r.c || 0, f: r.f || 0 };
+      if (r && r.fixedMacros) return { ...r.fixedMacros };
+      if (r) return calcRecipeMacros(r, 1);
+    }
+    return { kcal: 0, p: 0, c: 0, f: 0 };
+  }
+
+  // Initialise scaleFactor to 1 for all meals
+  day.meals.forEach(m => { if (m.scaleFactor === undefined) m.scaleFactor = 1; });
+
+  // Sum raw day totals (at current scale)
+  function dayTotals() {
+    return day.meals.reduce((acc, m) => {
+      const b = baseMacros(m);
+      const sf = m.scaleFactor || 1;
+      acc.kcal += b.kcal * sf;
+      acc.p    += b.p    * sf;
+      acc.c    += b.c    * sf;
+      acc.f    += b.f    * sf;
+      return acc;
+    }, { kcal: 0, p: 0, c: 0, f: 0 });
+  }
+
+  const raw = dayTotals();
+  if (raw.kcal < 1) return; // no data, skip
+
+  // ── Pass 1: Uniform scale to hit kcal target ──────────────────
+  const uniformSF = Math.min(SF_MAX, Math.max(SF_MIN, targets.kcal / raw.kcal));
+  day.meals.forEach(m => { m.scaleFactor = Math.round(uniformSF * 100) / 100; });
+
+  // ── Pass 2: Protein fine-tune ──────────────────────────────────
+  // Sort meals by protein density (p per kcal) descending — these are best levers
+  const mealBases = day.meals.map(m => ({ m, b: baseMacros(m) }));
+  const proteinRich = [...mealBases]
+    .filter(({ b }) => b.kcal > 0 && b.p > 0)
+    .sort((a, b) => (b.b.p / b.b.kcal) - (a.b.p / a.b.kcal));
+
+  for (let iter = 0; iter < 8; iter++) {
+    const cur = dayTotals();
+    const proteinErr = targets.protein - cur.p;   // positive = need more protein
+    const kcalErr    = targets.kcal    - cur.kcal; // positive = need more kcal
+
+    // Within tolerance — stop early
+    if (Math.abs(proteinErr) <= PROT_TOL && Math.abs(kcalErr) <= KCAL_TOL) break;
+
+    // Pick the best lever: protein-rich meals if protein is off,
+    // otherwise use all meals for a calorie-only correction
+    const levers = Math.abs(proteinErr) > PROT_TOL ? proteinRich : mealBases;
+    if (!levers.length) break;
+
+    for (const { m, b } of levers) {
+      if (b.kcal === 0) continue;
+      const curSF  = m.scaleFactor || 1;
+      const curP   = day.meals.reduce((s, x) => s + baseMacros(x).p * (x.scaleFactor || 1), 0);
+      const curK   = day.meals.reduce((s, x) => s + baseMacros(x).kcal * (x.scaleFactor || 1), 0);
+
+      const pErr = targets.protein - curP;
+      const kErr = targets.kcal   - curK;
+
+      // How much to change this meal's SF to correct protein, capped so kcal stays in tolerance
+      let deltaSF = 0;
+      if (Math.abs(pErr) > PROT_TOL) {
+        deltaSF = pErr / b.p; // ideal delta to fix protein
+        // Check resulting kcal impact
+        const newK = curK + b.kcal * deltaSF;
+        if (newK - targets.kcal > KCAL_TOL) {
+          // Cap: how much headroom do we have on kcal?
+          deltaSF = (targets.kcal + KCAL_TOL - curK) / b.kcal;
+        } else if (targets.kcal - newK > KCAL_TOL) {
+          deltaSF = (targets.kcal - KCAL_TOL - curK) / b.kcal;
+        }
+      } else if (Math.abs(kErr) > KCAL_TOL) {
+        // Protein OK, fix kcal using this meal
+        deltaSF = kErr / b.kcal;
+      }
+
+      const newSF = Math.min(SF_MAX, Math.max(SF_MIN, curSF + deltaSF));
+      m.scaleFactor = Math.round(newSF * 100) / 100;
+    }
+  }
+
+  // Final clamp — round to 2 dp for clean storage
+  day.meals.forEach(m => {
+    m.scaleFactor = Math.round(Math.min(SF_MAX, Math.max(SF_MIN, m.scaleFactor || 1)) * 100) / 100;
+  });
 }
 // ─────────────────────────────────────────────────────────────
 
@@ -2182,8 +2299,12 @@ function renderToday() {
     const sf = meal.scaleFactor || 1;
     let m;
     if (isStandard) {
-      // Εκτιμώμενες θερμίδες — macros N/A για στάνταρ
-      m = { kcal: Math.round(sm.kcal_est * sf), p: 0, c: 0, f: 0 };
+      m = {
+        kcal: Math.round((sm.kcal_est || 0) * sf),
+        p:    Math.round((sm.p   || 0) * sf),
+        c:    Math.round((sm.c   || 0) * sf),
+        f:    Math.round((sm.f   || 0) * sf),
+      };
     } else {
       m = calcRecipeMacros(recipe, sf);
     }
@@ -2199,12 +2320,13 @@ function renderToday() {
         ${sm.items.map(it => `<div class="ingredient-row"><span class="ingredient-name">${it}</span></div>`).join('')}
         ${sm.note ? `<div style="margin-top:6px;font-size:0.75rem;color:var(--text3);font-style:italic">💡 ${sm.note}</div>` : ''}
       </div>
-      <div class="meal-macros" style="opacity:0.5">
+      <div class="meal-macros">
         <div class="macro-chip"><div class="macro-chip-val" style="color:#22c55e">~${m.kcal}</div><div class="macro-chip-lbl">kcal</div></div>
-        <div class="macro-chip" style="font-size:0.7rem;color:var(--text3)"><div class="macro-chip-val">—</div><div class="macro-chip-lbl">πρωτ.</div></div>
-        <div class="macro-chip" style="font-size:0.7rem;color:var(--text3)"><div class="macro-chip-val">—</div><div class="macro-chip-lbl">υδατ.</div></div>
-        <div class="macro-chip" style="font-size:0.7rem;color:var(--text3)"><div class="macro-chip-val">—</div><div class="macro-chip-lbl">λίπος</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${m.p > 0 ? m.p + 'g' : '—'}</div><div class="macro-chip-lbl">πρωτ.</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${m.c > 0 ? m.c + 'g' : '—'}</div><div class="macro-chip-lbl">υδατ.</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f > 0 ? m.f + 'g' : '—'}</div><div class="macro-chip-lbl">λίπος</div></div>
       </div>
+      ${sf !== 1 ? `<div style="font-size:0.7rem;color:var(--text3);margin:4px 0">📏 Μερίδα ×${sf}</div>` : ''}
       <div style="font-size:0.7rem;color:var(--amber);background:var(--amber-bg);border-radius:6px;padding:4px 8px;margin:6px 0;display:inline-block">⭐ Στάνταρ γεύμα · εκτ. θερμίδες</div>`;
     } else {
       const allFoods = [...FOODS_DB, ...state.customFoods];
