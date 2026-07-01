@@ -21,6 +21,7 @@
   // ── Bootstrap ─────────────────────────────────────────────
 
   let _appInited = false;
+  let _appInitedForUserId = null;
 
   async function bootAuth() {
     renderAuthScreen();
@@ -28,16 +29,23 @@
     const { data: { session } } = await _supabase.auth.getSession();
     if (session) {
       hideAuthScreen();
-      if (!_appInited) { _appInited = true; await initApp(); }
+      if (!_appInited) { _appInited = true; _appInitedForUserId = session.user.id; await initApp(); }
     }
 
     _supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         hideAuthScreen();
-        if (!_appInited) { _appInited = true; await initApp(); }
+        // Re-init if this is a different user than the one the app was initialized for
+        const newUserId = session.user.id;
+        if (!_appInited || _appInitedForUserId !== newUserId) {
+          _appInited = true;
+          _appInitedForUserId = newUserId;
+          await initApp();
+        }
       }
       if (event === 'SIGNED_OUT') {
         _appInited = false;
+        _appInitedForUserId = null;
         showAuthScreen();
       }
       if (event === 'PASSWORD_RECOVERY') {

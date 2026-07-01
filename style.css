@@ -440,7 +440,13 @@ h3 { font-size: 0.95rem; }
   .top-nav { display: none; }
   .drawer { display: none !important; }
   .drawer-overlay { display: none !important; }
-  body { padding-bottom: 0; }
+  body {
+    padding-bottom: 0;
+    background-image: url('4342a526-d910-46e1-8d0a-752565b48474.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
 }
 
 

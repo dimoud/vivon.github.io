@@ -124,28 +124,37 @@ async function loadState() {
   state = _freshState();
   const defaults = _freshState();
 
-  const user = sbGetCurrentUser();
+  // Use live session to avoid race where _currentUser hasn't been set yet
+  let user = sbGetCurrentUser();
+  if (!user) {
+    try {
+      const { data: { session } } = await _supabase.auth.getSession();
+      user = session ? session.user : null;
+    } catch(e) {}
+  }
 
   // 1. Load from localStorage — only if cache belongs to this exact user
   let hasLocal = false;
-  try {
-    const raw = localStorage.getItem('nutriApp_v2');
-    if (raw) {
-      const saved = JSON.parse(raw);
-      if (!user || !saved._userId || saved._userId === user.id) {
-        hasLocal = true;
-        state = {
-          ...defaults,
-          ...saved,
-          profile: { ...defaults.profile, ...(saved.profile || {}) },
-          goals:   { ...defaults.goals,   ...(saved.goals   || {}) },
-        };
-      } else {
-        // Stale cache from a different user — discard immediately
-        try { localStorage.removeItem('nutriApp_v2'); } catch(e) {}
+  if (user) {
+    try {
+      const raw = localStorage.getItem('nutriApp_v2');
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved._userId === user.id) {
+          hasLocal = true;
+          state = {
+            ...defaults,
+            ...saved,
+            profile: { ...defaults.profile, ...(saved.profile || {}) },
+            goals:   { ...defaults.goals,   ...(saved.goals   || {}) },
+          };
+        } else {
+          // Stale cache from a different user — discard immediately
+          try { localStorage.removeItem('nutriApp_v2'); } catch(e) {}
+        }
       }
-    }
-  } catch(e) {}
+    } catch(e) {}
+  }
 
   // 2. Fetch from Supabase (source of truth) and overwrite
   if (user) {
