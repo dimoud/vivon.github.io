@@ -216,9 +216,7 @@
   function hideAuthScreen() {
     const el = document.getElementById('auth-screen');
     if (el) el.style.display = 'none';
-    // Reveal app shell
-    const shell = document.getElementById('app-shell');
-    if (shell) shell.classList.remove('app-hidden');
+    // Shell is revealed by initApp() after the correct tab is set, to avoid flicker
   }
 
   // ── Tab switching ─────────────────────────────────────────

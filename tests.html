@@ -47,10 +47,7 @@ window.supabase = {
     from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({}), order: () => ({ maybeSingle: async () => ({}) }) }) }) }),
   }),
 };
-// Prevent supabase.js from touching _supabase at module level
 window._currentUser = null;
-
-// Prevent script.js from calling DOM / saveState on load
 window.localStorage = { getItem: () => null, setItem: () => {} };
 </script>
 <script src="data.js"></script>
@@ -149,47 +146,105 @@ test('bmiLabel — obese', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 3 — Step calorie adjustment (tiered)
+// SUITE 3 — Step calorie calculation (biomechanics formula)
+// calcStepCalories(steps, weightKg, heightCm, gender)
+// stepLength (m) = height_m * 0.415 (male) or * 0.413 (female)
+// distanceKm = steps * stepLength / 1000
+// kcal = round(weight * distanceKm * 0.53)
 // ══════════════════════════════════════════════════════════════════
-suite('Step Adjustment (calcStepAdjustment)');
+suite('Step Calories (calcStepCalories)');
 
-const stepCases = [
-  [0,     0],
-  [3999,  0],
-  [4000,  80],
-  [5999,  80],
-  [6000,  150],
-  [7999,  150],
-  [8000,  250],
-  [9999,  250],
-  [10000, 350],
-  [11999, 350],
-  [12000, 450],
-  [15000, 450],
-];
-stepCases.forEach(([steps, expected]) => {
-  test(`${steps} steps → ${expected} kcal`, () => {
-    assertEq(calcStepAdjustment(steps), expected, `steps=${steps}`);
-  });
+test('0 steps → 0 kcal', () => {
+  assertEq(calcStepCalories(0, 95.9, 188, 'male'), 0);
 });
 
-test('null / undefined input treated as 0', () => {
-  assertEq(calcStepAdjustment(null), 0);
-  assertEq(calcStepAdjustment(undefined), 0);
+test('null/undefined steps treated as 0', () => {
+  assertEq(calcStepCalories(null, 70, 170, 'male'), 0);
+  assertEq(calcStepCalories(undefined, 70, 170, 'male'), 0);
+});
+
+test('male 8000 steps, 95.9kg, 188cm — biomechanics formula', () => {
+  // stepLength = 1.88 * 0.415 = 0.7802m
+  // distance = 8000 * 0.7802 / 1000 = 6.2416 km
+  // kcal = round(95.9 * 6.2416 * 0.53) = round(317.56) = 318
+  const expected = Math.round(95.9 * (8000 * (1.88 * 0.415) / 1000) * 0.53);
+  assertEq(calcStepCalories(8000, 95.9, 188, 'male'), expected);
+});
+
+test('female 10000 steps, 60kg, 165cm — biomechanics formula', () => {
+  // stepLength = 1.65 * 0.413 = 0.68145m
+  // distance = 10000 * 0.68145 / 1000 = 6.8145 km
+  // kcal = round(60 * 6.8145 * 0.53) = round(216.82) = 217
+  const expected = Math.round(60 * (10000 * (1.65 * 0.413) / 1000) * 0.53);
+  assertEq(calcStepCalories(10000, 60, 165, 'female'), expected);
+});
+
+test('scales with weight — more weight burns more kcal', () => {
+  const light = calcStepCalories(8000, 60, 175, 'male');
+  const heavy  = calcStepCalories(8000, 100, 175, 'male');
+  assert(heavy > light, `heavy (${heavy}) should > light (${light})`);
+});
+
+test('missing weight/height falls back to defaults', () => {
+  // Should not throw — uses 70kg / 170cm defaults
+  const result = calcStepCalories(5000, null, null, 'male');
+  assert(result >= 0, 'should return non-negative');
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 4 — TDEE (suggested and custom)
+// SUITE 4 — Exercise calorie calculation
+// calcExerciseCalories(sessionsPerWeek, weightKg)
+// MET=5.5, 1h/session → (MET * weight * hours * sessions) / 7
+// ══════════════════════════════════════════════════════════════════
+suite('Exercise Calories (calcExerciseCalories)');
+
+test('0 sessions → 0 kcal/day', () => {
+  assertEq(calcExerciseCalories(0, 80), 0);
+});
+
+test('3 sessions, 70kg — formula check', () => {
+  // (5.5 * 70 * 1.0 * 3) / 7 = 1155 / 7 = 165
+  assertEq(calcExerciseCalories(3, 70), Math.round(5.5 * 70 * 1.0 * 3 / 7));
+});
+
+test('5 sessions, 95.9kg — formula check', () => {
+  const expected = Math.round(5.5 * 95.9 * 1.0 * 5 / 7);
+  assertEq(calcExerciseCalories(5, 95.9), expected);
+});
+
+test('scales with weight', () => {
+  const light = calcExerciseCalories(3, 60);
+  const heavy  = calcExerciseCalories(3, 120);
+  assert(heavy > light, `heavy (${heavy}) should > light (${light})`);
+});
+
+test('null sessions treated as 0', () => {
+  assertEq(calcExerciseCalories(null, 80), 0);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 5 — TDEE (calcSuggestedTDEE and calcTDEE)
+// calcSuggestedTDEE(p) = round((BMR + walking + exercise) * 1.10)
+// activity field = sessions/week (0, 2, 3, 5, 7)
 // ══════════════════════════════════════════════════════════════════
 suite('TDEE');
 
-const profileA = { gender: 'male', weight: 95.9, height: 188, age: 34, activity: 1.50, dailySteps: 8000 };
+// Reference profile: sessions/week-based activity
+const profileA = { gender: 'male', weight: 95.9, height: 188, age: 34, activity: 3, dailySteps: 8000 };
 
-test('calcSuggestedTDEE uses BMR * activity + stepAdj', () => {
-  const bmr = calcBMR(profileA);          // 1969
-  const stepAdj = calcStepAdjustment(8000); // 250
-  const expected = Math.round(bmr * 1.50 + stepAdj);
+test('calcSuggestedTDEE = round((BMR + walking + exercise) * 1.10)', () => {
+  const bmr      = calcBMR(profileA);
+  const walking  = calcStepCalories(8000, 95.9, 188, 'male');
+  const exercise = calcExerciseCalories(3, 95.9);
+  const expected = Math.round((bmr + walking + exercise) * 1.10);
   assertEq(calcSuggestedTDEE(profileA), expected, 'suggestedTDEE');
+});
+
+test('TEF multiplier 1.10 is applied', () => {
+  const p = { gender: 'male', weight: 80, height: 180, age: 30, activity: 0, dailySteps: 0 };
+  const bmr = calcBMR(p);
+  const expected = Math.round(bmr * 1.10);
+  assertEq(calcSuggestedTDEE(p), expected, 'zero activity → BMR * 1.10');
 });
 
 test('calcTDEE falls back to suggested when useCustomTDEE=false', () => {
@@ -207,35 +262,66 @@ test('calcTDEE falls back to suggested when customTDEE=0 (even if flag set)', ()
   assertEq(calcTDEE(p), calcSuggestedTDEE(p));
 });
 
+test('more sessions → higher TDEE', () => {
+  const p0 = { ...profileA, activity: 0 };
+  const p5 = { ...profileA, activity: 5 };
+  assert(calcSuggestedTDEE(p5) > calcSuggestedTDEE(p0), 'more sessions = more TDEE');
+});
+
+test('more steps → higher TDEE', () => {
+  const pLow  = { ...profileA, dailySteps: 2000 };
+  const pHigh = { ...profileA, dailySteps: 15000 };
+  assert(calcSuggestedTDEE(pHigh) > calcSuggestedTDEE(pLow), 'more steps = more TDEE');
+});
+
 // ══════════════════════════════════════════════════════════════════
-// SUITE 5 — Activity kcal helpers
+// SUITE 6 — Legacy step kcal helper (calcStepsKcal)
+// Simple linear formula: steps * 0.04 * (weight/70)
 // ══════════════════════════════════════════════════════════════════
-suite('Activity kcal helpers');
+suite('Legacy step helper (calcStepsKcal)');
 
 test('calcStepsKcal scales linearly with weight', () => {
-  // 70kg reference: steps * 0.04
-  assertEq(calcStepsKcal(8000, 70), Math.round(8000 * 0.04), '70 kg');
-  // 95.9 kg: steps * 0.04 * (95.9/70)
+  assertEq(calcStepsKcal(8000, 70),   Math.round(8000 * 0.04), '70 kg baseline');
   assertEq(calcStepsKcal(8000, 95.9), Math.round(8000 * 0.04 * (95.9 / 70)), '95.9 kg');
 });
 
-test('calcWeightTrainingKcal scales with weight', () => {
-  assertEq(calcWeightTrainingKcal(70), Math.round(5 * 60), '70 kg baseline');
-  assertEq(calcWeightTrainingKcal(140), Math.round(5 * 60 * 2), 'double weight');
+test('calcStepsKcal 0 steps → 0', () => {
+  assertEq(calcStepsKcal(0, 80), 0);
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 6 — Ideal protein
+// SUITE 7 — Legacy weight-training kcal helper (calcWeightTrainingKcal)
+// Formula: round(5 * 60 * (weight / 70))
+// ══════════════════════════════════════════════════════════════════
+suite('Legacy training helper (calcWeightTrainingKcal)');
+
+test('70kg baseline = 300 kcal', () => {
+  assertEq(calcWeightTrainingKcal(70), Math.round(5 * 60 * (70 / 70)));
+});
+
+test('140kg = double baseline', () => {
+  assertEq(calcWeightTrainingKcal(140), Math.round(5 * 60 * (140 / 70)));
+});
+
+test('scales linearly with weight', () => {
+  const a = calcWeightTrainingKcal(80);
+  const b = calcWeightTrainingKcal(160);
+  assertEq(b, a * 2, 'double weight = double kcal');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 8 — Ideal protein
 // ══════════════════════════════════════════════════════════════════
 suite('Ideal protein');
 
 test('calcIdealProtein = round(w * 1.9)', () => {
   assertEq(calcIdealProtein(95.9), Math.round(95.9 * 1.9));
-  assertEq(calcIdealProtein(60), Math.round(60 * 1.9));
+  assertEq(calcIdealProtein(60),   Math.round(60   * 1.9));
+  assertEq(calcIdealProtein(70),   Math.round(70   * 1.9));
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 7 — Meal times
+// SUITE 9 — Meal times
 // ══════════════════════════════════════════════════════════════════
 suite('Meal times (getMealTimes)');
 
@@ -266,7 +352,7 @@ test('snack is +3h from breakfast', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 8 — Recipe macro calculation
+// SUITE 10 — Recipe macro calculation
 // ══════════════════════════════════════════════════════════════════
 suite('Recipe macros (calcRecipeMacros)');
 
@@ -289,7 +375,7 @@ test('200g chicken breast — fat', () => {
 });
 
 test('scaleFactor doubles macros', () => {
-  const base = calcRecipeMacros(chickenRecipe);
+  const base   = calcRecipeMacros(chickenRecipe);
   const scaled = calcRecipeMacros(chickenRecipe, 2);
   assertEq(scaled.kcal, base.kcal * 2, 'kcal * 2');
   assertEq(scaled.p,    base.p    * 2, 'p * 2');
@@ -306,7 +392,7 @@ test('3 eggs (τεμ) — protein', () => {
   assertEq(calcRecipeMacros(eggRecipe).p, 18);
 });
 
-// Unit = 'κ.γ.' (κουταλάκι γλυκού = 5ml, l1: kcal=884/100ml, sprayFactor=5ml)
+// Unit = 'κ.γ.' (κουταλάκι γλυκού = 5ml, l1: kcal=884/100ml)
 const sprayRecipe = { ingredients: [{ foodId: 'l1', qty: 2 }] }; // 2 κ.γ. = 10ml
 
 test('2 κ.γ. of olive oil — kcal (2 * 5ml * 884/100)', () => {
@@ -322,7 +408,119 @@ test('unknown foodId is skipped gracefully', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 9 — FOODS_DB integrity
+// SUITE 11 — Day macro calculation
+// ══════════════════════════════════════════════════════════════════
+suite('Day macros (calcDayMacros)');
+
+test('standard meal macros sum correctly with scaleFactor', () => {
+  // sm2: kcal_est=136, p=16, c=8, f=8
+  const sm = STANDARD_MEALS.find(s => s.id === 'sm2');
+  assert(sm, 'sm2 must exist in STANDARD_MEALS');
+  const fakeDayIdx = 0;
+  const origDay = state.week[fakeDayIdx];
+  state.week[fakeDayIdx] = {
+    meals: [{ standardId: 'sm2', scaleFactor: 1.5, done: false }]
+  };
+  const m = calcDayMacros(fakeDayIdx);
+  assertEq(m.kcal, Math.round(sm.kcal_est * 1.5), 'kcal scaled');
+  assertEq(m.p,    Math.round(sm.p * 1.5),         'protein scaled');
+  state.week[fakeDayIdx] = origDay;
+});
+
+test('scaleFactor=1 gives base macros', () => {
+  const sm = STANDARD_MEALS.find(s => s.id === 'sm2');
+  const origDay = state.week[0];
+  state.week[0] = { meals: [{ standardId: 'sm2', scaleFactor: 1, done: false }] };
+  const m = calcDayMacros(0);
+  assertEq(m.kcal, sm.kcal_est, 'kcal unscaled');
+  assertEq(m.p,    sm.p,         'protein unscaled');
+  state.week[0] = origDay;
+});
+
+test('doneOnly=true skips undone meals', () => {
+  const origDay = state.week[0];
+  state.week[0] = {
+    meals: [
+      { standardId: 'sm2', scaleFactor: 1, done: true  },
+      { standardId: 'sm2', scaleFactor: 1, done: false },
+    ]
+  };
+  const sm = STANDARD_MEALS.find(s => s.id === 'sm2');
+  const m = calcDayMacros(0, true);
+  assertEq(m.kcal, sm.kcal_est, 'only one done meal counted');
+  state.week[0] = origDay;
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 12 — Optimizer (_optimiseDayMacros)
+// ══════════════════════════════════════════════════════════════════
+suite('Day optimizer (_optimiseDayMacros)');
+
+// Build a fake day with two standard meals that have known macros
+// sm2: kcal_est=136, p=16, c=8, f=8
+// sm1: kcal_est=250, p=8,  c=32, f=10
+// Combined raw: kcal=386, p=24
+function makeFakeDay(ids) {
+  return {
+    meals: ids.map(id => ({ standardId: id, scaleFactor: 1, done: false }))
+  };
+}
+
+test('optimiser sets scaleFactor on all meals', () => {
+  const day = makeFakeDay(['sm1', 'sm2']);
+  _optimiseDayMacros(day, { kcal: 500, protein: 30, carbs: 100, fat: 30 });
+  day.meals.forEach(m => {
+    assert(m.scaleFactor !== undefined, 'scaleFactor must be set');
+    assert(typeof m.scaleFactor === 'number', 'scaleFactor must be a number');
+  });
+});
+
+test('optimiser scaleFactor stays within [0.6, 1.6] bounds', () => {
+  const day = makeFakeDay(['sm1', 'sm2']);
+  // Extreme target: much higher than raw total
+  _optimiseDayMacros(day, { kcal: 9999, protein: 500, carbs: 999, fat: 999 });
+  day.meals.forEach(m => {
+    assert(m.scaleFactor <= 1.6, `scaleFactor ${m.scaleFactor} exceeds max 1.6`);
+    assert(m.scaleFactor >= 0.6, `scaleFactor ${m.scaleFactor} below min 0.6`);
+  });
+});
+
+test('optimiser scaleFactor stays within bounds when target is very low', () => {
+  const day = makeFakeDay(['sm1', 'sm2']);
+  _optimiseDayMacros(day, { kcal: 1, protein: 1, carbs: 1, fat: 1 });
+  day.meals.forEach(m => {
+    assert(m.scaleFactor >= 0.6, `scaleFactor ${m.scaleFactor} below min 0.6`);
+  });
+});
+
+test('optimiser brings kcal closer to target than unscaled', () => {
+  const day = makeFakeDay(['sm1', 'sm2']); // raw = 386 kcal
+  const target = { kcal: 600, protein: 40, carbs: 100, fat: 30 };
+  _optimiseDayMacros(day, target);
+  const scaled = day.meals.reduce((s, m) => {
+    const sm = STANDARD_MEALS.find(x => x.id === m.standardId);
+    return s + (sm ? sm.kcal_est * m.scaleFactor : 0);
+  }, 0);
+  // Should be closer to 600 than 386 was
+  assert(Math.abs(scaled - 600) < Math.abs(386 - 600),
+    `optimised kcal ${scaled.toFixed(0)} should be closer to 600 than raw 386`);
+});
+
+test('optimiser does not crash on empty meals array', () => {
+  const day = { meals: [] };
+  _optimiseDayMacros(day, { kcal: 1800, protein: 150, carbs: 200, fat: 60 });
+  assertEq(day.meals.length, 0, 'empty meals stays empty');
+});
+
+test('optimiser does not crash on meal with no matching standard id', () => {
+  const day = { meals: [{ standardId: 'DOES_NOT_EXIST', scaleFactor: 1, done: false }] };
+  _optimiseDayMacros(day, { kcal: 1800, protein: 150, carbs: 200, fat: 60 });
+  // Should not throw — no-op
+  assert(true, 'no crash');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 13 — FOODS_DB integrity
 // ══════════════════════════════════════════════════════════════════
 suite('FOODS_DB integrity');
 
@@ -353,7 +551,49 @@ test('FOODS_DB has expected number of entries (sanity)', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
-// SUITE 10 — DEFAULT_GOALS / DEFAULT_PROFILE shape
+// SUITE 14 — STANDARD_MEALS integrity
+// ══════════════════════════════════════════════════════════════════
+suite('STANDARD_MEALS integrity');
+
+test('no duplicate IDs', () => {
+  const ids = STANDARD_MEALS.map(m => m.id);
+  const unique = new Set(ids);
+  assertEq(unique.size, ids.length, `${ids.length - unique.size} duplicate IDs`);
+});
+
+test('all entries have required fields', () => {
+  STANDARD_MEALS.forEach(m => {
+    assert(m.id,         `missing id: ${JSON.stringify(m)}`);
+    assert(m.meal,       `missing meal type on ${m.id}`);
+    assert(m.name,       `missing name on ${m.id}`);
+    assert(m.kcal_est > 0, `kcal_est must be > 0 on ${m.id}`);
+  });
+});
+
+test('all entries have valid meal type', () => {
+  const valid = new Set(['breakfast','snack','lunch','afternoon','dinner']);
+  STANDARD_MEALS.forEach(m => {
+    assert(valid.has(m.meal), `invalid meal type "${m.meal}" on ${m.id}`);
+  });
+});
+
+test('side dishes are flagged with side:true', () => {
+  // Side dish entries use ids ex_s1–ex_s99 (not ex_sn* which are snacks)
+  STANDARD_MEALS.filter(m => /^ex_s\d/.test(m.id)).forEach(m => {
+    assert(m.side === true, `${m.id} should have side:true`);
+  });
+});
+
+test('has entries for every meal type', () => {
+  const types = ['breakfast','snack','lunch','afternoon','dinner'];
+  types.forEach(t => {
+    const found = STANDARD_MEALS.some(m => m.meal === t && !m.side);
+    assert(found, `no non-side entries for meal type "${t}"`);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 15 — DEFAULT_GOALS / DEFAULT_PROFILE shape
 // ══════════════════════════════════════════════════════════════════
 suite('Defaults');
 
@@ -363,16 +603,20 @@ test('DEFAULT_GOALS has all macro keys', () => {
   });
 });
 
+test('DEFAULT_GOALS values are positive', () => {
+  assert(DEFAULT_GOALS.kcal > 0,    'kcal must be positive');
+  assert(DEFAULT_GOALS.protein > 0, 'protein must be positive');
+});
+
 test('DEFAULT_PROFILE has required fields', () => {
   ['name', 'weight', 'height', 'age', 'gender', 'activity'].forEach(k => {
     assert(DEFAULT_PROFILE[k] !== undefined, `missing ${k}`);
   });
 });
 
-test('DEFAULT_PROFILE activity is a valid Mifflin multiplier', () => {
-  const valid = [1.20, 1.35, 1.50, 1.65, 1.80];
-  assert(valid.includes(DEFAULT_PROFILE.activity),
-    `activity ${DEFAULT_PROFILE.activity} not in valid set`);
+test('DEFAULT_PROFILE gender is male or female', () => {
+  assert(['male','female'].includes(DEFAULT_PROFILE.gender),
+    `unexpected gender: ${DEFAULT_PROFILE.gender}`);
 });
 
 // ══════════════════════════════════════════════════════════════════
