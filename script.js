@@ -987,11 +987,11 @@ function _renderProfileInto(target) {
   const deficit = tdee - g.kcal;
 
   const activityLabels = {
-    0: 'Καμία (0 προπονήσεις/εβδ.)',
-    2: 'Ελαφριά (1–2 προπονήσεις/εβδ.)',
-    3: 'Μέτρια (3 προπονήσεις/εβδ.)',
-    5: 'Έντονη (4–5 προπονήσεις/εβδ.)',
-    7: 'Πολύ έντονη (6–7 προπονήσεις/εβδ.)',
+    0: tActivity(0),
+    2: tActivity(2),
+    3: tActivity(3),
+    5: tActivity(5),
+    7: tActivity(7),
   };
 
 
@@ -1227,11 +1227,11 @@ function _renderProfileInto(target) {
         ${(()=>{
           const mt = getMealTimes();
           const slots = [
-            ['breakfast', '🌅 Πρωινό',       mt.breakfast],
-            ['snack',     '🍎 Δεκατιανό',    mt.snack],
-            ['lunch',     '☀️ Μεσημεριανό',  mt.lunch],
-            ['afternoon', '🧃 Απογευματινό', mt.afternoon],
-            ['dinner',    '🌙 Βραδινό',       mt.dinner],
+            ['breakfast', '🌅 ' + tMeal('breakfast'), mt.breakfast],
+            ['snack',     '🍎 ' + tMeal('snack'),     mt.snack],
+            ['lunch',     '☀️ ' + tMeal('lunch'),     mt.lunch],
+            ['afternoon', '🧃 ' + tMeal('afternoon'), mt.afternoon],
+            ['dinner',    '🌙 ' + tMeal('dinner'),    mt.dinner],
           ];
           return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">` +
             slots.map(([key, lbl, val]) => `
@@ -1615,12 +1615,15 @@ const GOURMET_IDS = new Set([
 // Step 0: style (simple/gourmet/mixed)
 // Steps 1-4: meal exclusions per slot
 // Step 5: confirm → generate
-const WIZARD_MEALS = [
-  { key: 'breakfast', label: 'Πρωινό',      sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο πρωινό.', emoji: '🌅' },
-  { key: 'snack',     label: 'Σνακ',         sublabel: 'Αποεπίλεξε τα σνακ που ΔΕΝ θέλεις.', emoji: '🍎' },
-  { key: 'lunch',     label: 'Μεσημεριανό', sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο μεσημεριανό.', emoji: '🍽️' },
-  { key: 'dinner',    label: 'Βραδινό',      sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο βραδινό.', emoji: '🌙' },
-];
+function getWizardMeals() {
+  return [
+    { key: 'breakfast', label: tMeal('breakfast'), sublabel: t('wizard_meal_sublabel_breakfast'), emoji: '🌅' },
+    { key: 'snack',     label: tMeal('snack'),     sublabel: t('wizard_meal_sublabel_snack'),     emoji: '🍎' },
+    { key: 'lunch',     label: tMeal('lunch'),     sublabel: t('wizard_meal_sublabel_lunch'),     emoji: '🍽️' },
+    { key: 'dinner',    label: tMeal('dinner'),    sublabel: t('wizard_meal_sublabel_dinner'),    emoji: '🌙' },
+  ];
+}
+const WIZARD_MEALS = getWizardMeals();
 // step 0 = style, steps 1..4 = meals, step 5 = confirm
 const WIZARD_STYLE_STEP   = 0;
 const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length + 1;
@@ -1673,34 +1676,34 @@ function _renderWizardStep() {
 
   // ── Step 0: Style selection ──
   if (_wizardStep === WIZARD_STYLE_STEP) {
-    titleEl.textContent = '🍽️ Στυλ διατροφής';
-    labelEl.textContent = 'Βήμα 1 από 6 — Επίλεξε στυλ';
-    subEl.textContent   = 'Τα απλά γεύματα είναι εύκολα στην παρασκευή. Τα gourmet έχουν περισσότερη διαδικασία.';
-    btnNext.textContent = 'Επόμενο →';
+    titleEl.textContent = '🍽️ ' + t('wizard_style_title');
+    labelEl.textContent = tFmt('wizard_step_label', { n: 1, total });
+    subEl.textContent   = t('wizard_style_desc');
+    btnNext.textContent = t('btn_next') + ' →';
     const cur = state.wizardStyle || 'simple';
     body.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
         <div class="wstyle-card${cur==='simple'?' selected':''}" data-style="simple" onclick="wizardSetStyle('simple')">
           <div class="wstyle-icon">🥗</div>
           <div class="wstyle-info">
-            <div class="wstyle-title">Απλά γεύματα</div>
-            <div class="wstyle-sub">Κοτόπουλο, ρύζι, πατάτα, αυγά, σαλάτες — γρήγορα & χωρίς μεγάλη διαδικασία</div>
+            <div class="wstyle-title">${t('wizard_simple_title')}</div>
+            <div class="wstyle-sub">${t('wizard_simple_sub')}</div>
           </div>
           <div class="wstyle-check">${cur==='simple'?'✓':''}</div>
         </div>
         <div class="wstyle-card${cur==='mixed'?' selected':''}" data-style="mixed" onclick="wizardSetStyle('mixed')">
           <div class="wstyle-icon">🍲</div>
           <div class="wstyle-info">
-            <div class="wstyle-title">Μεικτά</div>
-            <div class="wstyle-sub">Συνδυασμός απλών και σύνθετων — καθημερινή ισορροπία</div>
+            <div class="wstyle-title">${t('wizard_mixed_title')}</div>
+            <div class="wstyle-sub">${t('wizard_mixed_sub')}</div>
           </div>
           <div class="wstyle-check">${cur==='mixed'?'✓':''}</div>
         </div>
         <div class="wstyle-card${cur==='gourmet'?' selected':''}" data-style="gourmet" onclick="wizardSetStyle('gourmet')">
           <div class="wstyle-icon">👨‍🍳</div>
           <div class="wstyle-info">
-            <div class="wstyle-title">Gourmet</div>
-            <div class="wstyle-sub">Μουσακάς, avocado toast, shakshuka, ποικιλία υλικών — για όταν έχεις χρόνο</div>
+            <div class="wstyle-title">${t('wizard_gourmet_title')}</div>
+            <div class="wstyle-sub">${t('wizard_gourmet_sub')}</div>
           </div>
           <div class="wstyle-check">${cur==='gourmet'?'✓':''}</div>
         </div>
@@ -1713,9 +1716,9 @@ function _renderWizardStep() {
   if (mealIdx < WIZARD_MEALS.length) {
     const meal = WIZARD_MEALS[mealIdx];
     titleEl.textContent = `${meal.emoji} ${meal.label}`;
-    labelEl.textContent = `Βήμα ${_wizardStep + 1} από ${total} — Επιλογές ${meal.label}`;
+    labelEl.textContent = tFmt('wizard_step_label', { n: _wizardStep + 1, total });
     subEl.textContent   = meal.sublabel;
-    btnNext.textContent = mealIdx < WIZARD_MEALS.length - 1 ? 'Επόμενο →' : 'Επισκόπηση →';
+    btnNext.textContent = mealIdx < WIZARD_MEALS.length - 1 ? t('btn_next') + ' →' : t('btn_done') + ' →';
 
     const style    = state.wizardStyle || 'simple';
     const excluded = _wizardExcluded[meal.key];
@@ -1789,10 +1792,10 @@ function _renderWizardStep() {
   }
 
   // ── Step 5: Confirm ──
-  titleEl.textContent = '✅ Επισκόπηση';
-  labelEl.textContent = `Στυλ: ${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[state.wizardStyle||'simple']}`;
-  subEl.textContent   = 'Τα αποκλεισμένα γεύματα δεν θα εμφανίζονται στο εβδομαδιαίο πλάνο.';
-  btnNext.textContent = '📋 Δημιουργία Πλάνου';
+  titleEl.textContent = '✅ ' + t('wizard_confirm_title');
+  labelEl.textContent = `${t('wizard_style_title')}: ${{ simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[state.wizardStyle||'simple']}`;
+  subEl.textContent   = t('wizard_confirm_sub');
+  btnNext.textContent = '📋 ' + t('btn_generate');
 
   let html = '<div class="wizard-confirm-list">';
   WIZARD_MEALS.forEach(meal => {
@@ -2314,7 +2317,7 @@ function getTodayQuote() {
 
 // ── RENDER HELPERS ──
 function mealTypePill(type) {
-  const map = { breakfast: ['Πρωινό','pill-breakfast'], lunch: ['Μεσημεριανό','pill-lunch'], dinner: ['Βραδινό','pill-dinner'], snack: ['Δεκατιανό','pill-snack'], afternoon: ['Απογευματινό','pill-afternoon'] };
+  const map = { breakfast: [tMeal('breakfast'),'pill-breakfast'], lunch: [tMeal('lunch'),'pill-lunch'], dinner: [tMeal('dinner'),'pill-dinner'], snack: [tMeal('snack'),'pill-snack'], afternoon: [tMeal('afternoon'),'pill-afternoon'] };
   const [label, cls] = map[type] || ['',''];
   return `<span class="meal-type-pill ${cls}">${label}</span>`;
 }
@@ -2657,13 +2660,13 @@ function renderWeek() {
   const allR = [...RECIPES_DB, ...state.customRecipes];
   const mealOrder = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealMeta = {
-    breakfast:  { label:'Πρωινό',       color:'#f59e0b', bg:'#fffbeb', border:'#f59e0b' },
-    snack:      { label:'Δεκατιανό',    color:'#10b981', bg:'#f0fdf4', border:'#10b981' },
-    lunch:      { label:'Μεσημεριανό',  color:'#3b82f6', bg:'#eff6ff', border:'#3b82f6' },
-    afternoon:  { label:'Απογευματινό', color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
-    dinner:     { label:'Βραδινό',      color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
+    breakfast:  { label:tMeal('breakfast'),  color:'#f59e0b', bg:'#fffbeb', border:'#f59e0b' },
+    snack:      { label:tMeal('snack'),      color:'#10b981', bg:'#f0fdf4', border:'#10b981' },
+    lunch:      { label:tMeal('lunch'),      color:'#3b82f6', bg:'#eff6ff', border:'#3b82f6' },
+    afternoon:  { label:tMeal('afternoon'),  color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
+    dinner:     { label:tMeal('dinner'),     color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
   };
-  const dayNamesLong = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+  const dayNamesLong = tDays();
   function getDayTitle(di) {
     if (!state.planStartDate) return `Ημ${di+1}`;
     const d = new Date(state.planStartDate);
@@ -2721,9 +2724,9 @@ function renderWeek() {
   }
 
   function weekBalance() {
-    if (avgPct >= 88 && avgPct <= 108) return { label:'Εξαιρετική ισορροπία', sub:'Συνέχισε έτσι', color:'#22c55e', bg:'rgba(34,197,94,0.08)' };
-    if (avgPct < 88) return { label:'Λίγο χαμηλά', sub:'Αύξησε λίγο τις θερμίδες', color:'#f59e0b', bg:'rgba(245,158,11,0.08)' };
-    return { label:'Λίγο υπερβολικά', sub:'Μείωσε λίγο τις θερμίδες', color:'#ef4444', bg:'rgba(239,68,68,0.08)' };
+    if (avgPct >= 88 && avgPct <= 108) return { label:t('week_balance_good'), sub:t('week_keep_going'), color:'#22c55e', bg:'rgba(34,197,94,0.08)' };
+    if (avgPct < 88) return { label:t('week_balance_low'), sub:t('week_increase_kcal'), color:'#f59e0b', bg:'rgba(245,158,11,0.08)' };
+    return { label:t('week_balance_high'), sub:t('week_decrease_kcal'), color:'#ef4444', bg:'rgba(239,68,68,0.08)' };
   }
   const bal = weekBalance();
   const balScore = Math.min(Math.round(avgPct), 999);
@@ -2735,7 +2738,7 @@ function renderWeek() {
     const start = new Date(state.planStartDate);
     const end = new Date(state.planStartDate);
     end.setDate(end.getDate() + 6);
-    const months = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+    const months = tMonths();
     return `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]} ${end.getFullYear()}`;
   }
   const weekRange = getWeekRange();
@@ -3178,9 +3181,13 @@ function filterRecipeType(type, btn) {
 function renderFoods(filter = '') {
   const allFoods = [...FOODS_DB, ...state.customFoods];
   const categories = {
-    protein: '🥩 Πρωτεΐνες', carbs: '🍚 Υδατάνθρακες',
-    veggie: '🥦 Λαχανικά', fat: '🫒 Λιπαρά',
-    dairy: '🥛 Γαλακτοκομικά', fruit: '🍎 Φρούτα', other: '🧂 Άλλα'
+    protein: '🥩 ' + tCategory('protein'),
+    carbs:   '🍚 ' + tCategory('carbs'),
+    veggie:  '🥦 ' + tCategory('veggie'),
+    fat:     '🫒 ' + tCategory('fat'),
+    dairy:   '🥛 ' + tCategory('dairy'),
+    fruit:   '🍎 ' + tCategory('fruit'),
+    other:   '🧂 ' + tCategory('other'),
   };
   const q = filter.toLowerCase();
 
@@ -3369,19 +3376,19 @@ function renderBuilderPage(typeFilter) {
 
   const _mt = getMealTimes();
   const mealTypeMeta = {
-    breakfast:  { label: 'Πρωινό',        icon: '🌅', cls: 'breakfast', color: '#f59e0b', time: _mt.breakfast },
-    snack:      { label: 'Δεκατιανό',     icon: '🍎', cls: 'snack',     color: '#22c55e', time: _mt.snack },
-    lunch:      { label: 'Μεσημεριανό',   icon: '☀️', cls: 'lunch',     color: '#3b82f6', time: _mt.lunch },
-    afternoon:  { label: 'Απογευματινό',  icon: '🧃', cls: 'afternoon', color: '#06b6d4', time: _mt.afternoon },
-    dinner:     { label: 'Βραδινό',       icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: _mt.dinner },
+    breakfast:  { label: tMeal('breakfast'),  icon: '🌅', cls: 'breakfast', color: '#f59e0b', time: _mt.breakfast },
+    snack:      { label: tMeal('snack'),      icon: '🍎', cls: 'snack',     color: '#22c55e', time: _mt.snack },
+    lunch:      { label: tMeal('lunch'),      icon: '☀️', cls: 'lunch',     color: '#3b82f6', time: _mt.lunch },
+    afternoon:  { label: tMeal('afternoon'),  icon: '🧃', cls: 'afternoon', color: '#06b6d4', time: _mt.afternoon },
+    dinner:     { label: tMeal('dinner'),     icon: '🌙', cls: 'dinner',    color: '#8b5cf6', time: _mt.dinner },
   };
   const filterLabels = [
-    { key: 'all',       label: 'Όλες',        icon: '' },
-    { key: 'breakfast', label: 'Πρωινά',      icon: '☀️' },
-    { key: 'snack',     label: 'Δεκατιανά',   icon: '🍎' },
-    { key: 'lunch',     label: 'Μεσ/νό',      icon: '🥗' },
-    { key: 'afternoon', label: 'Απογ/νά',     icon: '☕' },
-    { key: 'dinner',    label: 'Βραδινά',     icon: '🌙' },
+    { key: 'all',       label: t('filter_all'),         icon: '' },
+    { key: 'breakfast', label: tMealPlural('breakfast'), icon: '☀️' },
+    { key: 'snack',     label: tMealPlural('snack'),     icon: '🍎' },
+    { key: 'lunch',     label: tMealPlural('lunch'),     icon: '🥗' },
+    { key: 'afternoon', label: tMealPlural('afternoon'), icon: '☕' },
+    { key: 'dinner',    label: tMealPlural('dinner'),    icon: '🌙' },
   ];
   const allMealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealTypes = typeFilter === 'all' ? allMealTypes : [typeFilter];
@@ -4509,7 +4516,7 @@ function applyScale(mi, sf, dayIdx) {
 function openAddMealModal() {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
-  const mealLabels = { breakfast:'Πρωινό', lunch:'Μεσημεριανό', dinner:'Βραδινό', snack:'Δεκατιανό', afternoon:'Απογευματινό' };
+  const mealLabels = { breakfast:tMeal('breakfast'), lunch:tMeal('lunch'), dinner:tMeal('dinner'), snack:tMeal('snack'), afternoon:tMeal('afternoon') };
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Προσθήκη Γεύματος</div>
@@ -4844,7 +4851,7 @@ function exportDayPDF(dayIdx) {
         detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:8.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
       }
     }
-    const mealTypeLabel = { breakfast:'Πρωινό', snack:'Δεκατιανό', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' }[m.type] || m.type;
+    const mealTypeLabel = tMeal(m.type) || m.type;
     const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', afternoon:'#06b6d4', dinner:'#8b5cf6' }[m.type] || '#6b7280';
     const rowBg = { breakfast:'#fffbeb', snack:'#f0fdf4', lunch:'#eff6ff', afternoon:'#ecfeff', dinner:'#f5f3ff' }[m.type] || '#fff';
     return `<tr style="border-bottom:1px solid #e5e7eb;background:${rowBg}">
@@ -4934,7 +4941,7 @@ function exportPDF_today() {
   const barColor = pct > 105 ? '#ef4444' : pct > 95 ? '#22c55e' : '#f59e0b';
   const dateLabel = state.planStartDate ? ` · ${formatPlanDay(di)}` : '';
   const extraKcal = day.extraKcal || 0;
-  const mealTypeLabel = { breakfast:'Πρωινό', snack:'Δεκατιανό', lunch:'Μεσημεριανό', afternoon:'Απογευματινό', dinner:'Βραδινό' };
+  const mealTypeLabel = { breakfast:tMeal('breakfast'), snack:tMeal('snack'), lunch:tMeal('lunch'), afternoon:tMeal('afternoon'), dinner:tMeal('dinner') };
   const typeColor = { breakfast:'#f59e0b', snack:'#10b981', lunch:'#3b82f6', afternoon:'#06b6d4', dinner:'#8b5cf6' };
   const rowBg = { breakfast:'#fffbeb', snack:'#f0fdf4', lunch:'#eff6ff', afternoon:'#ecfeff', dinner:'#f5f3ff' };
 
@@ -5246,7 +5253,7 @@ function exportPDF_week() {
     const start = new Date(state.planStartDate);
     const end = new Date(state.planStartDate);
     end.setDate(end.getDate() + 6);
-    const months = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+    const months = tMonths();
     return `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]} ${end.getFullYear()}`;
   }
   const weekRangePrint = getWeekRangePrint();
@@ -5286,13 +5293,13 @@ function exportPDF_week() {
 
   const mealOrderP = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealMetaP = {
-    breakfast: { label:'Πρωινό',       color:'#f59e0b', bg:'#fffbeb', border:'#f59e0b' },
-    snack:     { label:'Δεκατιανό',    color:'#10b981', bg:'#f0fdf4', border:'#10b981' },
-    lunch:     { label:'Μεσημεριανό',  color:'#3b82f6', bg:'#eff6ff', border:'#3b82f6' },
-    afternoon: { label:'Απογευματινό', color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
-    dinner:    { label:'Βραδινό',      color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
+    breakfast: { label:tMeal('breakfast'),  color:'#f59e0b', bg:'#fffbeb', border:'#f59e0b' },
+    snack:     { label:tMeal('snack'),      color:'#10b981', bg:'#f0fdf4', border:'#10b981' },
+    lunch:     { label:tMeal('lunch'),      color:'#3b82f6', bg:'#eff6ff', border:'#3b82f6' },
+    afternoon: { label:tMeal('afternoon'),  color:'#06b6d4', bg:'#ecfeff', border:'#06b6d4' },
+    dinner:    { label:tMeal('dinner'),     color:'#8b5cf6', bg:'#f5f3ff', border:'#8b5cf6' },
   };
-  const dayNamesAllP = ['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
+  const dayNamesAllP = tDays();
   function getPdfDayTitle(di) {
     if (!state.planStartDate) return `Ημ${di+1}`;
     const d = new Date(state.planStartDate);
