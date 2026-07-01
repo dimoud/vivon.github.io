@@ -1039,23 +1039,23 @@ function _renderProfileInto(target) {
               placeholder="${t('prof_name_placeholder')}"
               style="font-size:1.45rem;font-weight:800;border:none;background:transparent;width:100%;padding:0;outline:none;color:var(--text);display:block;margin-bottom:4px"
               oninput="liveUpdateName(this.value)">
-            <div style="font-size:0.8rem;color:var(--text3);display:flex;align-items:center;gap:4px">Πάτα για επεξεργασία ✏️</div>
+            <div style="font-size:0.8rem;color:var(--text3);display:flex;align-items:center;gap:4px">${t('prof_click_edit')}</div>
           </div>
         </div>
       </div>
 
       <!-- ΣΩΜΑΤΙΚΑ ΣΤΟΙΧΕΙΑ -->
       <div class="card card-lg fade-in">
-        <div class="section-title">🏃 Σωματικά Στοιχεία</div>
+        <div class="section-title">${t('prof_body')}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem">Βάρος (kg)</label>
+            <label style="font-size:0.75rem">${t('prof_weight')}</label>
             <input type="text" inputmode="decimal" id="prof-weight" value="${p.weight || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
               onblur="liveUpdateProfile()">
           </div>
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem">Ύψος (cm)</label>
+            <label style="font-size:0.75rem">${t('prof_height')}</label>
             <input type="text" inputmode="decimal" id="prof-height" value="${p.height || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
               onblur="liveUpdateProfile()">
@@ -1063,22 +1063,22 @@ function _renderProfileInto(target) {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem">Ηλικία</label>
+            <label style="font-size:0.75rem">${t('prof_age')}</label>
             <input type="text" inputmode="numeric" id="prof-age" value="${p.age || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
               onblur="liveUpdateProfile()">
           </div>
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem">Φύλο</label>
+            <label style="font-size:0.75rem">${t('prof_gender')}</label>
             <select id="prof-gender" style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.9rem;background:var(--bg2)" onchange="liveUpdateProfile()">
-              <option value="male"   ${p.gender==='male'?'selected':''}>👤 Άνδρας</option>
-              <option value="female" ${p.gender==='female'?'selected':''}>👤 Γυναίκα</option>
+              <option value="male"   ${p.gender==='male'?'selected':''}>${t('prof_male')}</option>
+              <option value="female" ${p.gender==='female'?'selected':''}>${t('prof_female')}</option>
             </select>
           </div>
         </div>
         <div style="margin-bottom:14px">
           <div class="form-group" style="margin:0">
-            <label style="font-size:0.75rem">Επίπεδο Δραστηριότητας (προπονήσεις)</label>
+            <label style="font-size:0.75rem">${t('prof_activity')}</label>
             <select id="prof-activity" style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;background:var(--bg2)" onchange="liveUpdateProfile()">
               ${Object.entries(activityLabels).map(([val, lbl]) =>
                 `<option value="${val}" ${parseInt(p.activity)===parseInt(val)?'selected':''}>${lbl}</option>`
@@ -1087,7 +1087,7 @@ function _renderProfileInto(target) {
           </div>
         </div>
         <div class="form-group" style="margin:0">
-          <label style="font-size:0.75rem">👣 Μέσα Βήματα / Ημέρα</label>
+          <label style="font-size:0.75rem">${t('prof_steps')}</label>
           <div style="display:flex;align-items:center;gap:10px">
             <input type="range" id="prof-steps" min="0" max="20000" step="500" value="${p.dailySteps||0}"
               style="flex:1" oninput="liveUpdateProfile();document.getElementById('prof-steps-val').textContent=this.value">
@@ -1111,7 +1111,7 @@ function _renderProfileInto(target) {
         <div class="card fade-in" style="margin:0;padding:16px 12px;text-align:center">
           <div style="width:44px;height:44px;border-radius:50%;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 8px">〰️</div>
           <div class="bmr-val" style="font-size:1.55rem;font-weight:900;color:#3b82f6;line-height:1">${bmr}</div>
-          <div style="font-size:0.68rem;font-weight:700;color:#3b82f6;margin-top:2px">Βασικός Μεταβολισμός</div>
+          <div style="font-size:0.68rem;font-weight:700;color:#3b82f6;margin-top:2px">${t('prof_bmr_label')}</div>
           <div style="font-size:0.6rem;color:var(--text3);margin-top:2px">BMR kcal</div>
         </div>
         <div class="card fade-in" style="margin:0;padding:16px 12px;text-align:center;${p.useCustomTDEE?'border-color:#22c55e;background:#f0fdf4':''}">
@@ -1124,11 +1124,11 @@ function _renderProfileInto(target) {
 
       <!-- ΗΜΕΡΗΣΙΟΙ ΣΤΟΧΟΙ -->
       <div class="card card-lg fade-in">
-        <div class="section-title">🎯 Ημερήσιοι Στόχοι</div>
+        <div class="section-title">${t('prof_goals_title')}</div>
 
         ${(p.weight > 0 && p.height > 0 && p.age > 0) ? `
         <div id="pace-grid-wrap" style="margin-bottom:14px">
-          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">📉 Απώλεια Βάρους</div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">${t('pace_loss_header')}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
             ${(()=>{
               const slowKcal  = Math.max(Math.round((tdee - 200) / 50) * 50, Math.round(bmr * 0.9));
@@ -1137,10 +1137,10 @@ function _renderProfileInto(target) {
               const aggrKcal  = Math.max(Math.round((tdee - 900) / 50) * 50, Math.round(bmr * 0.75));
               const selected = state.goals.goalPace || null;
               return [
-                ['slow',       '🐢 Αργός',      `−${tdee-slowKcal} kcal/ημέρα`,  slowKcal,  '#22c55e', '#f0fdf4'],
-                ['moderate',   '🚶 Μέτριος',    `−${tdee-modKcal} kcal/ημέρα`,   modKcal,   '#3b82f6', '#eff6ff'],
-                ['fast',       '🏃 Γρήγορος',   `−${tdee-fastKcal} kcal/ημέρα`,  fastKcal,  '#f59e0b', '#fffbeb'],
-                ['aggressive', '🔥 Επιθετικός', `−${tdee-aggrKcal} kcal/ημέρα`,  aggrKcal,  '#ef4444', '#fef2f2'],
+                ['slow',       t('pace_slow'),       tFmt('pace_hint_kcal', {n: tdee-slowKcal}),  slowKcal,  '#22c55e', '#f0fdf4'],
+                ['moderate',   t('pace_moderate'),   tFmt('pace_hint_kcal', {n: tdee-modKcal}),   modKcal,   '#3b82f6', '#eff6ff'],
+                ['fast',       t('pace_fast'),       tFmt('pace_hint_kcal', {n: tdee-fastKcal}),  fastKcal,  '#f59e0b', '#fffbeb'],
+                ['aggressive', t('pace_aggressive'), tFmt('pace_hint_kcal', {n: tdee-aggrKcal}),  aggrKcal,  '#ef4444', '#fef2f2'],
               ].map(([mode, label, hint, kcalVal, color, bg]) => {
                 const isSelected = mode === selected;
                 const isGrey     = selected && !isSelected;
@@ -1159,7 +1159,7 @@ function _renderProfileInto(target) {
               }).join('');
             })()}
           </div>
-          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">⚖️ Άλλοι Στόχοι</div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">${t('pace_other_header')}</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
             ${(()=>{
               const maintainKcal = Math.round(tdee / 50) * 50;
@@ -1167,8 +1167,8 @@ function _renderProfileInto(target) {
               const bulkProt     = Math.round(p.weight * 2.2 / 5) * 5;
               const selected = state.goals.goalPace || null;
               return [
-                ['maintain', '⚖️ Συντήρηση',   `= TDEE ${tdee} kcal`,          maintainKcal, '#8b5cf6', '#f5f3ff'],
-                ['bulk',     '💪 Αύξηση Μάζας', `+200 kcal · ${bulkProt}g πρωτ.`, bulkKcal,  '#0ea5e9', '#f0f9ff'],
+                ['maintain', t('pace_maintain'), tFmt('pace_hint_tdee', {n: tdee}),       maintainKcal, '#8b5cf6', '#f5f3ff'],
+                ['bulk',     t('pace_bulk'),     tFmt('pace_hint_bulk', {n: bulkProt}),  bulkKcal,     '#0ea5e9', '#f0f9ff'],
               ].map(([mode, label, hint, kcalVal, color, bg]) => {
                 const isSelected = mode === selected;
                 const isGrey     = selected && !isSelected;
@@ -1201,7 +1201,7 @@ function _renderProfileInto(target) {
               : 'prof-range-amber';
             return `
           <div class="slider-label" style="margin-bottom:6px">
-            <span style="display:flex;align-items:center;gap:6px">🔥 <span>Θερμίδες</span></span>
+            <span style="display:flex;align-items:center;gap:6px">🔥 <span>${t('prof_kcal_label')}</span></span>
             <strong id="prof-kcal-val" style="color:${kcalColor}">${g.kcal} kcal</strong>
           </div>
           <input type="range" id="prof-kcal" min="1000" max="3500" step="50" value="${g.kcal}"
@@ -1215,14 +1215,14 @@ function _renderProfileInto(target) {
 
         <div style="margin-bottom:4px">
           <div class="slider-label" style="margin-bottom:6px">
-            <span style="display:flex;align-items:center;gap:6px">🥩 <span>Πρωτεΐνη</span></span>
+            <span style="display:flex;align-items:center;gap:6px">🥩 <span>${t('prof_protein_label')}</span></span>
             <strong id="prof-prot-val" style="color:var(--blue)">${g.protein}g</strong>
           </div>
           <input type="range" id="prof-prot" min="60" max="300" step="5" value="${g.protein}"
             class="prof-range-blue goal-slider"
             oninput="updateGoalFromProfile('protein',this.value)" style="width:100%">
           <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text3);margin-top:3px">
-            <span>60g</span><span id="td-prot-hint" style="color:var(--blue);font-weight:700">Συν. 1.9g/kg: ${idealProt}g</span><span>300g</span>
+            <span>60g</span><span id="td-prot-hint" style="color:var(--blue);font-weight:700">${tFmt('prof_protein_hint', {val: idealProt})}</span><span>300g</span>
           </div>
         </div>
 
@@ -1240,9 +1240,9 @@ function _renderProfileInto(target) {
 
       <!-- ΩΡΕΣ ΓΕΥΜΑΤΩΝ -->
       <div class="card card-lg fade-in">
-        <div class="section-title">🕐 Ώρες Γευμάτων</div>
+        <div class="section-title">${t('prof_meal_times_title')}</div>
         <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px">
-          Ρύθμισε την ώρα κάθε γεύματος ξεχωριστά.
+          ${t('prof_meal_times_desc')}
         </p>
         ${(()=>{
           const mt = getMealTimes();
@@ -1267,16 +1267,16 @@ function _renderProfileInto(target) {
 
       <!-- ΕΝΑΡΞΗ ΠΛΑΝΟΥ -->
       <div class="card card-lg fade-in">
-        <div class="section-title">📅 Έναρξη Πλάνου</div>
+        <div class="section-title">${t('prof_plan_start_title')}</div>
         <p style="font-size:0.82rem;color:var(--text2);margin-bottom:12px">
-          Επίλεξε ποια ημερομηνία αντιστοιχεί στην <strong>Ημέρα 1</strong> του πλάνου. Κάθε κουμπί ημέρας θα δείχνει αυτόματα την αντίστοιχη ημερομηνία.
+          ${t('prof_plan_start_desc')}
         </p>
         <div style="display:flex;gap:10px;align-items:center">
           <input type="date" id="plan-start-date"
             value="${state.planStartDate || ''}"
             style="flex:1;padding:10px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;background:var(--bg2)"
             onchange="setPlanStartDate(this.value)">
-          <button class="btn btn-green btn-sm" onclick="setPlanStartDate(new Date().toISOString().split('T')[0])">Σήμερα</button>
+          <button class="btn btn-green btn-sm" onclick="setPlanStartDate(new Date().toISOString().split('T')[0])">${t('prof_today_btn')}</button>
         </div>
         ${state.planStartDate ? `<div style="margin-top:8px;font-size:0.78rem;color:var(--text3)">
           Ημ1: ${formatPlanDay(0)} &nbsp;·&nbsp; Ημ4: ${formatPlanDay(3)} &nbsp;·&nbsp; Ημ7: ${formatPlanDay(6)}
@@ -1286,14 +1286,14 @@ function _renderProfileInto(target) {
           const profileReady = p.weight > 0 && p.height > 0 && p.age > 0;
           if (!profileReady) return `
             <div style="margin-top:14px;padding:10px 12px;background:var(--amber-bg,#fffbeb);border:1.5px solid var(--amber,#f59e0b);border-radius:var(--radius-sm);font-size:0.8rem;color:var(--amber,#b45309)">
-              ⚠️ Συμπλήρωσε πρώτα <strong>βάρος, ύψος και ηλικία</strong> στα στοιχεία σου παραπάνω.
+              ${t('prof_fill_first')}
             </div>
             <button class="btn btn-full" style="font-weight:800;margin-top:10px;opacity:0.4;cursor:not-allowed;background:var(--green)" disabled>
-              📋 Δημιουργία Πλάνου
+              ${t('prof_create_plan_btn')}
             </button>`;
           return `
             <button id="create-plan-btn" class="btn btn-green btn-full" style="font-weight:800;margin-top:14px" onclick="createPlan()">
-              📋 Δημιουργία Πλάνου
+              ${t('prof_create_plan_btn')}
             </button>`;
         })()}
       </div>
@@ -1301,10 +1301,10 @@ function _renderProfileInto(target) {
       <!-- ΕΚΤΥΠΩΣΗ & ΣΥΝΟΨΗ -->
       ${state.planCreated ? `
       <div class="card card-lg fade-in">
-        <div class="section-title">🖨️ Εκτύπωση &amp; Σύνοψη</div>
-        <p style="font-size:0.82rem;color:var(--text2);margin-bottom:14px">Συνοπτική εβδομαδιαία προβολή: ημέρες, γεύματα, θερμίδες, macros.</p>
+        <div class="section-title">${t('prof_print_title')}</div>
+        <p style="font-size:0.82rem;color:var(--text2);margin-bottom:14px">${t('prof_print_desc')}</p>
         <button class="btn btn-blue btn-full" onclick="exportPDF()" style="margin-bottom:10px">
-          🖨️ Εκτύπωση / Αποθήκευση PDF
+          ${t('prof_print_btn')}
         </button>
       </div>` : ''}
 
@@ -5795,8 +5795,8 @@ function renderSettingsSupplements() {
       <div class="card card-sm" style="margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div>
-            <div style="font-size:0.9rem;font-weight:700">Συμπληρώματα διατροφής</div>
-            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">Ενεργοποίησε για να εμφανίζονται στην ημερήσια σελίδα</div>
+            <div style="font-size:0.9rem;font-weight:700">${t('suppl_title')}</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('suppl_subtitle')}</div>
           </div>
           <label class="toggle-switch">
             <input type="checkbox" ${enabled ? 'checked' : ''} onchange="toggleSuppFeature(this.checked)">
@@ -5814,7 +5814,7 @@ function renderSettingsSupplements() {
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <div id="supp-cats" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-        ${[['all','Όλα'],['sport','💪 Αθλητική'],['health','❤️ Υγεία'],['wellness','🌿 Ευεξία'],['fatburn','🔥 Λιποδιάλυση'],['personal','⭐ Προσωπικά']].map(([cat,lbl]) =>
+        ${[['all',t('supp_cat_all')],['sport',t('supp_cat_sport')],['health',t('supp_cat_health')],['wellness',t('supp_cat_wellness')],['fatburn',t('supp_cat_fatburn')],['personal',t('supp_cat_personal')]].map(([cat,lbl]) =>
           `<button id="supp-cat-${cat}" onclick="filterSupplementsCat('${cat}')"
             style="padding:5px 12px;border-radius:20px;border:1.5px solid ${cat==='all'?'var(--green)':'var(--border)'};
             background:${cat==='all'?'var(--green-bg)':'var(--bg2)'};cursor:pointer;
@@ -5828,8 +5828,8 @@ function renderSettingsSupplements() {
         return `<div class="card card-sm supp-item" data-cat="${s.category||'personal'}" data-name="${s.name.toLowerCase()}" style="margin-bottom:8px;padding:10px 14px;display:grid;grid-template-columns:1fr 52px;align-items:center;gap:10px">
           <div style="min-width:0">
             <div style="font-size:0.88rem;font-weight:700">${s.name}</div>
-            <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">${s.timing} · ${s.qty}</div>
-            <div style="font-size:0.68rem;margin-top:3px">${s.ideal}</div>
+            <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">${tName(s,'timing')} · ${tName(s,'qty')}</div>
+            <div style="font-size:0.68rem;margin-top:3px">${tName(s,'ideal')}</div>
           </div>
           <label class="toggle-switch" style="justify-self:end;flex-shrink:0">
             <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSuppActive('${s.id}')">

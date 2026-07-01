@@ -401,6 +401,44 @@ const I18N = {
   // ── Supplement search ──
   search_supplement:          { el: 'Αναζήτηση συμπληρώματος…', en: 'Search supplement…', es: 'Buscar suplemento…', fr: 'Rechercher un supplément…' },
 
+  // ── Supplement category filter labels ──
+  supp_cat_all:      { el: 'Όλα',              en: 'All',           es: 'Todos',         fr: 'Tous' },
+  supp_cat_sport:    { el: '💪 Αθλητική',      en: '💪 Sport',      es: '💪 Deporte',    fr: '💪 Sport' },
+  supp_cat_health:   { el: '❤️ Υγεία',         en: '❤️ Health',     es: '❤️ Salud',      fr: '❤️ Santé' },
+  supp_cat_wellness: { el: '🌿 Ευεξία',        en: '🌿 Wellness',   es: '🌿 Bienestar',  fr: '🌿 Bien-être' },
+  supp_cat_fatburn:  { el: '🔥 Λιποδιάλυση',  en: '🔥 Fat Burn',   es: '🔥 Quemagrasas', fr: '🔥 Brûle-graisses' },
+  supp_cat_personal: { el: '⭐ Προσωπικά',     en: '⭐ Personal',   es: '⭐ Personal',   fr: '⭐ Personnel' },
+
+  // ── Profile section headings ──
+  prof_goals_title:      { el: '🎯 Ημερήσιοι Στόχοι',    en: '🎯 Daily Goals',        es: '🎯 Objetivos diarios',   fr: '🎯 Objectifs quotidiens' },
+  prof_meal_times_title: { el: '🕐 Ώρες Γευμάτων',       en: '🕐 Meal Times',          es: '🕐 Horarios de comidas', fr: '🕐 Horaires des repas' },
+  prof_meal_times_desc:  { el: 'Ρύθμισε την ώρα κάθε γεύματος ξεχωριστά.', en: 'Set the time for each meal individually.', es: 'Ajusta el horario de cada comida por separado.', fr: 'Définissez l\'heure de chaque repas séparément.' },
+  prof_plan_start_title: { el: '📅 Έναρξη Πλάνου',       en: '📅 Plan Start',          es: '📅 Inicio del plan',     fr: '📅 Début du plan' },
+  prof_plan_start_desc:  { el: 'Επίλεξε ποια ημερομηνία αντιστοιχεί στην <strong>Ημέρα 1</strong> του πλάνου. Κάθε κουμπί ημέρας θα δείχνει αυτόματα την αντίστοιχη ημερομηνία.', en: 'Choose the date that corresponds to <strong>Day 1</strong> of your plan. Each day button will automatically show the matching date.', es: 'Elige qué fecha corresponde al <strong>Día 1</strong> del plan. Cada botón de día mostrará automáticamente la fecha correspondiente.', fr: 'Choisissez la date correspondant au <strong>Jour 1</strong> de votre plan. Chaque bouton de jour affichera automatiquement la date correspondante.' },
+  prof_today_btn:        { el: 'Σήμερα',                  en: 'Today',                  es: 'Hoy',                    fr: 'Aujourd\'hui' },
+  prof_create_plan_btn:  { el: '📋 Δημιουργία Πλάνου',   en: '📋 Create Plan',         es: '📋 Crear plan',          fr: '📋 Créer un plan' },
+  prof_fill_first:       { el: '⚠️ Συμπλήρωσε πρώτα <strong>βάρος, ύψος και ηλικία</strong> στα στοιχεία σου παραπάνω.', en: '⚠️ First fill in your <strong>weight, height and age</strong> in the fields above.', es: '⚠️ Primero completa tu <strong>peso, altura y edad</strong> en los campos de arriba.', fr: '⚠️ Remplis d\'abord ton <strong>poids, ta taille et ton âge</strong> dans les champs ci-dessus.' },
+  prof_print_title:      { el: '🖨️ Εκτύπωση &amp; Σύνοψη', en: '🖨️ Print &amp; Summary', es: '🖨️ Imprimir &amp; Resumen', fr: '🖨️ Imprimer &amp; Résumé' },
+  prof_print_desc:       { el: 'Συνοπτική εβδομαδιαία προβολή: ημέρες, γεύματα, θερμίδες, macros.', en: 'Weekly summary view: days, meals, calories, macros.', es: 'Vista resumida semanal: días, comidas, calorías, macros.', fr: 'Vue récapitulative hebdomadaire : jours, repas, calories, macros.' },
+  prof_print_btn:        { el: '🖨️ Εκτύπωση / Αποθήκευση PDF', en: '🖨️ Print / Save PDF', es: '🖨️ Imprimir / Guardar PDF', fr: '🖨️ Imprimer / Enregistrer PDF' },
+  prof_click_edit:       { el: 'Πάτα για επεξεργασία ✏️', en: 'Tap to edit ✏️', es: 'Toca para editar ✏️', fr: 'Appuyez pour modifier ✏️' },
+  prof_bmr_label:        { el: 'Βασικός Μεταβολισμός', en: 'Basal Metabolism', es: 'Metabolismo Basal', fr: 'Métabolisme de Base' },
+  prof_kcal_label:       { el: '🔥 Θερμίδες', en: '🔥 Calories', es: '🔥 Calorías', fr: '🔥 Calories' },
+  prof_protein_label:    { el: '🥩 Πρωτεΐνη', en: '🥩 Protein', es: '🥩 Proteína', fr: '🥩 Protéines' },
+
+  // ── Goal pace section labels ──
+  pace_loss_header:  { el: '📉 Απώλεια Βάρους', en: '📉 Weight Loss', es: '📉 Pérdida de peso', fr: '📉 Perte de poids' },
+  pace_other_header: { el: '⚖️ Άλλοι Στόχοι',  en: '⚖️ Other Goals', es: '⚖️ Otros objetivos', fr: '⚖️ Autres objectifs' },
+  pace_slow:         { el: '🐢 Αργός',          en: '🐢 Slow',        es: '🐢 Lento',          fr: '🐢 Lent' },
+  pace_moderate:     { el: '🚶 Μέτριος',        en: '🚶 Moderate',    es: '🚶 Moderado',       fr: '🚶 Modéré' },
+  pace_fast:         { el: '🏃 Γρήγορος',       en: '🏃 Fast',        es: '🏃 Rápido',         fr: '🏃 Rapide' },
+  pace_aggressive:   { el: '🔥 Επιθετικός',     en: '🔥 Aggressive',  es: '🔥 Agresivo',       fr: '🔥 Agressif' },
+  pace_maintain:     { el: '⚖️ Συντήρηση',      en: '⚖️ Maintain',    es: '⚖️ Mantenimiento',  fr: '⚖️ Maintien' },
+  pace_bulk:         { el: '💪 Αύξηση Μάζας',   en: '💪 Bulk',        es: '💪 Volumen',        fr: '💪 Prise de masse' },
+  pace_hint_kcal:    { el: '−{n} kcal/ημέρα',  en: '−{n} kcal/day', es: '−{n} kcal/día',     fr: '−{n} kcal/jour' },
+  pace_hint_tdee:    { el: '= TDEE {n} kcal',   en: '= TDEE {n} kcal', es: '= TDEE {n} kcal', fr: '= TDEE {n} kcal' },
+  pace_hint_bulk:    { el: '+200 kcal · {n}g πρωτ.', en: '+200 kcal · {n}g prot.', es: '+200 kcal · {n}g prot.', fr: '+200 kcal · {n}g prot.' },
+
   // ── Profile/share ──
   prof_protein_hint:  { el: 'Συν. 1.9g/kg: {val}g', en: 'Rec. 1.9g/kg: {val}g', es: 'Rec. 1.9g/kg: {val}g', fr: 'Rec. 1.9g/kg : {val}g' },
   share_plan_title:   { el: 'Πλάνο', en: 'Plan', es: 'Plan', fr: 'Plan' },
@@ -635,9 +673,18 @@ function updateUILanguage() {
   _setDrawerLabel('stats',    t('nav_stats'));
   _setDrawerLabel('settings', t('nav_settings'));
 
-  // Re-render settings page if currently open
-  if (typeof renderSettingsPage === 'function' && document.getElementById('page-settings').classList.contains('active')) {
-    renderSettingsPage();
+  // Re-render whichever page is currently active
+  const activePages = {
+    'page-today':    () => typeof renderToday    === 'function' && renderToday(),
+    'page-week':     () => typeof renderWeek     === 'function' && renderWeek(),
+    'page-stats':    () => typeof renderStats    === 'function' && renderStats(),
+    'page-builder':  () => typeof renderBuilder  === 'function' && renderBuilder(),
+    'page-body':     () => typeof renderBody     === 'function' && renderBody(),
+    'page-settings': () => typeof renderSettingsPage === 'function' && renderSettingsPage(),
+  };
+  for (const [pageId, render] of Object.entries(activePages)) {
+    const el = document.getElementById(pageId);
+    if (el && el.classList.contains('active')) { render(); break; }
   }
 }
 
