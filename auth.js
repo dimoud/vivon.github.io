@@ -418,19 +418,21 @@
   // ── Sign-out (called from app UI) ─────────────────────────
 
   window.handleSignOut = async function () {
-    // Hide app and show auth immediately — no lag
     showAuthScreen();
-    // Cancel any pending debounced save so it cannot fire for the next user
+    // Cancel pending debounced save
     if (typeof _saveTimer !== 'undefined') {
       try { clearTimeout(_saveTimer); _saveTimer = null; } catch(e) {}
     }
+    // Invalidate any in-flight syncToSupabase — it will log a warning but
+    // the write will still complete under the correct userId snapshot, which is safe.
+    if (typeof _syncOwner !== 'undefined') {
+      try { _syncOwner = null; } catch(e) {}
+    }
     try { localStorage.removeItem('nutriApp_v2'); } catch (e) {}
-    // Reset in-memory state immediately so next login starts clean
     if (typeof _freshState === 'function') {
       try { state = _freshState(); } catch(e) {}
     }
     await sbSignOut();
-    // onAuthStateChange SIGNED_OUT also fires but showAuthScreen already ran
   };
 
   // ── Entry point ───────────────────────────────────────────

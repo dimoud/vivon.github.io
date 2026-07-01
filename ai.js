@@ -6,8 +6,23 @@ const GEMINI_PROXY_URL = 'https://tqasuwcnzfxjkthmjooz.supabase.co/functions/v1/
 const AI_COOLDOWN_MS = 30 * 1000; // 30 δευτερόλεπτα
 const AI_LAST_CALL_KEY = 'vivon_ai_last_call';
 
-function _checkRateLimit() {
-  const last = parseInt(localStorage.getItem(AI_LAST_CALL_KEY) || '0', 10);
+async function _checkRateLimit() {
+  const user = sbGetCurrentUser();
+  let last = 0;
+
+  // Prefer server-side timestamp (user-scoped, not bypassable via DevTools)
+  if (user) {
+    const serverLast = await sbGetAILastCall(user.id);
+    if (serverLast !== null) {
+      last = serverLast;
+    } else {
+      // Fall back to localStorage if server returned nothing (first call ever)
+      last = parseInt(localStorage.getItem(AI_LAST_CALL_KEY) || '0', 10);
+    }
+  } else {
+    last = parseInt(localStorage.getItem(AI_LAST_CALL_KEY) || '0', 10);
+  }
+
   const elapsed = Date.now() - last;
   if (elapsed < AI_COOLDOWN_MS) {
     const remaining = Math.ceil((AI_COOLDOWN_MS - elapsed) / 1000);
@@ -15,7 +30,11 @@ function _checkRateLimit() {
     const secs = remaining % 60;
     throw new Error(`Περίμενε ${mins}:${String(secs).padStart(2,'0')} λεπτά πριν την επόμενη βελτιστοποίηση`);
   }
-  localStorage.setItem(AI_LAST_CALL_KEY, Date.now().toString());
+
+  // Record the call server-side and locally
+  const now = Date.now().toString();
+  localStorage.setItem(AI_LAST_CALL_KEY, now);
+  if (user) sbSetAILastCall(user.id);
 }
 
 // ── Shared helpers ──────────────────────────────────────────
@@ -203,7 +222,7 @@ async function optimizeWeekWithAI() {
   btns.forEach(b => { b.disabled = true; b.innerHTML = '⏳ Βελτιστοποίηση...'; });
 
   try {
-    _checkRateLimit();
+    await _checkRateLimit();
     const recipesByType = _buildRecipesByType();
     const recipeGroups  = _buildRecipeGroups();
 
@@ -258,7 +277,7 @@ async function generateWeekWithAI() {
   if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Δημιουργία...'; }
 
   try {
-    _checkRateLimit();
+    await _checkRateLimit();
     const recipesByType = _buildRecipesByType();
     const recipeGroups  = _buildRecipeGroups();
     const g = state.goals;

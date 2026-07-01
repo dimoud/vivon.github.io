@@ -57,17 +57,13 @@ _supabase.auth.onAuthStateChange((_event, session) => {
 
 // ── LOAD ALL USER DATA ────────────────────────────────────────
 
+function _sbCheck(result, label) {
+  if (result.error) throw new Error(`[${label}] ${result.error.message}`);
+  return result.data;
+}
+
 async function sbLoadUserData(userId) {
-  const [
-    { data: profile },
-    { data: goals },
-    { data: weekPlans },
-    { data: bodyLog },
-    { data: supplements },
-    { data: customFoods },
-    { data: customRecipes },
-    { data: userState },
-  ] = await Promise.all([
+  const results = await Promise.all([
     _supabase.from('profiles').select('*').eq('id', userId).maybeSingle(),
     _supabase.from('goals').select('*').eq('user_id', userId).maybeSingle(),
     _supabase.from('week_plans').select('*').eq('user_id', userId),
@@ -77,6 +73,15 @@ async function sbLoadUserData(userId) {
     _supabase.from('custom_recipes').select('*').eq('user_id', userId).maybeSingle(),
     _supabase.from('user_state').select('*').eq('user_id', userId).maybeSingle(),
   ]);
+  const [profileRes, goalsRes, weekPlansRes, bodyLogRes, suppRes, cfRes, crRes, usRes] = results;
+  const profile      = _sbCheck(profileRes,   'profiles');
+  const goals        = _sbCheck(goalsRes,      'goals');
+  const weekPlans    = _sbCheck(weekPlansRes,  'week_plans');
+  const bodyLog      = _sbCheck(bodyLogRes,    'body_log');
+  const supplements  = _sbCheck(suppRes,       'supplements');
+  const customFoods  = _sbCheck(cfRes,         'custom_foods');
+  const customRecipes= _sbCheck(crRes,         'custom_recipes');
+  const userState    = _sbCheck(usRes,         'user_state');
 
   // Determine current week key and find matching plan
   const weekKey = getISOWeekKey();
@@ -152,7 +157,7 @@ async function sbLoadUserData(userId) {
 // ── SAVE FUNCTIONS ────────────────────────────────────────────
 
 async function sbSaveProfile(userId, profile) {
-  await _supabase.from('profiles').upsert({
+  const { error } = await _supabase.from('profiles').upsert({
     id:               userId,
     name:             profile.name,
     photo_url:        profile.photoUrl,
@@ -167,12 +172,13 @@ async function sbSaveProfile(userId, profile) {
     first_meal_time:  profile.firstMealTime,
     updated_at:       new Date().toISOString(),
   }, { onConflict: 'id' });
+  if (error) throw new Error(`[profiles] ${error.message}`);
 }
 
 async function sbSaveGoals(userId, goals) {
-  // Fetch existing row to get its id for upsert
-  const { data: existing } = await _supabase.from('goals').select('id').eq('user_id', userId).maybeSingle();
-  await _supabase.from('goals').upsert({
+  const { data: existing, error: fetchErr } = await _supabase.from('goals').select('id').eq('user_id', userId).maybeSingle();
+  if (fetchErr) throw new Error(`[goals fetch] ${fetchErr.message}`);
+  const { error } = await _supabase.from('goals').upsert({
     ...(existing ? { id: existing.id } : {}),
     user_id:    userId,
     kcal:       goals.kcal,
@@ -181,15 +187,17 @@ async function sbSaveGoals(userId, goals) {
     fat:        goals.fat,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'id' });
+  if (error) throw new Error(`[goals] ${error.message}`);
 }
 
 async function sbSaveWeekPlan(userId, weekKey, week) {
-  await _supabase.from('week_plans').upsert({
+  const { error } = await _supabase.from('week_plans').upsert({
     user_id:    userId,
     week_key:   weekKey,
     week_data:  week,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,week_key' });
+  if (error) throw new Error(`[week_plans] ${error.message}`);
 }
 
 async function sbSaveBodyLog(userId, bodyLog) {
@@ -201,39 +209,49 @@ async function sbSaveBodyLog(userId, bodyLog) {
     fat:     e.fat    ?? null,
     muscle:  e.muscle ?? null,
   }));
-  await _supabase.from('body_log').upsert(rows, { onConflict: 'user_id,date' });
+  const { error } = await _supabase.from('body_log').upsert(rows, { onConflict: 'user_id,date' });
+  if (error) throw new Error(`[body_log] ${error.message}`);
 }
 
 async function sbSaveSupplements(userId, supplements) {
-  const { data: existing } = await _supabase.from('supplements').select('id').eq('user_id', userId).maybeSingle();
-  await _supabase.from('supplements').upsert({
+  const { data: existing, error: fetchErr } = await _supabase.from('supplements').select('id').eq('user_id', userId).maybeSingle();
+  if (fetchErr) throw new Error(`[supplements fetch] ${fetchErr.message}`);
+  const { error } = await _supabase.from('supplements').upsert({
     ...(existing ? { id: existing.id } : {}),
     user_id:          userId,
     supplements_data: supplements,
   }, { onConflict: 'id' });
+  if (error) throw new Error(`[supplements] ${error.message}`);
 }
 
 async function sbSaveCustomFoods(userId, customFoods) {
-  const { data: existing } = await _supabase.from('custom_foods').select('id').eq('user_id', userId).maybeSingle();
+  const { data: existing, error: fetchErr } = await _supabase.from('custom_foods').select('id').eq('user_id', userId).maybeSingle();
+  if (fetchErr) throw new Error(`[custom_foods fetch] ${fetchErr.message}`);
   if (existing) {
-    await _supabase.from('custom_foods').update({ data: customFoods }).eq('id', existing.id);
+    const { error } = await _supabase.from('custom_foods').update({ data: customFoods }).eq('id', existing.id);
+    if (error) throw new Error(`[custom_foods update] ${error.message}`);
   } else {
-    await _supabase.from('custom_foods').insert({ user_id: userId, data: customFoods });
+    const { error } = await _supabase.from('custom_foods').insert({ user_id: userId, data: customFoods });
+    if (error) throw new Error(`[custom_foods insert] ${error.message}`);
   }
 }
 
 async function sbSaveCustomRecipes(userId, customRecipes) {
-  const { data: existing } = await _supabase.from('custom_recipes').select('id').eq('user_id', userId).maybeSingle();
+  const { data: existing, error: fetchErr } = await _supabase.from('custom_recipes').select('id').eq('user_id', userId).maybeSingle();
+  if (fetchErr) throw new Error(`[custom_recipes fetch] ${fetchErr.message}`);
   if (existing) {
-    await _supabase.from('custom_recipes').update({ data: customRecipes }).eq('id', existing.id);
+    const { error } = await _supabase.from('custom_recipes').update({ data: customRecipes }).eq('id', existing.id);
+    if (error) throw new Error(`[custom_recipes update] ${error.message}`);
   } else {
-    await _supabase.from('custom_recipes').insert({ user_id: userId, data: customRecipes });
+    const { error } = await _supabase.from('custom_recipes').insert({ user_id: userId, data: customRecipes });
+    if (error) throw new Error(`[custom_recipes insert] ${error.message}`);
   }
 }
 
 async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab, planCreated, planStartDate, wizardExcluded, wizardStyle }) {
-  const { data: existing } = await _supabase.from('user_state').select('id').eq('user_id', userId).maybeSingle();
-  await _supabase.from('user_state').upsert({
+  const { data: existing, error: fetchErr } = await _supabase.from('user_state').select('id').eq('user_id', userId).maybeSingle();
+  if (fetchErr) throw new Error(`[user_state fetch] ${fetchErr.message}`);
+  const { error } = await _supabase.from('user_state').upsert({
     ...(existing ? { id: existing.id } : {}),
     user_id:          userId,
     favorites:        favorites       ?? [],
@@ -245,6 +263,33 @@ async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, 
     wizard_excluded:  wizardExcluded  ?? {},
     wizard_style:     wizardStyle     ?? 'simple',
   }, { onConflict: 'id' });
+  if (error) throw new Error(`[user_state] ${error.message}`);
+}
+
+// ── AI RATE LIMIT (server-scoped) ─────────────────────────────
+// Stores last AI call timestamp in Supabase under the user's profile row.
+// Falls back to localStorage on network failure so the UI stays responsive.
+
+async function sbGetAILastCall(userId) {
+  try {
+    const { data, error } = await _supabase
+      .from('profiles')
+      .select('ai_last_call_at')
+      .eq('id', userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data.ai_last_call_at ? new Date(data.ai_last_call_at).getTime() : null;
+  } catch(e) { return null; }
+}
+
+async function sbSetAILastCall(userId) {
+  try {
+    const { error } = await _supabase
+      .from('profiles')
+      .update({ ai_last_call_at: new Date().toISOString() })
+      .eq('id', userId);
+    if (error) console.warn('[ai_last_call] update failed:', error.message);
+  } catch(e) {}
 }
 
 // ── WEEK KEY HELPER ───────────────────────────────────────────

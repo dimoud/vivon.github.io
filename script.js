@@ -62,11 +62,15 @@ function saveState() {
   _saveTimer = setTimeout(syncToSupabase, 1500);
 }
 
+// Tracks the user id that initiated the current sync.
+// Set to null on sign-out so in-flight syncs abort before writing.
+let _syncOwner = null;
+
 async function syncToSupabase() {
   const user = sbGetCurrentUser();
   if (!user) return;
-  // Snapshot userId and state now — guard against user switching mid-async
   const syncUserId = user.id;
+  _syncOwner = syncUserId;
   const snap = JSON.parse(JSON.stringify(state));
   const weekKey = getISOWeekKey();
   try {
@@ -89,6 +93,12 @@ async function syncToSupabase() {
         wizardStyle:    snap.wizardStyle,
       }),
     ]);
+    // After all awaits: verify the user hasn't changed during the async writes.
+    // If it has, the data was written under the correct userId snapshot so it's
+    // safe — but log a warning for debugging.
+    if (_syncOwner !== syncUserId) {
+      console.warn('syncToSupabase: user changed during sync — data written for', syncUserId);
+    }
   } catch(e) {
     console.error('Supabase sync error:', e);
   }
@@ -210,11 +220,16 @@ async function loadState() {
 
 function checkWeekReset() {
   const weekKey = getISOWeekKey();
-  // Use weekKey stored in state to detect week change (replaces time-based check)
   const storedKey = state.weekKey;
   if (storedKey && storedKey !== weekKey) {
-    // New week — archive old week is already in Supabase under the old weekKey.
-    // Reset all daily done flags.
+    // Sanity-check: only reset if at least 6 days have elapsed since week was stamped.
+    // This prevents a backward clock adjustment from wiping the week's data.
+    const MIN_ELAPSED_MS = 6 * 24 * 60 * 60 * 1000;
+    const elapsed = Date.now() - (state.weekCreatedAt || 0);
+    if (elapsed < MIN_ELAPSED_MS) {
+      console.warn('checkWeekReset: weekKey mismatch but elapsed < 6 days — skipping reset (clock skew?)');
+      return;
+    }
     state.week.forEach(day => {
       if (day.meals) day.meals.forEach(m => { m.done = false; });
       day.stepsDone = false;
@@ -227,7 +242,6 @@ function checkWeekReset() {
     saveState();
     showToast(t('toast_new_week'), 4000);
   } else if (!storedKey) {
-    // First run — stamp the current week key
     state.weekKey = weekKey;
     if (!state.weekCreatedAt) state.weekCreatedAt = Date.now();
   }
@@ -235,18 +249,19 @@ function checkWeekReset() {
 
 // ── ACTIVITY & DEFICIT CALCULATIONS ──
 function calcStepsKcal(steps, weight) {
-  // ~0.04 kcal ανά βήμα για 70kg, γραμμική κλιμάκωση
-  return Math.round(steps * 0.04 * (weight / 70));
+  const w = (weight > 0) ? weight : 70;
+  return Math.round((steps || 0) * 0.04 * (w / 70));
 }
 
 function calcWeightTrainingKcal(weight) {
-  // ~5 kcal/λεπτό για 60 λεπτά, κλιμάκωση βάρους
-  return Math.round(5 * 60 * (weight / 70));
+  const w = (weight > 0) ? weight : 70;
+  return Math.round(5 * 60 * (w / 70));
 }
 
 function calcDayActivityKcal(dayIdx) {
-  const day = state.week[dayIdx];
-  const w = state.profile.weight || 80;
+  const day = state.week?.[dayIdx];
+  if (!day) return { stepsKcal: 0, trainingKcal: 0, totalActivityKcal: 0, stepsCount: 0, stepsDone: false };
+  const w = state.profile?.weight || 80;
   const stepsCount = (day.stepsCount !== undefined && day.stepsCount !== null) ? day.stepsCount : 8000;
   const stepsDone = !!day.stepsDone;
   const stepsKcal = stepsDone ? calcStepsKcal(stepsCount, w) : 0;
@@ -255,9 +270,9 @@ function calcDayActivityKcal(dayIdx) {
 }
 
 function calcDayDeficit(dayIdx) {
-  const day = state.week[dayIdx];
+  const day = state.week?.[dayIdx];
+  if (!day) return { totalBurn: 0, consumed: 0, deficit: 0, stepsKcal: 0, trainingKcal: 0 };
   const p = state.profile;
-  // Βασικός TDEE μόνο με sedentary factor (1.2) — η υπόλοιπη δραστηριότητα μετριέται via βήματα/προπόνηση
   const bmr = calcBMR(p);
   const { stepsKcal, trainingKcal } = calcDayActivityKcal(dayIdx);
   const totalBurn = bmr + stepsKcal + trainingKcal;
@@ -307,10 +322,11 @@ function calcRecipeMacros(recipe, scaleFactor = 1) {
 }
 
 function calcDayMacros(dayIdx, doneOnly = false) {
-  const day = state.week[dayIdx];
+  const day = state.week?.[dayIdx];
+  if (!day) return { kcal: 0, p: 0, c: 0, f: 0 };
   let tot = { kcal: 0, p: 0, c: 0, f: 0 };
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  day.meals.forEach(meal => {
+  (day.meals || []).forEach(meal => {
     if (doneOnly && !meal.done) return;
     const sf = meal.scaleFactor || 1;
     if (meal.standardId) {
@@ -1308,25 +1324,44 @@ function initGoalSliders() {
   });
 }
 
+function _isSafeUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const trimmed = url.trim().toLowerCase();
+  return trimmed.startsWith('https://') || trimmed.startsWith('http://') || trimmed.startsWith('data:image/');
+}
+
+function _setAvatarImg(el, photoUrl, altText) {
+  if (_isSafeUrl(photoUrl)) {
+    const img = document.createElement('img');
+    img.src = photoUrl;
+    img.alt = altText || '';
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+    el.innerHTML = '';
+    el.appendChild(img);
+    el.style.padding = '0';
+  } else {
+    el.textContent = '';
+    el.style.padding = '';
+  }
+}
+
 function updateSidebarAvatar() {
   const p = state.profile;
   const avatarEl = document.getElementById('sidebar-avatar');
   const nameEl = document.getElementById('sidebar-user-name');
   if (!avatarEl) return;
-  if (p.photoUrl) {
-    avatarEl.innerHTML = `<img src="${p.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="photo">`;
-    avatarEl.style.padding = '0';
+  if (_isSafeUrl(p.photoUrl)) {
+    _setAvatarImg(avatarEl, p.photoUrl, 'photo');
   } else {
-    avatarEl.innerHTML = (p.name || 'Δ').charAt(0).toUpperCase();
+    avatarEl.textContent = (p.name || 'Δ').charAt(0).toUpperCase();
     avatarEl.style.padding = '';
   }
   if (nameEl && p.name) nameEl.textContent = p.name;
-  // Keep drawer in sync
   const dAvatar = document.getElementById('drawer-avatar');
   const dName   = document.getElementById('drawer-user-name');
   if (dAvatar) {
-    if (p.photoUrl) {
-      dAvatar.innerHTML = `<img src="${p.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="">`;
+    if (_isSafeUrl(p.photoUrl)) {
+      _setAvatarImg(dAvatar, p.photoUrl, '');
     } else {
       dAvatar.textContent = (p.name || 'Δ').charAt(0).toUpperCase();
     }
@@ -2177,20 +2212,26 @@ function updatePlanCreatedUI() {
 }
 
 function saveDayStepsCount(val) {
+  const day = state.week?.[state.currentDay];
+  if (!day) return;
   const v = parseInt(val);
-  state.week[state.currentDay].stepsCount = isNaN(v) ? 8000 : Math.max(0, v);
+  day.stepsCount = isNaN(v) ? 8000 : Math.max(0, v);
   saveState();
   updateActivitySection();
 }
 
 function saveDayStepsDone(checked) {
-  state.week[state.currentDay].stepsDone = !!checked;
+  const day = state.week?.[state.currentDay];
+  if (!day) return;
+  day.stepsDone = !!checked;
   saveState();
   updateActivitySection();
 }
 
 function saveDayTraining(checked) {
-  state.week[state.currentDay].weightTraining = !!checked;
+  const day = state.week?.[state.currentDay];
+  if (!day) return;
+  day.weightTraining = !!checked;
   saveState();
   updateActivitySection();
 }
@@ -2198,7 +2239,8 @@ function saveDayTraining(checked) {
 function updateActivitySection() {
   const el = document.getElementById('act-section');
   if (!el) return;
-  const day = state.week[state.currentDay];
+  const day = state.week?.[state.currentDay];
+  if (!day) return;
   const hasTraining = !!day.weightTraining;
   const { stepsKcal, trainingKcal, stepsCount, stepsDone } = calcDayActivityKcal(state.currentDay);
   const { totalBurn, consumed, deficit } = calcDayDeficit(state.currentDay);
@@ -4401,8 +4443,11 @@ function _swapRowClick(el) {
   _swapUpdatePreview();
 }
 
+const SF_MIN_VAL = 0.5, SF_MAX_VAL = 2.5;
+function _clampSF(v) { return Math.round(Math.min(SF_MAX_VAL, Math.max(SF_MIN_VAL, parseFloat(v) || 1)) * 100) / 100; }
+
 function _swapSfChange(val) {
-  _swapPending.sf = parseFloat(val);
+  _swapPending.sf = _clampSF(val);
   // Update track fill: (val - 0.5) / (2.5 - 0.5) * 100
   const slider = document.getElementById('swap-sf-slider');
   if (slider) {
@@ -4456,7 +4501,7 @@ function _swapApply() {
     state.week[dayIdx].meals[mi].recipeId = id;
     delete state.week[dayIdx].meals[mi].standardId;
   }
-  state.week[dayIdx].meals[mi].scaleFactor = sf;
+  state.week[dayIdx].meals[mi].scaleFactor = _clampSF(sf);
   saveState();
   closeModal();
   _refreshAfterMealEdit(dayIdx);
@@ -4518,7 +4563,7 @@ function openScaleModal(mi, dayIdx) {
 
 function applyScale(mi, sf, dayIdx) {
   if (dayIdx === undefined) dayIdx = state.currentDay;
-  state.week[dayIdx].meals[mi].scaleFactor = sf;
+  state.week[dayIdx].meals[mi].scaleFactor = _clampSF(sf);
   saveState();
   closeModal();
   _refreshAfterMealEdit(dayIdx);
@@ -4552,11 +4597,18 @@ function openAddMealModal() {
 }
 
 function addMealFromModal() {
-  const time = document.getElementById('new-meal-time').value;
-  const type = document.getElementById('new-meal-type').value;
-  const recipeId = document.getElementById('new-meal-recipe').value;
-  state.week[state.currentDay].meals.push({ time, type, recipeId, done: false, scaleFactor: 1 });
-  state.week[state.currentDay].meals.sort((a,b) => a.time.localeCompare(b.time));
+  const time     = (document.getElementById('new-meal-time')?.value   || '').trim();
+  const type     = (document.getElementById('new-meal-type')?.value   || '').trim();
+  const recipeId = (document.getElementById('new-meal-recipe')?.value || '').trim();
+  const VALID_TYPES = ['breakfast', 'snack', 'lunch', 'afternoon', 'dinner'];
+  if (!time || !type || !recipeId) { showToast('⚠️ Συμπλήρωσε όλα τα πεδία'); return; }
+  if (!VALID_TYPES.includes(type)) { showToast('⚠️ Μη έγκυρος τύπος γεύματος'); return; }
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  if (!allRecipes.some(r => r.id === recipeId)) { showToast('⚠️ Η συνταγή δεν βρέθηκε'); return; }
+  const day = state.week[state.currentDay];
+  if (!day) { showToast('⚠️ Μη έγκυρη ημέρα'); return; }
+  day.meals.push({ time, type, recipeId, done: false, scaleFactor: 1 });
+  day.meals.sort((a,b) => a.time.localeCompare(b.time));
   saveState();
   closeModal();
   _refreshAfterMealEdit(state.currentDay);

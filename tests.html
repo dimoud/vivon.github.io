@@ -53,6 +53,7 @@ window.localStorage = { getItem: () => null, setItem: () => {} };
 </script>
 <script src="data.js"></script>
 <script src="supabase.js"></script>
+<script src="i18n.js"></script>
 <script src="script.js"></script>
 
 <script>
@@ -618,6 +619,761 @@ test('DEFAULT_PROFILE has required fields', () => {
 test('DEFAULT_PROFILE gender is male or female', () => {
   assert(['male','female'].includes(DEFAULT_PROFILE.gender),
     `unexpected gender: ${DEFAULT_PROFILE.gender}`);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 16 — _isSafeUrl (XSS fix)
+// ══════════════════════════════════════════════════════════════════
+suite('_isSafeUrl (XSS fix)');
+
+test('https:// URL is safe', () => {
+  assert(_isSafeUrl('https://example.com/photo.jpg'));
+});
+
+test('http:// URL is safe', () => {
+  assert(_isSafeUrl('http://example.com/photo.jpg'));
+});
+
+test('data:image/ URL is safe', () => {
+  assert(_isSafeUrl('data:image/png;base64,abc123'));
+});
+
+test('javascript: is rejected', () => {
+  assert(!_isSafeUrl('javascript:alert(1)'));
+});
+
+test('data:text/html is rejected', () => {
+  assert(!_isSafeUrl('data:text/html,<script>alert(1)</script>'));
+});
+
+test('empty string is rejected', () => {
+  assert(!_isSafeUrl(''));
+});
+
+test('null is rejected', () => {
+  assert(!_isSafeUrl(null));
+});
+
+test('undefined is rejected', () => {
+  assert(!_isSafeUrl(undefined));
+});
+
+test('bare filename is rejected', () => {
+  assert(!_isSafeUrl('photo.jpg'));
+});
+
+test('leading whitespace around javascript: is still rejected', () => {
+  assert(!_isSafeUrl('  javascript:alert(1)'));
+});
+
+test('uppercase JAVASCRIPT: is rejected', () => {
+  assert(!_isSafeUrl('JAVASCRIPT:alert(1)'));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 17 — calcStepsKcal zero-weight guard (NaN fix)
+// ══════════════════════════════════════════════════════════════════
+suite('calcStepsKcal zero-weight guard');
+
+test('weight=0 does not return NaN', () => {
+  const result = calcStepsKcal(8000, 0);
+  assert(!isNaN(result), `expected number, got NaN`);
+});
+
+test('weight=0 falls back to 70kg baseline', () => {
+  assertEq(calcStepsKcal(8000, 0), calcStepsKcal(8000, 70), 'zero weight uses 70kg fallback');
+});
+
+test('negative weight does not return NaN', () => {
+  const result = calcStepsKcal(8000, -50);
+  assert(!isNaN(result), 'negative weight should not produce NaN');
+});
+
+test('negative weight falls back to 70kg baseline', () => {
+  assertEq(calcStepsKcal(8000, -50), calcStepsKcal(8000, 70));
+});
+
+test('positive weight still scales correctly', () => {
+  assertEq(calcStepsKcal(8000, 70), Math.round(8000 * 0.04));
+  assertEq(calcStepsKcal(8000, 140), Math.round(8000 * 0.04 * 2));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 18 — calcWeightTrainingKcal zero-weight guard (NaN fix)
+// ══════════════════════════════════════════════════════════════════
+suite('calcWeightTrainingKcal zero-weight guard');
+
+test('weight=0 does not return NaN', () => {
+  const result = calcWeightTrainingKcal(0);
+  assert(!isNaN(result), 'NaN returned for weight=0');
+});
+
+test('weight=0 falls back to 70kg baseline', () => {
+  assertEq(calcWeightTrainingKcal(0), calcWeightTrainingKcal(70));
+});
+
+test('negative weight falls back to 70kg baseline', () => {
+  assertEq(calcWeightTrainingKcal(-1), calcWeightTrainingKcal(70));
+});
+
+test('70kg baseline = 300 kcal', () => {
+  assertEq(calcWeightTrainingKcal(70), 300);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 19 — _clampSF (scale factor bounds fix)
+// ══════════════════════════════════════════════════════════════════
+suite('_clampSF (scale factor bounds)');
+
+test('value within range passes through', () => {
+  assertEq(_clampSF(1.0), 1.0);
+  assertEq(_clampSF(1.5), 1.5);
+});
+
+test('value below 0.5 is clamped to 0.5', () => {
+  assertEq(_clampSF(0.1), 0.5);
+  assertEq(_clampSF(0),   0.5);
+  assertEq(_clampSF(-5),  0.5);
+});
+
+test('value above 2.5 is clamped to 2.5', () => {
+  assertEq(_clampSF(3.0),  2.5);
+  assertEq(_clampSF(99),   2.5);
+  assertEq(_clampSF(1000), 2.5);
+});
+
+test('NaN input falls back to 1.0', () => {
+  assertEq(_clampSF(NaN), 1.0);
+});
+
+test('string number is parsed correctly', () => {
+  assertEq(_clampSF('1.5'), 1.5);
+});
+
+test('result is rounded to 2 decimal places', () => {
+  const result = _clampSF(1.2345678);
+  assertEq(result, Math.round(1.2345678 * 100) / 100);
+});
+
+test('boundary 0.5 is accepted', () => {
+  assertEq(_clampSF(0.5), 0.5);
+});
+
+test('boundary 2.5 is accepted', () => {
+  assertEq(_clampSF(2.5), 2.5);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 20 — checkWeekReset clock-skew guard
+// ══════════════════════════════════════════════════════════════════
+suite('checkWeekReset clock-skew guard');
+
+// Save and restore state around each test
+function withState(overrides, fn) {
+  const saved = JSON.parse(JSON.stringify({
+    weekKey: state.weekKey,
+    weekCreatedAt: state.weekCreatedAt,
+    week: state.week,
+    supplements: state.supplements,
+  }));
+  Object.assign(state, overrides);
+  try { fn(); } finally {
+    state.weekKey       = saved.weekKey;
+    state.weekCreatedAt = saved.weekCreatedAt;
+    state.week          = saved.week;
+    state.supplements   = saved.supplements;
+  }
+}
+
+test('no reset when weekKey matches current week', () => {
+  const currentKey = getISOWeekKey();
+  withState({ weekKey: currentKey, weekCreatedAt: Date.now() - 7 * 24 * 60 * 60 * 1000 }, () => {
+    state.week[0].meals = [{ done: true }];
+    checkWeekReset();
+    assertEq(state.week[0].meals[0].done, true, 'done flag should be untouched');
+  });
+});
+
+test('no reset when elapsed < 6 days even if weekKey differs (clock skew)', () => {
+  withState({
+    weekKey: '1990-W01',                           // definitely different from current
+    weekCreatedAt: Date.now() - 2 * 24 * 60 * 60 * 1000, // only 2 days ago
+  }, () => {
+    state.week[0].meals = [{ done: true }];
+    checkWeekReset();
+    assertEq(state.week[0].meals[0].done, true, 'should NOT reset — elapsed < 6 days');
+    assertEq(state.weekKey, '1990-W01', 'weekKey should be unchanged');
+  });
+});
+
+test('reset happens when weekKey differs AND elapsed >= 6 days', () => {
+  withState({
+    weekKey: '1990-W01',
+    weekCreatedAt: Date.now() - 8 * 24 * 60 * 60 * 1000, // 8 days ago
+  }, () => {
+    state.week[0].meals = [{ done: true }];
+    state.week[0].stepsDone = true;
+    checkWeekReset();
+    assertEq(state.week[0].meals[0].done, false, 'done flag should be reset');
+    assertEq(state.week[0].stepsDone,     false, 'stepsDone should be reset');
+    assertEq(state.weekKey, getISOWeekKey(), 'weekKey should update to current');
+  });
+});
+
+test('reset clears supplement done flags', () => {
+  withState({
+    weekKey: '1990-W01',
+    weekCreatedAt: Date.now() - 8 * 24 * 60 * 60 * 1000,
+  }, () => {
+    state.supplements = { done: { s1: true, s2: true }, activeIds: [] };
+    checkWeekReset();
+    assertEq(Object.keys(state.supplements.done).length, 0, 'supplement done should be cleared');
+  });
+});
+
+test('first run (no weekKey) stamps current week without resetting', () => {
+  withState({ weekKey: undefined, weekCreatedAt: undefined }, () => {
+    state.week[0].meals = [{ done: true }];
+    checkWeekReset();
+    assertEq(state.weekKey, getISOWeekKey(), 'should stamp current weekKey');
+    assertEq(state.week[0].meals[0].done, true, 'should NOT reset meals on first run');
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 21 — calcDayActivityKcal optional-chaining guard
+// ══════════════════════════════════════════════════════════════════
+suite('calcDayActivityKcal optional-chaining guard');
+
+test('out-of-range dayIdx returns zero struct (no crash)', () => {
+  const result = calcDayActivityKcal(999);
+  assertEq(result.stepsKcal,     0, 'stepsKcal');
+  assertEq(result.trainingKcal,  0, 'trainingKcal');
+  assertEq(result.totalActivityKcal, 0, 'totalActivityKcal');
+  assert(!result.stepsDone, 'stepsDone');
+});
+
+test('negative dayIdx returns zero struct (no crash)', () => {
+  const result = calcDayActivityKcal(-1);
+  assertEq(result.stepsKcal, 0);
+});
+
+test('valid dayIdx still returns values (regression)', () => {
+  const saved = state.week[0];
+  state.week[0] = { stepsDone: true, stepsCount: 8000, weightTraining: false };
+  state.profile.weight = 70;
+  const result = calcDayActivityKcal(0);
+  assert(result.stepsKcal > 0, 'should return non-zero stepsKcal for valid day');
+  state.week[0] = saved;
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 22 — calcDayMacros optional-chaining guard
+// ══════════════════════════════════════════════════════════════════
+suite('calcDayMacros optional-chaining guard');
+
+test('out-of-range dayIdx returns zero macros (no crash)', () => {
+  const m = calcDayMacros(999);
+  assertEq(m.kcal, 0, 'kcal');
+  assertEq(m.p,    0, 'p');
+  assertEq(m.c,    0, 'c');
+  assertEq(m.f,    0, 'f');
+});
+
+test('negative dayIdx returns zero macros (no crash)', () => {
+  const m = calcDayMacros(-1);
+  assertEq(m.kcal, 0);
+});
+
+test('day with empty meals array returns zero macros', () => {
+  const saved = state.week[0];
+  state.week[0] = { meals: [] };
+  const m = calcDayMacros(0);
+  assertEq(m.kcal, 0, 'empty day kcal should be 0');
+  state.week[0] = saved;
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 23 — calcDayDeficit optional-chaining guard
+// ══════════════════════════════════════════════════════════════════
+suite('calcDayDeficit optional-chaining guard');
+
+test('out-of-range dayIdx returns zero struct (no crash)', () => {
+  const r = calcDayDeficit(999);
+  assertEq(r.totalBurn,   0);
+  assertEq(r.consumed,    0);
+  assertEq(r.deficit,     0);
+  assertEq(r.stepsKcal,   0);
+  assertEq(r.trainingKcal,0);
+});
+
+test('negative dayIdx returns zero struct (no crash)', () => {
+  const r = calcDayDeficit(-1);
+  assertEq(r.totalBurn, 0);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 24 — _freshState shape & isolation
+// ══════════════════════════════════════════════════════════════════
+suite('_freshState — shape & isolation');
+
+test('returns all required top-level keys', () => {
+  const s = _freshState();
+  ['profile','goals','week','weekCreatedAt','currentDay','programCreated',
+   'planCreated','planStartDate','supplements','favorites','customFoods',
+   'customRecipes','dayTemplates','activeTab','optimizeMode','bodyLog',
+   'wizardExcluded','wizardStyle'].forEach(k => {
+    assert(k in s, `missing key: ${k}`);
+  });
+});
+
+test('profile defaults match DEFAULT_PROFILE', () => {
+  const s = _freshState();
+  assertEq(s.profile.weight,  DEFAULT_PROFILE.weight);
+  assertEq(s.profile.height,  DEFAULT_PROFILE.height);
+  assertEq(s.profile.gender,  DEFAULT_PROFILE.gender);
+});
+
+test('goals defaults match DEFAULT_GOALS', () => {
+  const s = _freshState();
+  assertEq(s.goals.kcal,    DEFAULT_GOALS.kcal);
+  assertEq(s.goals.protein, DEFAULT_GOALS.protein);
+});
+
+test('week has 7 days', () => {
+  assertEq(_freshState().week.length, 7);
+});
+
+test('two calls return independent objects (no shared reference)', () => {
+  const a = _freshState();
+  const b = _freshState();
+  a.profile.weight = 999;
+  assert(b.profile.weight !== 999, 'states share a profile reference');
+});
+
+test('week arrays are independent between calls', () => {
+  const a = _freshState();
+  const b = _freshState();
+  a.week[0].meals = [];
+  assert(Array.isArray(b.week[0].meals), 'week[0].meals corrupted by sibling call');
+  assert(b.week[0].meals !== a.week[0].meals, 'week[0].meals shares reference');
+});
+
+test('planCreated starts false', () => {
+  assert(_freshState().planCreated === false);
+});
+
+test('favorites starts as empty array', () => {
+  const s = _freshState();
+  assert(Array.isArray(s.favorites) && s.favorites.length === 0);
+});
+
+test('wizardStyle defaults to simple', () => {
+  assertEq(_freshState().wizardStyle, 'simple');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 25 — addMealFromModal validation (DOM-stub approach)
+// ══════════════════════════════════════════════════════════════════
+suite('addMealFromModal — validation');
+
+// Helper: creates in-memory DOM inputs so addMealFromModal can read them
+function _setMealModalInputs(time, type, recipeId) {
+  ['new-meal-time','new-meal-type','new-meal-recipe'].forEach(id => {
+    let el = document.getElementById(id);
+    if (!el) { el = document.createElement('input'); el.id = id; document.body.appendChild(el); }
+  });
+  document.getElementById('new-meal-time').value   = time   ?? '';
+  document.getElementById('new-meal-type').value   = type   ?? '';
+  document.getElementById('new-meal-recipe').value = recipeId ?? '';
+}
+
+// Capture toasts without DOM
+const _toasts = [];
+const _origShowToast = window.showToast;
+window.showToast = (msg) => { _toasts.push(msg); };
+// Stub closeModal and _refreshAfterMealEdit (DOM-dependent)
+window.closeModal = () => {};
+window._refreshAfterMealEdit = () => {};
+
+test('rejects when time is empty', () => {
+  _toasts.length = 0;
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const before = state.week[0].meals.length;
+  _setMealModalInputs('', 'lunch', RECIPES_DB[0].id);
+  addMealFromModal();
+  assertEq(state.week[0].meals.length, before, 'meal should not be added');
+  state.currentDay = origDay;
+});
+
+test('rejects invalid meal type', () => {
+  _toasts.length = 0;
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const before = state.week[0].meals.length;
+  _setMealModalInputs('12:00', 'brunch', RECIPES_DB[0].id);
+  addMealFromModal();
+  assertEq(state.week[0].meals.length, before, 'invalid type should not add meal');
+  assert(_toasts.some(m => m.includes('⚠️')), 'should show warning toast');
+  state.currentDay = origDay;
+});
+
+test('rejects unknown recipeId', () => {
+  _toasts.length = 0;
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const before = state.week[0].meals.length;
+  _setMealModalInputs('12:00', 'lunch', 'FAKE_ID_DOES_NOT_EXIST');
+  addMealFromModal();
+  assertEq(state.week[0].meals.length, before, 'unknown recipe should not add meal');
+  state.currentDay = origDay;
+});
+
+test('accepts valid inputs and pushes meal', () => {
+  _toasts.length = 0;
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const before = state.week[0].meals.length;
+  const validId = RECIPES_DB[0].id;
+  _setMealModalInputs('12:00', 'lunch', validId);
+  addMealFromModal();
+  assertEq(state.week[0].meals.length, before + 1, 'meal should be added');
+  // Clean up
+  state.week[0].meals.pop();
+  state.currentDay = origDay;
+});
+
+test('added meal has correct fields', () => {
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const validId = RECIPES_DB[0].id;
+  _setMealModalInputs('08:00', 'breakfast', validId);
+  addMealFromModal();
+  const added = state.week[0].meals.find(m => m.recipeId === validId && m.time === '08:00');
+  assert(added, 'meal not found after add');
+  assertEq(added.type, 'breakfast');
+  assertEq(added.done, false);
+  assertEq(added.scaleFactor, 1);
+  // Clean up
+  state.week[0].meals = state.week[0].meals.filter(m => !(m.recipeId === validId && m.time === '08:00'));
+  state.currentDay = origDay;
+});
+
+test('meals are sorted by time after add', () => {
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  state.week[0].meals = [];
+  const validId = RECIPES_DB[0].id;
+  _setMealModalInputs('20:00', 'dinner', validId);
+  addMealFromModal();
+  const validId2 = RECIPES_DB[1]?.id || RECIPES_DB[0].id;
+  _setMealModalInputs('07:00', 'breakfast', validId2);
+  addMealFromModal();
+  assert(state.week[0].meals[0].time <= state.week[0].meals[1].time, 'meals not sorted by time');
+  state.week[0].meals = [];
+  state.currentDay = origDay;
+});
+
+test('all 5 valid meal types are accepted', () => {
+  const origDay = state.currentDay;
+  state.currentDay = 0;
+  const validId = RECIPES_DB[0].id;
+  ['breakfast','snack','lunch','afternoon','dinner'].forEach(type => {
+    const before = state.week[0].meals.length;
+    _setMealModalInputs('12:00', type, validId);
+    addMealFromModal();
+    assert(state.week[0].meals.length > before, `type "${type}" was rejected`);
+    state.week[0].meals.pop();
+  });
+  state.currentDay = origDay;
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26 — generateSmartWeek (plan creation)
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — plan creation');
+
+test('returns array of 7 days', () => {
+  const week = generateSmartWeek('simple', {});
+  assertEq(week.length, 7, 'should produce 7 days');
+});
+
+test('each day has exactly 5 meals', () => {
+  const week = generateSmartWeek('simple', {});
+  week.forEach((day, i) => {
+    assertEq(day.meals.length, 5, `day ${i+1} should have 5 meals`);
+  });
+});
+
+test('each meal has required fields', () => {
+  const week = generateSmartWeek('simple', {});
+  week.forEach((day, di) => {
+    day.meals.forEach((m, mi) => {
+      assert(m.time,    `day ${di+1} meal ${mi+1} missing time`);
+      assert(m.type,    `day ${di+1} meal ${mi+1} missing type`);
+      assert(!m.done,   `day ${di+1} meal ${mi+1} done should start false`);
+      assert(m.recipeId || m.standardId, `day ${di+1} meal ${mi+1} missing recipeId/standardId`);
+    });
+  });
+});
+
+test('each day has correct meal slot order', () => {
+  const expectedTypes = ['breakfast','snack','lunch','afternoon','dinner'];
+  const week = generateSmartWeek('simple', {});
+  week.forEach((day, di) => {
+    day.meals.forEach((m, si) => {
+      assertEq(m.type, expectedTypes[si], `day ${di+1} slot ${si} wrong type`);
+    });
+  });
+});
+
+test('all scaleFactor values are within [0.6, 1.6] after optimisation', () => {
+  const week = generateSmartWeek('simple', {});
+  week.forEach((day, di) => {
+    day.meals.forEach((m, mi) => {
+      const sf = m.scaleFactor ?? 1;
+      assert(sf >= 0.6 && sf <= 1.6,
+        `day ${di+1} meal ${mi+1} scaleFactor ${sf} out of [0.6, 1.6]`);
+    });
+  });
+});
+
+test('excluded recipes do not appear in generated week', () => {
+  const allBreakfasts = _allMeals().filter(r => r.meal === 'breakfast' && !r.side);
+  // Exclude all but two
+  const [keep1, keep2, ...rest] = allBreakfasts;
+  const excludedIds = rest.map(r => r.id);
+  const week = generateSmartWeek('simple', { breakfast: excludedIds });
+  week.forEach((day, di) => {
+    const bf = day.meals.find(m => m.type === 'breakfast');
+    if (bf && bf.recipeId) {
+      assert(!excludedIds.includes(bf.recipeId),
+        `day ${di+1} breakfast "${bf.recipeId}" is in excluded list`);
+    }
+    if (bf && bf.standardId) {
+      assert(!excludedIds.includes(bf.standardId),
+        `day ${di+1} breakfast standardId "${bf.standardId}" is in excluded list`);
+    }
+  });
+});
+
+test('gourmet style includes at least some gourmet meals', () => {
+  const week = generateSmartWeek('gourmet', {});
+  const allIds = week.flatMap(d => d.meals.map(m => m.recipeId || m.standardId));
+  const hasGourmet = allIds.some(id => id && GOURMET_IDS.has(id));
+  assert(hasGourmet, 'gourmet style should produce at least one gourmet meal');
+});
+
+test('simple style produces no gourmet meals', () => {
+  const week = generateSmartWeek('simple', {});
+  const allIds = week.flatMap(d => d.meals.map(m => m.recipeId || m.standardId));
+  const hasGourmet = allIds.some(id => id && GOURMET_IDS.has(id));
+  assert(!hasGourmet, 'simple style should not produce gourmet meals');
+});
+
+test('does not crash with all meals excluded (falls back gracefully)', () => {
+  const allIds = _allMeals().map(r => r.id);
+  const excl = { breakfast: allIds, snack: allIds, lunch: allIds, afternoon: allIds, dinner: allIds };
+  let threw = false;
+  try { generateSmartWeek('simple', excl); } catch(e) { threw = true; }
+  assert(!threw, 'should not throw when all meals excluded');
+});
+
+test('no same meal repeated on consecutive days in same slot', () => {
+  // Run a few times to account for randomness
+  for (let run = 0; run < 3; run++) {
+    const week = generateSmartWeek('simple', {});
+    ['breakfast','lunch','dinner'].forEach(slot => {
+      const ids = week.map(d => {
+        const m = d.meals.find(x => x.type === slot);
+        return m?.recipeId || m?.standardId || null;
+      });
+      for (let i = 1; i < ids.length; i++) {
+        if (ids[i] && ids[i - 1]) {
+          assert(ids[i] !== ids[i-1],
+            `${slot} repeated on consecutive days: ${ids[i-1]} → ${ids[i]} (run ${run})`);
+        }
+      }
+    });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 27 — Wizard state machine (wizardNext / wizardBack / wizardSetStyle)
+// ══════════════════════════════════════════════════════════════════
+suite('Wizard state machine');
+
+// Stub _renderWizardStep and DOM dependencies the wizard touches
+window._renderWizardStep = () => {};
+window.navigateTo = () => {};
+window.updatePlanCreatedUI = () => {};
+// wizard-overlay needs to exist
+(function() {
+  if (!document.getElementById('wizard-overlay')) {
+    const el = document.createElement('div');
+    el.id = 'wizard-overlay';
+    document.body.appendChild(el);
+  }
+})();
+
+function resetWizard() {
+  _wizardStep = 0;
+  _wizardExcluded = {};
+  WIZARD_MEALS.forEach(m => { _wizardExcluded[m.key] = new Set(); });
+}
+
+test('initial step is 0 after createPlan reset', () => {
+  resetWizard();
+  assertEq(_wizardStep, 0);
+});
+
+test('wizardNext increments step', () => {
+  resetWizard();
+  wizardNext();
+  assertEq(_wizardStep, 1);
+});
+
+test('wizardNext increments through all steps to CONFIRM', () => {
+  resetWizard();
+  for (let i = 0; i < WIZARD_CONFIRM_STEP; i++) wizardNext();
+  assertEq(_wizardStep, WIZARD_CONFIRM_STEP);
+});
+
+test('wizardNext at CONFIRM step finalises plan (planCreated = true)', () => {
+  resetWizard();
+  state.planCreated = false;
+  // Advance to confirm step
+  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  assert(state.planCreated, 'planCreated should be true after finishing wizard');
+});
+
+test('finalised week has 7 days', () => {
+  resetWizard();
+  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  assertEq(state.week.length, 7);
+});
+
+test('wizardBack decrements step', () => {
+  resetWizard();
+  wizardNext(); wizardNext();
+  wizardBack();
+  assertEq(_wizardStep, 1);
+});
+
+test('wizardBack does not go below 0', () => {
+  resetWizard();
+  wizardBack();
+  assertEq(_wizardStep, 0, 'step should not go negative');
+});
+
+test('wizardSetStyle sets state.wizardStyle', () => {
+  wizardSetStyle('gourmet');
+  assertEq(state.wizardStyle, 'gourmet');
+  wizardSetStyle('simple');
+  assertEq(state.wizardStyle, 'simple');
+  wizardSetStyle('mixed');
+  assertEq(state.wizardStyle, 'mixed');
+});
+
+test('wizard exclusion sets initialise empty', () => {
+  resetWizard();
+  WIZARD_MEALS.forEach(m => {
+    assert(_wizardExcluded[m.key] instanceof Set, `${m.key} exclusion should be a Set`);
+    assertEq(_wizardExcluded[m.key].size, 0, `${m.key} exclusion should start empty`);
+  });
+});
+
+test('wizardToggleGroup excludes meal ids', () => {
+  resetWizard();
+  _wizardStep = 1; // breakfast step
+  const mealKey = WIZARD_MEALS[0].key; // 'breakfast'
+  const ids = _allMeals().filter(r => r.meal === mealKey).slice(0, 2).map(r => r.id);
+  if (ids.length < 1) return; // skip if no meals
+  const fakeEl = { querySelector: () => null, classList: { remove: ()=>{}, add: ()=>{} } };
+  wizardToggleGroup(mealKey, ids, fakeEl);
+  ids.forEach(id => assert(_wizardExcluded[mealKey].has(id), `${id} should be excluded`));
+});
+
+test('wizardToggleGroup re-includes when all already excluded', () => {
+  resetWizard();
+  _wizardStep = 1;
+  const mealKey = WIZARD_MEALS[0].key;
+  const ids = _allMeals().filter(r => r.meal === mealKey).slice(0, 2).map(r => r.id);
+  if (ids.length < 1) return;
+  // Exclude first
+  ids.forEach(id => _wizardExcluded[mealKey].add(id));
+  const fakeEl = { querySelector: () => null, classList: { remove: ()=>{}, add: ()=>{} } };
+  wizardToggleGroup(mealKey, ids, fakeEl);
+  ids.forEach(id => assert(!_wizardExcluded[mealKey].has(id), `${id} should be re-included`));
+});
+
+test('_wizardSelectAll clears exclusions for a meal key', () => {
+  resetWizard();
+  const mealKey = WIZARD_MEALS[0].key;
+  _allMeals().filter(r => r.meal === mealKey).forEach(r => _wizardExcluded[mealKey].add(r.id));
+  assert(_wizardExcluded[mealKey].size > 0, 'precondition: should have exclusions');
+  _wizardSelectAll(mealKey);
+  assertEq(_wizardExcluded[mealKey].size, 0, 'exclusions should be cleared');
+});
+
+test('excluded meals from wizard are preserved in state after plan creation', () => {
+  resetWizard();
+  const mealKey = WIZARD_MEALS[0].key;
+  const firstId = _allMeals().find(r => r.meal === mealKey)?.id;
+  if (!firstId) return;
+  _wizardExcluded[mealKey].add(firstId);
+  // Advance past confirm
+  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  assert(Array.isArray(state.wizardExcluded[mealKey]),
+    'state.wizardExcluded should be serialised array');
+  assert(state.wizardExcluded[mealKey].includes(firstId),
+    'excluded id should be in state after plan creation');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 28 — getISOWeekKey
+// ══════════════════════════════════════════════════════════════════
+suite('getISOWeekKey');
+
+test('returns a string', () => {
+  assert(typeof getISOWeekKey() === 'string');
+});
+
+test('matches format YYYY-WNN', () => {
+  assert(/^\d{4}-W\d{2}$/.test(getISOWeekKey()), `bad format: ${getISOWeekKey()}`);
+});
+
+test('week number is between 01 and 53', () => {
+  const wn = parseInt(getISOWeekKey().split('-W')[1], 10);
+  assert(wn >= 1 && wn <= 53, `week ${wn} out of range`);
+});
+
+test('year is plausible (2024–2100)', () => {
+  const yr = parseInt(getISOWeekKey().split('-W')[0], 10);
+  assert(yr >= 2024 && yr <= 2100, `year ${yr} implausible`);
+});
+
+test('two consecutive calls return the same key (stable within a session)', () => {
+  assertEq(getISOWeekKey(), getISOWeekKey());
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 29 — syncToSupabase _syncOwner guard (sign-out race)
+// ══════════════════════════════════════════════════════════════════
+suite('syncToSupabase — sign-out race guard');
+
+test('_syncOwner starts as null', () => {
+  // After module load with no user, _syncOwner should be null
+  assert(_syncOwner === null, `expected null, got ${_syncOwner}`);
+});
+
+test('syncToSupabase exits early when no user', async () => {
+  // _currentUser is null in test harness — syncToSupabase should return without throwing
+  let threw = false;
+  try { await syncToSupabase(); } catch(e) { threw = true; }
+  assert(!threw, 'should not throw when no user');
+  assertEq(_syncOwner, null, '_syncOwner should stay null');
 });
 
 // ══════════════════════════════════════════════════════════════════
