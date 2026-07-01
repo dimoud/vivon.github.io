@@ -136,12 +136,14 @@ async function sbLoadUserData(userId) {
   }
 
   if (userState) {
-    result.favorites     = userState.favorites     ?? [];
-    result.dayTemplates  = userState.day_templates ?? [];
-    result.optimizeMode  = userState.optimize_mode ?? 1;
-    result.activeTab     = userState.active_tab    ?? 'today';
-    result.planCreated   = userState.plan_created  ?? false;
-    result.planStartDate = userState.plan_start_date ?? null;
+    result.favorites      = userState.favorites      ?? [];
+    result.dayTemplates   = userState.day_templates  ?? [];
+    result.optimizeMode   = userState.optimize_mode  ?? 1;
+    result.activeTab      = userState.active_tab     ?? 'today';
+    result.planCreated    = userState.plan_created   ?? false;
+    result.planStartDate  = userState.plan_start_date ?? null;
+    result.wizardExcluded = userState.wizard_excluded ?? {};
+    result.wizardStyle    = userState.wizard_style    ?? 'simple';
   }
 
   return result;
@@ -229,17 +231,19 @@ async function sbSaveCustomRecipes(userId, customRecipes) {
   }
 }
 
-async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab, planCreated, planStartDate }) {
+async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab, planCreated, planStartDate, wizardExcluded, wizardStyle }) {
   const { data: existing } = await _supabase.from('user_state').select('id').eq('user_id', userId).maybeSingle();
   await _supabase.from('user_state').upsert({
     ...(existing ? { id: existing.id } : {}),
-    user_id:         userId,
-    favorites:       favorites      ?? [],
-    day_templates:   dayTemplates   ?? [],
-    optimize_mode:   optimizeMode   ?? 1,
-    active_tab:      activeTab      ?? 'today',
-    plan_created:    planCreated    ?? false,
-    plan_start_date: planStartDate  ?? null,
+    user_id:          userId,
+    favorites:        favorites       ?? [],
+    day_templates:    dayTemplates    ?? [],
+    optimize_mode:    optimizeMode    ?? 1,
+    active_tab:       activeTab       ?? 'today',
+    plan_created:     planCreated     ?? false,
+    plan_start_date:  planStartDate   ?? null,
+    wizard_excluded:  wizardExcluded  ?? {},
+    wizard_style:     wizardStyle     ?? 'simple',
   }, { onConflict: 'id' });
 }
 

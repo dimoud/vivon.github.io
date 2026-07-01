@@ -20,6 +20,8 @@ let state = {
   activeTab: 'today',
   optimizeMode: 1,
   bodyLog: [],
+  wizardExcluded: {},
+  wizardStyle: 'simple',
 };
 
 // ── MEAL TIME HELPER ──
@@ -77,12 +79,14 @@ async function syncToSupabase() {
       sbSaveCustomFoods(syncUserId, snap.customFoods),
       sbSaveCustomRecipes(syncUserId, snap.customRecipes),
       sbSaveUserState(syncUserId, {
-        favorites:     snap.favorites,
-        dayTemplates:  snap.dayTemplates,
-        optimizeMode:  snap.optimizeMode,
-        activeTab:     snap.activeTab,
-        planCreated:   snap.planCreated,
-        planStartDate: snap.planStartDate,
+        favorites:      snap.favorites,
+        dayTemplates:   snap.dayTemplates,
+        optimizeMode:   snap.optimizeMode,
+        activeTab:      snap.activeTab,
+        planCreated:    snap.planCreated,
+        planStartDate:  snap.planStartDate,
+        wizardExcluded: snap.wizardExcluded,
+        wizardStyle:    snap.wizardStyle,
       }),
     ]);
   } catch(e) {
@@ -110,6 +114,8 @@ function _freshState() {
     activeTab: 'today',
     optimizeMode: 1,
     bodyLog: [],
+    wizardExcluded: {},
+    wizardStyle: 'simple',
   };
 }
 
@@ -300,7 +306,12 @@ function calcDayMacros(dayIdx, doneOnly = false) {
     const sf = meal.scaleFactor || 1;
     if (meal.standardId) {
       const sm = STANDARD_MEALS.find(s => s.id === meal.standardId);
-      if (sm) tot.kcal += Math.round(sm.kcal_est * sf);
+      if (sm) {
+        tot.kcal += Math.round((sm.kcal_est || 0) * sf);
+        tot.p    += Math.round((sm.p || 0) * sf);
+        tot.c    += Math.round((sm.c || 0) * sf);
+        tot.f    += Math.round((sm.f || 0) * sf);
+      }
     } else {
       const recipe = allRecipes.find(r => r.id === meal.recipeId);
       if (!recipe) return;
@@ -1525,20 +1536,32 @@ function setPlanStartDate(dateStr) {
   autoSaveSettings();
 }
 
+// ── GOURMET IDS — defined before wizard so _renderWizardStep can use it ──
+const GOURMET_IDS = new Set([
+  'r48','r45','r40',
+  'sm55','sm56','sm73',
+  'cb_b4','cb_b5','cb_b6','cb_b7',
+  'cb_l1','cb_l2','cb_l3','cb_l4','cb_l5','cb_l7','cb_l9','cb_l11','cb_l13','cb_l14','cb_l15',
+  'cb_d1','cb_d4','cb_d5','cb_d7','cb_d8','cb_d10',
+  'ex_l54','ex_l55','ex_l56','ex_l57','ex_d21','ex_d22','ex_d23','ex_d24',
+]);
+
 // ── PLAN WIZARD ──────────────────────────────────────────────
-// Shows all meals per meal-type; user unchecks meals they don't want.
-// Excluded meal ids are stored and used to filter the week plan.
+// Step 0: style (simple/gourmet/mixed)
+// Steps 1-4: meal exclusions per slot
+// Step 5: confirm → generate
 const WIZARD_MEALS = [
   { key: 'breakfast', label: 'Πρωινό',      sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο πρωινό.', emoji: '🌅' },
   { key: 'snack',     label: 'Σνακ',         sublabel: 'Αποεπίλεξε τα σνακ που ΔΕΝ θέλεις.', emoji: '🍎' },
   { key: 'lunch',     label: 'Μεσημεριανό', sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο μεσημεριανό.', emoji: '🍽️' },
   { key: 'dinner',    label: 'Βραδινό',      sublabel: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο βραδινό.', emoji: '🌙' },
 ];
-const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length;
+// step 0 = style, steps 1..4 = meals, step 5 = confirm
+const WIZARD_STYLE_STEP   = 0;
+const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length + 1;
 
 let _wizardStep = 0;
-// { mealKey: Set<mealId> } — ids of EXCLUDED meals
-let _wizardExcluded = {};
+let _wizardExcluded = {};  // { mealKey: Set<mealId> }
 
 function _allMeals() {
   return [
@@ -1549,24 +1572,33 @@ function _allMeals() {
 
 function createPlan() {
   _wizardExcluded = {};
-  WIZARD_MEALS.forEach(m => { _wizardExcluded[m.key] = new Set(); });
+  WIZARD_MEALS.forEach(m => {
+    _wizardExcluded[m.key] = new Set(state.wizardExcluded?.[m.key] || []);
+  });
   _wizardStep = 0;
   _renderWizardStep();
   document.getElementById('wizard-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
+function wizardSetStyle(s) {
+  state.wizardStyle = s;
+  document.querySelectorAll('.wstyle-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.style === s);
+  });
+}
+
 function _renderWizardStep() {
   if (!document.getElementById('wizard-overlay')) return;
 
-  const dots     = document.getElementById('wizard-step-dots');
-  const titleEl  = document.getElementById('wizard-step-title');
-  const labelEl  = document.getElementById('wizard-meal-label');
-  const subEl    = document.getElementById('wizard-meal-sublabel');
-  const body     = document.getElementById('wizard-body');
-  const btnBack  = document.getElementById('wizard-btn-back');
-  const btnNext  = document.getElementById('wizard-btn-next');
-  const total    = WIZARD_MEALS.length + 1;
+  const dots    = document.getElementById('wizard-step-dots');
+  const titleEl = document.getElementById('wizard-step-title');
+  const labelEl = document.getElementById('wizard-meal-label');
+  const subEl   = document.getElementById('wizard-meal-sublabel');
+  const body    = document.getElementById('wizard-body');
+  const btnBack = document.getElementById('wizard-btn-back');
+  const btnNext = document.getElementById('wizard-btn-next');
+  const total   = WIZARD_CONFIRM_STEP + 1; // style + 4 meals + confirm
 
   dots.innerHTML = Array.from({ length: total }, (_, i) =>
     `<div class="wizard-step-dot ${i < _wizardStep ? 'done' : i === _wizardStep ? 'active' : ''}"></div>`
@@ -1574,95 +1606,197 @@ function _renderWizardStep() {
 
   btnBack.style.display = _wizardStep === 0 ? 'none' : '';
 
-  if (_wizardStep < WIZARD_MEALS.length) {
-    const meal = WIZARD_MEALS[_wizardStep];
+  // ── Step 0: Style selection ──
+  if (_wizardStep === WIZARD_STYLE_STEP) {
+    titleEl.textContent = '🍽️ Στυλ διατροφής';
+    labelEl.textContent = 'Βήμα 1 από 6 — Επίλεξε στυλ';
+    subEl.textContent   = 'Τα απλά γεύματα είναι εύκολα στην παρασκευή. Τα gourmet έχουν περισσότερη διαδικασία.';
+    btnNext.textContent = 'Επόμενο →';
+    const cur = state.wizardStyle || 'simple';
+    body.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
+        <div class="wstyle-card${cur==='simple'?' selected':''}" data-style="simple" onclick="wizardSetStyle('simple')">
+          <div class="wstyle-icon">🥗</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">Απλά γεύματα</div>
+            <div class="wstyle-sub">Κοτόπουλο, ρύζι, πατάτα, αυγά, σαλάτες — γρήγορα & χωρίς μεγάλη διαδικασία</div>
+          </div>
+          <div class="wstyle-check">${cur==='simple'?'✓':''}</div>
+        </div>
+        <div class="wstyle-card${cur==='mixed'?' selected':''}" data-style="mixed" onclick="wizardSetStyle('mixed')">
+          <div class="wstyle-icon">🍲</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">Μεικτά</div>
+            <div class="wstyle-sub">Συνδυασμός απλών και σύνθετων — καθημερινή ισορροπία</div>
+          </div>
+          <div class="wstyle-check">${cur==='mixed'?'✓':''}</div>
+        </div>
+        <div class="wstyle-card${cur==='gourmet'?' selected':''}" data-style="gourmet" onclick="wizardSetStyle('gourmet')">
+          <div class="wstyle-icon">👨‍🍳</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">Gourmet</div>
+            <div class="wstyle-sub">Μουσακάς, avocado toast, shakshuka, ποικιλία υλικών — για όταν έχεις χρόνο</div>
+          </div>
+          <div class="wstyle-check">${cur==='gourmet'?'✓':''}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // ── Steps 1-4: Meal exclusions ──
+  const mealIdx = _wizardStep - 1; // 0-based into WIZARD_MEALS
+  if (mealIdx < WIZARD_MEALS.length) {
+    const meal = WIZARD_MEALS[mealIdx];
     titleEl.textContent = `${meal.emoji} ${meal.label}`;
-    labelEl.textContent = `Βήμα ${_wizardStep + 1} από ${WIZARD_MEALS.length}`;
+    labelEl.textContent = `Βήμα ${_wizardStep + 1} από ${total} — Επιλογές ${meal.label}`;
     subEl.textContent   = meal.sublabel;
-    btnNext.textContent = _wizardStep < WIZARD_MEALS.length - 1 ? 'Επόμενο →' : 'Επισκόπηση →';
+    btnNext.textContent = mealIdx < WIZARD_MEALS.length - 1 ? 'Επόμενο →' : 'Επισκόπηση →';
 
+    const style    = state.wizardStyle || 'simple';
     const excluded = _wizardExcluded[meal.key];
-    const meals = _allMeals().filter(r => r.meal === meal.key || r.meal === (meal.key === 'snack' ? 'afternoon' : null));
+    let meals = _allMeals().filter(r =>
+      r.meal === meal.key || (meal.key === 'snack' && r.meal === 'afternoon')
+    );
+    // Filter by style
+    if (style === 'simple')  meals = meals.filter(r => !GOURMET_IDS.has(r.id));
+    if (style === 'gourmet') {
+      const hasGourmet = meals.some(r => GOURMET_IDS.has(r.id));
+      if (hasGourmet) meals = meals.filter(r => GOURMET_IDS.has(r.id));
+    }
 
-    if (!meals.length) {
+    // Deduplicate by foodGroup: show one representative per group (the first entry with wizardName or lowest kcal)
+    const seenGroups = new Set();
+    const wizardMeals = []; // representative entries shown in wizard
+    const groupToIds  = {}; // foodGroup → all sibling ids in this filtered set
+    meals.forEach(r => {
+      const g = r.foodGroup;
+      if (g) {
+        if (!groupToIds[g]) groupToIds[g] = [];
+        groupToIds[g].push(r.id);
+        if (!seenGroups.has(g)) {
+          seenGroups.add(g);
+          wizardMeals.push(r); // first entry = representative
+        }
+      } else {
+        wizardMeals.push(r);
+      }
+    });
+
+    if (!wizardMeals.length) {
       body.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;padding:20px 0">Δεν βρέθηκαν γεύματα.</div>';
       return;
     }
 
-    // Count selected/excluded for counter
-    const excCount = meals.filter(r => excluded.has(r.id)).length;
-    const selCount = meals.length - excCount;
+    // A group is "excluded" when ALL sibling ids are excluded
+    function isRowExcluded(r) {
+      const g = r.foodGroup;
+      if (!g) return excluded.has(r.id);
+      return (groupToIds[g] || [r.id]).every(id => excluded.has(id));
+    }
+
+    const excCount = wizardMeals.filter(r => isRowExcluded(r)).length;
+    const selCount = wizardMeals.length - excCount;
 
     let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
       <span style="font-size:0.75rem;color:var(--text3)">${selCount} επιλεγμένα · ${excCount} αποκλεισμένα</span>
       <button onclick="_wizardSelectAll('${meal.key}')" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">Επιλογή όλων</button>
-    </div>
-    <div class="wizard-meal-list">`;
+    </div><div class="wizard-meal-list">`;
 
-    meals.forEach(r => {
-      const ex = excluded.has(r.id);
-      const safeId = r.id.replace(/[^a-zA-Z0-9_]/g, '_');
-      html += `<div class="wizard-meal-row${ex ? ' excluded' : ''}" id="wmr_${safeId}" onclick="wizardToggleMeal('${meal.key}','${r.id}',this)">
+    wizardMeals.forEach(r => {
+      const ex = isRowExcluded(r);
+      const displayName = r.wizardName || r.name;
+      const kcalStr = r.kcal_est ? `${r.kcal_est} kcal` : (r.fixedMacros ? `${r.fixedMacros.kcal} kcal` : '');
+      const siblings = r.foodGroup ? JSON.stringify(groupToIds[r.foodGroup] || [r.id]) : JSON.stringify([r.id]);
+      html += `<div class="wizard-meal-row${ex?' excluded':''}" onclick="wizardToggleGroup('${meal.key}',${siblings},this)">
         <div class="wmr-left">
-          <div class="wfood-chip-check">
-            ${ex
-              ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
-              : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'}
-          </div>
-          <span class="wmr-emoji">${r.emoji || '🍽️'}</span>
-          <span class="wmr-name">${r.name}</span>
+          <div class="wfood-chip-check">${ex
+            ?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+            :'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'}</div>
+          <span class="wmr-emoji">${r.emoji||'🍽️'}</span>
+          <span class="wmr-name">${displayName}</span>
         </div>
-        <span class="wmr-kcal">${r.kcal_est || (r.fixedMacros ? r.fixedMacros.kcal : '') || ''} kcal</span>
+        <span class="wmr-kcal">${kcalStr}</span>
       </div>`;
     });
     html += '</div>';
     body.innerHTML = html;
-
-  } else {
-    titleEl.textContent = '✅ Επισκόπηση Επιλογών';
-    labelEl.textContent = 'Έλεγξε τις επιλογές σου πριν δημιουργηθεί το πλάνο.';
-    subEl.textContent   = 'Τα αποκλεισμένα γεύματα δεν θα προτείνονται στο εβδομαδιαίο πλάνο.';
-    btnNext.textContent = '📋 Δημιουργία Πλάνου';
-
-    let html = '<div class="wizard-confirm-list">';
-    WIZARD_MEALS.forEach(meal => {
-      const excIds = [..._wizardExcluded[meal.key]];
-      const excNames = excIds.map(id => {
-        const r = _allMeals().find(x => x.id === id);
-        return r ? r.name : id;
-      });
-      const total_m = _allMeals().filter(r => r.meal === meal.key || r.meal === (meal.key === 'snack' ? 'afternoon' : null)).length;
-      html += `<div class="wizard-confirm-meal">
-        <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label} <span style="font-weight:400;color:var(--text3)">(${total_m - excIds.length}/${total_m} επιλεγμένα)</span></div>
-        ${excNames.length
-          ? `<div class="wizard-confirm-excluded">❌ Αποκλεισμένα: ${excNames.slice(0,5).join(', ')}${excNames.length > 5 ? ` +${excNames.length - 5} ακόμα` : ''}</div>`
-          : `<div class="wizard-confirm-ok">✓ Όλα τα γεύματα επιτρεπτά</div>`}
-      </div>`;
-    });
-    html += '</div>';
-    body.innerHTML = html;
+    return;
   }
+
+  // ── Step 5: Confirm ──
+  titleEl.textContent = '✅ Επισκόπηση';
+  labelEl.textContent = `Στυλ: ${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[state.wizardStyle||'simple']}`;
+  subEl.textContent   = 'Τα αποκλεισμένα γεύματα δεν θα εμφανίζονται στο εβδομαδιαίο πλάνο.';
+  btnNext.textContent = '📋 Δημιουργία Πλάνου';
+
+  let html = '<div class="wizard-confirm-list">';
+  WIZARD_MEALS.forEach(meal => {
+    const excSet = _wizardExcluded[meal.key];
+    const allForMeal = _allMeals().filter(r => r.meal===meal.key||(meal.key==='snack'&&r.meal==='afternoon'));
+    // Deduplicate to get wizard-level rows
+    const seenG2 = new Set();
+    const wizRows = [];
+    allForMeal.forEach(r => {
+      const g = r.foodGroup;
+      if (g && seenG2.has(g)) return;
+      if (g) seenG2.add(g);
+      wizRows.push(r);
+    });
+    const excRows = wizRows.filter(r => {
+      const siblings = r.foodGroup ? allForMeal.filter(x=>x.foodGroup===r.foodGroup).map(x=>x.id) : [r.id];
+      return siblings.every(id => excSet.has(id));
+    });
+    const excNames = excRows.map(r => r.wizardName || r.name);
+    html += `<div class="wizard-confirm-meal">
+      <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label}
+        <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length} επιλεγμένα)</span>
+      </div>
+      ${excNames.length
+        ? `<div class="wizard-confirm-excluded">❌ ${excNames.slice(0,4).join(', ')}${excNames.length>4?` +${excNames.length-4} ακόμα`:''}</div>`
+        : `<div class="wizard-confirm-ok">✓ Όλα επιτρεπτά</div>`}
+    </div>`;
+  });
+  html += '</div>';
+  body.innerHTML = html;
 }
 
-function wizardToggleMeal(mealKey, mealId, el) {
+// Toggle a food group (or single meal) in the wizard exclusion set.
+// ids[] = all sibling ids that belong to the same foodGroup.
+function wizardToggleGroup(mealKey, ids, el) {
   const excSet = _wizardExcluded[mealKey];
   const checkEl = el.querySelector('.wfood-chip-check');
-  if (excSet.has(mealId)) {
-    excSet.delete(mealId);
+  // Group is excluded when ALL siblings are excluded
+  const allExcluded = ids.every(id => excSet.has(id));
+  if (allExcluded) {
+    // Re-include: remove all siblings
+    ids.forEach(id => excSet.delete(id));
     el.classList.remove('excluded');
     if (checkEl) checkEl.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
   } else {
-    excSet.add(mealId);
+    // Exclude: add all siblings
+    ids.forEach(id => excSet.add(id));
     el.classList.add('excluded');
     if (checkEl) checkEl.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   }
-  // Update counter
-  const meal = WIZARD_MEALS[_wizardStep];
+  // Update the counter display
+  const meal = WIZARD_MEALS[_wizardStep - 1];
   if (meal) {
-    const meals = _allMeals().filter(r => r.meal === meal.key || r.meal === (meal.key === 'snack' ? 'afternoon' : null));
-    const excCount = meals.filter(r => _wizardExcluded[meal.key].has(r.id)).length;
     const ctr = document.querySelector('.wizard-meal-list')?.previousElementSibling?.querySelector('span');
-    if (ctr) ctr.textContent = `${meals.length - excCount} επιλεγμένα · ${excCount} αποκλεισμένα`;
+    if (ctr) {
+      // Recalculate using deduplication (same logic as render)
+      const all = _allMeals().filter(r => r.meal === meal.key || (meal.key === 'snack' && r.meal === 'afternoon'));
+      const seenG = new Set();
+      let totalRows = 0, excRows = 0;
+      all.forEach(r => {
+        const g = r.foodGroup;
+        if (g && seenG.has(g)) return;
+        if (g) seenG.add(g);
+        totalRows++;
+        const siblings = g ? all.filter(x => x.foodGroup === g).map(x => x.id) : [r.id];
+        if (siblings.every(id => excSet.has(id))) excRows++;
+      });
+      ctr.textContent = `${totalRows - excRows} επιλεγμένα · ${excRows} αποκλεισμένα`;
+    }
   }
 }
 
@@ -1676,11 +1810,13 @@ function wizardNext() {
     _wizardStep++;
     _renderWizardStep();
   } else {
-    _applyWizardExclusions();
     _closeWizard();
     state.planCreated = true;
     state.wizardExcluded = {};
     WIZARD_MEALS.forEach(m => { state.wizardExcluded[m.key] = [..._wizardExcluded[m.key]]; });
+    // Run smart generator using wizard style + exclusions
+    const style = state.wizardStyle || 'simple';
+    state.week = generateSmartWeek(style, state.wizardExcluded);
     saveState();
     updatePlanCreatedUI();
     renderProfile();
@@ -1697,30 +1833,131 @@ function _closeWizard() {
   document.body.style.overflow = '';
 }
 
-function _applyWizardExclusions() {
-  state._wizardExcludedPerMeal = {};
-  WIZARD_MEALS.forEach(m => { state._wizardExcludedPerMeal[m.key] = [..._wizardExcluded[m.key]]; });
-  if (!state.week) return;
-  state.week.forEach((day, dayIdx) => {
-    if (!day.meals) return;
-    day.meals.forEach((mealSlot, slotIdx) => {
-      if (!mealSlot.recipeId) return;
-      const mealKey = mealSlot.type || _guessSlotMealKey(slotIdx, day.meals.length);
-      const excSet = _wizardExcluded[mealKey] || new Set();
-      if (excSet.has(mealSlot.recipeId)) {
-        const allowed = _allMeals().filter(r =>
-          (r.meal === mealKey || (mealKey === 'snack' && r.meal === 'afternoon')) &&
-          !excSet.has(r.id)
-        );
-        if (allowed.length) mealSlot.recipeId = allowed[dayIdx % allowed.length].id;
-      }
-    });
-  });
-}
-
 function _guessSlotMealKey(slotIdx, totalSlots) {
   if (totalSlots <= 3) return ['breakfast','lunch','dinner'][slotIdx] || 'lunch';
-  return ['breakfast','snack','lunch','dinner'][slotIdx] || 'lunch';
+  return ['breakfast','snack','lunch','afternoon','dinner'][slotIdx] || 'lunch';
+}
+
+// ── SMART WEEK GENERATOR ──────────────────────────────────────
+const MEAL_SLOT_TYPES = ['breakfast','snack','lunch','afternoon','dinner'];
+const WATER_NOTES = [
+  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L',
+  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L',
+  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L',
+  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L',
+  'Πιες 1L νερό 💧 — Στόχος: 3L ✅',
+];
+const SLOT_TIMES = ['07:00','10:00','13:00','16:00','19:30'];
+
+/**
+ * Generate a randomised 7-day week plan.
+ * @param {string} style  'simple' | 'gourmet' | 'mixed'
+ * @param {Object} excludedPerMeal  { breakfast: ['id',...], lunch: [...], ... }
+ */
+function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
+  const pool = _allMeals();
+
+  // Normalise excluded sets
+  const excSets = {};
+  MEAL_SLOT_TYPES.forEach(t => {
+    excSets[t] = new Set(excludedPerMeal[t] || []);
+  });
+  // snack excludes also count for afternoon
+  excSets['afternoon'] = excSets['snack'];
+
+  // Gourmet ratio per style: fraction of meals that should be gourmet
+  // simple → 0, mixed → ~1/5, gourmet → ~2/3
+  const GOURMET_RATIO = { simple: 0, mixed: 1/5, gourmet: 2/3 };
+  const gourmetRatio = GOURMET_RATIO[style] ?? 0;
+
+  // Track how many meals picked so far and how many were gourmet, per slot type
+  const pickCount   = {}; // slotType → total picks
+  const gourmetCount = {}; // slotType → gourmet picks
+  MEAL_SLOT_TYPES.forEach(t => { pickCount[t] = 0; gourmetCount[t] = 0; });
+
+  // Base candidates: slot-type match + exclusion filter + no side dishes
+  // afternoon slot accepts both meal:"afternoon" and meal:"snack" entries
+  function candidates(slotType) {
+    return pool.filter(r => {
+      const matchesSlot = r.meal === slotType
+        || (slotType === 'afternoon' && (r.meal === 'afternoon' || r.meal === 'snack'));
+      if (!matchesSlot) return false;
+      if (r.side) return false;
+      if (excSets[slotType] && excSets[slotType].has(r.id)) return false;
+      return true;
+    });
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // No-repeat-within-3-days: track by foodGroup (if set) or id
+  // so that different size variants of the same food are treated as one
+  const recentPickKeys = {}; // slotType → [last 3 group-or-id keys]
+  MEAL_SLOT_TYPES.forEach(t => { recentPickKeys[t] = []; });
+
+  function mealKey(r) { return r.foodGroup || r.id; }
+
+  function pickOne(slotType) {
+    const all = candidates(slotType);
+    const simple  = all.filter(r => !GOURMET_IDS.has(r.id));
+    const gourmet = all.filter(r =>  GOURMET_IDS.has(r.id));
+
+    // Decide whether this pick should be gourmet based on running ratio
+    const total  = pickCount[slotType];
+    const gCount = gourmetCount[slotType];
+    const targetGourmet = Math.round((total + 1) * gourmetRatio);
+    const wantGourmet   = gCount < targetGourmet;
+
+    let preferred = wantGourmet
+      ? (gourmet.length ? gourmet : simple)
+      : (simple.length  ? simple  : gourmet);
+    if (!preferred.length) preferred = all;
+
+    // Filter out food groups seen in the last 3 days; relax if nothing left
+    const recent = recentPickKeys[slotType];
+    let pool2 = preferred.filter(r => !recent.includes(mealKey(r)));
+    if (!pool2.length) pool2 = preferred;
+    if (!pool2.length) return null;
+
+    const picked = shuffle(pool2)[0];
+    recent.push(mealKey(picked));
+    if (recent.length > 3) recent.shift();
+    pickCount[slotType]++;
+    if (GOURMET_IDS.has(picked.id)) gourmetCount[slotType]++;
+    return picked;
+  }
+
+  const week = [];
+  for (let di = 0; di < 7; di++) {
+    const meals = MEAL_SLOT_TYPES.map((slotType, si) => {
+      const picked = pickOne(slotType);
+      return {
+        time: SLOT_TIMES[si],
+        type: slotType,
+        recipeId: picked ? picked.id : DEFAULT_WEEK[di].meals[si]?.recipeId,
+        done: false,
+        waterNote: WATER_NOTES[si],
+        ...(picked && picked.kcal_est ? { standardId: picked.id } : {}),
+      };
+    });
+    week.push({
+      day: di + 1,
+      label: `Ημέρα ${di + 1}`,
+      meals,
+      stepsCount: DEFAULT_WEEK[di]?.stepsCount,
+      stepsDone: false,
+      weightTraining: false,
+      extraKcal: 0,
+    });
+  }
+  return week;
 }
 // ─────────────────────────────────────────────────────────────
 
@@ -2414,9 +2651,21 @@ function renderWeek() {
             <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">›</button>
           </div>
           ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
-          <div style="display:flex;gap:5px;margin-left:auto">
-            <button class="btn btn-ghost btn-sm" onclick="exportPDF()">🖨️ PDF</button>
-            <button class="btn btn-ghost btn-sm" onclick="copyDay()">📋</button>
+          <div style="display:flex;gap:5px;margin-left:auto;align-items:center">
+            <button id="week-regen-btn" onclick="confirmRegenerateInline()" title="Δημιούργησε Ξανά"
+              style="display:flex;align-items:center;gap:5px;background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap"
+              onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background=this.dataset.active==='1'?'var(--green)':'#3b82f6'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              <span class="week-btn-label">Ξανά</span>
+            </button>
+            <button onclick="resetWeekPlan()" title="Επαναφορά προεπιλογών"
+              style="display:flex;align-items:center;gap:5px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:0.78rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all .15s;white-space:nowrap"
+              onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+              <span class="week-btn-label">Επαναφορά</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="exportPDF()" title="PDF">🖨️ <span class="week-btn-label">PDF</span></button>
+            <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="Αντιγραφή">📋</button>
           </div>
         </div>
       </div>
@@ -2596,14 +2845,62 @@ function renderWeek() {
         </div>
       </div>
 
-      <!-- Reset button -->
-      <div style="padding:16px 16px 32px;text-align:center">
-        <button onclick="resetWeekPlan()" style="background:none;border:1.5px solid var(--border);border-radius:10px;padding:10px 24px;font-size:0.82rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all .15s" onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
-          🔄 Επαναφορά εβδομαδιαίου πλάνου
-        </button>
-      </div>
 
     </div>`;
+}
+
+function confirmRegenerateInline() {
+  const style = state.wizardStyle || 'simple';
+  const excPerMeal = state.wizardExcluded || {};
+  state.week = generateSmartWeek(style, excPerMeal);
+  saveState();
+  renderWeek();
+  showToast(`🎲 Νέο πρόγραμμα (${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[style]})!`);
+  // Flash button green
+  const btn = document.getElementById('week-regen-btn');
+  if (btn) {
+    btn.dataset.active = '1';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => {
+      btn.dataset.active = '';
+      btn.style.background = '#3b82f6';
+    }, 2000);
+  }
+}
+
+function regeneratePlan() {
+  const cur = state.wizardStyle || 'simple';
+  openModal(`
+    <div class="modal-handle"></div>
+    <div class="modal-title">🔄 Δημιούργησε Ξανά</div>
+    <p style="font-size:0.83rem;color:var(--text2);margin-bottom:14px">Επίλεξε στυλ και δημιούργησε νέο τυχαίο πρόγραμμα με βάση τις προτιμήσεις σου.</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
+      ${[['simple','🥗','Απλά','Κοτόπουλο, ρύζι, αυγά — γρήγορα'],
+         ['mixed','🍲','Μεικτά','Συνδυασμός απλών και σύνθετων'],
+         ['gourmet','👨‍🍳','Gourmet','Μουσακάς, avocado, shakshuka']].map(([s,e,t,d]) => `
+        <div id="rg_${s}" onclick="document.querySelectorAll('[id^=rg_]').forEach(x=>x.style.borderColor='var(--border)');this.style.borderColor='var(--green)';_tmpRgStyle='${s}'"
+          style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid ${s===cur?'var(--green)':'var(--border)'};border-radius:12px;cursor:pointer;transition:border-color .15s">
+          <span style="font-size:1.3rem">${e}</span>
+          <div><div style="font-weight:700;font-size:0.88rem">${t}</div><div style="font-size:0.74rem;color:var(--text3)">${d}</div></div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeModal()" class="btn btn-ghost" style="flex:1">Άκυρο</button>
+      <button onclick="confirmRegenerate()" class="btn btn-green" style="flex:1">🎲 Δημιουργία</button>
+    </div>
+  `);
+  window._tmpRgStyle = cur;
+}
+
+function confirmRegenerate() {
+  closeModal();
+  const style = window._tmpRgStyle || state.wizardStyle || 'simple';
+  state.wizardStyle = style;
+  const excPerMeal = state.wizardExcluded || {};
+  state.week = generateSmartWeek(style, excPerMeal);
+  saveState();
+  renderWeek();
+  showToast(`🎲 Νέο πρόγραμμα δημιουργήθηκε (${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[style]})!`);
 }
 
 function resetWeekPlan() {
