@@ -1032,13 +1032,13 @@ function _renderProfileInto(target) {
             <label style="font-size:0.75rem">Βάρος (kg)</label>
             <input type="text" inputmode="decimal" id="prof-weight" value="${p.weight || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
-              oninput="liveUpdateProfile()">
+              onblur="liveUpdateProfile()">
           </div>
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Ύψος (cm)</label>
             <input type="text" inputmode="decimal" id="prof-height" value="${p.height || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
-              oninput="liveUpdateProfile()">
+              onblur="liveUpdateProfile()">
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
@@ -1046,7 +1046,7 @@ function _renderProfileInto(target) {
             <label style="font-size:0.75rem">Ηλικία</label>
             <input type="text" inputmode="numeric" id="prof-age" value="${p.age || ''}"
               style="width:100%;padding:10px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;font-weight:700;text-align:center;background:var(--bg2)"
-              oninput="liveUpdateProfile()">
+              onblur="liveUpdateProfile()">
           </div>
           <div class="form-group" style="margin:0">
             <label style="font-size:0.75rem">Φύλο</label>
@@ -1582,6 +1582,11 @@ function triggerPhotoUpload() {
 function handlePhotoUpload(input) {
   const file = input.files[0];
   if (!file) return;
+  if (file.size > 250 * 1024) {
+    showToast('❌ Η φωτογραφία δεν μπορεί να υπερβαίνει τα 250KB');
+    input.value = '';
+    return;
+  }
   const reader = new FileReader();
   reader.onload = (e) => {
     state.profile.photoUrl = e.target.result;
@@ -1776,7 +1781,8 @@ function _renderWizardStep() {
       const displayName = r.wizardName || r.name;
       const kcalStr = r.kcal_est ? `${r.kcal_est} kcal` : (r.fixedMacros ? `${r.fixedMacros.kcal} kcal` : '');
       const siblings = r.foodGroup ? JSON.stringify(groupToIds[r.foodGroup] || [r.id]) : JSON.stringify([r.id]);
-      html += `<div class="wizard-meal-row${ex?' excluded':''}" onclick="wizardToggleGroup('${meal.key}',${siblings},this)">
+      const siblingsAttr = siblings.replace(/"/g, '&quot;');
+      html += `<div class="wizard-meal-row${ex?' excluded':''}" onclick="wizardToggleGroup('${meal.key}',JSON.parse(this.dataset.ids),this)" data-ids="${siblingsAttr}">
         <div class="wmr-left">
           <div class="wfood-chip-check">${ex
             ?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
