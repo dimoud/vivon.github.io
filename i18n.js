@@ -163,6 +163,13 @@ const I18N = {
   day_thu: { el: 'Πέμπτη',    en: 'Thursday',  es: 'Jueves',     fr: 'Jeudi' },
   day_fri: { el: 'Παρασκευή', en: 'Friday',    es: 'Viernes',    fr: 'Vendredi' },
   day_sat: { el: 'Σάββατο',   en: 'Saturday',  es: 'Sábado',     fr: 'Samedi' },
+  day_sun_s: { el: 'Κυρ', en: 'Sun', es: 'Dom', fr: 'Dim' },
+  day_mon_s: { el: 'Δευ', en: 'Mon', es: 'Lun', fr: 'Lun' },
+  day_tue_s: { el: 'Τρί', en: 'Tue', es: 'Mar', fr: 'Mar' },
+  day_wed_s: { el: 'Τετ', en: 'Wed', es: 'Mié', fr: 'Mer' },
+  day_thu_s: { el: 'Πέμ', en: 'Thu', es: 'Jue', fr: 'Jeu' },
+  day_fri_s: { el: 'Παρ', en: 'Fri', es: 'Vie', fr: 'Ven' },
+  day_sat_s: { el: 'Σάβ', en: 'Sat', es: 'Sáb', fr: 'Sam' },
 
   // ── Month abbreviations ──
   month_jan: { el: 'Ιαν', en: 'Jan', es: 'Ene', fr: 'Jan' },
@@ -213,7 +220,9 @@ const I18N = {
   // ── Today page ──
   today_no_plan:    { el: 'Δεν έχεις πλάνο για σήμερα', en: 'No plan for today', es: 'Sin plan para hoy', fr: 'Pas de plan pour aujourd\'hui' },
   today_create_plan: { el: 'Δημιούργησε πλάνο', en: 'Create plan', es: 'Crear plan', fr: 'Créer un plan' },
-  water_note_label: { el: '💧 Νερό', en: '💧 Water', es: '💧 Agua', fr: '💧 Eau' },
+  water_note_label:  { el: '💧 Νερό', en: '💧 Water', es: '💧 Agua', fr: '💧 Eau' },
+  water_note_500ml:  { el: 'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: {total}', en: 'Drink 500ml water 💧 — Total so far: {total}', es: 'Bebe 500ml de agua 💧 — Total hasta ahora: {total}', fr: 'Bois 500ml d\'eau 💧 — Total jusqu\'ici : {total}' },
+  water_note_1l:     { el: 'Πιες 1L νερό 💧 — Στόχος: 3L ✅', en: 'Drink 1L water 💧 — Goal: 3L ✅', es: 'Bebe 1L de agua 💧 — Objetivo: 3L ✅', fr: 'Bois 1L d\'eau 💧 — Objectif : 3L ✅' },
   mark_done:        { el: 'Ολοκληρώθηκε', en: 'Done', es: 'Listo', fr: 'Terminé' },
 
   // ── Week page ──
@@ -224,9 +233,17 @@ const I18N = {
   week_keep_going:   { el: 'Συνέχισε έτσι',         en: 'Keep it up',          es: '¡Sigue así!',         fr: 'Continue comme ça' },
   week_increase_kcal:{ el: 'Αύξησε λίγο τις θερμίδες', en: 'Increase calories a bit', es: 'Aumenta un poco las calorías', fr: 'Augmente un peu les calories' },
   week_decrease_kcal:{ el: 'Μείωσε λίγο τις θερμίδες', en: 'Decrease calories a bit', es: 'Reduce un poco las calorías', fr: 'Réduis un peu les calories' },
-  week_day_prefix:   { el: 'Ημ',                    en: 'D',                   es: 'D',                   fr: 'J' },
+  week_day_prefix:   { el: 'Ημ{n}',                 en: 'D{n}',                es: 'D{n}',                fr: 'J{n}' },
   week_reset_confirm: { el: 'Επαναφορά εβδομαδιαίου πλάνου στις προεπιλογές;', en: 'Reset weekly plan to defaults?', es: '¿Restablecer el plan semanal?', fr: 'Réinitialiser le plan hebdomadaire ?' },
-  week_reset_done:   { el: '✅ Εβδομαδιαίο πλάνο επαναφέρθηκε στις προεπιλογές', en: '✅ Weekly plan reset to defaults', es: '✅ Plan semanal restablecido', fr: '✅ Plan hebdomadaire réinitialisé' },
+  week_reset_done:    { el: '✅ Εβδομαδιαίο πλάνο επαναφέρθηκε στις προεπιλογές', en: '✅ Weekly plan reset to defaults', es: '✅ Plan semanal restablecido', fr: '✅ Plan hebdomadaire réinitialisé' },
+  deficit_label:      { el: 'Έλλειμμα',       en: 'Deficit',    es: 'Déficit',    fr: 'Déficit' },
+  surplus_label:      { el: 'Πλεόνασμα',      en: 'Surplus',    es: 'Superávit',  fr: 'Surplus' },
+  deficit_abbr:       { el: 'έλλ.',           en: 'def.',       es: 'déf.',       fr: 'déf.' },
+  surplus_abbr:       { el: 'πλεόν.',         en: 'surp.',      es: 'sup.',       fr: 'surp.' },
+  deficit_on_track:   { el: 'Στη σωστή πορεία!',  en: 'On track!',     es: '¡En el buen camino!', fr: 'Sur la bonne voie !' },
+  surplus_today:      { el: 'Πλεόνασμα σήμερα',  en: 'Surplus today', es: 'Superávit hoy',       fr: 'Surplus aujourd\'hui' },
+  deficit_help:       { el: 'Το ημερήσιο έλλειμμα σε βοηθά να πετύχεις τους στόχους σου.', en: 'The daily deficit helps you reach your goals.', es: 'El déficit diario te ayuda a alcanzar tus objetivos.', fr: 'Le déficit journalier t\'aide à atteindre tes objectifs.' },
+  surplus_help:       { el: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.', en: 'You consumed more calories than you burned.', es: 'Consumiste más calorías de las que quemaste.', fr: 'Tu as consommé plus de calories que tu n\'en as brûlées.' },
 
   // ── Wizard ──
   wizard_style_title:   { el: '🍽️ Στυλ διατροφής',   en: '🍽️ Eating style',    es: '🍽️ Estilo alimentario', fr: '🍽️ Style alimentaire' },
@@ -238,10 +255,18 @@ const I18N = {
   wizard_mixed_sub:     { el: 'Συνδυασμός απλών και σύνθετων — καθημερινή ισορροπία', en: 'Mix of simple and complex — daily balance', es: 'Combinación de simples y complejas — equilibrio diario', fr: 'Mélange de simples et complexes — équilibre quotidien' },
   wizard_gourmet_title: { el: 'Gourmet', en: 'Gourmet', es: 'Gourmet', fr: 'Gourmet' },
   wizard_gourmet_sub:   { el: 'Μουσακάς, avocado toast, shakshuka, ποικιλία υλικών — για όταν έχεις χρόνο', en: 'Moussaka, avocado toast, shakshuka, variety — for when you have time', es: 'Musaka, tostada de aguacate, shakshuka, variedad — para cuando tienes tiempo', fr: 'Moussaka, toast avocat, shakshuka, variété — pour quand tu as le temps' },
-  wizard_deselect:      { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις', en: 'Deselect meals you do NOT want', es: 'Deselecciona las comidas que NO quieres', fr: 'Désélectionne les repas que tu NE veux PAS' },
-  wizard_meal_sublabel: { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο {slot}.', en: 'Deselect meals you do NOT want for {slot}.', es: 'Deselecciona las comidas que NO quieres en {slot}.', fr: 'Désélectionne les repas que tu NE veux PAS pour {slot}.' },
-  wizard_confirm_title: { el: '✅ Επιβεβαίωση πλάνου', en: '✅ Confirm plan', es: '✅ Confirmar plan', fr: '✅ Confirmer le plan' },
-  wizard_confirm_sub:   { el: 'Το πλάνο θα δημιουργηθεί με τις επιλογές σου.', en: 'The plan will be created with your choices.', es: 'El plan se creará con tus opciones.', fr: 'Le plan sera créé avec tes choix.' },
+  wizard_deselect:               { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις', en: 'Deselect meals you do NOT want', es: 'Deselecciona las comidas que NO quieres', fr: 'Désélectionne les repas que tu NE veux PAS' },
+  wizard_meal_sublabel:          { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο {slot}.', en: 'Deselect meals you do NOT want for {slot}.', es: 'Deselecciona las comidas que NO quieres en {slot}.', fr: 'Désélectionne les repas que tu NE veux PAS pour {slot}.' },
+  wizard_meal_sublabel_breakfast: { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο πρωινό.', en: 'Deselect breakfasts you do NOT want.', es: 'Deselecciona los desayunos que NO quieres.', fr: 'Désélectionne les petits-déjeuners que tu NE veux PAS.' },
+  wizard_meal_sublabel_snack:     { el: 'Αποεπίλεξε τα σνακ που ΔΕΝ θέλεις.', en: 'Deselect snacks you do NOT want.', es: 'Deselecciona los snacks que NO quieres.', fr: 'Désélectionne les snacks que tu NE veux PAS.' },
+  wizard_meal_sublabel_lunch:     { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο μεσημεριανό.', en: 'Deselect lunches you do NOT want.', es: 'Deselecciona los almuerzos que NO quieres.', fr: 'Désélectionne les déjeuners que tu NE veux PAS.' },
+  wizard_meal_sublabel_dinner:    { el: 'Αποεπίλεξε τα γεύματα που ΔΕΝ θέλεις στο βραδινό.', en: 'Deselect dinners you do NOT want.', es: 'Deselecciona las cenas que NO quieres.', fr: 'Désélectionne les dîners que tu NE veux PAS.' },
+  wizard_confirm_title:          { el: '✅ Επιβεβαίωση πλάνου', en: '✅ Confirm plan', es: '✅ Confirmar plan', fr: '✅ Confirmer le plan' },
+  wizard_confirm_sub:            { el: 'Το πλάνο θα δημιουργηθεί με τις επιλογές σου.', en: 'The plan will be created with your choices.', es: 'El plan se creará con tus opciones.', fr: 'Le plan sera créé avec tes choix.' },
+  wizard_selected_count:         { el: '{sel} επιλεγμένα · {exc} αποκλεισμένα', en: '{sel} selected · {exc} excluded', es: '{sel} seleccionados · {exc} excluidos', fr: '{sel} sélectionnés · {exc} exclus' },
+  wizard_select_all:             { el: 'Επιλογή όλων', en: 'Select all', es: 'Seleccionar todo', fr: 'Tout sélectionner' },
+  wizard_all_ok:                 { el: '✓ Όλα επιτρεπτά', en: '✓ All allowed', es: '✓ Todos permitidos', fr: '✓ Tous autorisés' },
+  wizard_more:                   { el: '+{n} ακόμα', en: '+{n} more', es: '+{n} más', fr: '+{n} de plus' },
 
   // ── Stats / Progress ──
   stats_title:      { el: '📊 Στατιστικά', en: '📊 Statistics', es: '📊 Estadísticas', fr: '📊 Statistiques' },
@@ -267,6 +292,12 @@ const I18N = {
 
   // ── Optimize / Goals ──
   opt_title:        { el: 'Βελτίωση',              en: 'Optimize',            es: 'Optimizar',            fr: 'Optimiser' },
+  pace_slow:        { el: 'Αργός',        en: 'Slow',        es: 'Lento',        fr: 'Lent' },
+  pace_moderate:    { el: 'Μέτριος',      en: 'Moderate',    es: 'Moderado',     fr: 'Modéré' },
+  pace_fast:        { el: 'Γρήγορος',     en: 'Fast',        es: 'Rápido',       fr: 'Rapide' },
+  pace_aggressive:  { el: 'Επιθετικός',   en: 'Aggressive',  es: 'Agresivo',     fr: 'Agressif' },
+  pace_maintain:    { el: 'Συντήρηση',    en: 'Maintenance', es: 'Mantenimiento', fr: 'Maintien' },
+  pace_bulk:        { el: 'Αύξηση Μάζας', en: 'Bulk',        es: 'Volumen',      fr: 'Prise de masse' },
   opt_goal_kcal:    { el: 'Στόχος Θερμίδων',       en: 'Calorie Goal',        es: 'Objetivo calórico',    fr: 'Objectif calorique' },
   opt_goal_protein: { el: 'Στόχος Πρωτεΐνης (g)',  en: 'Protein Goal (g)',    es: 'Objetivo proteína (g)',fr: 'Objectif protéines (g)' },
   opt_goal_carbs:   { el: 'Στόχος Υδατανθράκων (g)',en: 'Carb Goal (g)',      es: 'Objetivo carbos (g)',  fr: 'Objectif glucides (g)' },
@@ -274,7 +305,9 @@ const I18N = {
 
   // ── Body / Measurements ──
   body_title:       { el: 'Μετρήσεις',   en: 'Measurements', es: 'Medidas',    fr: 'Mesures' },
-  body_weight:      { el: 'Βάρος',       en: 'Weight',       es: 'Peso',       fr: 'Poids' },
+  body_weight:      { el: 'Βάρος',       en: 'Weight',       es: 'Peso',         fr: 'Poids' },
+  body_fat:         { el: 'Λίπος',       en: 'Body Fat',     es: 'Grasa corporal', fr: 'Masse grasse' },
+  body_muscle:      { el: 'Μυϊκή μάζα', en: 'Muscle Mass',  es: 'Masa muscular',  fr: 'Masse musculaire' },
   body_log_empty:   { el: 'Δεν υπάρχουν μετρήσεις ακόμα', en: 'No measurements yet', es: 'Sin medidas aún', fr: 'Pas encore de mesures' },
 
   // ── Toasts / notifications ──
@@ -303,22 +336,75 @@ const I18N = {
   evidence_low:    { el: 'Χαμηλή', en: 'Low',    es: 'Baja',  fr: 'Faible' },
 
   // ── Auth page ──
-  auth_login:          { el: 'Σύνδεση',              en: 'Sign in',              es: 'Iniciar sesión',       fr: 'Connexion' },
-  auth_register:       { el: 'Εγγραφή',              en: 'Create account',       es: 'Crear cuenta',         fr: 'Créer un compte' },
-  auth_email:          { el: 'Email',                en: 'Email',                es: 'Correo',               fr: 'E-mail' },
-  auth_password:       { el: 'Κωδικός',              en: 'Password',             es: 'Contraseña',           fr: 'Mot de passe' },
-  auth_name:           { el: 'Όνομα',                en: 'Name',                 es: 'Nombre',               fr: 'Prénom' },
-  auth_forgot:         { el: 'Ξέχασες τον κωδικό;', en: 'Forgot password?',     es: '¿Olvidaste tu contraseña?', fr: 'Mot de passe oublié ?' },
-  auth_reset_send:     { el: 'Αποστολή',             en: 'Send',                 es: 'Enviar',               fr: 'Envoyer' },
-  auth_reset_sent:     { el: '✅ Email επαναφοράς εστάλη!', en: '✅ Reset email sent!', es: '✅ ¡Email de restablecimiento enviado!', fr: '✅ E-mail de réinitialisation envoyé !' },
-  auth_error_generic:  { el: '❌ Σφάλμα. Δοκιμάστε ξανά.', en: '❌ Error. Try again.', es: '❌ Error. Inténtalo de nuevo.', fr: '❌ Erreur. Réessayez.' },
-  auth_no_account:     { el: 'Δεν έχεις λογαριασμό;', en: 'No account?',         es: '¿Sin cuenta?',         fr: 'Pas de compte ?' },
-  auth_have_account:   { el: 'Έχεις ήδη λογαριασμό;', en: 'Already have an account?', es: '¿Ya tienes cuenta?', fr: 'Déjà un compte ?' },
+  auth_login:              { el: 'Σύνδεση',              en: 'Sign in',              es: 'Iniciar sesión',       fr: 'Connexion' },
+  auth_register:           { el: 'Εγγραφή',              en: 'Create account',       es: 'Crear cuenta',         fr: 'Créer un compte' },
+  auth_create_account:     { el: 'Δημιουργία λογαριασμού', en: 'Create account',    es: 'Crear cuenta',         fr: 'Créer un compte' },
+  auth_email:              { el: 'Email',                en: 'Email',                es: 'Correo',               fr: 'E-mail' },
+  auth_password:           { el: 'Κωδικός',              en: 'Password',             es: 'Contraseña',           fr: 'Mot de passe' },
+  auth_password_hint:      { el: 'Τουλάχιστον 6 χαρακτήρες', en: 'At least 6 characters', es: 'Al menos 6 caracteres', fr: 'Au moins 6 caractères' },
+  auth_name:               { el: 'Όνομα',                en: 'Name',                 es: 'Nombre',               fr: 'Prénom' },
+  auth_forgot:             { el: 'Ξέχασες τον κωδικό σου;', en: 'Forgot your password?', es: '¿Olvidaste tu contraseña?', fr: 'Mot de passe oublié ?' },
+  auth_reset_label:        { el: 'Επαναφορά',            en: 'Reset',                es: 'Restablecer',          fr: 'Réinitialiser' },
+  auth_reset_hint:         { el: 'Εισάγετε το email σας και θα σας στείλουμε σύνδεσμο για επαναφορά κωδικού.', en: 'Enter your email and we\'ll send you a password reset link.', es: 'Introduce tu correo y te enviaremos un enlace para restablecer tu contraseña.', fr: 'Saisissez votre e-mail et nous vous enverrons un lien de réinitialisation.' },
+  auth_reset_send:         { el: 'Αποστολή συνδέσμου',   en: 'Send reset link',      es: 'Enviar enlace',        fr: 'Envoyer le lien' },
+  auth_reset_sent:         { el: 'Ο σύνδεσμος επαναφοράς στάλθηκε στο email σας.', en: 'The reset link has been sent to your email.', es: 'El enlace de restablecimiento ha sido enviado a tu correo.', fr: 'Le lien de réinitialisation a été envoyé à votre e-mail.' },
+  auth_new_password:       { el: 'Νέος Κωδικός',         en: 'New Password',         es: 'Nueva Contraseña',     fr: 'Nouveau mot de passe' },
+  auth_new_password_hint:  { el: 'Εισάγετε τον νέο σας κωδικό.', en: 'Enter your new password.', es: 'Introduce tu nueva contraseña.', fr: 'Saisissez votre nouveau mot de passe.' },
+  auth_save_password:      { el: 'Αποθήκευση κωδικού',   en: 'Save password',        es: 'Guardar contraseña',   fr: 'Enregistrer le mot de passe' },
+  auth_back_login:         { el: 'Πίσω στη σύνδεση',     en: 'Back to sign in',      es: 'Volver a iniciar sesión', fr: 'Retour à la connexion' },
+  auth_loading:            { el: 'Παρακαλώ περιμένετε...', en: 'Please wait...', es: 'Por favor espera...', fr: 'Veuillez patienter...' },
+  auth_check_email:        { el: 'Ελέγξτε το email σας για επιβεβαίωση εγγραφής.', en: 'Check your email to confirm registration.', es: 'Revisa tu correo para confirmar el registro.', fr: 'Vérifiez votre e-mail pour confirmer l\'inscription.' },
+  auth_tagline:            { el: 'Ο σύμμαχός σου για μια καλύτερη διατροφή.', en: 'Your ally for better nutrition.', es: 'Tu aliado para una mejor nutrición.', fr: 'Votre allié pour une meilleure nutrition.' },
+  auth_error_generic:      { el: 'Άγνωστο σφάλμα.', en: 'Unknown error.', es: 'Error desconocido.', fr: 'Erreur inconnue.' },
+  auth_error_credentials:  { el: 'Λανθασμένο email ή κωδικός.', en: 'Incorrect email or password.', es: 'Correo o contraseña incorrectos.', fr: 'E-mail ou mot de passe incorrect.' },
+  auth_error_not_confirmed:{ el: 'Παρακαλώ επιβεβαιώστε πρώτα το email σας.', en: 'Please confirm your email first.', es: 'Por favor, confirma tu correo primero.', fr: 'Veuillez d\'abord confirmer votre e-mail.' },
+  auth_error_already_registered: { el: 'Υπάρχει ήδη λογαριασμός με αυτό το email.', en: 'An account with this email already exists.', es: 'Ya existe una cuenta con este correo.', fr: 'Un compte avec cet e-mail existe déjà.' },
+  auth_error_password_short: { el: 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.', en: 'Password must be at least 6 characters.', es: 'La contraseña debe tener al menos 6 caracteres.', fr: 'Le mot de passe doit comporter au moins 6 caractères.' },
+  auth_error_invalid_email: { el: 'Μη έγκυρο email.', en: 'Invalid email.', es: 'Correo inválido.', fr: 'E-mail invalide.' },
+  auth_error_rate_limit:   { el: 'Πολλές προσπάθειες. Παρακαλώ δοκιμάστε ξανά σε λίγα λεπτά.', en: 'Too many attempts. Please try again in a few minutes.', es: 'Demasiados intentos. Por favor, inténtalo de nuevo en unos minutos.', fr: 'Trop de tentatives. Veuillez réessayer dans quelques minutes.' },
+  auth_no_account:         { el: 'Δεν έχεις λογαριασμό;', en: 'No account?',         es: '¿Sin cuenta?',         fr: 'Pas de compte ?' },
+  auth_have_account:       { el: 'Έχεις ήδη λογαριασμό;', en: 'Already have an account?', es: '¿Ya tienes cuenta?', fr: 'Déjà un compte ?' },
 
   // ── Units ──
-  unit_piece:  { el: 'τεμ.', en: 'pc',  es: 'u.',  fr: 'pièce' },
-  unit_tsp:    { el: 'κ.γ.', en: 'tsp', es: 'cdta.',fr: 'c.à.c.' },
-  unit_tbsp:   { el: 'κ.σ.', en: 'tbsp',es: 'cda.', fr: 'c.à.s.' },
+  unit_piece:     { el: 'τεμ.', en: 'pc',      es: 'u.',    fr: 'pièce' },
+  unit_piece_pl:  { el: 'τεμάχια', en: 'pieces', es: 'unidades', fr: 'pièces' },
+  unit_grams:     { el: 'γραμμάρια (g)', en: 'grams (g)', es: 'gramos (g)', fr: 'grammes (g)' },
+  unit_tsp:       { el: 'κ.γ.', en: 'tsp', es: 'cdta.',fr: 'c.à.c.' },
+  unit_tbsp:      { el: 'κ.σ.', en: 'tbsp',es: 'cda.', fr: 'c.à.s.' },
+
+  // ── Form labels ──
+  form_name:                  { el: 'Όνομα',              en: 'Name',               es: 'Nombre',          fr: 'Nom' },
+  form_category:              { el: 'Κατηγορία',          en: 'Category',           es: 'Categoría',       fr: 'Catégorie' },
+  form_unit:                  { el: 'Μονάδα',             en: 'Unit',               es: 'Unidad',          fr: 'Unité' },
+  form_meal_type:             { el: 'Τύπος Γεύματος',     en: 'Meal type',          es: 'Tipo de comida',  fr: 'Type de repas' },
+  form_instructions:          { el: 'Οδηγίες',            en: 'Instructions',       es: 'Instrucciones',   fr: 'Instructions' },
+  form_instructions_placeholder: { el: 'Βήμα 1...', en: 'Step 1...', es: 'Paso 1...', fr: 'Étape 1...' },
+  form_kcal_per_serving:      { el: 'Θερμίδες ανά μερίδα', en: 'Calories per serving', es: 'Calorías por ración', fr: 'Calories par portion' },
+  form_nutrients:             { el: 'Θρεπτικά στοιχεία',  en: 'Nutrition facts',    es: 'Valores nutricionales', fr: 'Valeurs nutritionnelles' },
+  form_recipe_placeholder:    { el: 'πχ. Σαλάτα Τόνου',  en: 'e.g. Tuna Salad',   es: 'ej. Ensalada de atún', fr: 'ex. Salade thon' },
+  form_food_placeholder:      { el: 'πχ. Τυρί κότατζ 0%', en: 'e.g. Cottage cheese 0%', es: 'ej. Queso cottage 0%', fr: 'ex. Fromage cottage 0%' },
+
+  // ── Confirm dialogs ──
+  confirm_delete_template:    { el: 'Διαγραφή αυτού του προτύπου;', en: 'Delete this template?', es: '¿Eliminar esta plantilla?', fr: 'Supprimer ce modèle ?' },
+  confirm_reset_day:          { el: 'Επαναφορά Ημέρα {n} στα default γεύματα; Οι αλλαγές χάνονται.', en: 'Reset Day {n} to default meals? Changes will be lost.', es: '¿Restablecer el Día {n} a las comidas por defecto? Los cambios se perderán.', fr: 'Réinitialiser le Jour {n} aux repas par défaut ? Les modifications seront perdues.' },
+
+  // ── Toast messages ──
+  toast_new_week:             { el: 'Νέα εβδομάδα! Τα ημερήσια checkboxes έγιναν reset.', en: 'New week! Daily checkboxes were reset.', es: '¡Nueva semana! Las casillas diarias se reiniciaron.', fr: 'Nouvelle semaine ! Les cases quotidiennes ont été réinitialisées.' },
+  toast_plan_style:           { el: 'Νέο πρόγραμμα ({style})!', en: 'New plan ({style})!', es: '¡Nuevo plan ({style})!', fr: 'Nouveau plan ({style}) !' },
+
+  // ── Builder ──
+  builder_plan_ready:         { el: 'Το πλάνο είναι έτοιμο!',  en: 'Plan is ready!',         es: '¡El plan está listo!',    fr: 'Le plan est prêt !' },
+  builder_no_days_selected:   { el: 'Δεν έχεις επιλέξει ημέρες', en: 'No days selected', es: 'No has seleccionado días', fr: 'Aucun jour sélectionné' },
+  builder_apply_confirm_title: { el: 'Εφαρμογή προγράμματος', en: 'Apply plan', es: 'Aplicar plan', fr: 'Appliquer le plan' },
+  builder_apply_confirm_body: { el: 'Θέλεις να αποθηκεύσεις το πλάνο για: {days};<br><br>Το υπάρχον πρόγραμμα των ημερών αυτών θα αντικατασταθεί.', en: 'Do you want to save the plan for: {days}?<br><br>The existing schedule for these days will be replaced.', es: '¿Quieres guardar el plan para: {days}?<br><br>El programa existente para estos días será reemplazado.', fr: 'Veux-tu sauvegarder le plan pour : {days} ?<br><br>Le programme existant pour ces jours sera remplacé.' },
+
+  // ── Supplement search ──
+  search_supplement:          { el: 'Αναζήτηση συμπληρώματος…', en: 'Search supplement…', es: 'Buscar suplemento…', fr: 'Rechercher un supplément…' },
+
+  // ── Profile/share ──
+  prof_protein_hint:  { el: 'Συν. 1.9g/kg: {val}g', en: 'Rec. 1.9g/kg: {val}g', es: 'Rec. 1.9g/kg: {val}g', fr: 'Rec. 1.9g/kg : {val}g' },
+  share_plan_title:   { el: 'Πλάνο', en: 'Plan', es: 'Plan', fr: 'Plan' },
+  share_user:         { el: 'Χρήστης', en: 'User', es: 'Usuario', fr: 'Utilisateur' },
 
   // ── Macro abbreviations for display ──
   macro_p_abbr: { el: 'Π', en: 'P', es: 'P', fr: 'P' },
@@ -330,7 +416,18 @@ const I18N = {
   builder_your_day:   { el: 'Η μέρα σου',         en: 'Your day',    es: 'Tu día',              fr: 'Ta journée' },
   builder_templates:  { el: 'Πρότυπα',             en: 'Templates',   es: 'Plantillas',          fr: 'Modèles' },
   builder_save_tpl:   { el: '💾 Αποθήκευση ως πρότυπο', en: '💾 Save as template', es: '💾 Guardar como plantilla', fr: '💾 Enregistrer comme modèle' },
-  builder_apply_day:  { el: 'Εφαρμογή στην εβδομάδα', en: 'Apply to week', es: 'Aplicar a la semana', fr: 'Appliquer à la semaine' },
+  builder_apply_day:       { el: 'Εφαρμογή στην εβδομάδα', en: 'Apply to week', es: 'Aplicar a la semana', fr: 'Appliquer à la semaine' },
+  builder_quality_great:      { el: 'Πολύ καλή επιλογή!',    en: 'Great choice!',        es: '¡Excelente elección!',    fr: 'Excellent choix !' },
+  builder_quality_good:       { el: 'Καλή πρόοδος',          en: 'Good progress',        es: 'Buen progreso',           fr: 'Bon progrès' },
+  builder_quality_start:      { el: 'Επίλεξε γεύματα',       en: 'Select meals',         es: 'Selecciona comidas',      fr: 'Sélectionne des repas' },
+  builder_quality_great_desc: { el: 'Ισορροπημένο πλάνο με ποικιλία θρεπτικών συστατικών.', en: 'Balanced plan with a variety of nutrients.', es: 'Plan equilibrado con variedad de nutrientes.', fr: 'Plan équilibré avec une variété de nutriments.' },
+  builder_quality_good_desc:  { el: 'Καλό πλάνο, μπορείς να βελτιώσεις τα μακροθρεπτικά.', en: 'Good plan, you can improve the macros.', es: 'Buen plan, puedes mejorar los macros.', fr: 'Bon plan, tu peux améliorer les macros.' },
+  builder_quality_start_desc: { el: 'Πρόσθεσε γεύματα από την αριστερή λίστα.', en: 'Add meals from the left list.', es: 'Añade comidas de la lista izquierda.', fr: 'Ajoute des repas depuis la liste gauche.' },
+  stats_balance_great:        { el: 'Πολύ καλή επιλογή!',    en: 'Great balance!',       es: '¡Muy buen equilibrio!',   fr: 'Très bon équilibre !' },
+  stats_balance_low:          { el: 'Λίγο χαμηλά',           en: 'A bit low',            es: 'Un poco bajo',            fr: 'Un peu bas' },
+  stats_balance_high:         { el: 'Λίγο ψηλά',             en: 'A bit high',           es: 'Un poco alto',            fr: 'Un peu haut' },
+  diversity_great:            { el: 'Καλή ποικιλία!',         en: 'Great variety!',       es: '¡Gran variedad!',         fr: 'Bonne variété !' },
+  diversity_more:             { el: 'Δοκίμασε περισσότερα',   en: 'Try more variety',     es: 'Prueba más variedad',     fr: 'Essaie plus de variété' },
 
   // ── Macro display labels (full) ──
   macro_protein:  { el: 'Πρωτεΐνη', en: 'Protein',       es: 'Proteína',  fr: 'Protéines' },
@@ -479,6 +576,22 @@ function tDays() {
   return [
     t('day_sun'), t('day_mon'), t('day_tue'), t('day_wed'),
     t('day_thu'), t('day_fri'), t('day_sat'),
+  ];
+}
+
+// ── Short day names (0=Sunday), same order as tDays() ──
+function tDaysShort() {
+  return [
+    t('day_sun_s'), t('day_mon_s'), t('day_tue_s'), t('day_wed_s'),
+    t('day_thu_s'), t('day_fri_s'), t('day_sat_s'),
+  ];
+}
+
+// ── Short day names starting Monday (stats charts: 0=Mon … 6=Sun) ──
+function tDaysWeek() {
+  return [
+    t('day_mon_s'), t('day_tue_s'), t('day_wed_s'), t('day_thu_s'),
+    t('day_fri_s'), t('day_sat_s'), t('day_sun_s'),
   ];
 }
 

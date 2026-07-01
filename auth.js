@@ -67,23 +67,23 @@
           <img src="logo.png" alt="VIVON" class="auth-logo-img"
                onerror="this.style.display='none'">
           <div class="auth-brand">VIVON</div>
-          <div class="auth-tagline">Ο σύμμαχός σου για μια <em>καλύτερη διατροφή</em>.</div>
+          <div class="auth-tagline">${t('auth_tagline')}</div>
         </div>
 
         <!-- Tabs -->
         <div class="auth-tabs" id="auth-tabs">
           <button class="auth-tab active" data-tab="login" onclick="authShowTab('login')">
-            ${ICONS.user} Σύνδεση
+            ${ICONS.user} ${t('auth_login')}
           </button>
           <button class="auth-tab" data-tab="register" onclick="authShowTab('register')">
-            ${ICONS.userAdd} Εγγραφή
+            ${ICONS.userAdd} ${t('auth_register')}
           </button>
         </div>
 
         <!-- LOGIN -->
         <form id="auth-form-login" class="auth-form" onsubmit="authLogin(event)">
           <div class="auth-field">
-            <label class="auth-label">Email</label>
+            <label class="auth-label">${t('auth_email')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.mail}</span>
               <input class="auth-input" id="auth-email-login" type="email"
@@ -91,7 +91,7 @@
             </div>
           </div>
           <div class="auth-field">
-            <label class="auth-label">Κωδικός</label>
+            <label class="auth-label">${t('auth_password')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.lock}</span>
               <input class="auth-input" id="auth-pass-login" type="password"
@@ -106,11 +106,11 @@
             ${ICONS.shield} <span></span>
           </div>
           <button class="auth-btn" type="submit" id="auth-btn-login">
-            ${ICONS.arrow} Σύνδεση
+            ${ICONS.arrow} ${t('auth_login')}
           </button>
           <div class="auth-footer-row">
             <button class="auth-link-btn" type="button" onclick="authShowTab('reset')">
-              Ξέχασες τον κωδικό σου; <span>Επαναφορά</span>
+              ${t('auth_forgot')} <span>${t('auth_reset_label')}</span>
             </button>
           </div>
         </form>
@@ -119,16 +119,16 @@
         <form id="auth-form-register" class="auth-form" style="display:none"
               onsubmit="authRegister(event)">
           <div class="auth-field">
-            <label class="auth-label">Όνομα</label>
+            <label class="auth-label">${t('auth_name')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.user}</span>
               <input class="auth-input" id="auth-name-register" type="text"
-                     placeholder="Το όνομά σου" required autocomplete="given-name"
+                     placeholder="${t('prof_name_placeholder')}" required autocomplete="given-name"
                      style="padding-left:42px">
             </div>
           </div>
           <div class="auth-field">
-            <label class="auth-label">Email</label>
+            <label class="auth-label">${t('auth_email')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.mail}</span>
               <input class="auth-input" id="auth-email-register" type="email"
@@ -136,11 +136,11 @@
             </div>
           </div>
           <div class="auth-field">
-            <label class="auth-label">Κωδικός</label>
+            <label class="auth-label">${t('auth_password')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.lock}</span>
               <input class="auth-input" id="auth-pass-register" type="password"
-                     placeholder="Τουλάχιστον 6 χαρακτήρες" required minlength="6"
+                     placeholder="${t('auth_password_hint')}" required minlength="6"
                      autocomplete="new-password" style="padding-right:42px">
               <button type="button" class="auth-input-toggle"
                       onclick="authTogglePass('auth-pass-register',this)"
@@ -159,16 +159,16 @@
             ${ICONS.shield} <span></span>
           </div>
           <button class="auth-btn" type="submit" id="auth-btn-register">
-            ${ICONS.arrow} Δημιουργία λογαριασμού
+            ${ICONS.arrow} ${t('auth_create_account')}
           </button>
         </form>
 
         <!-- PASSWORD RESET (request) -->
         <form id="auth-form-reset" class="auth-form" style="display:none"
               onsubmit="authReset(event)">
-          <p class="auth-hint">Εισάγετε το email σας και θα σας στείλουμε σύνδεσμο για επαναφορά κωδικού.</p>
+          <p class="auth-hint">${t('auth_reset_hint')}</p>
           <div class="auth-field">
-            <label class="auth-label">Email</label>
+            <label class="auth-label">${t('auth_email')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.mail}</span>
               <input class="auth-input" id="auth-email-reset" type="email"
@@ -178,11 +178,11 @@
           <div id="auth-error-reset"   class="auth-error"   style="display:none"><span></span></div>
           <div id="auth-success-reset" class="auth-success"  style="display:none"></div>
           <button class="auth-btn" type="submit" id="auth-btn-reset">
-            ${ICONS.arrow} Αποστολή συνδέσμου
+            ${ICONS.arrow} ${t('auth_reset_send')}
           </button>
           <div class="auth-footer-row">
             <button class="auth-link-btn" type="button" onclick="authShowTab('login')">
-              ${ICONS.back} <span style="font-size:0.8rem">Πίσω στη σύνδεση</span>
+              ${ICONS.back} <span style="font-size:0.8rem">${t('auth_back_login')}</span>
             </button>
           </div>
         </form>
@@ -190,13 +190,13 @@
         <!-- SET NEW PASSWORD (after clicking reset link) -->
         <form id="auth-form-reset-new" class="auth-form" style="display:none"
               onsubmit="authSetNewPassword(event)">
-          <p class="auth-hint">Εισάγετε τον νέο σας κωδικό.</p>
+          <p class="auth-hint">${t('auth_new_password_hint')}</p>
           <div class="auth-field">
-            <label class="auth-label">Νέος Κωδικός</label>
+            <label class="auth-label">${t('auth_new_password')}</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">${ICONS.lock}</span>
               <input class="auth-input" id="auth-pass-new" type="password"
-                     placeholder="Τουλάχιστον 6 χαρακτήρες" required minlength="6"
+                     placeholder="${t('auth_password_hint')}" required minlength="6"
                      autocomplete="new-password" style="padding-right:42px">
               <button type="button" class="auth-input-toggle"
                       onclick="authTogglePass('auth-pass-new',this)"
@@ -205,7 +205,7 @@
           </div>
           <div id="auth-error-reset-new" class="auth-error" style="display:none"><span></span></div>
           <button class="auth-btn" type="submit" id="auth-btn-reset-new">
-            ${ICONS.arrow} Αποθήκευση κωδικού
+            ${ICONS.arrow} ${t('auth_save_password')}
           </button>
         </form>
 
@@ -317,14 +317,7 @@
 
     const disclaimerCheck = document.getElementById('auth-disclaimer-check');
     if (!disclaimerCheck || !disclaimerCheck.checked) {
-      const lang = _disclaimerLang();
-      const required = {
-        el: 'Πρέπει να αποδεχτείς τους όρους για να εγγραφείς.',
-        en: 'You must accept the notice to create an account.',
-        es: 'Debes aceptar el aviso para crear una cuenta.',
-        fr: 'Vous devez accepter l\'avis pour créer un compte.',
-      };
-      showError('register', required[lang] || required.en);
+      showError('register', t('disclaimer_required'));
       return;
     }
 
@@ -337,7 +330,7 @@
 
     if (!data.session) {
       // Email confirmation required
-      showInfo('register', `${ICONS.shield} Ελέγξτε το email σας για επιβεβαίωση εγγραφής.`);
+      showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
     }
   };
 
@@ -352,7 +345,7 @@
     if (error) { showError('reset', _friendly(error.message)); return; }
 
     const suc = document.getElementById('auth-success-reset');
-    if (suc) { suc.style.display = ''; suc.textContent = '✅ Ο σύνδεσμος επαναφοράς στάλθηκε στο email σας.'; }
+    if (suc) { suc.style.display = ''; suc.textContent = '✅ ' + t('auth_reset_sent'); }
   };
 
   window.authSetNewPassword = async function (e) {
@@ -369,18 +362,20 @@
 
   // ── UI helpers ────────────────────────────────────────────
 
-  const BTN_LABELS = {
-    login:       `${ICONS.arrow} Σύνδεση`,
-    register:    `${ICONS.arrow} Δημιουργία λογαριασμού`,
-    reset:       `${ICONS.arrow} Αποστολή συνδέσμου`,
-    'reset-new': `${ICONS.arrow} Αποθήκευση κωδικού`,
-  };
+  function getBtnLabels() {
+    return {
+      login:       `${ICONS.arrow} ${t('auth_login')}`,
+      register:    `${ICONS.arrow} ${t('auth_create_account')}`,
+      reset:       `${ICONS.arrow} ${t('auth_reset_send')}`,
+      'reset-new': `${ICONS.arrow} ${t('auth_save_password')}`,
+    };
+  }
 
   function setLoading(form, loading) {
     const btn = document.getElementById(`auth-btn-${form}`);
     if (!btn) return;
     btn.disabled = loading;
-    btn.innerHTML = loading ? 'Παρακαλώ περιμένετε...' : (BTN_LABELS[form] || 'OK');
+    btn.innerHTML = loading ? t('auth_loading') : (getBtnLabels()[form] || 'OK');
   }
 
   function showError(form, msg) {
@@ -409,12 +404,14 @@
   }
 
   function _friendly(msg) {
-    if (!msg) return 'Άγνωστο σφάλμα.';
-    if (msg.includes('Invalid login credentials'))  return 'Λανθασμένο email ή κωδικός.';
-    if (msg.includes('Email not confirmed'))         return 'Παρακαλώ επιβεβαιώστε πρώτα το email σας.';
-    if (msg.includes('User already registered'))     return 'Υπάρχει ήδη λογαριασμός με αυτό το email.';
-    if (msg.includes('Password should be'))          return 'Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.';
-    if (msg.includes('Unable to validate email'))    return 'Μη έγκυρο email.';
+    if (!msg) return t('auth_error_generic');
+    if (msg.includes('Invalid login credentials'))  return t('auth_error_credentials');
+    if (msg.includes('Email not confirmed'))         return t('auth_error_not_confirmed');
+    if (msg.includes('User already registered'))     return t('auth_error_already_registered');
+    if (msg.includes('Password should be'))          return t('auth_error_password_short');
+    if (msg.includes('Unable to validate email'))    return t('auth_error_invalid_email');
+    if (msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('429'))
+      return t('auth_error_rate_limit');
     return msg;
   }
 

@@ -225,7 +225,7 @@ function checkWeekReset() {
     state.weekKey = weekKey;
     state.weekCreatedAt = Date.now();
     saveState();
-    showToast('Νέα εβδομάδα! Τα ημερήσια checkboxes έγιναν reset.', 4000);
+    showToast(t('toast_new_week'), 4000);
   } else if (!storedKey) {
     // First run — stamp the current week key
     state.weekKey = weekKey;
@@ -736,7 +736,7 @@ function bchart_zoom(id, factor) {
 
 function fmtDateGr(isoDate) {
   if (!isoDate) return '';
-  const months = ['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  const months = tMonths();
   const [y, m, d] = isoDate.split('-');
   return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
 }
@@ -761,9 +761,9 @@ function renderBodyMeasurementsCard() {
   const fatVal    = (latest && latest.fat    != null) ? `${latest.fat}%`    : '—';
   const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
 
-  const weightCard = statCard('#eff6ff', '⚖️', weightVal, 'Βάρος',      '#3b82f6');
-  const fatCard    = statCard('#fef2f2', '🩸',  fatVal,    'Λίπος',      '#ef4444');
-  const muscleCard = statCard('#f0fdf4', '💪',  muscleVal, 'Μυϊκή μάζα','#16a34a');
+  const weightCard = statCard('#eff6ff', '⚖️', weightVal, t('body_weight'),  '#3b82f6');
+  const fatCard    = statCard('#fef2f2', '🩸',  fatVal,    t('macro_fat'),    '#ef4444');
+  const muscleCard = statCard('#f0fdf4', '💪',  muscleVal, t('body_muscle'),  '#16a34a');
 
   const dateChip = latest
     ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;border-radius:20px;padding:5px 12px;font-size:0.78rem;color:#374151;font-weight:500;margin-top:6px">
@@ -850,26 +850,26 @@ function renderBodyMeasurementsCard() {
           </div>
         </div>
         <div>
-          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">Βάρος (kg)</div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">${t('body_weight')} (kg)</div>
           <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
             <span style="font-size:0.85rem;flex-shrink:0">⚖️</span>
-            <input type="text" inputmode="decimal" id="bm-weight" placeholder="π.χ. 95.5"
+            <input type="text" inputmode="decimal" id="bm-weight" placeholder="e.g. 95.5"
               style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
         <div>
-          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% Λίπους</div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% ${t('body_fat')}</div>
           <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
             <span style="font-size:0.85rem;flex-shrink:0">🩸</span>
-            <input type="text" inputmode="decimal" id="bm-fat" placeholder="π.χ. 22.5"
+            <input type="text" inputmode="decimal" id="bm-fat" placeholder="e.g. 22.5"
               style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
         <div>
-          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% Μυϊκής Μάζας</div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% ${t('body_muscle')}</div>
           <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
             <span style="font-size:0.85rem;flex-shrink:0">💪</span>
-            <input type="text" inputmode="decimal" id="bm-muscle" placeholder="π.χ. 38.0"
+            <input type="text" inputmode="decimal" id="bm-muscle" placeholder="e.g. 38.0"
               style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
         </div>
@@ -903,10 +903,10 @@ function calcBMI(w, h) {
 }
 
 function bmiLabel(bmi) {
-  if (bmi < 18.5) return { label: 'Λιποβαρής', color: '#3b82f6' };
-  if (bmi < 25)   return { label: 'Κανονικό', color: '#22c55e' };
-  if (bmi < 30)   return { label: 'Υπέρβαρος', color: '#f59e0b' };
-  return { label: 'Παχυσαρκία', color: '#ef4444' };
+  if (bmi < 18.5) return { label: t('bmi_underweight'), color: '#3b82f6' };
+  if (bmi < 25)   return { label: t('bmi_normal'),      color: '#22c55e' };
+  if (bmi < 30)   return { label: t('bmi_overweight'),  color: '#f59e0b' };
+  return { label: t('bmi_obese'), color: '#ef4444' };
 }
 
 // Mifflin-St Jeor BMR
@@ -1016,7 +1016,7 @@ function _renderProfileInto(target) {
           <div style="flex:1;min-width:0">
             <input type="text" id="prof-name"
               value="${p.name || ''}"
-              placeholder="Το όνομά σου..."
+              placeholder="${t('prof_name_placeholder')}"
               style="font-size:1.45rem;font-weight:800;border:none;background:transparent;width:100%;padding:0;outline:none;color:var(--text);display:block;margin-bottom:4px"
               oninput="liveUpdateName(this.value)">
             <div style="font-size:0.8rem;color:var(--text3);display:flex;align-items:center;gap:4px">Πάτα για επεξεργασία ✏️</div>
@@ -1097,7 +1097,7 @@ function _renderProfileInto(target) {
         <div class="card fade-in" style="margin:0;padding:16px 12px;text-align:center;${p.useCustomTDEE?'border-color:#22c55e;background:#f0fdf4':''}">
           <div style="width:44px;height:44px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 8px">🌿</div>
           <div class="tdee-val" style="font-size:1.55rem;font-weight:900;color:var(--green-d);line-height:1">${tdee}</div>
-          <div style="font-size:0.68rem;font-weight:700;color:var(--green-d);margin-top:2px">${p.useCustomTDEE?'Χειροκίνητο':'Θερμίδες Συντήρησης'}</div>
+          <div style="font-size:0.68rem;font-weight:700;color:var(--green-d);margin-top:2px">${p.useCustomTDEE ? t('tdee_custom') : t('tdee_label')}</div>
           <div style="font-size:0.6rem;color:var(--text3);margin-top:2px">TDEE kcal</div>
         </div>
       </div>` : ''}
@@ -1417,7 +1417,7 @@ function liveUpdateProfile() {
 
   // Protein ideal hint
   const protHintEl = document.getElementById('td-prot-hint');
-  if (protHintEl) protHintEl.textContent = `Συν. 1.9g/kg: ${calcIdealProtein(p.weight)}g`;
+  if (protHintEl) protHintEl.textContent = tFmt('prof_protein_hint', { val: calcIdealProtein(p.weight) });
 
   // TDEE label on kcal slider
   const tdeeSliderLbl = document.getElementById('td-slider-tdee');
@@ -1551,8 +1551,8 @@ function applyGoalPace(mode) {
   state.goals.goalPace = mode;
   saveState();
   renderProfile();
-  const modeLabels = { slow: 'Αργός', moderate: 'Μέτριος', fast: 'Γρήγορος', aggressive: 'Επιθετικός', maintain: 'Συντήρηση', bulk: 'Αύξηση Μάζας' };
-  showToast(`✅ ${modeLabels[mode]}: ${kcal} kcal · ${prot}g πρωτ.`);
+  const modeLabels = { slow: t('pace_slow'), moderate: t('pace_moderate'), fast: t('pace_fast'), aggressive: t('pace_aggressive'), maintain: t('pace_maintain'), bulk: t('pace_bulk') };
+  showToast(`✅ ${modeLabels[mode]}: ${kcal} kcal · ${prot}g ${t('macro_p_abbr')}.`);
   autoSaveSettings();
 }
 
@@ -1565,7 +1565,7 @@ function shareProfile() {
   const p = state.profile;
   const g = state.goals;
   const tdee = calcTDEE(p);
-  const text = `Vivon Πλάνο — ${p.name || 'Χρήστης'}\n🎯 ${g.kcal} kcal | 🥩 ${g.protein}g πρωτ. | 🍚 ${g.carbs}g υδατ. | 🫒 ${g.fat}g λίπος\nTDEE: ${tdee} kcal`;
+  const text = `Vivon ${t('share_plan_title')} — ${p.name || t('share_user')}\n🎯 ${g.kcal} kcal | 🥩 ${g.protein}g ${t('macro_p_abbr')}. | 🍚 ${g.carbs}g ${t('macro_c_abbr')}. | 🫒 ${g.fat}g ${t('macro_f_abbr')}.\nTDEE: ${tdee} kcal`;
   if (navigator.share) {
     navigator.share({ title: 'Vivon Πλάνο', text }).catch(() => {});
   } else if (navigator.clipboard) {
@@ -1666,6 +1666,7 @@ function _renderWizardStep() {
   const body    = document.getElementById('wizard-body');
   const btnBack = document.getElementById('wizard-btn-back');
   const btnNext = document.getElementById('wizard-btn-next');
+  const _wizardMeals = getWizardMeals();
   const total   = WIZARD_CONFIRM_STEP + 1; // style + 4 meals + confirm
 
   dots.innerHTML = Array.from({ length: total }, (_, i) =>
@@ -1713,12 +1714,12 @@ function _renderWizardStep() {
 
   // ── Steps 1-4: Meal exclusions ──
   const mealIdx = _wizardStep - 1; // 0-based into WIZARD_MEALS
-  if (mealIdx < WIZARD_MEALS.length) {
-    const meal = WIZARD_MEALS[mealIdx];
+  if (mealIdx < _wizardMeals.length) {
+    const meal = _wizardMeals[mealIdx];
     titleEl.textContent = `${meal.emoji} ${meal.label}`;
     labelEl.textContent = tFmt('wizard_step_label', { n: _wizardStep + 1, total });
     subEl.textContent   = meal.sublabel;
-    btnNext.textContent = mealIdx < WIZARD_MEALS.length - 1 ? t('btn_next') + ' →' : t('btn_done') + ' →';
+    btnNext.textContent = mealIdx < _wizardMeals.length - 1 ? t('btn_next') + ' →' : t('btn_done') + ' →';
 
     const style    = state.wizardStyle || 'simple';
     const excluded = _wizardExcluded[meal.key];
@@ -1766,8 +1767,8 @@ function _renderWizardStep() {
     const selCount = wizardMeals.length - excCount;
 
     let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <span style="font-size:0.75rem;color:var(--text3)">${selCount} επιλεγμένα · ${excCount} αποκλεισμένα</span>
-      <button onclick="_wizardSelectAll('${meal.key}')" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">Επιλογή όλων</button>
+      <span style="font-size:0.75rem;color:var(--text3)">${tFmt('wizard_selected_count', { sel: selCount, exc: excCount })}</span>
+      <button onclick="_wizardSelectAll('${meal.key}')" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">${t('wizard_select_all')}</button>
     </div><div class="wizard-meal-list">`;
 
     wizardMeals.forEach(r => {
@@ -1798,7 +1799,7 @@ function _renderWizardStep() {
   btnNext.textContent = '📋 ' + t('btn_generate');
 
   let html = '<div class="wizard-confirm-list">';
-  WIZARD_MEALS.forEach(meal => {
+  _wizardMeals.forEach(meal => {
     const excSet = _wizardExcluded[meal.key];
     const allForMeal = _allMeals().filter(r => r.meal===meal.key||(meal.key==='snack'&&r.meal==='afternoon'));
     // Deduplicate to get wizard-level rows
@@ -1817,11 +1818,11 @@ function _renderWizardStep() {
     const excNames = excRows.map(r => r.wizardName || r.name);
     html += `<div class="wizard-confirm-meal">
       <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label}
-        <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length} επιλεγμένα)</span>
+        <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length})</span>
       </div>
       ${excNames.length
-        ? `<div class="wizard-confirm-excluded">❌ ${excNames.slice(0,4).join(', ')}${excNames.length>4?` +${excNames.length-4} ακόμα`:''}</div>`
-        : `<div class="wizard-confirm-ok">✓ Όλα επιτρεπτά</div>`}
+        ? `<div class="wizard-confirm-excluded">❌ ${excNames.slice(0,4).join(', ')}${excNames.length>4?' '+tFmt('wizard_more',{n:excNames.length-4}):''}</div>`
+        : `<div class="wizard-confirm-ok">${t('wizard_all_ok')}</div>`}
     </div>`;
   });
   html += '</div>';
@@ -1863,7 +1864,7 @@ function wizardToggleGroup(mealKey, ids, el) {
         const siblings = g ? all.filter(x => x.foodGroup === g).map(x => x.id) : [r.id];
         if (siblings.every(id => excSet.has(id))) excRows++;
       });
-      ctr.textContent = `${totalRows - excRows} επιλεγμένα · ${excRows} αποκλεισμένα`;
+      ctr.textContent = tFmt('wizard_selected_count', { sel: totalRows - excRows, exc: excRows });
     }
   }
 }
@@ -1908,13 +1909,16 @@ function _guessSlotMealKey(slotIdx, totalSlots) {
 
 // ── SMART WEEK GENERATOR ──────────────────────────────────────
 const MEAL_SLOT_TYPES = ['breakfast','snack','lunch','afternoon','dinner'];
-const WATER_NOTES = [
-  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L',
-  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L',
-  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L',
-  'Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L',
-  'Πιες 1L νερό 💧 — Στόχος: 3L ✅',
-];
+function getWaterNotes() {
+  return [
+    tFmt('water_note_500ml', { total: '0.5L' }),
+    tFmt('water_note_500ml', { total: '1.0L' }),
+    tFmt('water_note_500ml', { total: '1.5L' }),
+    tFmt('water_note_500ml', { total: '2.0L' }),
+    t('water_note_1l'),
+  ];
+}
+const WATER_NOTES = getWaterNotes();
 const SLOT_TIMES = ['07:00','10:00','13:00','16:00','19:30'];
 
 /**
@@ -2017,7 +2021,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
     });
     week.push({
       day: di + 1,
-      label: `Ημέρα ${di + 1}`,
+      label: tFmt('week_day_prefix', { n: di + 1 }),
       meals,
       stepsCount: DEFAULT_WEEK[di]?.stepsCount,
       stepsDone: false,
@@ -2196,8 +2200,8 @@ function updateActivitySection() {
   const deficitColor = deficitPos ? '#22c55e' : '#ef4444';
   const weeklyStepsKcal = stepsKcal * 7;
   const motivMsg = deficitPos
-    ? { icon: '🎯', title: 'Στη σωστή πορεία!', text: 'Το ημερήσιο έλλειμμα σε βοηθά να πετύχεις τους στόχους σου.' }
-    : { icon: '⚠️', title: 'Πλεόνασμα σήμερα', text: 'Κατανάλωσες περισσότερες θερμίδες από όσες έκαψες.' };
+    ? { icon: '🎯', title: t('deficit_on_track'), text: t('deficit_help') }
+    : { icon: '⚠️', title: t('surplus_today'), text: t('surplus_help') };
 
   el.innerHTML = `
     <div class="card card-sm" style="padding:14px 16px;margin-bottom:10px">
@@ -2246,7 +2250,7 @@ function updateActivitySection() {
           🔥 Σύνολο <strong>${totalBurn} kcal</strong> &nbsp;·&nbsp; BMR Κατανάλωση <strong>${consumed} kcal</strong>
         </div>
         <div style="font-size:1.6rem;font-weight:900;color:${deficitColor}">${deficitPos ? '−' : '+'}${Math.abs(deficit)} kcal</div>
-        <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? 'Έλλειμμα' : 'Πλεόνασμα'}</div>
+        <div style="font-size:0.82rem;font-weight:600;color:${deficitColor};margin-top:2px">${deficitPos ? t('deficit_label') : t('surplus_label')}</div>
       </div>
       <div class="act-divider"></div>
       <div class="act-motiv" style="margin-bottom:0">
@@ -2292,16 +2296,15 @@ function clearPrevExtra(dayIdx) {
 }
 
 function formatPlanDay(dayOffset) {
-  if (!state.planStartDate) return `Ημ${dayOffset+1}`;
+  if (!state.planStartDate) return tFmt('week_day_prefix', { n: dayOffset + 1 });
   const d = new Date(state.planStartDate);
   d.setDate(d.getDate() + dayOffset);
-  const days = ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'];
+  const days = tDaysShort();
   return `${days[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
 }
 
 function getPlanDayLabel(dayIdx) {
-  // Returns "Ημ1 · Δευ 30/6" or just "Ημ1" if no date set
-  const base = `Ημ${dayIdx+1}`;
+  const base = tFmt('week_day_prefix', { n: dayIdx + 1 });
   if (!state.planStartDate) return base;
   return `${base} · ${formatPlanDay(dayIdx)}`;
 }
@@ -2601,7 +2604,7 @@ function renderToday() {
           <p style="font-size:0.8rem;color:var(--text2);margin-bottom:10px">Φάγατε κάτι παραπάνω; Καταγράψτε το εδώ. Η ημέρα θα κοκκινίσει στην Εβδομάδα.</p>
           <div style="display:flex;gap:8px;align-items:center">
             <input type="number" id="extra-kcal-input" value="${extraKcal||''}" min="0" max="5000" step="50"
-              placeholder="π.χ. 400"
+              placeholder="e.g. 400"
               style="flex:1;padding:10px 12px;border:2px solid ${extraKcal>0?'#ef4444':'var(--border)'};border-radius:var(--radius-sm);font-size:1rem;font-weight:700;background:var(--bg2)">
             <span style="font-size:0.85rem;color:var(--text3);white-space:nowrap">kcal</span>
             <button class="btn btn-sm" style="background:${extraKcal>0?'#ef4444':'var(--green)'};color:#fff"
@@ -2668,7 +2671,7 @@ function renderWeek() {
   };
   const dayNamesLong = tDays();
   function getDayTitle(di) {
-    if (!state.planStartDate) return `Ημ${di+1}`;
+    if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 });
     const d = new Date(state.planStartDate);
     d.setDate(d.getDate() + di);
     return dayNamesLong[d.getDay()];
@@ -2823,7 +2826,7 @@ function renderWeek() {
           const { deficit } = calcDayDeficit(di);
           const dc = deficit >= 0 ? '#22c55e' : '#ef4444';
           const sc = (day.stepsCount !== undefined && day.stepsCount !== null) ? day.stepsCount : 8000;
-          return `<div style="margin-top:5px;font-size:0.6rem;text-align:center;color:${dc};font-weight:700">${deficit >= 0 ? '−' : '+'}${Math.abs(deficit)} kcal ${deficit >= 0 ? 'έλλ.' : 'πλεόν.'}</div>
+          return `<div style="margin-top:5px;font-size:0.6rem;text-align:center;color:${dc};font-weight:700">${deficit >= 0 ? '−' : '+'}${Math.abs(deficit)} kcal ${deficit >= 0 ? t('deficit_abbr') : t('surplus_abbr')}</div>
           <div style="font-size:0.55rem;color:var(--text3);text-align:center">${day.stepsDone ? `👣${(sc/1000).toFixed(1)}k` : ''}${day.weightTraining?' 🏋️':''}</div>`;
         })()}
       </div>
@@ -2878,9 +2881,9 @@ function renderWeek() {
           <!-- Macros -->
           <div style="flex:1;min-width:200px">
             <div style="font-size:0.75rem;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">Μακροθρεπτικά (μέσος όρος)</div>
-            ${macroRow('Πρωτεΐνη', avgP, state.goals.protein || 160, '#3b82f6')}
-            ${macroRow('Υδατάνθρακες', avgC, state.goals.carbs || 200, '#8b5cf6')}
-            ${macroRow('Λίπος', avgF, state.goals.fat || 60, '#f59e0b')}
+            ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#3b82f6')}
+            ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6')}
+            ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b')}
           </div>
           <!-- Balance -->
           <div style="background:${bal.bg};border-radius:12px;padding:14px 18px;min-width:160px;text-align:center;border:1px solid ${bal.color}33;display:flex;flex-direction:column;align-items:center;gap:6px">
@@ -2919,9 +2922,9 @@ function renderWeek() {
         const deficitColor = weeklyDeficit >= 0 ? '#22c55e' : '#ef4444';
         const kgEquiv = (weeklyDeficit / 7700).toFixed(2);
         const kgColor = parseFloat(kgEquiv) >= 0 ? '#22c55e' : '#ef4444';
-        const dayNames7Short = ['Κυρ','Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ'];
+        const dayNames7Short = tDaysShort();
         function getShortDayTitle(di) {
-          if (!state.planStartDate) return `Η${di+1}`;
+          if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 }).substring(0,2);
           const d = new Date(state.planStartDate);
           d.setDate(d.getDate() + di);
           return dayNames7Short[d.getDay()];
@@ -3023,7 +3026,7 @@ function renderWeek() {
             <div style="font-size:1.3rem;margin-bottom:2px">🌿</div>
             <div style="font-size:0.7rem;color:var(--text3);margin-bottom:2px">Ποικιλία τροφών</div>
             <div style="font-size:1rem;font-weight:900;color:var(--text)">${uniqueFoods.size} διαφ. τρόφιμα</div>
-            <div style="font-size:0.65rem;color:${uniqueFoods.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoods.size >= 30 ? 'Καλή ποικιλία!' : 'Δοκίμασε περισσότερα'}</div>
+            <div style="font-size:0.65rem;color:${uniqueFoods.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoods.size >= 30 ? t('diversity_great') : t('diversity_more')}</div>
           </div>
           <div style="text-align:center">
             <div style="font-size:1.3rem;margin-bottom:2px">💧</div>
@@ -3050,7 +3053,7 @@ function confirmRegenerateInline() {
   state.week = generateSmartWeek(style, excPerMeal);
   saveState();
   renderWeek();
-  showToast(`🎲 Νέο πρόγραμμα (${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[style]})!`);
+  showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
   // Flash button green
   const btn = document.getElementById('week-regen-btn');
   if (btn) {
@@ -3070,13 +3073,13 @@ function regeneratePlan() {
     <div class="modal-title">🔄 Δημιούργησε Ξανά</div>
     <p style="font-size:0.83rem;color:var(--text2);margin-bottom:14px">Επίλεξε στυλ και δημιούργησε νέο τυχαίο πρόγραμμα με βάση τις προτιμήσεις σου.</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px">
-      ${[['simple','🥗','Απλά','Κοτόπουλο, ρύζι, αυγά — γρήγορα'],
-         ['mixed','🍲','Μεικτά','Συνδυασμός απλών και σύνθετων'],
-         ['gourmet','👨‍🍳','Gourmet','Μουσακάς, avocado, shakshuka']].map(([s,e,t,d]) => `
+      ${[['simple','🥗',t('wizard_simple_title'),t('wizard_simple_sub').substring(0,40)],
+         ['mixed','🍲',t('wizard_mixed_title'),t('wizard_mixed_sub').substring(0,40)],
+         ['gourmet','👨‍🍳',t('wizard_gourmet_title'),t('wizard_gourmet_sub').substring(0,40)]].map(([s,e,sl,d]) => `
         <div id="rg_${s}" onclick="document.querySelectorAll('[id^=rg_]').forEach(x=>x.style.borderColor='var(--border)');this.style.borderColor='var(--green)';_tmpRgStyle='${s}'"
           style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:2px solid ${s===cur?'var(--green)':'var(--border)'};border-radius:12px;cursor:pointer;transition:border-color .15s">
           <span style="font-size:1.3rem">${e}</span>
-          <div><div style="font-weight:700;font-size:0.88rem">${t}</div><div style="font-size:0.74rem;color:var(--text3)">${d}</div></div>
+          <div><div style="font-weight:700;font-size:0.88rem">${sl}</div><div style="font-size:0.74rem;color:var(--text3)">${d}</div></div>
         </div>`).join('')}
     </div>
     <div style="display:flex;gap:10px">
@@ -3095,7 +3098,7 @@ function confirmRegenerate() {
   state.week = generateSmartWeek(style, excPerMeal);
   saveState();
   renderWeek();
-  showToast(`🎲 Νέο πρόγραμμα δημιουργήθηκε (${{'simple':'Απλά','mixed':'Μεικτά','gourmet':'Gourmet'}[style]})!`);
+  showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
 }
 
 function resetWeekPlan() {
@@ -3134,7 +3137,7 @@ function renderRecipes(filter = '') {
         </div>
         <div class="rc-search">
           <svg class="rc-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Αναζήτηση συνταγής..." value="${filter}" oninput="renderRecipes(this.value)">
+          <input type="text" placeholder="${t('search_recipe')}" value="${filter}" oninput="renderRecipes(this.value)">
         </div>
         <div class="recipe-filter-pills">
           <button class="recipe-pill active" onclick="filterRecipeType('all',this)">Όλες</button>
@@ -3198,7 +3201,7 @@ function renderFoods(filter = '') {
         <button class="btn btn-green btn-sm" onclick="openAddFoodModal()">➕ Νέα</button>
       </div>
       <div class="search-wrap"><span class="search-icon">🔍</span>
-        <input type="text" placeholder="Αναζήτηση τροφής..." value="${filter}" oninput="renderFoods(this.value)">
+        <input type="text" placeholder="${t('search_food')}" value="${filter}" oninput="renderFoods(this.value)">
       </div>`;
 
   Object.entries(categories).forEach(([cat, label]) => {
@@ -3207,10 +3210,10 @@ function renderFoods(filter = '') {
     html += `<div class="food-section">
       <div class="food-section-title">${label}</div>
       ${foods.map(f => {
-        const per = f.unit === 'τεμ' ? `/ τεμ` : `/ 100${f.unit}`;
+        const per = f.unit === 'τεμ' ? `/ ${t('unit_piece')}` : `/ 100${f.unit}`;
         return `<div class="food-row" onclick="openFoodDetail('${f.id}')">
           <div>
-            <div class="food-row-name">${f.name}</div>
+            <div class="food-row-name">${tName(f)}</div>
             <div class="food-row-sub">Π:${f.per100.p}g · Υ:${f.per100.c}g · Λ:${f.per100.f}g ${per}</div>
           </div>
           <div class="food-row-kcal">${f.per100.kcal} kcal</div>
@@ -3536,12 +3539,8 @@ function renderBuilderPage(typeFilter) {
 
   const avgPct = (pPct + cPct + fPct + kPct) / 4;
   const score = Math.round(avgPct / 10 * 10) / 10;
-  const qualLabel = avgPct >= 85 ? 'Πολύ καλή επιλογή!' : avgPct >= 60 ? 'Καλή πρόοδος' : 'Επίλεξε γεύματα';
-  const qualDesc  = avgPct >= 85
-    ? 'Ισορροπημένο πλάνο με ποικιλία θρεπτικών συστατικών.'
-    : avgPct >= 60
-    ? 'Καλό πλάνο, μπορείς να βελτιώσεις τα μακροθρεπτικά.'
-    : 'Πρόσθεσε γεύματα από την αριστερή λίστα.';
+  const qualLabel = avgPct >= 85 ? t('builder_quality_great') : avgPct >= 60 ? t('builder_quality_good') : t('builder_quality_start');
+  const qualDesc  = avgPct >= 85 ? t('builder_quality_great_desc') : avgPct >= 60 ? t('builder_quality_good_desc') : t('builder_quality_start_desc');
 
   // Templates HTML (inside right panel)
   const tplHtml = savedTemplates.length
@@ -3571,7 +3570,7 @@ function renderBuilderPage(typeFilter) {
   const applyDayIdx = Math.max(0, Math.min(state.week.length - 1, state._builderApplyDay || 0));
   state._builderApplyDay = applyDayIdx;
   const applyDayLabel = state.planStartDate
-    ? (() => { const d = new Date(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months=['Ιανουαρίου','Φεβρουαρίου','Μαρτίου','Απριλίου','Μαΐου','Ιουνίου','Ιουλίου','Αυγούστου','Σεπτεμβρίου','Οκτωβρίου','Νοεμβρίου','Δεκεμβρίου']; const dayNames=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο']; return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
+    ? (() => { const d = new Date(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months = tMonths(); const dayNames = tDays(); return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
     : state.week[applyDayIdx].label;
 
   document.getElementById('page-builder').innerHTML = `
@@ -3598,7 +3597,7 @@ function renderBuilderPage(typeFilter) {
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green-d)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#dcfce7"/><path d="M3 11c0 0 2-3 9-3s9 3 9 3v2c0 4.42-3.58 8-8 8H11c-4.42 0-8-3.58-8-8v-2z" fill="none"/><ellipse cx="12" cy="13" rx="5" ry="4" fill="none" stroke="var(--green-d)" stroke-width="1.5"/></svg>
           </div>
           <div>
-            <div class="dplanner-status-title">${totalKcal > 0 ? 'Το πλάνο είναι έτοιμο!' : 'Επίλεξε γεύματα'}</div>
+            <div class="dplanner-status-title">${totalKcal > 0 ? t('builder_plan_ready') : t('builder_quality_start')}</div>
             <div class="dplanner-status-meta">${builderMeals.length} γεύματα &nbsp;·&nbsp; ${totalKcal} kcal</div>
           </div>
         </div>
@@ -3653,7 +3652,7 @@ function renderBuilderPage(typeFilter) {
           <div class="dplanner-col-subhead">
             <div class="dplanner-search-wrap">
               <span class="dplanner-search-icon">🔍</span>
-              <input type="text" placeholder="Αναζήτηση γευμάτων..."
+              <input type="text" placeholder="${t('search_meal')}"
                 value="${window._builderSearch || ''}"
                 oninput="window._builderSearch=this.value;renderBuilderPage('${typeFilter}')">
             </div>
@@ -3862,12 +3861,12 @@ function builderSaveToDay(dayIdx, typeFilter) {
 
 function builderConfirmApply(typeFilter) {
   if (!state._builderSavedDays || !state._builderSavedDays.length) {
-    showToast('⚠️ Δεν έχεις επιλέξει ημέρες'); return;
+    showToast('⚠️ ' + t('builder_no_days_selected')); return;
   }
-  const dayNames = state._builderSavedDays.map(i => state.week[i]?.label || `Η${i+1}`).join(', ');
+  const dayNames = state._builderSavedDays.map(i => state.week[i]?.label || tFmt('week_day_prefix', { n: i + 1 })).join(', ');
   showConfirmModal(
-    'Εφαρμογή προγράμματος',
-    `Θέλεις να αποθηκεύσεις το πλάνο για: <strong>${dayNames}</strong>;<br><br>Το υπάρχον πρόγραμμα των ημερών αυτών θα αντικατασταθεί.`,
+    t('builder_apply_confirm_title'),
+    tFmt('builder_apply_confirm_body', { days: `<strong>${dayNames}</strong>` }),
     () => builderApplyWeekToSchedule(typeFilter)
   );
 }
@@ -4038,7 +4037,7 @@ function saveDayAsTemplate() {
 }
 
 function deleteTemplate(ti) {
-  if (!confirm('Διαγραφή αυτού του προτύπου;')) return;
+  if (!confirm(t('confirm_delete_template'))) return;
   state.dayTemplates.splice(ti, 1);
   saveState();
   if (state.activeTab === 'builder') renderBuilderPage();
@@ -4277,10 +4276,10 @@ function openFoodDetail(fid) {
   const allFoods = [...FOODS_DB, ...state.customFoods];
   const food = allFoods.find(f => f.id === fid);
   if (!food) return;
-  const per = food.unit === 'τεμ' ? 'τεμ' : '100' + food.unit;
+  const per = food.unit === 'τεμ' ? t('unit_piece') : '100' + food.unit;
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">${food.name}</div>
+    <div class="modal-title">${tName(food)}</div>
     <div class="section-title">Θρεπτικά Στοιχεία / ${per}</div>
     <div class="meal-macros" style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px">
       <div class="macro-chip"><div class="macro-chip-val" style="color:#22c55e">${food.per100.kcal}</div><div class="macro-chip-lbl">kcal</div></div>
@@ -4303,7 +4302,7 @@ function openSwapMeal(mi, dayIdx) {
   const snackTypes = currentType === 'afternoon' ? ['afternoon', 'snack'] : [currentType];
   const recipes = allRecipes.filter(r => snackTypes.includes(r.meal));
   const standards = STANDARD_MEALS.filter(s => snackTypes.includes(s.meal));
-  const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Δεκατιανό', afternoon:'Απογευματινό' }[currentType] || '';
+  const mealTypeLabel = tMealPlural(currentType) || '';
 
   const currentId = currentMeal.standardId || currentMeal.recipeId;
   const currentSf = currentMeal.scaleFactor || 1;
@@ -4352,7 +4351,7 @@ function openSwapMeal(mi, dayIdx) {
       <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
     </div>
     <div class="swap-search-wrap">
-      <input class="swap-search" id="swap-search-input" type="text" placeholder="Αναζήτηση γεύματος..." oninput="filterSwapList(this.value)" autocomplete="off">
+      <input class="swap-search" id="swap-search-input" type="text" placeholder="${t('search_meal')}" oninput="filterSwapList(this.value)" autocomplete="off">
     </div>
     <div class="swap-list" id="swap-list-inner">
       ${listHTML || '<div class="empty-state"><p>Δεν βρέθηκαν γεύματα</p></div>'}
@@ -4574,27 +4573,27 @@ function openAddRecipeModal() {
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Νέα Συνταγή</div>
-    <div class="form-group"><label>Όνομα</label><input type="text" id="nr-name" placeholder="πχ. Σαλάτα Τόνου"></div>
+    <div class="form-group"><label>${t('form_name')}</label><input type="text" id="nr-name" placeholder="${t('form_recipe_placeholder')}"></div>
     <div class="form-group"><label>Emoji</label><input type="text" id="nr-emoji" value="🍽️" maxlength="2"></div>
-    <div class="form-group"><label>Τύπος Γεύματος</label>
+    <div class="form-group"><label>${t('form_meal_type')}</label>
       <select id="nr-meal">
-        <option value="breakfast">Πρωινό</option>
-        <option value="snack">Δεκατιανό</option>
-        <option value="afternoon">Απογευματινό</option>
-        <option value="lunch">Μεσημεριανό</option>
-        <option value="dinner">Βραδινό</option>
+        <option value="breakfast">${tMeal('breakfast')}</option>
+        <option value="snack">${tMeal('snack')}</option>
+        <option value="afternoon">${tMeal('afternoon')}</option>
+        <option value="lunch">${tMeal('lunch')}</option>
+        <option value="dinner">${tMeal('dinner')}</option>
       </select>
     </div>
-    <div class="form-group"><label>Οδηγίες</label><textarea id="nr-inst" placeholder="Βήμα 1..."></textarea></div>
+    <div class="form-group"><label>${t('form_instructions')}</label><textarea id="nr-inst" placeholder="${t('form_instructions_placeholder')}"></textarea></div>
     <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px">
-      <span style="font-size:0.82rem;color:var(--text2)">Θερμίδες ανά μερίδα</span>
+      <span style="font-size:0.82rem;color:var(--text2)">${t('form_kcal_per_serving')}</span>
       <button id="ai-estimate-recipe-btn" class="btn btn-ghost btn-sm" onclick="estimateRecipeCaloriesWithAI(document.getElementById('nr-name').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div class="form-group"><label>Θερμίδες</label><input type="number" id="nr-kcal" placeholder="0"></div>
-      <div class="form-group"><label>Πρωτεΐνη (g)</label><input type="number" id="nr-p" placeholder="0"></div>
-      <div class="form-group"><label>Υδατάνθρακες (g)</label><input type="number" id="nr-c" placeholder="0"></div>
-      <div class="form-group"><label>Λίπος (g)</label><input type="number" id="nr-f" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_kcal')}</label><input type="number" id="nr-kcal" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_protein')} (g)</label><input type="number" id="nr-p" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_carbs')} (g)</label><input type="number" id="nr-c" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_fat')} (g)</label><input type="number" id="nr-f" placeholder="0"></div>
     </div>
     <div class="section-title">Υλικά (1ο)</div>
     <div style="display:flex;gap:8px">
@@ -4633,26 +4632,26 @@ function openAddFoodModal() {
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">➕ Νέο Τρόφιμο</div>
-    <div class="form-group"><label>Όνομα</label><input type="text" id="nf-name" placeholder="πχ. Τυρί κότατζ 0%"></div>
-    <div class="form-group"><label>Κατηγορία</label>
+    <div class="form-group"><label>${t('form_name')}</label><input type="text" id="nf-name" placeholder="${t('form_food_placeholder')}"></div>
+    <div class="form-group"><label>${t('form_category')}</label>
       <select id="nf-cat">
-        <option value="protein">Πρωτεΐνη</option><option value="carbs">Υδατάνθρακες</option>
-        <option value="veggie">Λαχανικά</option><option value="fat">Λιπαρά</option>
-        <option value="dairy">Γαλακτοκομικά</option><option value="fruit">Φρούτα</option><option value="other">Άλλο</option>
+        <option value="protein">${tCategory('protein')}</option><option value="carbs">${tCategory('carbs')}</option>
+        <option value="veggie">${tCategory('veggie')}</option><option value="fat">${tCategory('fat')}</option>
+        <option value="dairy">${tCategory('dairy')}</option><option value="fruit">${tCategory('fruit')}</option><option value="other">${tCategory('other')}</option>
       </select>
     </div>
-    <div class="form-group"><label>Μονάδα</label>
-      <select id="nf-unit"><option value="g">γραμμάρια (g)</option><option value="ml">ml</option><option value="τεμ">τεμάχια</option></select>
+    <div class="form-group"><label>${t('form_unit')}</label>
+      <select id="nf-unit"><option value="g">${t('unit_grams')}</option><option value="ml">ml</option><option value="τεμ">${t('unit_piece_pl')}</option></select>
     </div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-      <span style="font-size:0.82rem;color:var(--text2)">Θρεπτικά στοιχεία</span>
+      <span style="font-size:0.82rem;color:var(--text2)">${t('form_nutrients')}</span>
       <button id="ai-estimate-food-btn" class="btn btn-ghost btn-sm" onclick="estimateFoodCaloriesWithAI(document.getElementById('nf-name').value, document.getElementById('nf-unit').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="form-group"><label>Θερμίδες</label><input type="number" id="nf-kcal" placeholder="0"></div>
-      <div class="form-group"><label>Πρωτεΐνη (g)</label><input type="number" id="nf-p" placeholder="0"></div>
-      <div class="form-group"><label>Υδατάνθρακες (g)</label><input type="number" id="nf-c" placeholder="0"></div>
-      <div class="form-group"><label>Λίπος (g)</label><input type="number" id="nf-f" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_kcal')}</label><input type="number" id="nf-kcal" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_protein')} (g)</label><input type="number" id="nf-p" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_carbs')} (g)</label><input type="number" id="nf-c" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_fat')} (g)</label><input type="number" id="nf-f" placeholder="0"></div>
     </div>
     <button class="btn btn-green btn-full" onclick="saveNewFood()">💾 Αποθήκευση</button>`);
 }
@@ -4776,7 +4775,7 @@ function resetDayDone() {
 }
 
 function resetDayMeals() {
-  if (!confirm(`Επαναφορά Ημέρα ${state.currentDay+1} στα default γεύματα; Οι αλλαγές χάνονται.`)) return;
+  if (!confirm(tFmt('confirm_reset_day', { n: state.currentDay + 1 }))) return;
   state.week[state.currentDay].meals = JSON.parse(JSON.stringify(DEFAULT_WEEK[state.currentDay].meals));
   saveState();
   _refreshAfterMealEdit(state.currentDay);
@@ -4834,9 +4833,9 @@ function exportDayPDF(dayIdx) {
       const r = allRecipes.find(x => x.id === m.recipeId);
       if (!r) return '';
       const mac = calcRecipeMacros(r, m.scaleFactor||1);
-      name = r.emoji + ' ' + r.name;
+      name = r.emoji + ' ' + tName(r);
       kcal = mac.kcal;
-      macStr = `Π:${mac.p}g / Υ:${mac.c}g / Λ:${mac.f}g`;
+      macStr = `${t('macro_p_abbr')}:${mac.p}g / ${t('macro_c_abbr')}:${mac.c}g / ${t('macro_f_abbr')}:${mac.f}g`;
       const ingList = r.ingredients.map(ing => {
         const food = allFoodsLocal.find(f => f.id === ing.foodId);
         if (!food) return '';
@@ -4959,9 +4958,9 @@ function exportPDF_today() {
       const r = allRecipes.find(x => x.id === m.recipeId);
       if (!r) return '';
       const mac = calcRecipeMacros(r, m.scaleFactor||1);
-      name = r.emoji + ' ' + r.name;
+      name = r.emoji + ' ' + tName(r);
       kcal = mac.kcal;
-      macStr = `Π:${mac.p}g / Υ:${mac.c}g / Λ:${mac.f}g`;
+      macStr = `${t('macro_p_abbr')}:${mac.p}g / ${t('macro_c_abbr')}:${mac.c}g / ${t('macro_f_abbr')}:${mac.f}g`;
       const ingList = r.ingredients.map(ing => {
         const food = allFoodsForPrint.find(f => f.id === ing.foodId);
         if (!food) return '';
@@ -5040,7 +5039,7 @@ function exportPDF_today() {
 
 function exportPDF_stats() {
   const g = state.goals;
-  const DAYS_EL = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
+  const DAYS_EL = tDaysWeek();
   const weekData = state.week.map((day, i) => {
     const m = calcDayMacros(i, false);
     const { deficit, stepsKcal, trainingKcal } = calcDayDeficit(i);
@@ -5260,8 +5259,8 @@ function exportPDF_week() {
 
   const balColor = avgPctW >= 88 && avgPctW <= 108 ? '#22c55e' : avgPctW < 88 ? '#f59e0b' : '#ef4444';
   const balEmoji = avgPctW >= 88 && avgPctW <= 108 ? '😊' : avgPctW < 88 ? '😟' : '⚠️';
-  const balLabel = avgPctW >= 88 && avgPctW <= 108 ? 'Πολύ καλή επιλογή!' : avgPctW < 88 ? 'Λίγο χαμηλά' : 'Λίγο ψηλά';
-  const balSub   = avgPctW >= 88 && avgPctW <= 108 ? 'Συνέχισε έτσι' : avgPctW < 88 ? 'Αύξησε λίγο τις θερμίδες' : 'Προσπάθησε να μειώσεις';
+  const balLabel = avgPctW >= 88 && avgPctW <= 108 ? t('stats_balance_great') : avgPctW < 88 ? t('stats_balance_low') : t('stats_balance_high');
+  const balSub   = avgPctW >= 88 && avgPctW <= 108 ? t('week_keep_going') : avgPctW < 88 ? t('week_increase_kcal') : t('week_decrease_kcal');
 
   function printGauge(pct, size) {
     const r = size * 0.38, circ = 2 * Math.PI * r;
@@ -5301,7 +5300,7 @@ function exportPDF_week() {
   };
   const dayNamesAllP = tDays();
   function getPdfDayTitle(di) {
-    if (!state.planStartDate) return `Ημ${di+1}`;
+    if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 });
     const d = new Date(state.planStartDate);
     d.setDate(d.getDate() + di);
     return dayNamesAllP[d.getDay()];
@@ -5392,9 +5391,9 @@ function exportPDF_week() {
         <div style="width:1px;background:#f3f4f6;flex-shrink:0"></div>
         <div style="flex:1;padding:0 5px">
           <div style="font-size:7px;font-weight:800;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px">Μακροθρεπτικά (μέσος όρος)</div>
-          ${printMacroBar('Πρωτεΐνη', avgPW, g.protein || 160, '#3b82f6')}
-          ${printMacroBar('Υδατάνθρακες', avgCW, g.carbs || 200, '#8b5cf6')}
-          ${printMacroBar('Λίπος', avgFW, g.fat || 60, '#f59e0b')}
+          ${printMacroBar(t('macro_protein'), avgPW, g.protein || 160, '#3b82f6')}
+          ${printMacroBar(t('macro_carbs'),   avgCW, g.carbs || 200,   '#8b5cf6')}
+          ${printMacroBar(t('macro_fat'),     avgFW, g.fat || 60,     '#f59e0b')}
         </div>
         <div style="width:1px;background:#f3f4f6;flex-shrink:0"></div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:95px;text-align:center">
@@ -5418,7 +5417,7 @@ function exportPDF_week() {
           <div style="font-size:12px;margin-bottom:1px">🌿</div>
           <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">Ποικιλία τροφών</div>
           <div style="font-size:10px;font-weight:900;color:#111">${uniqueFoodsW.size} διαφ. τρόφιμα</div>
-          <div style="font-size:6.5px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? 'Καλή ποικιλία!' : 'Δοκίμασε περισσότερα'}</div>
+          <div style="font-size:6.5px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? t('diversity_great') : t('diversity_more')}</div>
         </div>
         <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
           <div style="font-size:12px;margin-bottom:1px">💧</div>
@@ -5524,7 +5523,7 @@ function renderStatsPage() {
     const { deficit, stepsKcal, trainingKcal } = calcDayDeficit(i);
     return { day, idx: i, ...m, deficit, stepsKcal, trainingKcal };
   });
-  const DAYS_EL = ['Δευ','Τρί','Τετ','Πέμ','Παρ','Σάβ','Κυρ'];
+  const DAYS_EL = tDaysWeek();
   const goals = state.goals;
   const avgKcal = Math.round(weekData.reduce((s,d) => s + d.kcal, 0) / 7);
   const avgP    = Math.round(weekData.reduce((s,d) => s + d.p,   0) / 7);
@@ -5650,9 +5649,9 @@ function renderStatsPage() {
       <div class="card">
         <h3 style="margin-bottom:12px">Εξέλιξη Σώματος</h3>
         <div style="display:flex;gap:6px;margin-bottom:8px">
-          ${bodyStatCard('#eff6ff','⚖️',weightVal,'Βάρος','#3b82f6')}
-          ${bodyStatCard('#fef2f2','🩸',fatVal,'Λίπος','#ef4444')}
-          ${bodyStatCard('#f0fdf4','💪',muscleVal,'Μυϊκή μάζα','#16a34a')}
+          ${bodyStatCard('#eff6ff','⚖️',weightVal,t('body_weight'),'#3b82f6')}
+          ${bodyStatCard('#fef2f2','🩸',fatVal,t('body_fat'),'#ef4444')}
+          ${bodyStatCard('#f0fdf4','💪',muscleVal,t('body_muscle'),'#16a34a')}
         </div>
         ${dateChip}
         ${bodyChartHtml}
@@ -5739,7 +5738,7 @@ function renderSettingsSupplements() {
       </div>
       ${enabled ? `
       <div style="margin-bottom:12px">
-        <input type="text" id="supp-search" placeholder="Αναζήτηση συμπληρώματος…"
+        <input type="text" id="supp-search" placeholder="${t('search_supplement')}"
           oninput="filterSupplements()"
           style="width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:12px;
           font-size:0.9rem;font-family:inherit;background:var(--bg2);color:var(--text);
@@ -6012,7 +6011,7 @@ async function initApp() {
   // Update sidebar + drawer with signed-in user's name or email
   const user = sbGetCurrentUser();
   if (user) {
-    const _emailShort = (email) => email ? email.split('@')[0] : 'Χρήστης';
+    const _emailShort = (email) => email ? email.split('@')[0] : t('share_user');
     const displayLabel = state.profile.name || _emailShort(user.email);
     const nameEl = document.getElementById('sidebar-user-name');
     if (nameEl) nameEl.textContent = displayLabel;
@@ -6110,6 +6109,6 @@ function updateDrawerUser() {
       avatarEl.textContent = (p && p.name ? p.name : (user ? user.email : 'Δ')).charAt(0).toUpperCase();
     }
   }
-  if (nameEl) nameEl.textContent = (p && p.name) || (user && user.email) || 'Χρήστης';
+  if (nameEl) nameEl.textContent = (p && p.name) || (user && user.email) || t('share_user');
   if (emailEl) emailEl.textContent = (user && user.email) || '';
 }
