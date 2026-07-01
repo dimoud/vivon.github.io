@@ -392,7 +392,7 @@ function addBodyMeasurement() {
   saveState();
   const bodyCard = document.getElementById('body-page-content');
   if (bodyCard) bodyCard.innerHTML = renderBodyMeasurementsCard();
-  showToast('✅ Μέτρηση αποθηκεύτηκε!');
+  showToast(t('toast_body_saved'));
 }
 
 function deleteBodyEntry(date) {
@@ -401,11 +401,11 @@ function deleteBodyEntry(date) {
   saveState();
   const bodyCard = document.getElementById('body-page-content');
   if (bodyCard) bodyCard.innerHTML = renderBodyMeasurementsCard();
-  showToast('🗑 Εγγραφή διαγράφηκε');
+  showToast(t('toast_body_deleted'));
 }
 
 function renderBodyChart(log) {
-  if (!log || log.length < 2) return '<div style="font-size:0.78rem;color:var(--text3);text-align:center;padding:16px 0">Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</div>';
+  if (!log || log.length < 2) return `<div style="font-size:0.78rem;color:var(--text3);text-align:center;padding:16px 0">${t('body_chart_min')}</div>`;
 
   const id = 'bchart_' + Date.now();
   const hasFat    = log.some(e => e.fat    != null);
@@ -424,15 +424,15 @@ function renderBodyChart(log) {
     <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
       <button onclick="bchart_toggleSeries('${id}','weight')" id="${id}_t_weight"
         style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #3b82f6;background:#eff6ff;color:#1d4ed8;cursor:pointer">
-        <span style="width:12px;height:2px;background:#3b82f6;border-radius:1px;display:inline-block"></span>Βάρος (kg)
+        <span style="width:12px;height:2px;background:#3b82f6;border-radius:1px;display:inline-block"></span>${t('body_weight_kg')}
       </button>
       ${hasFat ? `<button onclick="bchart_toggleSeries('${id}','fat')" id="${id}_t_fat"
         style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #ef4444;background:#fef2f2;color:#b91c1c;cursor:pointer">
-        <span style="width:12px;height:2px;background:#ef4444;border-radius:1px;display:inline-block"></span>% Λίπος
+        <span style="width:12px;height:2px;background:#ef4444;border-radius:1px;display:inline-block"></span>${t('body_fat_pct')}
       </button>` : ''}
       ${hasMuscle ? `<button onclick="bchart_toggleSeries('${id}','muscle')" id="${id}_t_muscle"
         style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;font-size:0.7rem;font-weight:700;border-radius:6px;border:2px solid #22c55e;background:#f0fdf4;color:#15803d;cursor:pointer">
-        <span style="width:12px;height:2px;background:#22c55e;border-radius:1px;display:inline-block"></span>% Μυϊκή Μάζα
+        <span style="width:12px;height:2px;background:#22c55e;border-radius:1px;display:inline-block"></span>${t('body_muscle_pct')}
       </button>` : ''}
     </div>
     <!-- Canvas -->
@@ -793,30 +793,30 @@ function renderBodyMeasurementsCard() {
   const chartInfo = log.length < 2
     ? `<div style="display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#0369a1;margin-top:10px">
         <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid #0369a1;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem">i</span>
-        <span>Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</span>
+        <span>${t('body_chart_min')}</span>
        </div>`
     : `<div style="margin-top:10px">${renderBodyChart(log)}</div>`;
 
   // ── History rows ──
   const historyRows = log.length === 0
-    ? `<div style="font-size:0.8rem;color:var(--text3);text-align:center;padding:16px 0">Δεν υπάρχουν μετρήσεις ακόμα</div>`
+    ? `<div style="font-size:0.8rem;color:var(--text3);text-align:center;padding:16px 0">${t('body_log_empty')}</div>`
     : [...log].reverse().slice(0, 8).map(e => {
         const weightCol = `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:48px">
           <span style="font-size:0.85rem">⚖️</span>
           <span style="font-size:0.8rem;font-weight:700;color:#3b82f6;white-space:nowrap">${e.weight} kg</span>
-          <span style="font-size:0.6rem;color:#9ca3af">Βάρος</span>
+          <span style="font-size:0.6rem;color:#9ca3af">${t('body_weight')}</span>
         </div>`;
         const fatCol = (e.fat != null)
           ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:36px">
               <span style="font-size:0.85rem">🩸</span>
               <span style="font-size:0.8rem;font-weight:700;color:#ef4444">${e.fat}%</span>
-              <span style="font-size:0.6rem;color:#9ca3af">Λίπος</span>
+              <span style="font-size:0.6rem;color:#9ca3af">${t('body_fat')}</span>
              </div>` : '';
         const muscleCol = (e.muscle != null)
           ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:48px">
               <span style="font-size:0.85rem">💪</span>
               <span style="font-size:0.8rem;font-weight:700;color:#16a34a">${e.muscle}%</span>
-              <span style="font-size:0.6rem;color:#9ca3af">Μυϊκή μάζα</span>
+              <span style="font-size:0.6rem;color:#9ca3af">${t('body_muscle')}</span>
              </div>` : '';
         return `<div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;gap:8px">
           <div style="font-size:0.73rem;color:#6b7280;font-weight:500;min-width:68px;flex-shrink:0">${fmtDateGr(e.date)}</div>
@@ -828,7 +828,7 @@ function renderBodyMeasurementsCard() {
 
   const showAll = log.length > 8
     ? `<div style="text-align:center;padding-top:12px">
-        <span style="font-size:0.82rem;color:#16a34a;font-weight:600;cursor:pointer">Προβολή όλων των μετρήσεων ›</span>
+        <span style="font-size:0.82rem;color:#16a34a;font-weight:600;cursor:pointer">${t('body_view_all')}</span>
        </div>` : '';
 
   const todayDisplay = fmtDateGr(today);
@@ -841,8 +841,8 @@ function renderBodyMeasurementsCard() {
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
         <div style="width:42px;height:42px;background:linear-gradient(135deg,#e0e7ff,#f0fdf4);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">📊</div>
         <div>
-          <div style="font-size:0.95rem;font-weight:800;color:#111;letter-spacing:0.02em">ΜΕΤΡΗΣΕΙΣ ΣΩΜΑΤΟΣ</div>
-          <div style="font-size:0.72rem;color:#9ca3af;margin-top:2px">Παρακολούθησε την πρόοδό σου</div>
+          <div style="font-size:0.95rem;font-weight:800;color:#111;letter-spacing:0.02em">${t('body_page_title')}</div>
+          <div style="font-size:0.72rem;color:#9ca3af;margin-top:2px">${t('body_page_subtitle')}</div>
         </div>
       </div>
 
@@ -857,11 +857,11 @@ function renderBodyMeasurementsCard() {
     <div class="card card-lg fade-in" style="padding:18px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
         <div style="width:28px;height:28px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#16a34a;line-height:1">+</div>
-        <span style="font-size:0.95rem;font-weight:800;color:#16a34a;letter-spacing:0.03em">ΝΕΑ ΜΕΤΡΗΣΗ</span>
+        <span style="font-size:0.95rem;font-weight:800;color:#16a34a;letter-spacing:0.03em">${t('body_new_entry')}</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;align-items:start">
         <div>
-          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">Ημερομηνία</div>
+          <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">${t('body_date_label')}</div>
           <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
             <span style="font-size:0.85rem;flex-shrink:0">📅</span>
             <input type="date" id="bm-date" value="${today}"
@@ -896,7 +896,7 @@ function renderBodyMeasurementsCard() {
       </div>
       <button onclick="addBodyMeasurement()" style="width:100%;padding:9px 14px;font-size:0.78rem;font-weight:600;border-radius:8px;display:flex;align-items:center;justify-content:center;gap:6px;background:#e5e7eb;color:#374151;border:1px solid #d1d5db;cursor:pointer;letter-spacing:0.01em">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Αποθήκευση Μέτρησης
+        ${t('body_save_btn')}
       </button>
     </div>
 
@@ -905,9 +905,9 @@ function renderBodyMeasurementsCard() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:8px">
           <div style="width:32px;height:32px;background:#f1f5f9;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.95rem">📋</div>
-          <span style="font-size:0.85rem;font-weight:800;color:#111;letter-spacing:0.02em">ΙΣΤΟΡΙΚΟ ΜΕΤΡΗΣΕΩΝ</span>
+          <span style="font-size:0.85rem;font-weight:800;color:#111;letter-spacing:0.02em">${t('body_history_title')}</span>
         </div>
-        ${log.length > 0 ? `<span style="background:#f1f5f9;border-radius:20px;padding:4px 10px;font-size:0.7rem;color:#6b7280;font-weight:600">${log.length} μετρήσεις</span>` : ''}
+        ${log.length > 0 ? `<span style="background:#f1f5f9;border-radius:20px;padding:4px 10px;font-size:0.7rem;color:#6b7280;font-weight:600">${tFmt('body_count', {n: log.length})}</span>` : ''}
       </div>
       ${historyRows}
       ${showAll}
@@ -5227,7 +5227,7 @@ function exportPDF_body() {
   const p = state.profile;
 
   const logRows = log.length === 0
-    ? '<tr><td colspan="4" style="padding:12px;text-align:center;color:#9ca3af;font-size:12px">Δεν υπάρχουν μετρήσεις</td></tr>'
+    ? `<tr><td colspan="4" style="padding:12px;text-align:center;color:#9ca3af;font-size:12px">${t('body_log_empty')}</td></tr>`
     : [...log].reverse().map(e => {
         const fatStr = e.fat !== null && e.fat !== undefined ? `${e.fat}%` : '—';
         const muscleStr = e.muscle !== null && e.muscle !== undefined ? `${e.muscle}%` : '—';
@@ -5636,7 +5636,7 @@ function renderStatsPage() {
   const bodyChartHtml = log.length < 2
     ? `<div style="display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#0369a1;margin-top:10px">
         <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;border:1.5px solid #0369a1;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:0.72rem">i</span>
-        <span>Χρειάζονται τουλάχιστον 2 μετρήσεις για διάγραμμα</span>
+        <span>${t('body_chart_min')}</span>
        </div>`
     : `<div style="margin-top:10px">${renderBodyChart(log)}</div>`;
   const dateChip = latest
