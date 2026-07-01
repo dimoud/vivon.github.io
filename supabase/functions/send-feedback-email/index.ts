@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 const TO_EMAIL = 'moudiotis.meng@gmail.com';
-const FROM_EMAIL = 'noreply@vivon.top'; // must be a verified sender domain in Resend
+const FROM_EMAIL = 'onboarding@resend.dev'; // Resend shared domain, works without verification
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
