@@ -1107,24 +1107,20 @@ function _renderProfileInto(target) {
         <div class="section-title">🎯 Ημερήσιοι Στόχοι</div>
 
         ${(p.weight > 0 && p.height > 0 && p.age > 0) ? `
-        <div style="margin-bottom:14px">
-          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:6px">⚡ Αυτόματος Στόχος</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div id="pace-grid-wrap" style="margin-bottom:14px">
+          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">📉 Απώλεια Βάρους</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
             ${(()=>{
               const slowKcal  = Math.max(Math.round((tdee - 200) / 50) * 50, Math.round(bmr * 0.9));
               const modKcal   = Math.max(Math.round((tdee - 400) / 50) * 50, Math.round(bmr * 0.85));
               const fastKcal  = Math.max(Math.round((tdee - 600) / 50) * 50, Math.round(bmr * 0.80));
               const aggrKcal  = Math.max(Math.round((tdee - 900) / 50) * 50, Math.round(bmr * 0.75));
-              const defSlow   = tdee - slowKcal;
-              const defMod    = tdee - modKcal;
-              const defFast   = tdee - fastKcal;
-              const defAggr   = tdee - aggrKcal;
-              const selected = state.goals.goalPace || 'fast';
+              const selected = state.goals.goalPace || null;
               return [
-                ['slow',       '🐢 Αργός',      `−${defSlow} kcal/ημέρα`,  slowKcal,  '#22c55e', '#f0fdf4'],
-                ['moderate',   '🚶 Μέτριος',    `−${defMod} kcal/ημέρα`,   modKcal,   '#3b82f6', '#eff6ff'],
-                ['fast',       '🏃 Γρήγορος',   `−${defFast} kcal/ημέρα`,  fastKcal,  '#f59e0b', '#fffbeb'],
-                ['aggressive', '🔥 Επιθετικός', `−${defAggr} kcal/ημέρα`,  aggrKcal,  '#ef4444', '#fef2f2'],
+                ['slow',       '🐢 Αργός',      `−${tdee-slowKcal} kcal/ημέρα`,  slowKcal,  '#22c55e', '#f0fdf4'],
+                ['moderate',   '🚶 Μέτριος',    `−${tdee-modKcal} kcal/ημέρα`,   modKcal,   '#3b82f6', '#eff6ff'],
+                ['fast',       '🏃 Γρήγορος',   `−${tdee-fastKcal} kcal/ημέρα`,  fastKcal,  '#f59e0b', '#fffbeb'],
+                ['aggressive', '🔥 Επιθετικός', `−${tdee-aggrKcal} kcal/ημέρα`,  aggrKcal,  '#ef4444', '#fef2f2'],
               ].map(([mode, label, hint, kcalVal, color, bg]) => {
                 const isSelected = mode === selected;
                 const isGrey     = selected && !isSelected;
@@ -1132,13 +1128,40 @@ function _renderProfileInto(target) {
                 const btnBg      = isSelected ? bg : isGrey ? 'var(--bg2)' : bg;
                 const btnOpacity = isGrey ? '0.45' : '1';
                 const labelColor = isGrey ? 'var(--text3)' : 'var(--text)';
-                const hintColor  = isGrey ? 'var(--text3)' : 'var(--text3)';
                 const kcalColor  = isGrey ? 'var(--text3)' : color;
                 return `
                 <button onclick="applyGoalPace('${mode}')"
                   style="padding:8px 6px;border:${btnBorder};border-radius:var(--radius-sm);background:${btnBg};cursor:pointer;text-align:left;transition:all 0.15s;opacity:${btnOpacity}">
                   <div style="font-size:0.78rem;font-weight:800;color:${labelColor}">${label}${isSelected ? ' ✓' : ''}</div>
-                  <div style="font-size:0.65rem;color:${hintColor};margin-top:1px">${hint}</div>
+                  <div style="font-size:0.65rem;color:var(--text3);margin-top:1px">${hint}</div>
+                  <div style="font-size:0.82rem;font-weight:900;color:${kcalColor};margin-top:2px">${kcalVal} kcal</div>
+                </button>`;
+              }).join('');
+            })()}
+          </div>
+          <div style="font-size:0.72rem;font-weight:700;color:var(--text2);margin-bottom:4px">⚖️ Άλλοι Στόχοι</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            ${(()=>{
+              const maintainKcal = Math.round(tdee / 50) * 50;
+              const bulkKcal     = Math.round((tdee + 200) / 50) * 50;
+              const bulkProt     = Math.round(p.weight * 2.2 / 5) * 5;
+              const selected = state.goals.goalPace || null;
+              return [
+                ['maintain', '⚖️ Συντήρηση',   `= TDEE ${tdee} kcal`,          maintainKcal, '#8b5cf6', '#f5f3ff'],
+                ['bulk',     '💪 Αύξηση Μάζας', `+200 kcal · ${bulkProt}g πρωτ.`, bulkKcal,  '#0ea5e9', '#f0f9ff'],
+              ].map(([mode, label, hint, kcalVal, color, bg]) => {
+                const isSelected = mode === selected;
+                const isGrey     = selected && !isSelected;
+                const btnBorder  = isSelected ? `2px solid ${color}` : isGrey ? '2px solid var(--border)' : `2px solid ${color}33`;
+                const btnBg      = isSelected ? bg : isGrey ? 'var(--bg2)' : bg;
+                const btnOpacity = isGrey ? '0.45' : '1';
+                const labelColor = isGrey ? 'var(--text3)' : 'var(--text)';
+                const kcalColor  = isGrey ? 'var(--text3)' : color;
+                return `
+                <button onclick="applyGoalPace('${mode}')"
+                  style="padding:8px 6px;border:${btnBorder};border-radius:var(--radius-sm);background:${btnBg};cursor:pointer;text-align:left;transition:all 0.15s;opacity:${btnOpacity}">
+                  <div style="font-size:0.78rem;font-weight:800;color:${labelColor}">${label}${isSelected ? ' ✓' : ''}</div>
+                  <div style="font-size:0.65rem;color:var(--text3);margin-top:1px">${hint}</div>
                   <div style="font-size:0.82rem;font-weight:900;color:${kcalColor};margin-top:2px">${kcalVal} kcal</div>
                 </button>`;
               }).join('');
@@ -1364,6 +1387,18 @@ function liveUpdateProfile() {
 
   saveState();
 
+  // Re-render pace buttons when profile becomes complete (or TDEE changes)
+  const paceWrap = document.getElementById('pace-grid-wrap');
+  if (profileReady && !paceWrap) {
+    // First time profile is complete — defer re-render so current input keeps focus
+    setTimeout(() => renderProfile(), 0);
+    return;
+  }
+  if (profileReady && paceWrap) {
+    // Re-render pace section so TDEE-based values stay current
+    setTimeout(() => renderProfile(), 0);
+  }
+
   // Δυναμική ενημέρωση BMR / TDEE / BMI χωρίς full re-render
   const bmr  = calcBMR(p);
   const tdee = calcTDEE(p);
@@ -1482,20 +1517,41 @@ function applyGoalPace(mode) {
   const p = state.profile;
   const bmr = calcBMR(p);
   const tdee = calcTDEE(p);
-  const deficits = { slow: 200, moderate: 400, fast: 600, aggressive: 900 };
-  const floors   = { slow: 0.90, moderate: 0.85, fast: 0.80, aggressive: 0.75 };
-  const deficit = deficits[mode] || 400;
-  const floor   = floors[mode]   || 0.85;
-  let kcal = Math.max(Math.round((tdee - deficit) / 50) * 50, Math.round(bmr * floor));
-  const prot = calcIdealProtein(p.weight);
-  state.goals.kcal     = kcal;
-  state.goals.protein  = prot;
-  state.goals.carbs    = Math.round((kcal * 0.35) / 4 / 5) * 5;
-  state.goals.fat      = Math.round((kcal * 0.25) / 9 / 5) * 5;
+
+  let kcal, prot;
+
+  if (mode === 'maintain') {
+    kcal = Math.round(tdee / 50) * 50;
+    prot = calcIdealProtein(p.weight);
+    state.goals.kcal     = kcal;
+    state.goals.protein  = prot;
+    state.goals.carbs    = Math.round((kcal * 0.40) / 4 / 5) * 5;
+    state.goals.fat      = Math.round((kcal * 0.30) / 9 / 5) * 5;
+  } else if (mode === 'bulk') {
+    kcal = Math.round((tdee + 200) / 50) * 50;
+    // Υψηλότερη πρωτεΐνη για αύξηση μάζας: 2.2g/kg
+    prot = Math.round(p.weight * 2.2 / 5) * 5;
+    state.goals.kcal     = kcal;
+    state.goals.protein  = prot;
+    state.goals.carbs    = Math.round((kcal * 0.45) / 4 / 5) * 5;
+    state.goals.fat      = Math.round((kcal * 0.25) / 9 / 5) * 5;
+  } else {
+    const deficits = { slow: 200, moderate: 400, fast: 600, aggressive: 900 };
+    const floors   = { slow: 0.90, moderate: 0.85, fast: 0.80, aggressive: 0.75 };
+    const deficit  = deficits[mode] || 400;
+    const floor    = floors[mode]   || 0.85;
+    kcal = Math.max(Math.round((tdee - deficit) / 50) * 50, Math.round(bmr * floor));
+    prot = calcIdealProtein(p.weight);
+    state.goals.kcal     = kcal;
+    state.goals.protein  = prot;
+    state.goals.carbs    = Math.round((kcal * 0.35) / 4 / 5) * 5;
+    state.goals.fat      = Math.round((kcal * 0.25) / 9 / 5) * 5;
+  }
+
   state.goals.goalPace = mode;
   saveState();
   renderProfile();
-  const modeLabels = { slow: 'Αργός', moderate: 'Μέτριος', fast: 'Γρήγορος', aggressive: 'Επιθετικός' };
+  const modeLabels = { slow: 'Αργός', moderate: 'Μέτριος', fast: 'Γρήγορος', aggressive: 'Επιθετικός', maintain: 'Συντήρηση', bulk: 'Αύξηση Μάζας' };
   showToast(`✅ ${modeLabels[mode]}: ${kcal} kcal · ${prot}g πρωτ.`);
   autoSaveSettings();
 }
@@ -5949,11 +6005,13 @@ async function initApp() {
   // Update sidebar + drawer with signed-in user's name or email
   const user = sbGetCurrentUser();
   if (user) {
+    const _emailShort = (email) => email ? email.split('@')[0] : 'Χρήστης';
+    const displayLabel = state.profile.name || _emailShort(user.email);
     const nameEl = document.getElementById('sidebar-user-name');
-    if (nameEl) nameEl.textContent = state.profile.name || user.email || 'Χρήστης';
+    if (nameEl) nameEl.textContent = displayLabel;
     const dName  = document.getElementById('drawer-user-name');
     const dEmail = document.getElementById('drawer-user-email');
-    if (dName)  dName.textContent  = state.profile.name || user.email || 'Χρήστης';
+    if (dName)  dName.textContent  = displayLabel;
     if (dEmail) dEmail.textContent = user.email || '';
   }
 

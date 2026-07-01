@@ -45,7 +45,7 @@ const PHILOSOPHY_QUOTES = [
   { text: "Σιωπῇ καὶ πόνῳ τὰ μεγάλα πράττεται.", author: "Αρχαία Γνώμη", translation: "Τα μεγάλα πράγματα γίνονται με σιωπή και κόπο." },
 ];
 
-const DEFAULT_GOALS = { kcal: 1700, protein: 155, carbs: 150, fat: 45 };
+const DEFAULT_GOALS = { kcal: 1000, protein: 60, carbs: 150, fat: 45 };
 
 // Προεπιλεγμένο προφίλ χρήστη
 const DEFAULT_PROFILE = {
@@ -55,7 +55,7 @@ const DEFAULT_PROFILE = {
   height: 0,
   age: 0,
   gender: 'male',
-  activity: 1.35,    // Mifflin-St Jeor multipliers: 1.20/1.35/1.50/1.65/1.80
+  activity: 0,    // weekly training sessions (0 = καμία δραστηριότητα)
   dailySteps: 0,  // μέσος αριθμός βημάτων/ημέρα για TDEE
   useCustomTDEE: false,  // αν true, χρησιμοποιεί customTDEE αντί υπολογισμού
   customTDEE: 0,         // χειροκίνητα εισαγμένο TDEE (0 = αχρησιμοποίητο)
