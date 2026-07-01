@@ -186,6 +186,23 @@
     </div><!-- /app-content -->
   </div><!-- /app-shell -->
 
+  <!-- PLAN WIZARD -->
+  <div id="wizard-overlay" class="wizard-overlay" onclick="if(event.target===this)_closeWizard()">
+    <div class="wizard-modal">
+      <div class="wizard-header">
+        <div class="wizard-title" id="wizard-step-title"></div>
+        <div class="wizard-steps" id="wizard-step-dots"></div>
+        <div class="wizard-step-label" id="wizard-meal-label"></div>
+        <div class="wizard-step-sublabel" id="wizard-meal-sublabel"></div>
+      </div>
+      <div class="wizard-body" id="wizard-body"></div>
+      <div class="wizard-footer">
+        <button class="btn-back" id="wizard-btn-back" onclick="wizardBack()">← Πίσω</button>
+        <button class="btn-next" id="wizard-btn-next" onclick="wizardNext()">Επόμενο →</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div id="modal-overlay" class="modal-overlay">
     <div class="modal-sheet">
