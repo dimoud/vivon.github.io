@@ -1204,14 +1204,19 @@ input[type="range"]::-moz-range-thumb {
 /* ── MODAL ── */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0,0,0,0);
   z-index: 200;
   display: none;
   align-items: flex-end;
   justify-content: center;
   padding: 0;
+  transition: background 0.22s ease;
 }
-.modal-overlay.open { display: flex; }
+.modal-overlay.open {
+  display: flex;
+  background: rgba(0,0,0,0.45);
+  animation: overlayFadeIn 0.22s ease forwards;
+}
 .modal-sheet {
   background: var(--card);
   border-radius: 24px 24px 0 0;
@@ -1220,11 +1225,22 @@ input[type="range"]::-moz-range-thumb {
   max-height: 90vh;
   overflow-y: auto;
   padding: 20px 20px 30px;
-  animation: slideUp 0.25s cubic-bezier(.4,0,.2,1);
+  animation: slideUp 0.28s cubic-bezier(.22,1,.36,1);
+}
+@keyframes overlayFadeIn {
+  from { background: rgba(0,0,0,0); }
+  to   { background: rgba(0,0,0,0.45); }
 }
 @keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
+  from { transform: translateY(60px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
+}
+.modal-closing {
+  animation: slideDown 0.22s cubic-bezier(.4,0,1,1) forwards !important;
+}
+@keyframes slideDown {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(60px); opacity: 0; }
 }
 .modal-handle {
   width: 40px; height: 4px;
@@ -1443,7 +1459,67 @@ select { cursor: pointer; }
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 10px;
-  align-items: start;
+  align-items: stretch;
+}
+.week-day-card {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.week-day-card-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.week-day-card-header:hover { background: var(--bg2); }
+.week-day-card-body {
+  padding: 8px 8px 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Week meal chip — clickable meal card inside weekly view */
+.week-meal-chip {
+  background: var(--chip-bg, #f9fafb);
+  border-left: 3px solid var(--chip-border, #e5e7eb);
+  border-radius: 0 6px 6px 0;
+  padding: 5px 7px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s cubic-bezier(.4,0,.2,1),
+              box-shadow 0.15s cubic-bezier(.4,0,.2,1),
+              background 0.15s, opacity 0.15s;
+  user-select: none;
+}
+.week-meal-chip:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+  filter: brightness(0.97);
+}
+.week-meal-chip:active {
+  transform: scale(0.96);
+  box-shadow: none;
+  opacity: 0.85;
+  transition-duration: 0.08s;
+}
+.week-meal-edit-icon {
+  font-size: 0.72rem;
+  color: var(--chip-color, var(--text3));
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.week-meal-chip:hover .week-meal-edit-icon {
+  opacity: 1;
 }
 @media (max-width: 900px) {
   .week-days-grid { grid-template-columns: repeat(3, 1fr); }
@@ -1522,9 +1598,10 @@ select { cursor: pointer; }
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 60vh;
+  max-height: 44vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
 }
 .swap-row {
   display: flex;
@@ -1538,10 +1615,25 @@ select { cursor: pointer; }
   transition: all var(--transition);
   gap: 10px;
 }
-.swap-row:hover, .swap-row:active {
+.swap-row:hover {
+  border-color: var(--blue);
+  background: var(--blue-bg);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(59,130,246,0.12);
+}
+.swap-row:active, .swap-row-picking {
+  transform: scale(0.97);
   border-color: var(--green-d);
   background: var(--green-bg);
+  box-shadow: none;
 }
+.swap-row-selected {
+  border-color: var(--green-d) !important;
+  background: var(--green-bg) !important;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+}
+.swap-row-selected .swap-name { color: var(--green-d); }
+.swap-row-selected .swap-kcal { color: var(--green-d); }
 .swap-row-left {
   display: flex;
   align-items: flex-start;
@@ -1586,6 +1678,104 @@ select { cursor: pointer; }
   color: var(--text3);
   display: block;
 }
+
+/* ── Swap modal: sticky scale bar ── */
+.swap-scale-bar {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -20px -30px;
+  padding: 12px 18px 20px;
+  background: var(--card);
+  border-top: 1.5px solid var(--border);
+  box-shadow: 0 -6px 20px rgba(0,0,0,0.07);
+}
+.swap-scale-preview {
+  min-height: 28px;
+  margin-bottom: 10px;
+  transition: opacity 0.2s;
+}
+.swap-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.swap-preview-sf {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text2);
+}
+.swap-preview-macros {
+  display: flex;
+  gap: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.swap-scale-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.swap-scale-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.swap-scale-slider {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--green) 0%, var(--green) calc((var(--pct,50)) * 1%), var(--border) calc((var(--pct,50)) * 1%), var(--border) 100%);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.swap-scale-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--green-d);
+  box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+  cursor: grab;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.swap-scale-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.2);
+  box-shadow: 0 3px 12px rgba(22,163,74,0.4);
+}
+.swap-scale-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid var(--green-d);
+  box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+  cursor: grab;
+}
+.swap-apply-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 12px;
+  border: none;
+  background: var(--green-d);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+.swap-apply-btn:hover { background: #15803d; }
+.swap-apply-btn:active { transform: scale(0.97); background: #166534; }
 .selected-builder {
   border-color: var(--green-d) !important;
   background: var(--green-bg) !important;
@@ -1753,12 +1943,13 @@ select { cursor: pointer; }
 /* ── SAVE DESTINATION + WEEK OVERVIEW CARDS ── */
 .dplanner-daycard {
   background: var(--card);
-  border-radius: 16px;
-  padding: 16px;
-  margin: 0 12px 10px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  display: none;
+  border-radius: 0;
+  padding: 14px 20px;
+  margin: 0;
+  box-shadow: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  display: block;
 }
 .dplanner-daycard-title { font-size: 0.92rem; font-weight: 800; }
 
@@ -1801,8 +1992,8 @@ select { cursor: pointer; }
 /* 3-column grid */
 .dplanner-cols {
   display: grid;
-  grid-template-columns: minmax(0, 38%) 1fr minmax(0, 22%);
-  gap: 16px;
+  grid-template-columns: 2.2fr 1.8fr 1.2fr;
+  gap: 0;
   flex: 1;
   min-height: 0;
   overflow: hidden;
@@ -1815,19 +2006,32 @@ select { cursor: pointer; }
   border-right: 1px solid var(--border);
   min-height: 0;
   overflow: hidden;
+  background: var(--card);
 }
 .dplanner-col:last-child { border-right: none; }
 
-.dplanner-col-head {
-  padding: 14px 16px 10px;
+/* Title row — same height in all 3 cols so titles align */
+.dplanner-col-title {
+  padding: 20px 20px 16px;
   background: var(--card);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }
-.dplanner-col-head h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 6px; }
+.dplanner-col-title h3 { font-size: 1rem; font-weight: 800; margin: 0; }
+
+/* Sub-header (search/pills/nav) — below the title */
+.dplanner-col-subhead {
+  padding: 10px 16px 10px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Legacy wrapper kept for mobile compatibility */
+.dplanner-col-head { flex-shrink: 0; }
 
 .dplanner-col-body {
-  padding: 12px;
+  padding: 12px 16px;
   background: var(--bg);
   flex: 1;
   overflow-y: auto;
@@ -1835,6 +2039,55 @@ select { cursor: pointer; }
 }
 .dplanner-col-body::-webkit-scrollbar { width: 4px; }
 .dplanner-col-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Desktop week selector (right col) ── */
+.dplanner-desktop-week {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.dplanner-desktop-week-title {
+  font-size: 0.8rem; font-weight: 800; margin-bottom: 10px; color: var(--text2);
+  letter-spacing: 0.3px;
+}
+.dplanner-desktop-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.dplanner-desktop-day-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 2px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: pointer;
+  transition: all var(--transition);
+  font-size: 0.65rem; font-weight: 700; color: var(--text2);
+}
+.dplanner-desktop-day-btn:hover { border-color: var(--green-d); background: var(--green-bg); }
+.dplanner-desktop-day-btn.has-meals {
+  border-color: var(--green-d); background: var(--green-d); color: #fff;
+}
+.dplanner-desktop-day-check {
+  width: 16px; height: 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dplanner-apply-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 14px;
+  background: var(--green-d); color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer; transition: opacity var(--transition);
+  margin-top: 8px;
+}
+.dplanner-apply-btn:hover { opacity: 0.88; }
+.dplanner-apply-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── LEFT: meal library section headers ── */
 .dplanner-lib-section-header {
@@ -1948,7 +2201,7 @@ select { cursor: pointer; }
 
 /* ── MIDDLE: day plan ── */
 .dplanner-day-nav {
-  display: flex; align-items: center; gap: 6px; margin-top: 6px;
+  display: flex; align-items: center; gap: 6px; margin-top: 0;
 }
 .dplanner-nav-btn {
   background: none; border: 1px solid var(--border); border-radius: 50%;
@@ -1963,36 +2216,60 @@ select { cursor: pointer; }
 }
 
 .dplanner-slot {
-  margin-bottom: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
 }
 .dplanner-slot-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px;
+  padding: 14px 16px;
 }
-.dplanner-slot-left { display: flex; align-items: center; gap: 8px; }
+.dplanner-slot-left { display: flex; align-items: center; gap: 12px; }
+.dplanner-slot-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.dplanner-slot-dot.breakfast { background: #f59e0b; }
+.dplanner-slot-dot.snack     { background: #22c55e; }
+.dplanner-slot-dot.lunch     { background: #3b82f6; }
+.dplanner-slot-dot.afternoon { background: #06b6d4; }
+.dplanner-slot-dot.dinner    { background: #8b5cf6; }
 .dplanner-slot-icon {
-  width: 34px; height: 34px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1rem; flex-shrink: 0;
+  font-size: 1.2rem; flex-shrink: 0;
 }
 .dplanner-slot-icon.breakfast { background: #fef3c7; }
 .dplanner-slot-icon.snack     { background: #dcfce7; }
 .dplanner-slot-icon.lunch     { background: #dbeafe; }
 .dplanner-slot-icon.afternoon { background: #cffafe; }
 .dplanner-slot-icon.dinner    { background: #ede9fe; }
-.dplanner-slot-title { font-size: 0.88rem; font-weight: 800; }
-.dplanner-slot-time  { font-size: 0.68rem; color: var(--text3); }
-.dplanner-slot-kcal  { font-size: 0.88rem; font-weight: 800; }
+.dplanner-slot-time  { font-size: 0.68rem; color: var(--text3); margin-bottom: 2px; }
+.dplanner-slot-title { font-size: 0.92rem; font-weight: 800; }
+.dplanner-slot-kcal  { font-size: 0.78rem; font-weight: 600; color: var(--text3); }
+.dplanner-slot-add-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid var(--green-d); color: var(--green-d);
+  background: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 400; flex-shrink: 0;
+  line-height: 1;
+  transition: all var(--transition);
+}
+.dplanner-slot-add-btn:hover { background: var(--green-d); color: #fff; }
+
+.dplanner-slot-entries { padding: 0 16px 10px; }
 
 .dplanner-entry {
   display: flex; align-items: center; gap: 8px;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 8px; padding: 8px 10px;
-  margin-bottom: 4px; font-size: 0.82rem;
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
 }
-.dplanner-entry-emoji { font-size: 1.2rem; flex-shrink: 0; }
+.dplanner-entry-emoji { font-size: 1.1rem; flex-shrink: 0; }
 .dplanner-entry-name  { flex: 1; font-weight: 600; color: var(--text); }
-.dplanner-entry-kcal  { font-size: 0.8rem; font-weight: 700; color: var(--green-d); white-space: nowrap; }
+.dplanner-entry-kcal  { font-size: 0.78rem; font-weight: 700; color: var(--text3); white-space: nowrap; }
 .dplanner-entry-rm    {
   background: none; border: none; color: var(--text3); cursor: pointer;
   font-size: 1rem; padding: 2px 4px; border-radius: 4px;
@@ -2002,14 +2279,12 @@ select { cursor: pointer; }
 
 .dplanner-add-slot-btn {
   display: flex; align-items: center; gap: 6px;
-  width: 100%; padding: 6px 10px;
+  width: 100%; padding: 8px 16px;
   font-size: 0.75rem; color: var(--text3);
-  background: none; border: 1px dashed var(--border); border-radius: 8px;
-  cursor: pointer; text-align: left; transition: all var(--transition);
+  background: none; border: none; border-top: 1px solid var(--border);
+  cursor: pointer; transition: all var(--transition);
 }
-.dplanner-add-slot-btn:hover {
-  color: var(--green-d); border-color: var(--green-d); background: var(--green-bg);
-}
+.dplanner-add-slot-btn:hover { color: var(--green-d); background: var(--green-bg); }
 
 /* ── RIGHT: summary ── */
 .dplanner-donut-wrap {
@@ -2081,7 +2356,15 @@ select { cursor: pointer; }
   /* Show new mobile cards, hide desktop topbar */
   .dplanner-topbar  { display: none; }
   .dplanner-topcard { display: block; }
-  .dplanner-daycard { display: block; }
+  .dplanner-daycard {
+    display: block;
+    border-radius: 16px;
+    margin: 0 12px 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
 
   /* Compact 2-per-row meal cards on mobile */
   .dplanner-lib-grid   { grid-template-columns: 1fr 1fr; gap: 6px; }

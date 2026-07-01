@@ -2715,6 +2715,7 @@ function renderWeek() {
       }, 0);
 
       return meals.map(me => {
+        const mi = day.meals.indexOf(me);
         let name = '', kcal = 0, emoji = '';
         if (me.standardId) {
           const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
@@ -2732,10 +2733,11 @@ function renderWeek() {
             <span style="font-size:0.6rem;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em">${meta.label}</span>
             <span style="font-size:0.6rem;font-weight:700;color:${meta.color}">${typeKcal} kcal</span>
           </div>
-          <div style="background:${meta.bg};border-left:3px solid ${meta.border};border-radius:0 6px 6px 0;padding:5px 7px;cursor:pointer" onclick="goToDay(${di})">
+          <div class="week-meal-chip" style="--chip-bg:${meta.bg};--chip-border:${meta.border};--chip-color:${meta.color}" onclick="openSwapMeal(${mi},${di})">
             <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px">
               <span style="font-size:1.15rem;flex-shrink:0">${emoji}</span>
               <span style="font-size:0.7rem;font-weight:700;color:var(--text);line-height:1.3;flex:1">${name}</span>
+              <span class="week-meal-edit-icon">✎</span>
             </div>
             <div style="font-size:0.62rem;color:${meta.color};font-weight:700">${kcal} kcal</div>
           </div>
@@ -2743,15 +2745,18 @@ function renderWeek() {
       }).join('');
     }).join('');
 
-    return `<div style="background:var(--card);border-radius:12px;border:1px solid var(--border);border-top:${borderTop};box-shadow:var(--shadow);overflow:hidden;min-width:0">
-      <div style="padding:10px 10px 8px;border-bottom:1px solid var(--border)">
-        <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${getDayTitle(di)}</div>
+    return `<div class="week-day-card" style="border-top:${borderTop}">
+      <div class="week-day-card-header" onclick="goToDay(${di})" title="Μετάβαση στην ημέρα">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${getDayTitle(di)}</div>
+          <span style="font-size:0.6rem;color:var(--text3)">→</span>
+        </div>
         ${dateStr}
         <div style="margin-top:6px">
           <div style="font-size:1rem;font-weight:900;color:${barColor}">${m.kcal > 0 ? m.kcal.toLocaleString() : '—'} kcal</div>
         </div>
       </div>
-      <div style="padding:8px 8px 10px">
+      <div class="week-day-card-body">
         ${mealSections || '<div style="font-size:0.65rem;color:var(--text3);text-align:center;padding:12px 0">Κανένα γεύμα</div>'}
         ${allDone ? `<div style="margin-top:6px;text-align:center"><span style="font-size:0.62rem;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 8px">✓ Ολοκληρώθηκε</span></div>` : ''}
         ${extraKcal > 0 ? `<div style="margin-top:4px;font-size:0.62rem;color:#ef4444;font-weight:700;text-align:center">⚠️ +${extraKcal} kcal εκτός</div>` : ''}
@@ -3295,7 +3300,7 @@ function runOptimize(allDays = false) {
     showToast(`✅ Ημέρα ${state.currentDay+1} βελτιστοποιήθηκε`);
   }
   saveState();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
   navigateTo('today');
 }
 
@@ -3419,15 +3424,19 @@ function renderBuilderPage(typeFilter) {
     middleHtml += `<div class="dplanner-slot">
       <div class="dplanner-slot-header">
         <div class="dplanner-slot-left">
+          <span class="dplanner-slot-dot ${meta.cls}"></span>
           <div class="dplanner-slot-icon ${meta.cls}">${meta.icon}</div>
           <div>
-            <div class="dplanner-slot-title">${meta.label}</div>
             <div class="dplanner-slot-time">${meta.time}</div>
+            <div class="dplanner-slot-title">${meta.label}</div>
           </div>
         </div>
-        ${slotKcal > 0 ? `<div class="dplanner-slot-kcal" style="color:${meta.color}">${slotKcal} kcal</div>` : ''}
+        <div style="display:flex;align-items:center;gap:8px">
+          ${slotKcal > 0 ? `<div class="dplanner-slot-kcal">${slotKcal} kcal</div>` : ''}
+          <button class="dplanner-slot-add-btn" onclick="dpHighlightType('${t}')" title="Προσθήκη τροφίμου">+</button>
+        </div>
       </div>
-      ${entriesHtml}
+      ${entriesHtml ? `<div class="dplanner-slot-entries">${entriesHtml}</div>` : ''}
       <button class="dplanner-add-slot-btn" onclick="dpHighlightType('${t}')">+ Προσθήκη τροφίμου</button>
     </div>`;
   });
@@ -3565,7 +3574,7 @@ function renderBuilderPage(typeFilter) {
         })()}
       </div>
       ${(state._builderSavedDays && state._builderSavedDays.length > 0) ? `
-      <button class="dplanner-btn-apply" onclick="builderApplyWeekToSchedule()">
+      <button class="dplanner-btn-apply" onclick="builderConfirmApply('${typeFilter}')">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Εφαρμογή στο πρόγραμμα (${state._builderSavedDays.length} ημέρες)
       </button>` : ''}
@@ -3577,16 +3586,18 @@ function renderBuilderPage(typeFilter) {
       <!-- LEFT: Meal Library -->
       <div class="dplanner-col">
         <div class="dplanner-col-head">
-          <h3>Βιβλιοθήκη τροφίμων</h3>
-          <div class="dplanner-search-wrap">
-            <span class="dplanner-search-icon">🔍</span>
-            <input type="text" placeholder="Αναζήτηση γευμάτων..."
-              value="${window._builderSearch || ''}"
-              oninput="window._builderSearch=this.value;renderBuilderPage('${typeFilter}')">
-          </div>
-          <div class="recipe-filter-pills" style="margin-top:8px">
-            ${filterLabels.map(fl => `<button class="recipe-pill ${typeFilter===fl.key?'active':''}"
-              onclick="renderBuilderPage('${fl.key}')">${fl.icon ? fl.icon+' ' : ''}${fl.label}</button>`).join('')}
+          <div class="dplanner-col-title"><h3>Βιβλιοθήκη τροφίμων</h3></div>
+          <div class="dplanner-col-subhead">
+            <div class="dplanner-search-wrap">
+              <span class="dplanner-search-icon">🔍</span>
+              <input type="text" placeholder="Αναζήτηση γευμάτων..."
+                value="${window._builderSearch || ''}"
+                oninput="window._builderSearch=this.value;renderBuilderPage('${typeFilter}')">
+            </div>
+            <div class="recipe-filter-pills" style="margin-top:8px">
+              ${filterLabels.map(fl => `<button class="recipe-pill ${typeFilter===fl.key?'active':''}"
+                onclick="renderBuilderPage('${fl.key}')">${fl.icon ? fl.icon+' ' : ''}${fl.label}</button>`).join('')}
+            </div>
           </div>
         </div>
         <div class="dplanner-col-body">${libHtml}</div>
@@ -3595,11 +3606,13 @@ function renderBuilderPage(typeFilter) {
       <!-- MIDDLE: Day Plan -->
       <div class="dplanner-col">
         <div class="dplanner-col-head">
-          <h3>Το πλάνο της ημέρας</h3>
-          <div class="dplanner-day-nav">
-            <button class="dplanner-nav-btn" onclick="state.currentDay=Math.max(0,state.currentDay-1);renderBuilderPage('${typeFilter}')">‹</button>
-            <div class="dplanner-day-label">${dayLabel}</div>
-            <button class="dplanner-nav-btn" onclick="state.currentDay=Math.min(state.week.length-1,state.currentDay+1);renderBuilderPage('${typeFilter}')">›</button>
+          <div class="dplanner-col-title"><h3>Το πλάνο της ημέρας</h3></div>
+          <div class="dplanner-col-subhead">
+            <div class="dplanner-day-nav" style="margin-top:0">
+              <button class="dplanner-nav-btn" onclick="state.currentDay=Math.max(0,state.currentDay-1);renderBuilderPage('${typeFilter}')">‹</button>
+              <div class="dplanner-day-label">${dayLabel}</div>
+              <button class="dplanner-nav-btn" onclick="state.currentDay=Math.min(state.week.length-1,state.currentDay+1);renderBuilderPage('${typeFilter}')">›</button>
+            </div>
           </div>
         </div>
         <div class="dplanner-col-body">
@@ -3609,7 +3622,9 @@ function renderBuilderPage(typeFilter) {
 
       <!-- RIGHT: Summary -->
       <div class="dplanner-col">
-        <div class="dplanner-col-head"><h3>Σύνοψη ημέρας</h3></div>
+        <div class="dplanner-col-head">
+          <div class="dplanner-col-title"><h3>Σύνοψη ημέρας</h3></div>
+        </div>
         <div class="dplanner-col-body">
 
           <!-- Donut -->
@@ -3782,11 +3797,22 @@ function builderSaveToDay(dayIdx, typeFilter) {
   renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
 }
 
-function builderApplyWeekToSchedule() {
+function builderConfirmApply(typeFilter) {
+  if (!state._builderSavedDays || !state._builderSavedDays.length) {
+    showToast('⚠️ Δεν έχεις επιλέξει ημέρες'); return;
+  }
+  const dayNames = state._builderSavedDays.map(i => state.week[i]?.label || `Η${i+1}`).join(', ');
+  showConfirmModal(
+    'Εφαρμογή προγράμματος',
+    `Θέλεις να αποθηκεύσεις το πλάνο για: <strong>${dayNames}</strong>;<br><br>Το υπάρχον πρόγραμμα των ημερών αυτών θα αντικατασταθεί.`,
+    () => builderApplyWeekToSchedule(typeFilter)
+  );
+}
+
+function builderApplyWeekToSchedule(typeFilter) {
   if (!state._builderSavedDays || !state._builderSavedDays.length) {
     showToast('⚠️ Δεν έχεις αποθηκεύσει καμία ημέρα'); return;
   }
-  if (!confirm(`Να αντικατασταθεί το τρέχον εβδομαδιαίο πρόγραμμα για ${state._builderSavedDays.length} ημέρα/ες;`)) return;
   state._builderSavedDays.forEach(i => {
     if (state._builderWeek && state._builderWeek[i]) {
       state.week[i].meals = state._builderWeek[i].meals;
@@ -3798,7 +3824,7 @@ function builderApplyWeekToSchedule() {
   state.programCreated = true;
   saveState();
   showToast('✅ Το πρόγραμμα ενημερώθηκε!');
-  renderBuilderPage(state._builderFilter || 'breakfast');
+  renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
 }
 
 function applyBuilderToDayIdx(dayIdx) {
@@ -3982,6 +4008,8 @@ function applyTemplateToDay(ti, dayIdx) {
   closeModal();
   showToast(`✅ "${tpl.name}" → Ημέρα ${dayIdx+1}`);
   if (dayIdx === state.currentDay) { navigateTo('today'); } else { renderSettingsPage(); }
+  const weekPage = document.getElementById('page-week');
+  if (weekPage && weekPage.classList.contains('active')) renderWeek();
 }
 
 
@@ -4030,7 +4058,7 @@ function toggleRecipeExpand(btn) {
 function toggleMealDone(mi) {
   state.week[state.currentDay].meals[mi].done = !state.week[state.currentDay].meals[mi].done;
   saveState();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
 }
 
 function toggleSupp(id) {
@@ -4098,13 +4126,39 @@ function toggleFavorite(rid) {
 }
 
 // ── MODALS ──
+function showConfirmModal(title, bodyHtml, onConfirm) {
+  const id = 'confirm_cb_' + Date.now();
+  window[id] = () => { closeModal(); onConfirm(); delete window[id]; };
+  openModal(`
+    <div style="padding:20px">
+      <h3 style="font-size:1rem;font-weight:800;margin-bottom:12px">${title}</h3>
+      <div style="font-size:0.88rem;color:var(--text2);line-height:1.6;margin-bottom:20px">${bodyHtml}</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Ακύρωση</button>
+        <button class="btn btn-green" style="flex:1" onclick="window['${id}']()" >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Εφαρμογή
+        </button>
+      </div>
+    </div>
+  `);
+}
+
 function openModal(html) {
   const overlay = document.getElementById('modal-overlay');
+  const sheet = overlay.querySelector('.modal-sheet');
   document.getElementById('modal-content').innerHTML = html;
+  sheet.classList.remove('modal-closing');
   overlay.classList.add('open');
 }
 function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
+  const overlay = document.getElementById('modal-overlay');
+  const sheet = overlay.querySelector('.modal-sheet');
+  sheet.classList.add('modal-closing');
+  setTimeout(() => {
+    overlay.classList.remove('open');
+    sheet.classList.remove('modal-closing');
+  }, 220);
 }
 
 function openRecipeDetail(rid) {
@@ -4174,17 +4228,29 @@ function openFoodDetail(fid) {
     <button class="btn btn-ghost btn-full" onclick="closeModal()">Κλείσιμο</button>`);
 }
 
-function openSwapMeal(mi) {
+
+// State for the swap modal pending selection
+let _swapPending = { mi: null, dayIdx: null, type: null, id: null, isStd: false, sf: 1 };
+
+function openSwapMeal(mi, dayIdx) {
+  if (dayIdx === undefined) dayIdx = state.currentDay;
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  const currentType = state.week[state.currentDay].meals[mi].type;
+  const currentMeal = state.week[dayIdx].meals[mi];
+  const currentType = currentMeal.type;
   const snackTypes = currentType === 'afternoon' ? ['afternoon', 'snack'] : [currentType];
   const recipes = allRecipes.filter(r => snackTypes.includes(r.meal));
   const standards = STANDARD_MEALS.filter(s => snackTypes.includes(s.meal));
   const mealTypeLabel = { breakfast:'Πρωινά', lunch:'Μεσημεριανά', dinner:'Βραδινά', snack:'Δεκατιανό', afternoon:'Απογευματινό' }[currentType] || '';
 
+  const currentId = currentMeal.standardId || currentMeal.recipeId;
+  const currentSf = currentMeal.scaleFactor || 1;
+
+  // Init pending state
+  _swapPending = { mi, dayIdx, type: currentType, id: currentId, isStd: !!currentMeal.standardId, sf: currentSf };
+
   const standardItems = standards.map(s => ({
     key: 'std:' + s.id,
-    html: `<div class="swap-row" data-name="${s.name.toLowerCase()}" onclick="swapMealStandard(${mi},'${s.id}')">
+    html: `<div class="swap-row${s.id === currentId ? ' swap-row-selected' : ''}" data-name="${s.name.toLowerCase()}" data-id="${s.id}" data-isstd="1" data-kcal="${s.kcal_est}" data-p="${s.p||0}" data-c="${s.c||0}" data-f="${s.f||0}" onclick="_swapRowClick(this)">
       <div class="swap-row-left">
         <span class="swap-emoji">${s.emoji}</span>
         <div>
@@ -4201,7 +4267,7 @@ function openSwapMeal(mi) {
     const m = calcRecipeMacros(r);
     return {
       key: 'rec:' + r.id,
-      html: `<div class="swap-row" data-name="${r.name.toLowerCase()}" onclick="swapMeal(${mi},'${r.id}')">
+      html: `<div class="swap-row${r.id === currentId ? ' swap-row-selected' : ''}" data-name="${r.name.toLowerCase()}" data-id="${r.id}" data-isstd="0" data-kcal="${m.kcal}" data-p="${m.p}" data-c="${m.c}" data-f="${m.f}" onclick="_swapRowClick(this)">
         <div class="swap-row-left">
           <span class="swap-emoji">${r.emoji}</span>
           <div>
@@ -4227,12 +4293,99 @@ function openSwapMeal(mi) {
     </div>
     <div class="swap-list" id="swap-list-inner">
       ${listHTML || '<div class="empty-state"><p>Δεν βρέθηκαν γεύματα</p></div>'}
+    </div>
+    <div class="swap-scale-bar" id="swap-scale-bar">
+      <div class="swap-scale-preview" id="swap-scale-preview"></div>
+      <div class="swap-scale-slider-wrap">
+        <span class="swap-scale-label">½x</span>
+        <input type="range" class="swap-scale-slider" id="swap-sf-slider"
+          min="0.5" max="2.5" step="0.05" value="${currentSf}"
+          oninput="_swapSfChange(this.value)">
+        <span class="swap-scale-label">2½x</span>
+      </div>
+      <button class="swap-apply-btn" onclick="_swapApply()">✓ Εφαρμογή</button>
     </div>`);
 
   setTimeout(() => {
     const inp = document.getElementById('swap-search-input');
     if (inp) inp.focus();
-  }, 100);
+    const sel = document.querySelector('#swap-list-inner .swap-row-selected');
+    if (sel) sel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    // Init slider gradient
+    _swapSfChange(currentSf);
+    _swapUpdatePreview();
+  }, 120);
+}
+
+function _swapRowClick(el) {
+  document.querySelectorAll('#swap-list-inner .swap-row').forEach(r => r.classList.remove('swap-row-selected', 'swap-row-picking'));
+  el.classList.add('swap-row-selected', 'swap-row-picking');
+  setTimeout(() => el.classList.remove('swap-row-picking'), 300);
+  _swapPending.id    = el.dataset.id;
+  _swapPending.isStd = el.dataset.isstd === '1';
+  _swapUpdatePreview();
+}
+
+function _swapSfChange(val) {
+  _swapPending.sf = parseFloat(val);
+  // Update track fill: (val - 0.5) / (2.5 - 0.5) * 100
+  const slider = document.getElementById('swap-sf-slider');
+  if (slider) {
+    const pct = ((parseFloat(val) - 0.5) / 2) * 100;
+    slider.style.background = `linear-gradient(to right, var(--green) ${pct}%, var(--border) ${pct}%)`;
+  }
+  _swapUpdatePreview();
+}
+
+function _swapUpdatePreview() {
+  const bar = document.getElementById('swap-scale-bar');
+  const prev = document.getElementById('swap-scale-preview');
+  const slider = document.getElementById('swap-sf-slider');
+  if (!bar || !prev) return;
+
+  const sf = _swapPending.sf;
+  if (slider) slider.value = sf;
+
+  const sel = document.querySelector('#swap-list-inner .swap-row-selected');
+  if (!sel) { prev.innerHTML = ''; return; }
+
+  const baseKcal = parseFloat(sel.dataset.kcal) || 0;
+  const baseP    = parseFloat(sel.dataset.p)    || 0;
+  const baseC    = parseFloat(sel.dataset.c)    || 0;
+  const baseF    = parseFloat(sel.dataset.f)    || 0;
+  const kcal = Math.round(baseKcal * sf);
+  const p    = Math.round(baseP * sf);
+  const c    = Math.round(baseC * sf);
+  const f    = Math.round(baseF * sf);
+  const sfLabel = sf === 1 ? '1× (κανονική)' : sf < 1 ? `${sf.toFixed(2)}× (μικρότερη)` : `${sf.toFixed(2)}× (μεγαλύτερη)`;
+
+  prev.innerHTML = `
+    <div class="swap-preview-row">
+      <span class="swap-preview-sf">${sfLabel}</span>
+      <div class="swap-preview-macros">
+        <span style="color:#22c55e;font-weight:800">${kcal} kcal</span>
+        <span style="color:#3b82f6">Π ${p}g</span>
+        <span style="color:#8b5cf6">Υ ${c}g</span>
+        <span style="color:#f59e0b">Λ ${f}g</span>
+      </div>
+    </div>`;
+}
+
+function _swapApply() {
+  const { mi, dayIdx, id, isStd, sf } = _swapPending;
+  if (!id) { closeModal(); return; }
+  if (isStd) {
+    state.week[dayIdx].meals[mi].standardId = id;
+    delete state.week[dayIdx].meals[mi].recipeId;
+  } else {
+    state.week[dayIdx].meals[mi].recipeId = id;
+    delete state.week[dayIdx].meals[mi].standardId;
+  }
+  state.week[dayIdx].meals[mi].scaleFactor = sf;
+  saveState();
+  closeModal();
+  _refreshAfterMealEdit(dayIdx);
+  showToast('✅ Γεύμα αποθηκεύτηκε');
 }
 
 window.filterSwapList = function(query) {
@@ -4244,28 +4397,36 @@ window.filterSwapList = function(query) {
   });
 };
 
-function swapMeal(mi, rid) {
-  state.week[state.currentDay].meals[mi].recipeId = rid;
-  state.week[state.currentDay].meals[mi].scaleFactor = 1;
-  delete state.week[state.currentDay].meals[mi].standardId;
+function swapMeal(mi, rid, dayIdx) {
+  if (dayIdx === undefined) dayIdx = state.currentDay;
+  state.week[dayIdx].meals[mi].recipeId = rid;
+  state.week[dayIdx].meals[mi].scaleFactor = 1;
+  delete state.week[dayIdx].meals[mi].standardId;
   saveState();
   closeModal();
-  renderToday();
+  _refreshAfterMealEdit(dayIdx);
   showToast('✅ Γεύμα αλλάχθηκε');
 }
 
-function swapMealStandard(mi, sid) {
-  // Αποθηκεύουμε το standard ID — δεν έχει recipeId, εμφανίζεται ως "στάνταρ"
-  state.week[state.currentDay].meals[mi].standardId = sid;
-  delete state.week[state.currentDay].meals[mi].recipeId;
+function swapMealStandard(mi, sid, dayIdx) {
+  if (dayIdx === undefined) dayIdx = state.currentDay;
+  state.week[dayIdx].meals[mi].standardId = sid;
+  delete state.week[dayIdx].meals[mi].recipeId;
   saveState();
   closeModal();
-  renderToday();
+  _refreshAfterMealEdit(dayIdx);
   showToast('✅ Στάνταρ γεύμα επιλέχθηκε');
 }
 
-function openScaleModal(mi) {
-  const sf = state.week[state.currentDay].meals[mi].scaleFactor || 1;
+function _refreshAfterMealEdit(dayIdx) {
+  if (dayIdx === state.currentDay) renderToday();
+  const weekPage = document.getElementById('page-week');
+  if (weekPage && weekPage.classList.contains('active')) renderWeek();
+}
+
+function openScaleModal(mi, dayIdx) {
+  if (dayIdx === undefined) dayIdx = state.currentDay;
+  const sf = state.week[dayIdx].meals[mi].scaleFactor || 1;
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">⚖️ Προσαρμογή Ποσοτήτων</div>
@@ -4277,14 +4438,15 @@ function openScaleModal(mi) {
       </div>
     </div>
     <div style="font-size:0.78rem;color:var(--text3);margin-bottom:14px">0.5x = μισή μερίδα · 1x = κανονική · 2x = διπλή</div>
-    <button class="btn btn-green btn-full" onclick="applyScale(${mi},parseFloat(document.getElementById('sf-slider').value))">✓ Εφαρμογή</button>`);
+    <button class="btn btn-green btn-full" onclick="applyScale(${mi},parseFloat(document.getElementById('sf-slider').value),${dayIdx})">✓ Εφαρμογή</button>`);
 }
 
-function applyScale(mi, sf) {
-  state.week[state.currentDay].meals[mi].scaleFactor = sf;
+function applyScale(mi, sf, dayIdx) {
+  if (dayIdx === undefined) dayIdx = state.currentDay;
+  state.week[dayIdx].meals[mi].scaleFactor = sf;
   saveState();
   closeModal();
-  renderToday();
+  _refreshAfterMealEdit(dayIdx);
   showToast(`✅ Ποσότητα: ${sf.toFixed(2)}x`);
 }
 
@@ -4322,7 +4484,7 @@ function addMealFromModal() {
   state.week[state.currentDay].meals.sort((a,b) => a.time.localeCompare(b.time));
   saveState();
   closeModal();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
   showToast('✅ Γεύμα προστέθηκε');
 }
 
@@ -4340,7 +4502,7 @@ function addRecipeToDay(rid) {
   });
   state.week[state.currentDay].meals.sort((a,b) => a.time.localeCompare(b.time));
   saveState();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
   showToast('✅ Γεύμα προστέθηκε στην ημέρα');
 }
 
@@ -4544,10 +4706,9 @@ function updateBuilderSummary() {
 
 // ── RESET DAY ──
 function resetDayDone() {
-  // Μηδενίζει μόνο τα checkboxes (done flags) — κρατάει τα γεύματα
   state.week[state.currentDay].meals.forEach(m => m.done = false);
   saveState();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
   showToast('↺ Checkboxes μηδενίστηκαν');
 }
 
@@ -4555,7 +4716,7 @@ function resetDayMeals() {
   if (!confirm(`Επαναφορά Ημέρα ${state.currentDay+1} στα default γεύματα; Οι αλλαγές χάνονται.`)) return;
   state.week[state.currentDay].meals = JSON.parse(JSON.stringify(DEFAULT_WEEK[state.currentDay].meals));
   saveState();
-  renderToday();
+  _refreshAfterMealEdit(state.currentDay);
   showToast('✅ Ημέρα επαναφέρθηκε στα default');
 }
 
@@ -4578,6 +4739,8 @@ function doCopyDay(targetIdx) {
   state.week[targetIdx].meals.forEach(m => m.done = false);
   saveState();
   closeModal();
+  const weekPage = document.getElementById('page-week');
+  if (weekPage && weekPage.classList.contains('active')) renderWeek();
   showToast(`✅ Αντιγράφηκε στην Ημέρα ${targetIdx+1}`);
 }
 
