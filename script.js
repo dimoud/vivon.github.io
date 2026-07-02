@@ -1202,7 +1202,7 @@ function _renderProfileInto(target) {
               : 'prof-range-amber';
             return `
           <div class="slider-label" style="margin-bottom:6px">
-            <span style="display:flex;align-items:center;gap:6px">🔥 <span>${t('prof_kcal_label')}</span></span>
+            <span style="display:flex;align-items:center;gap:6px"><span>${t('prof_kcal_label')}</span></span>
             <strong id="prof-kcal-val" style="color:${kcalColor}">${g.kcal} kcal</strong>
           </div>
           <input type="range" id="prof-kcal" min="1000" max="3500" step="50" value="${g.kcal}"
@@ -1216,7 +1216,7 @@ function _renderProfileInto(target) {
 
         <div style="margin-bottom:4px">
           <div class="slider-label" style="margin-bottom:6px">
-            <span style="display:flex;align-items:center;gap:6px">🥩 <span>${t('prof_protein_label')}</span></span>
+            <span style="display:flex;align-items:center;gap:6px"><span>${t('prof_protein_label')}</span></span>
             <strong id="prof-prot-val" style="color:var(--blue)">${g.protein}g</strong>
           </div>
           <input type="range" id="prof-prot" min="60" max="300" step="5" value="${g.protein}"
@@ -1489,6 +1489,31 @@ function updateGoalFromProfile(key, val) {
   autoSaveSettings();
 }
 
+function updateWeekGoalSlider(key, val) {
+  const v = parseInt(val);
+  state.goals[key] = v;
+  // Sync label in week page
+  const kcalEl = document.getElementById('week-kcal-val');
+  const protEl = document.getElementById('week-prot-val');
+  if (key === 'kcal' && kcalEl) kcalEl.textContent = v + ' kcal';
+  if (key === 'protein' && protEl) protEl.textContent = v + 'g';
+  // Also sync settings page sliders if visible
+  const settKcal = document.getElementById('prof-kcal');
+  if (settKcal) { settKcal.value = state.goals.kcal; }
+  const settKcalVal = document.getElementById('prof-kcal-val');
+  if (settKcalVal) settKcalVal.textContent = state.goals.kcal + ' kcal';
+  const settProt = document.getElementById('prof-prot');
+  if (settProt) { settProt.value = state.goals.protein; }
+  const settProtVal = document.getElementById('prof-prot-val');
+  if (settProtVal) settProtVal.textContent = state.goals.protein + 'g';
+  // Reoptimise all 7 days
+  const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
+  state.week.forEach(day => { if (day.meals && day.meals.length > 0) _optimiseDayMacros(day, targets); });
+  saveState();
+  autoSaveSettings();
+  renderWeek();
+}
+
 function updateFirstMealTime(val) {
   if (!val) return;
   state.profile.firstMealTime = val;
@@ -1683,15 +1708,25 @@ function _allMeals() {
   ];
 }
 
+let _wizardSwipeCleanup = null;
 function createPlan() {
+  if (document.getElementById('wizard-overlay')?.classList.contains('open')) return;
   _wizardExcluded = {};
   WIZARD_MEALS.forEach(m => {
     _wizardExcluded[m.key] = new Set(state.wizardExcluded?.[m.key] || []);
   });
   _wizardStep = 0;
   _renderWizardStep();
+  const modal = document.querySelector('#wizard-overlay .wizard-modal');
   document.getElementById('wizard-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  document.activeElement?.blur();
+  if (modal) {
+    _wizardSwipeCleanup = _addSwipeDismiss(modal, () => {
+      if (_wizardStep > 0) wizardBack(); else _closeWizard();
+    }, { directions: ['right'], threshold: 80 });
+  }
+  history.pushState({ vivon: 'wizard' }, '', location.pathname + location.search);
 }
 
 function wizardSetStyle(s) {
@@ -1943,9 +1978,11 @@ function wizardBack() {
   if (_wizardStep > 0) { _wizardStep--; _renderWizardStep(); }
 }
 
-function _closeWizard() {
+function _closeWizard(fromPopstate) {
+  if (_wizardSwipeCleanup) { _wizardSwipeCleanup(); _wizardSwipeCleanup = null; }
   document.getElementById('wizard-overlay').classList.remove('open');
   document.body.style.overflow = '';
+  if (!fromPopstate) history.back();
 }
 
 function _guessSlotMealKey(slotIdx, totalSlots) {
@@ -2085,22 +2122,22 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
 
 /**
  * Adjust meal scaleFactor values so the day hits calorie + protein targets.
- * Priority: 1-protein  2-calories  3-fat  4-carbs
- * Scale bounds: 0.6–1.6 (realistic portion range).
+ * Priority: protein first, then calories.
+ * Scale bounds: 0.6–2.0.
  * Strategy:
- *   Pass 1 — global uniform scale to hit kcal target
- *   Pass 2 — protein fine-tune: shift scale on high-protein meals to nail protein target
- *            while keeping kcal within ±50 kcal tolerance
+ *   Pass 1 — uniform scale to hit kcal target
+ *   Pass 2 — protein fix: scale protein-rich meals UP and offset excess kcal by
+ *            scaling low-protein meals DOWN (calorie-neutral protein swap)
+ *   Pass 3 — kcal correction if still off after protein fix
  */
 function _optimiseDayMacros(day, targets) {
-  const KCAL_TOL  = 50;
+  const KCAL_TOL  = 60;
   const PROT_TOL  = 5;
-  const SF_MIN    = 0.6;
-  const SF_MAX    = 1.6;
+  const SF_MIN    = 0.0;
+  const SF_MAX    = 2.0;
 
   const allMeals = [...RECIPES_DB, ...(state?.customRecipes || []), ...STANDARD_MEALS];
 
-  // Helper: get base macros (at scaleFactor=1) for a meal slot object
   function baseMacros(m) {
     if (m.standardId) {
       const sm = STANDARD_MEALS.find(s => s.id === m.standardId);
@@ -2115,81 +2152,80 @@ function _optimiseDayMacros(day, targets) {
     return { kcal: 0, p: 0, c: 0, f: 0 };
   }
 
-  // Initialise scaleFactor to 1 for all meals
   day.meals.forEach(m => { if (m.scaleFactor === undefined) m.scaleFactor = 1; });
 
-  // Sum raw day totals (at current scale)
   function dayTotals() {
     return day.meals.reduce((acc, m) => {
       const b = baseMacros(m);
       const sf = m.scaleFactor || 1;
       acc.kcal += b.kcal * sf;
       acc.p    += b.p    * sf;
-      acc.c    += b.c    * sf;
-      acc.f    += b.f    * sf;
       return acc;
-    }, { kcal: 0, p: 0, c: 0, f: 0 });
+    }, { kcal: 0, p: 0 });
   }
 
   const raw = dayTotals();
-  if (raw.kcal < 1) return; // no data, skip
+  if (raw.kcal < 1) return;
 
   // ── Pass 1: Uniform scale to hit kcal target ──────────────────
   const uniformSF = Math.min(SF_MAX, Math.max(SF_MIN, targets.kcal / raw.kcal));
   day.meals.forEach(m => { m.scaleFactor = Math.round(uniformSF * 100) / 100; });
 
-  // ── Pass 2: Protein fine-tune ──────────────────────────────────
-  // Sort meals by protein density (p per kcal) descending — these are best levers
-  const mealBases = day.meals.map(m => ({ m, b: baseMacros(m) }));
-  const proteinRich = [...mealBases]
-    .filter(({ b }) => b.kcal > 0 && b.p > 0)
-    .sort((a, b) => (b.b.p / b.b.kcal) - (a.b.p / a.b.kcal));
+  // ── Pass 2: Protein fix via calorie-neutral swap ───────────────
+  // Scale protein-rich meals UP, offset extra kcal by scaling low-protein meals DOWN
+  const mealBases = day.meals.map(m => ({ m, b: baseMacros(m) })).filter(({ b }) => b.kcal > 0);
+  // Sort by protein density: high first = levers to increase protein
+  const byProtDens = [...mealBases].sort((a, b) => (b.b.p / b.b.kcal) - (a.b.p / a.b.kcal));
+  const proteinRich = byProtDens.filter(({ b }) => b.p > 0);
+  // Low-protein meals: levers to absorb kcal offset (scale down without losing much protein)
+  const lowProt = [...byProtDens].reverse().filter(({ b }) => b.p / b.kcal < 0.05);
 
-  for (let iter = 0; iter < 8; iter++) {
+  for (let iter = 0; iter < 12; iter++) {
     const cur = dayTotals();
-    const proteinErr = targets.protein - cur.p;   // positive = need more protein
-    const kcalErr    = targets.kcal    - cur.kcal; // positive = need more kcal
+    const pErr = targets.protein - cur.p;
+    const kErr = targets.kcal - cur.kcal;
 
-    // Within tolerance — stop early
-    if (Math.abs(proteinErr) <= PROT_TOL && Math.abs(kcalErr) <= KCAL_TOL) break;
+    if (Math.abs(pErr) <= PROT_TOL && Math.abs(kErr) <= KCAL_TOL) break;
 
-    // Pick the best lever: protein-rich meals if protein is off,
-    // otherwise use all meals for a calorie-only correction
-    const levers = Math.abs(proteinErr) > PROT_TOL ? proteinRich : mealBases;
-    if (!levers.length) break;
-
-    for (const { m, b } of levers) {
-      if (b.kcal === 0) continue;
-      const curSF  = m.scaleFactor || 1;
-      const curP   = day.meals.reduce((s, x) => s + baseMacros(x).p * (x.scaleFactor || 1), 0);
-      const curK   = day.meals.reduce((s, x) => s + baseMacros(x).kcal * (x.scaleFactor || 1), 0);
-
-      const pErr = targets.protein - curP;
-      const kErr = targets.kcal   - curK;
-
-      // How much to change this meal's SF to correct protein, capped so kcal stays in tolerance
-      let deltaSF = 0;
-      if (Math.abs(pErr) > PROT_TOL) {
-        deltaSF = pErr / b.p; // ideal delta to fix protein
-        // Check resulting kcal impact
-        const newK = curK + b.kcal * deltaSF;
-        if (newK - targets.kcal > KCAL_TOL) {
-          // Cap: how much headroom do we have on kcal?
-          deltaSF = (targets.kcal + KCAL_TOL - curK) / b.kcal;
-        } else if (targets.kcal - newK > KCAL_TOL) {
-          deltaSF = (targets.kcal - KCAL_TOL - curK) / b.kcal;
-        }
-      } else if (Math.abs(kErr) > KCAL_TOL) {
-        // Protein OK, fix kcal using this meal
-        deltaSF = kErr / b.kcal;
-      }
-
+    if (Math.abs(pErr) > PROT_TOL && proteinRich.length > 0) {
+      // Pick best protein lever
+      const { m, b } = proteinRich[0];
+      const curSF = m.scaleFactor || 1;
+      // How much SF change needed to fix protein gap?
+      const deltaSF = pErr / b.p;
       const newSF = Math.min(SF_MAX, Math.max(SF_MIN, curSF + deltaSF));
+      const actualDelta = newSF - curSF;
+      const extraKcal = b.kcal * actualDelta;
       m.scaleFactor = Math.round(newSF * 100) / 100;
+
+      // Offset the extra kcal by scaling down low-protein meals to stay calorie-neutral
+      if (Math.abs(extraKcal) > 10 && lowProt.length > 0) {
+        let remaining = extraKcal;
+        for (const { m: lm, b: lb } of lowProt) {
+          if (lm === m || lb.kcal === 0) continue;
+          const lSF = lm.scaleFactor || 1;
+          const maxRemovable = lb.kcal * lSF; // kcal we can remove by going to SF=0
+          const toRemove = Math.min(Math.abs(remaining), maxRemovable) * Math.sign(remaining);
+          const lDelta = -toRemove / lb.kcal;
+          const lNewSF = Math.min(SF_MAX, Math.max(SF_MIN, lSF + lDelta));
+          lm.scaleFactor = Math.round(lNewSF * 100) / 100;
+          remaining -= toRemove;
+          if (Math.abs(remaining) < 10) break;
+        }
+      }
+    } else if (Math.abs(kErr) > KCAL_TOL) {
+      // Protein OK, fix remaining kcal gap uniformly
+      const curK = dayTotals().kcal;
+      if (curK < 1) break;
+      const corrSF = targets.kcal / curK;
+      day.meals.forEach(m => {
+        m.scaleFactor = Math.round(Math.min(SF_MAX, Math.max(SF_MIN, (m.scaleFactor || 1) * corrSF)) * 100) / 100;
+      });
+      break;
     }
   }
 
-  // Final clamp — round to 2 dp for clean storage
+  // Final clamp
   day.meals.forEach(m => {
     m.scaleFactor = Math.round(Math.min(SF_MAX, Math.max(SF_MIN, m.scaleFactor || 1)) * 100) / 100;
   });
@@ -2450,13 +2486,14 @@ function renderToday() {
         <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f > 0 ? m.f + 'g' : '—'}</div><div class="macro-chip-lbl">${t('chip_fat')}</div></div>
       </div>
       ${sf !== 1 ? `<div style="font-size:0.7rem;color:var(--text3);margin:4px 0">📏 ${t('chip_portion')} ×${sf}</div>` : ''}
-      ${sm.note ? `
+      ${(sm.instructions || sm.note || sm.serving) ? `
       <button class="recipe-expand-btn" onclick="toggleRecipeExpand(this)" aria-expanded="false">
-        ${t('meal_serving_btn')} <span class="recipe-expand-arrow">▼</span>
+        ${t('meal_recipe_btn')} <span class="recipe-expand-arrow">▼</span>
       </button>
       <div class="recipe-expand-body">
         <div>
-          <div class="recipe-serving"><span class="recipe-serving-icon">💡</span> ${sm.note}</div>
+          ${sm.instructions ? `<div class="recipe-instructions">${sm.instructions.replace(/\n/g,'<br>')}</div>` : (sm.note ? `<div class="recipe-instructions">${sm.note}</div>` : '')}
+          ${sm.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${sm.serving}</div>` : ''}
         </div>
       </div>` : ''}`;
     } else {
@@ -2549,7 +2586,7 @@ function renderToday() {
       <div class="quote-banner fade-in">
         <div class="quote-text">«${q.text}»</div>
         <div class="quote-author">— ${q.author}</div>
-        <div class="quote-translation">${q.translation}</div>
+        <div class="quote-translation">${q.translationI18n[getLang()] || q.translationI18n.el}</div>
       </div>
 
       <!-- Kcal Hero -->
@@ -2796,15 +2833,19 @@ function renderWeek() {
     </svg>`;
   }
 
-  function macroRow(label, val, goal, color) {
+  function macroRow(label, val, goal, color, highlight = false) {
     const pct = Math.min(100, Math.round((val / goal) * 100));
-    return `<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:700;margin-bottom:4px">
-        <span style="color:var(--text2)">${label}</span>
-        <span style="color:var(--text3)">${val}g / ${goal}g &nbsp; <span style="color:${color}">${pct}%</span></span>
+    const labelSize  = highlight ? '0.88rem' : '0.72rem';
+    const valueSize  = highlight ? '0.88rem' : '0.72rem';
+    const barHeight  = highlight ? '11px' : '8px';
+    const fontWeight = highlight ? '800' : '700';
+    return `<div style="margin-bottom:${highlight ? '14px' : '10px'}">
+      <div style="display:flex;justify-content:space-between;font-size:${labelSize};font-weight:${fontWeight};margin-bottom:4px">
+        <span style="color:${highlight ? color : 'var(--text2)'};font-weight:${highlight ? '900' : '700'}">${label}</span>
+        <span style="color:var(--text3);font-size:${valueSize}">${val}g / ${goal}g &nbsp; <span style="color:${color};font-weight:800">${pct}%</span></span>
       </div>
-      <div style="height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
-        <div style="height:8px;width:${pct}%;background:${color};border-radius:4px"></div>
+      <div style="height:${barHeight};background:#e5e7eb;border-radius:4px;overflow:hidden">
+        <div style="height:${barHeight};width:${pct}%;background:${color};border-radius:4px"></div>
       </div>
     </div>`;
   }
@@ -2967,22 +3008,32 @@ function renderWeek() {
           <!-- Macros -->
           <div style="flex:1;min-width:200px">
             <div style="font-size:0.75rem;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">${t('week_macros_avg')}</div>
-            ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#3b82f6')}
+            ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#22c55e', true)}
             ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6')}
             ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b')}
           </div>
-          <!-- Balance -->
-          <div style="background:${bal.bg};border-radius:12px;padding:14px 18px;min-width:160px;text-align:center;border:1px solid ${bal.color}33;display:flex;flex-direction:column;align-items:center;gap:6px">
-            <div style="font-size:0.65rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em">${t('week_balance_title')}</div>
-            <svg width="60" height="60" viewBox="0 0 60 60">
-              <circle cx="30" cy="30" r="${balArcR}" fill="none" stroke="var(--border)" stroke-width="5"/>
-              <circle cx="30" cy="30" r="${balArcR}" fill="none" stroke="${bal.color}" stroke-width="5"
-                stroke-dasharray="${balDash} ${balCirc}" stroke-dashoffset="${balCirc * 0.25}"
-                stroke-linecap="round" style="transition:stroke-dasharray 0.5s ease"/>
-              <text x="30" y="35" text-anchor="middle" font-size="13" font-weight="800" fill="${bal.color}" font-family="inherit">${balScore}%</text>
-            </svg>
-            <div style="font-size:0.78rem;font-weight:700;color:${bal.color};line-height:1.2">${bal.label}</div>
-            <div style="font-size:0.68rem;color:var(--text3);line-height:1.3">${bal.sub}</div>
+          <!-- Week Goal Sliders -->
+          <div style="display:flex;flex-direction:column;gap:10px;min-width:180px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <span style="font-size:0.68rem;font-weight:700;color:var(--text2)">${t('prof_kcal_label')}</span>
+                <strong id="week-kcal-val" style="font-size:0.72rem;color:var(--amber)">${state.goals.kcal} kcal</strong>
+              </div>
+              <input type="range" id="week-kcal-slider" min="1000" max="3500" step="50" value="${state.goals.kcal}"
+                style="width:100%;accent-color:var(--amber)"
+                oninput="updateWeekGoalSlider('kcal',this.value)">
+              <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3)"><span>1000</span><span>3500</span></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <span style="font-size:0.68rem;font-weight:700;color:var(--text2)">${t('prof_protein_label')}</span>
+                <strong id="week-prot-val" style="font-size:0.72rem;color:var(--blue)">${state.goals.protein}g</strong>
+              </div>
+              <input type="range" id="week-prot-slider" min="60" max="300" step="5" value="${state.goals.protein}"
+                style="width:100%;accent-color:#3b82f6"
+                oninput="updateWeekGoalSlider('protein',this.value)">
+              <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3)"><span>60g</span><span>300g</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -4345,21 +4396,42 @@ function showConfirmModal(title, bodyHtml, onConfirm) {
   `);
 }
 
+let _modalSwipeCleanup = null;
 function openModal(html) {
+  if (_isModalOpen()) return;
   const overlay = document.getElementById('modal-overlay');
   const sheet = overlay.querySelector('.modal-sheet');
   document.getElementById('modal-content').innerHTML = html;
+  // Inject universal close button — removes any pre-existing one first
+  sheet.querySelector('.modal-sheet-close')?.remove();
+  const xBtn = document.createElement('button');
+  xBtn.className = 'modal-sheet-close';
+  xBtn.setAttribute('aria-label', 'Κλείσιμο');
+  xBtn.textContent = '✕';
+  xBtn.onclick = () => closeModal();
+  sheet.appendChild(xBtn);
   sheet.classList.remove('modal-closing');
   overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.activeElement?.blur();
+  _modalSwipeCleanup = _addSwipeDismiss(sheet, () => closeModal(), { directions: ['down'], threshold: 60 });
+  history.pushState({ vivon: 'modal' }, '', location.pathname + location.search);
 }
-function closeModal() {
+function closeModal(fromPopstate) {
   const overlay = document.getElementById('modal-overlay');
+  if (!overlay || !overlay.classList.contains('open')) return;
   const sheet = overlay.querySelector('.modal-sheet');
+  if (_modalSwipeCleanup) { _modalSwipeCleanup(); _modalSwipeCleanup = null; }
   sheet.classList.add('modal-closing');
   setTimeout(() => {
     overlay.classList.remove('open');
     sheet.classList.remove('modal-closing');
+    document.body.style.overflow = '';
   }, 220);
+  if (!fromPopstate) history.back();
+}
+function _isModalOpen() {
+  return document.getElementById('modal-overlay')?.classList.contains('open');
 }
 
 function openRecipeDetail(rid) {
@@ -4485,15 +4557,12 @@ function openSwapMeal(mi, dayIdx) {
   const listHTML = allItems.map(i => i.html).join('');
 
   openModal(`
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-right:32px">
       <div class="modal-title" style="margin:0">${t('swap_title')} — ${mealTypeLabel}</div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <button onclick="_openAddRecipeFromSwap()" title="${t('btn_new_recipe')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Νέα
-        </button>
-        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
-      </div>
+      <button onclick="_openAddRecipeFromSwap()" title="${t('btn_new_recipe')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Νέα
+      </button>
     </div>
     <div class="swap-search-wrap">
       <input class="swap-search" id="swap-search-input" type="text" placeholder="${t('search_meal')}" oninput="filterSwapList(this.value)" autocomplete="off">
@@ -4514,10 +4583,11 @@ function openSwapMeal(mi, dayIdx) {
     </div>`);
 
   setTimeout(() => {
+    const isMobile = window.matchMedia('(pointer: coarse)').matches;
     const inp = document.getElementById('swap-search-input');
-    if (inp) inp.focus();
+    if (inp && !isMobile) inp.focus();
     const sel = document.querySelector('#swap-list-inner .swap-row-selected');
-    if (sel) sel.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (sel && !isMobile) sel.scrollIntoView({ block: 'center', behavior: 'smooth' });
     // Init slider gradient
     _swapSfChange(currentSf);
     _swapUpdatePreview();
@@ -6348,6 +6418,34 @@ async function initApp() {
 // auth.js boots first, checks the session, then calls initApp().
 document.addEventListener('DOMContentLoaded', () => {});
 
+/* ── SWIPE-TO-DISMISS UTILITY ── */
+// Attaches touch listeners to `el`. Calls onDismiss() when the user swipes
+// far enough in any of the allowed directions ('down','left','right').
+// Returns a cleanup function that removes the listeners.
+function _addSwipeDismiss(el, onDismiss, { directions = ['down'], threshold = 72 } = {}) {
+  let sx = 0, sy = 0;
+  function onStart(e) {
+    const t = e.touches[0];
+    sx = t.clientX; sy = t.clientY;
+  }
+  function onEnd(e) {
+    const t = e.changedTouches[0];
+    const dx = t.clientX - sx;
+    const dy = t.clientY - sy;
+    const ax = Math.abs(dx), ay = Math.abs(dy);
+    if (directions.includes('down')  && dy >  threshold && ay > ax) { onDismiss(); return; }
+    if (directions.includes('up')    && dy < -threshold && ay > ax) { onDismiss(); return; }
+    if (directions.includes('right') && dx >  threshold && ax > ay) { onDismiss(); return; }
+    if (directions.includes('left')  && dx < -threshold && ax > ay) { onDismiss(); return; }
+  }
+  el.addEventListener('touchstart', onStart, { passive: true });
+  el.addEventListener('touchend',   onEnd,   { passive: true });
+  return () => {
+    el.removeEventListener('touchstart', onStart);
+    el.removeEventListener('touchend',   onEnd);
+  };
+}
+
 /* ── HISTORY API (back-button support) ── */
 function _historyPushTab(tab) {
   history.pushState({ vivon: 'tab', tab }, '', location.pathname + location.search);
@@ -6358,7 +6456,33 @@ function _historyPushDrawer() {
 function _isDrawerOpen() {
   return document.getElementById('drawer')?.classList.contains('open');
 }
+function _isWizardOpen() {
+  return document.getElementById('wizard-overlay')?.classList.contains('open');
+}
+function _isLegalOpen() {
+  return document.getElementById('legal-modal-overlay')?.classList.contains('open');
+}
+function _isOnboardingOpen() {
+  const el = document.getElementById('onboarding-overlay');
+  return el && el.style.display !== 'none' && el.style.display !== '';
+}
 window.addEventListener('popstate', (e) => {
+  if (_isModalOpen()) {
+    closeModal(true);
+    return;
+  }
+  if (_isWizardOpen()) {
+    _closeWizard(true);
+    return;
+  }
+  if (_isLegalOpen()) {
+    closeLegalModal(true);
+    return;
+  }
+  if (_isOnboardingOpen()) {
+    window._obDone && window._obDone(true);
+    return;
+  }
   if (_isDrawerOpen()) {
     closeDrawer(true);
     return;
@@ -6370,6 +6494,7 @@ window.addEventListener('popstate', (e) => {
 });
 
 /* ── SIDE DRAWER ── */
+let _drawerSwipeCleanup = null;
 function openDrawer() {
   const drawer = document.getElementById('drawer');
   const overlay = document.getElementById('drawer-overlay');
@@ -6378,6 +6503,7 @@ function openDrawer() {
   drawer.classList.add('open');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  _drawerSwipeCleanup = _addSwipeDismiss(drawer, () => closeDrawer(), { directions: ['left'], threshold: 60 });
   _historyPushDrawer();
 }
 
@@ -6385,6 +6511,7 @@ function closeDrawer(fromPopstate) {
   const drawer = document.getElementById('drawer');
   const overlay = document.getElementById('drawer-overlay');
   if (!drawer) return;
+  if (_drawerSwipeCleanup) { _drawerSwipeCleanup(); _drawerSwipeCleanup = null; }
   drawer.classList.remove('open');
   overlay.classList.remove('open');
   document.body.style.overflow = '';
@@ -6419,9 +6546,19 @@ function updateDrawerUser() {
 }
 
 /* ── LEGAL MODAL ── */
+let _legalSwipeCleanup = null;
 function openLegalModal() {
-  document.getElementById('legal-modal-overlay').classList.add('open');
+  if (_isLegalOpen()) return;
+  const overlay = document.getElementById('legal-modal-overlay');
+  const sheet = overlay.querySelector('.legal-modal-sheet');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (sheet) _legalSwipeCleanup = _addSwipeDismiss(sheet, () => closeLegalModal(), { directions: ['down'], threshold: 60 });
+  history.pushState({ vivon: 'legal' }, '', location.pathname + location.search);
 }
-function closeLegalModal() {
+function closeLegalModal(fromPopstate) {
+  if (_legalSwipeCleanup) { _legalSwipeCleanup(); _legalSwipeCleanup = null; }
   document.getElementById('legal-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if (!fromPopstate) history.back();
 }

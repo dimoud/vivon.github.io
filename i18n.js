@@ -3,10 +3,10 @@
 // ============================================================
 
 const LANGUAGES = {
-  el: { label: 'Ελληνικά', flag: '🇬🇷' },
-  en: { label: 'English',  flag: '🇬🇧' },
-  es: { label: 'Español',  flag: '🇪🇸' },
-  fr: { label: 'Français', flag: '🇫🇷' },
+  el: { label: 'Ελληνικά', flag: '🇬🇷', cc: 'gr' },
+  en: { label: 'English',  flag: '🇬🇧', cc: 'gb' },
+  es: { label: 'Español',  flag: '🇪🇸', cc: 'es' },
+  fr: { label: 'Français', flag: '🇫🇷', cc: 'fr' },
 };
 
 const I18N = {
@@ -423,7 +423,7 @@ const I18N = {
   auth_back_login:         { el: 'Πίσω στη σύνδεση',     en: 'Back to sign in',      es: 'Volver a iniciar sesión', fr: 'Retour à la connexion' },
   auth_loading:            { el: 'Παρακαλώ περιμένετε...', en: 'Please wait...', es: 'Por favor espera...', fr: 'Veuillez patienter...' },
   auth_check_email:        { el: 'Ελέγξτε το email σας για επιβεβαίωση εγγραφής.', en: 'Check your email to confirm registration.', es: 'Revisa tu correo para confirmar el registro.', fr: 'Vérifiez votre e-mail pour confirmer l\'inscription.' },
-  auth_tagline:            { el: 'Ο σύμμαχός σου για μια καλύτερη διατροφή.', en: 'Your ally for better nutrition.', es: 'Tu aliado para una mejor nutrición.', fr: 'Votre allié pour une meilleure nutrition.' },
+  auth_tagline:            { el: 'Ο σύμμαχός σου για μια <em>καλύτερη διατροφή.</em>', en: 'Your ally for <em>better nutrition.</em>', es: 'Tu aliado para una <em>mejor nutrición.</em>', fr: 'Votre allié pour une <em>meilleure nutrition.</em>' },
   auth_error_generic:      { el: 'Άγνωστο σφάλμα.', en: 'Unknown error.', es: 'Error desconocido.', fr: 'Erreur inconnue.' },
   auth_error_credentials:  { el: 'Λανθασμένο email ή κωδικός.', en: 'Incorrect email or password.', es: 'Correo o contraseña incorrectos.', fr: 'E-mail ou mot de passe incorrect.' },
   auth_error_not_confirmed:{ el: 'Παρακαλώ επιβεβαιώστε πρώτα το email σας.', en: 'Please confirm your email first.', es: 'Por favor, confirma tu correo primero.', fr: 'Veuillez d\'abord confirmer votre e-mail.' },

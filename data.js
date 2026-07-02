@@ -4,45 +4,45 @@
 
 const PHILOSOPHY_QUOTES = [
   // Επίκτητος
-  { text: "Οὐ τὰ πράγματα ταράττει τοὺς ἀνθρώπους, ἀλλὰ αἱ περὶ τῶν πραγμάτων δόξαι.", author: "Επίκτητος", translation: "Δεν μας ταράζουν τα πράγματα, αλλά οι απόψεις μας γι' αυτά." },
-  { text: "Κράτει τοῦ σώματος ἵνα μὴ κρατῇ σε.", author: "Επίκτητος", translation: "Κυρίαρχε στο σώμα σου, ώστε να μην σε κυριαρχεί." },
-  { text: "Πρῶτον μάθε τί εἶ, εἶτα κόσμει σεαυτόν.", author: "Επίκτητος", translation: "Πρώτα μάθε τι είσαι, έπειτα καλλώπισε τον εαυτό σου." },
-  { text: "Τῆς φύσεως ἕπου.", author: "Επίκτητος", translation: "Ακολούθησε τη φύση." },
-  { text: "Ἕκαστος τοσοῦτον ἀσχολεῖται τοῖς ἄλλοις ὅσον ἐαυτοῦ ἀμελεῖ.", author: "Επίκτητος", translation: "Ο καθένας ασχολείται με τους άλλους όσο αμελεί τον εαυτό του." },
-  { text: "Μηδὲν ἀγαν.", author: "Επίκτητος", translation: "Τίποτα σε υπερβολή." },
-  { text: "Ζήτει τίνος ἐστὶ τοῦ σώματος ἐπιμελεῖσθαι.", author: "Επίκτητος", translation: "Ζήτησε πώς να φροντίζεις το σώμα." },
+  { text: "Οὐ τὰ πράγματα ταράττει τοὺς ἀνθρώπους, ἀλλὰ αἱ περὶ τῶν πραγμάτων δόξαι.", author: "Επίκτητος", translationI18n: { el: "Δεν μας ταράζουν τα πράγματα, αλλά οι απόψεις μας γι' αυτά.", en: "It is not things that trouble us, but our opinions about things.", es: "No son las cosas las que nos perturban, sino nuestras opiniones sobre ellas.", fr: "Ce ne sont pas les choses qui nous troublent, mais nos opinions sur elles." } },
+  { text: "Κράτει τοῦ σώματος ἵνα μὴ κρατῇ σε.", author: "Επίκτητος", translationI18n: { el: "Κυρίαρχε στο σώμα σου, ώστε να μην σε κυριαρχεί.", en: "Master your body, so that it does not master you.", es: "Domina tu cuerpo para que no te domine a ti.", fr: "Maîtrise ton corps, afin qu'il ne te maîtrise pas." } },
+  { text: "Πρῶτον μάθε τί εἶ, εἶτα κόσμει σεαυτόν.", author: "Επίκτητος", translationI18n: { el: "Πρώτα μάθε τι είσαι, έπειτα καλλώπισε τον εαυτό σου.", en: "First learn who you are, then adorn yourself accordingly.", es: "Primero aprende quién eres, luego adórnate en consecuencia.", fr: "Apprends d'abord qui tu es, puis orne-toi en conséquence." } },
+  { text: "Τῆς φύσεως ἕπου.", author: "Επίκτητος", translationI18n: { el: "Ακολούθησε τη φύση.", en: "Follow nature.", es: "Sigue la naturaleza.", fr: "Suis la nature." } },
+  { text: "Ἕκαστος τοσοῦτον ἀσχολεῖται τοῖς ἄλλοις ὅσον ἐαυτοῦ ἀμελεῖ.", author: "Επίκτητος", translationI18n: { el: "Ο καθένας ασχολείται με τους άλλους όσο αμελεί τον εαυτό του.", en: "Each person busies himself with others as much as he neglects himself.", es: "Cada uno se ocupa de los demás tanto como descuida a sí mismo.", fr: "Chacun s'occupe des autres autant qu'il se néglige lui-même." } },
+  { text: "Μηδὲν ἀγαν.", author: "Επίκτητος", translationI18n: { el: "Τίποτα σε υπερβολή.", en: "Nothing in excess.", es: "Nada en exceso.", fr: "Rien en excès." } },
+  { text: "Ζήτει τίνος ἐστὶ τοῦ σώματος ἐπιμελεῖσθαι.", author: "Επίκτητος", translationI18n: { el: "Ζήτησε πώς να φροντίζεις το σώμα.", en: "Seek how to take care of the body.", es: "Busca cómo cuidar el cuerpo.", fr: "Cherche comment prendre soin du corps." } },
   // Αριστοτέλης
-  { text: "Ἄνθρωπος φύσει πολιτικὸν ζῷον.", author: "Αριστοτέλης", translation: "Ο άνθρωπος είναι εκ φύσεως πολιτικό ζώο." },
-  { text: "Ἀρχὴ ἥμισυ παντός.", author: "Αριστοτέλης", translation: "Η αρχή είναι το μισό του παντός." },
-  { text: "Ἡ εὐδαιμονία ἐνέργειά τις τῆς ψυχῆς.", author: "Αριστοτέλης", translation: "Η ευδαιμονία είναι ενέργεια της ψυχής." },
-  { text: "Ἡ ἀρετὴ ἐν τῷ μέσῳ ἐστίν.", author: "Αριστοτέλης", translation: "Η αρετή βρίσκεται στο μέσο." },
-  { text: "Εἰ ἓν ἁμαρτάνεις, ἐν ᾧ μάλιστα δεῖ κατορθοῦν, ἁμαρτάνεις.", author: "Αριστοτέλης", translation: "Αν σφάλεις εκεί που πρέπει να επιτύχεις, τότε πραγματικά σφάλεις." },
-  { text: "Ἐν ᾧ γὰρ ζῶμεν, ἐν τούτῳ καὶ ὑγιαίνομεν.", author: "Αριστοτέλης", translation: "Όσο ζούμε, χρειαζόμαστε και υγεία." },
-  { text: "Τελεία φιλία ἐστὶ ἡ τῶν ἀγαθῶν.", author: "Αριστοτέλης", translation: "Τέλεια φιλία είναι αυτή που βασίζεται στην αρετή." },
+  { text: "Ἄνθρωπος φύσει πολιτικὸν ζῷον.", author: "Αριστοτέλης", translationI18n: { el: "Ο άνθρωπος είναι εκ φύσεως πολιτικό ζώο.", en: "Man is by nature a political animal.", es: "El hombre es por naturaleza un animal político.", fr: "L'homme est par nature un animal politique." } },
+  { text: "Ἀρχὴ ἥμισυ παντός.", author: "Αριστοτέλης", translationI18n: { el: "Η αρχή είναι το μισό του παντός.", en: "The beginning is half of everything.", es: "El comienzo es la mitad de todo.", fr: "Le commencement est la moitié de tout." } },
+  { text: "Ἡ εὐδαιμονία ἐνέργειά τις τῆς ψυχῆς.", author: "Αριστοτέλης", translationI18n: { el: "Η ευδαιμονία είναι ενέργεια της ψυχής.", en: "Happiness is an activity of the soul.", es: "La felicidad es una actividad del alma.", fr: "Le bonheur est une activité de l'âme." } },
+  { text: "Ἡ ἀρετὴ ἐν τῷ μέσῳ ἐστίν.", author: "Αριστοτέλης", translationI18n: { el: "Η αρετή βρίσκεται στο μέσο.", en: "Virtue lies in the middle.", es: "La virtud se encuentra en el término medio.", fr: "La vertu se trouve dans le juste milieu." } },
+  { text: "Εἰ ἓν ἁμαρτάνεις, ἐν ᾧ μάλιστα δεῖ κατορθοῦν, ἁμαρτάνεις.", author: "Αριστοτέλης", translationI18n: { el: "Αν σφάλεις εκεί που πρέπει να επιτύχεις, τότε πραγματικά σφάλεις.", en: "If you err where you must succeed, you truly err.", es: "Si fallas donde debes tener éxito, verdaderamente fallas.", fr: "Si tu failles là où tu dois réussir, tu failles vraiment." } },
+  { text: "Ἐν ᾧ γὰρ ζῶμεν, ἐν τούτῳ καὶ ὑγιαίνομεν.", author: "Αριστοτέλης", translationI18n: { el: "Όσο ζούμε, χρειαζόμαστε και υγεία.", en: "As long as we live, we also need health.", es: "Mientras vivimos, también necesitamos salud.", fr: "Tant que nous vivons, nous avons aussi besoin de santé." } },
+  { text: "Τελεία φιλία ἐστὶ ἡ τῶν ἀγαθῶν.", author: "Αριστοτέλης", translationI18n: { el: "Τέλεια φιλία είναι αυτή που βασίζεται στην αρετή.", en: "Perfect friendship is that of good people.", es: "La amistad perfecta es la de las personas virtuosas.", fr: "L'amitié parfaite est celle des gens vertueux." } },
   // Επίκουρος
-  { text: "Οὐκ ἔστιν ἡδέως ζῆν ἄνευ τοῦ φρονίμως καὶ καλῶς καὶ δικαίως ζῆν.", author: "Επίκουρος", translation: "Δεν μπορείς να ζεις ευχάριστα χωρίς να ζεις φρόνιμα, καλά και δίκαια." },
-  { text: "Λάθε βιώσας.", author: "Επίκουρος", translation: "Ζήσε αθόρυβα." },
-  { text: "Ἡ εὐτέλεια ἡδίστη.", author: "Επίκουρος", translation: "Η λιτότητα είναι η πιο ευχάριστη." },
-  { text: "Βέβαιον τε φιλίαν ἐπαγγέλλεσθαι καὶ ἀβέβαιον ποιεῖσθαι χαλεπόν.", author: "Επίκουρος", translation: "Να υπόσχεσαι φιλία και να μην την εκπληρώνεις είναι ανάρμοστο." },
-  { text: "Ἡ φυσικὴ πλοῦτος εὐπόριστος ὁ δὲ κενοδοξία ἀπόριστος.", author: "Επίκουρος", translation: "Ο φυσικός πλούτος είναι εύκολος στην απόκτηση· η κενοδοξία δεν χορταίνει." },
+  { text: "Οὐκ ἔστιν ἡδέως ζῆν ἄνευ τοῦ φρονίμως καὶ καλῶς καὶ δικαίως ζῆν.", author: "Επίκουρος", translationI18n: { el: "Δεν μπορείς να ζεις ευχάριστα χωρίς να ζεις φρόνιμα, καλά και δίκαια.", en: "You cannot live pleasantly without living wisely, well, and justly.", es: "No puedes vivir agradablemente sin vivir sabia, bien y justamente.", fr: "On ne peut pas vivre agréablement sans vivre sagement, honnêtement et justement." } },
+  { text: "Λάθε βιώσας.", author: "Επίκουρος", translationI18n: { el: "Ζήσε αθόρυβα.", en: "Live in obscurity.", es: "Vive en la oscuridad.", fr: "Vis dans l'obscurité." } },
+  { text: "Ἡ εὐτέλεια ἡδίστη.", author: "Επίκουρος", translationI18n: { el: "Η λιτότητα είναι η πιο ευχάριστη.", en: "Simplicity is most pleasant.", es: "La sencillez es lo más agradable.", fr: "La simplicité est la plus agréable." } },
+  { text: "Βέβαιον τε φιλίαν ἐπαγγέλλεσθαι καὶ ἀβέβαιον ποιεῖσθαι χαλεπόν.", author: "Επίκουρος", translationI18n: { el: "Να υπόσχεσαι φιλία και να μην την εκπληρώνεις είναι ανάρμοστο.", en: "To promise friendship and then fail to keep it is dishonorable.", es: "Prometer amistad y no cumplirla es deshonroso.", fr: "Promettre l'amitié et ne pas la tenir est une honte." } },
+  { text: "Ἡ φυσικὴ πλοῦτος εὐπόριστος ὁ δὲ κενοδοξία ἀπόριστος.", author: "Επίκουρος", translationI18n: { el: "Ο φυσικός πλούτος είναι εύκολος στην απόκτηση· η κενοδοξία δεν χορταίνει.", en: "Natural wealth is easy to obtain; vain glory is insatiable.", es: "La riqueza natural es fácil de obtener; la vanidad nunca se sacia.", fr: "La richesse naturelle est facile à obtenir ; la vanité ne se rassasie jamais." } },
   // Πλάτωνας
-  { text: "Σῶμα καὶ ψυχὴ ἐν ἀσκήσει συντηρεῖται.", author: "Πλάτωνας", translation: "Σώμα και ψυχή διατηρούνται με άσκηση." },
-  { text: "Ὁ ἀγύμναστος βίος οὐ βιωτός.", author: "Πλάτωνας", translation: "Η ζωή χωρίς άσκηση δεν αξίζει να ζιστεί." },
-  { text: "Ὁ νοῦς ὑγιαίνων ἐν σώματι ὑγιαίνοντι.", author: "Πλάτωνας", translation: "Υγιής νους σε υγιές σώμα." },
-  { text: "Τὸ ἄγνωστον ἑαυτοῦ πάντων χαλεπώτατον.", author: "Πλάτωνας", translation: "Το να μην γνωρίζεις τον εαυτό σου είναι το δυσκολότερο από όλα." },
-  { text: "Ψυχῆς οὖν ἐπιμελεῖσθαι πρῶτον.", author: "Πλάτωνας", translation: "Φρόντισε πρώτα για την ψυχή." },
+  { text: "Σῶμα καὶ ψυχὴ ἐν ἀσκήσει συντηρεῖται.", author: "Πλάτωνας", translationI18n: { el: "Σώμα και ψυχή διατηρούνται με άσκηση.", en: "Body and soul are maintained through exercise.", es: "Cuerpo y alma se mantienen a través del ejercicio.", fr: "Le corps et l'âme se maintiennent par l'exercice." } },
+  { text: "Ὁ ἀγύμναστος βίος οὐ βιωτός.", author: "Πλάτωνας", translationI18n: { el: "Η ζωή χωρίς άσκηση δεν αξίζει να ζιστεί.", en: "A life without exercise is not worth living.", es: "Una vida sin ejercicio no merece ser vivida.", fr: "Une vie sans exercice ne vaut pas la peine d'être vécue." } },
+  { text: "Ὁ νοῦς ὑγιαίνων ἐν σώματι ὑγιαίνοντι.", author: "Πλάτωνας", translationI18n: { el: "Υγιής νους σε υγιές σώμα.", en: "A healthy mind in a healthy body.", es: "Una mente sana en un cuerpo sano.", fr: "Un esprit sain dans un corps sain." } },
+  { text: "Τὸ ἄγνωστον ἑαυτοῦ πάντων χαλεπώτατον.", author: "Πλάτωνας", translationI18n: { el: "Το να μην γνωρίζεις τον εαυτό σου είναι το δυσκολότερο από όλα.", en: "Not knowing yourself is the hardest thing of all.", es: "No conocerse a uno mismo es lo más difícil de todo.", fr: "Ne pas se connaître soi-même est la chose la plus difficile de toutes." } },
+  { text: "Ψυχῆς οὖν ἐπιμελεῖσθαι πρῶτον.", author: "Πλάτωνας", translationI18n: { el: "Φρόντισε πρώτα για την ψυχή.", en: "Take care of the soul first.", es: "Cuida primero el alma.", fr: "Prends d'abord soin de l'âme." } },
   // Σωκράτης / Άλλοι
-  { text: "Γνῶθι σαυτόν.", author: "Σωκράτης", translation: "Γνώρισε τον εαυτό σου." },
-  { text: "Ἓν οἶδα ὅτι οὐδὲν οἶδα.", author: "Σωκράτης", translation: "Ένα γνωρίζω: ότι δεν γνωρίζω τίποτα." },
-  { text: "Μέτρον ἄριστον.", author: "Κλεόβουλος", translation: "Το μέτρο είναι το άριστο." },
-  { text: "Ἐν ὑγιεῖ σώματι ὑγιὴς νοῦς.", author: "Αρχαία Γνώμη", translation: "Σε υγιές σώμα υγιής νους." },
-  { text: "Τὸ εὖ πράττειν χωρὶς ἀρετῆς ἀδύνατον.", author: "Δημόκριτος", translation: "Το να ζεις καλά χωρίς αρετή είναι αδύνατο." },
-  { text: "Πάντα ῥεῖ.", author: "Ηράκλειτος", translation: "Τα πάντα ρέουν." },
-  { text: "Τὸ αὐτὸ ποταμῷ δὶς οὐκ ἔστιν ἐμβῆναι.", author: "Ηράκλειτος", translation: "Δεν μπορείς να μπεις δύο φορές στο ίδιο ποτάμι." },
-  { text: "Ἐκ τῆς τέχνης σοφία, ἐκ τῆς σοφίας εὐδαιμονία.", author: "Δημόκριτος", translation: "Από την τέχνη η σοφία, από τη σοφία η ευδαιμονία." },
-  { text: "Τολμᾶν χρή, τοῖς τολμῶσι γὰρ ἡ τύχη εὐμενής.", author: "Σοφοκλής", translation: "Πρέπει να τολμάς, γιατί η τύχη ευνοεί τους τολμηρούς." },
-  { text: "Ὁ πόνος τίκτει δόξαν.", author: "Πίνδαρος", translation: "Ο κόπος γεννά τη δόξα." },
-  { text: "Σιωπῇ καὶ πόνῳ τὰ μεγάλα πράττεται.", author: "Αρχαία Γνώμη", translation: "Τα μεγάλα πράγματα γίνονται με σιωπή και κόπο." },
+  { text: "Γνῶθι σαυτόν.", author: "Σωκράτης", translationI18n: { el: "Γνώρισε τον εαυτό σου.", en: "Know thyself.", es: "Conócete a ti mismo.", fr: "Connais-toi toi-même." } },
+  { text: "Ἓν οἶδα ὅτι οὐδὲν οἶδα.", author: "Σωκράτης", translationI18n: { el: "Ένα γνωρίζω: ότι δεν γνωρίζω τίποτα.", en: "I know one thing: that I know nothing.", es: "Sé una cosa: que no sé nada.", fr: "Je sais une chose : que je ne sais rien." } },
+  { text: "Μέτρον ἄριστον.", author: "Κλεόβουλος", translationI18n: { el: "Το μέτρο είναι το άριστο.", en: "Moderation is best.", es: "La moderación es lo mejor.", fr: "La modération est la meilleure." } },
+  { text: "Ἐν ὑγιεῖ σώματι ὑγιὴς νοῦς.", author: "Αρχαία Γνώμη", translationI18n: { el: "Σε υγιές σώμα υγιής νους.", en: "In a healthy body, a healthy mind.", es: "En un cuerpo sano, una mente sana.", fr: "Dans un corps sain, un esprit sain." } },
+  { text: "Τὸ εὖ πράττειν χωρὶς ἀρετῆς ἀδύνατον.", author: "Δημόκριτος", translationI18n: { el: "Το να ζεις καλά χωρίς αρετή είναι αδύνατο.", en: "To live well without virtue is impossible.", es: "Vivir bien sin virtud es imposible.", fr: "Bien vivre sans vertu est impossible." } },
+  { text: "Πάντα ῥεῖ.", author: "Ηράκλειτος", translationI18n: { el: "Τα πάντα ρέουν.", en: "Everything flows.", es: "Todo fluye.", fr: "Tout s'écoule." } },
+  { text: "Τὸ αὐτὸ ποταμῷ δὶς οὐκ ἔστιν ἐμβῆναι.", author: "Ηράκλειτος", translationI18n: { el: "Δεν μπορείς να μπεις δύο φορές στο ίδιο ποτάμι.", en: "You cannot step into the same river twice.", es: "No puedes entrar dos veces en el mismo río.", fr: "On ne peut pas entrer deux fois dans le même fleuve." } },
+  { text: "Ἐκ τῆς τέχνης σοφία, ἐκ τῆς σοφίας εὐδαιμονία.", author: "Δημόκριτος", translationI18n: { el: "Από την τέχνη η σοφία, από τη σοφία η ευδαιμονία.", en: "From craft comes wisdom, from wisdom comes happiness.", es: "Del arte viene la sabiduría, de la sabiduría la felicidad.", fr: "De l'art vient la sagesse, de la sagesse vient le bonheur." } },
+  { text: "Τολμᾶν χρή, τοῖς τολμῶσι γὰρ ἡ τύχη εὐμενής.", author: "Σοφοκλής", translationI18n: { el: "Πρέπει να τολμάς, γιατί η τύχη ευνοεί τους τολμηρούς.", en: "One must dare, for fortune favors the bold.", es: "Hay que atreverse, pues la fortuna favorece a los audaces.", fr: "Il faut oser, car la fortune sourit aux audacieux." } },
+  { text: "Ὁ πόνος τίκτει δόξαν.", author: "Πίνδαρος", translationI18n: { el: "Ο κόπος γεννά τη δόξα.", en: "Toil gives birth to glory.", es: "El esfuerzo engendra la gloria.", fr: "Le labeur engendre la gloire." } },
+  { text: "Σιωπῇ καὶ πόνῳ τὰ μεγάλα πράττεται.", author: "Αρχαία Γνώμη", translationI18n: { el: "Τα μεγάλα πράγματα γίνονται με σιωπή και κόπο.", en: "Great things are accomplished in silence and toil.", es: "Las grandes cosas se logran en silencio y con esfuerzo.", fr: "Les grandes choses s'accomplissent dans le silence et le labeur." } },
 ];
 
 const DEFAULT_GOALS = { kcal: 1000, protein: 60, carbs: 150, fat: 45 };
@@ -601,6 +601,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ταχίνι 2κγ & 2 φέτες τοστ", en: "Tahini 2 tsp & 2 slices of toast", es: "Tahini 2 cdita & 2 tostadas", fr: "Tahini 2 càc & 2 tranches de toast" },
     kcal_est: 250, p: 8, c: 32, f: 10,
     note: "Κλασικό γρήγορο πρωινό",
+    instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε το ταχίνι γενναιόδωρα από πάνω.",
+    serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα για επιπλέον γεύση.",
     items: ["2 κγ ταχίνι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
   },
   {
@@ -609,6 +611,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι 2% 200g", en: "Yogurt 2% 200g", es: "Yogur 2% 200g", fr: "Yaourt 2% 200g" },
     kcal_est: 136, p: 16, c: 8, f: 8,
     note: "Συχνά ως συμπλήρωμα πρωινού",
+    instructions: "1. Βγάλε το γιαούρτι από το ψυγείο 5 λεπτά νωρίτερα για καλύτερη γεύση.",
+    serving: "Σέρβιρε σε μπολ. Μπορείς να συνδυάσεις με φρούτο ή λίγο μέλι.",
     items: ["200g γιαούρτι 2%"]
   },
   {
@@ -617,6 +621,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μέλι 2κγ & 2 φέτες τοστ", en: "Honey 2 tsp & 2 slices of toast", es: "Miel 2 cdita & 2 tostadas", fr: "Miel 2 càc & 2 tranches de toast" },
     kcal_est: 200, p: 5, c: 40, f: 2,
     note: "Γλυκό εναλλακτικό πρωινό",
+    instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Στάξε το μέλι από πάνω.",
+    serving: "Σέρβιρε αμέσως ζεστό. Τέλειο με λίγη κανέλα από πάνω.",
     items: ["2 κγ μέλι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
   },
   {
@@ -625,6 +631,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι 200g + Πρωτεΐνη 30g + Βρώμη 5κσ", en: "Yogurt 200g + Protein 30g + Oats 5 tbsp", es: "Yogur 200g + Proteína 30g + Avena 5 cdas", fr: "Yaourt 200g + Protéine 30g + Avoine 5 càs" },
     kcal_est: 350, p: 42, c: 30, f: 5,
     note: "Υψηλή πρωτεΐνη, χορταστικό",
+    instructions: "1. Ανακάτεψε το whey με το γιαούρτι μέχρι να διαλυθεί πλήρως.\n2. Ρίξε τη βρώμη από πάνω — ωμή για τραγανή υφή.",
+    serving: "Σέρβιρε σε μπολ. Πρόσθεσε φρούτα εποχής ή λίγη μαύρη σοκολάτα τριμμένη.",
     items: ["200g γιαούρτι 2%", "30g whey isolate", "5 κ.σ. βρώμη (~50g)"]
   },
   {
@@ -633,6 +641,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ταχίνι 2κγ & 4 ριζογκοφρέτες", en: "Tahini 2 tsp & 4 rice cakes", es: "Tahini 2 cdita & 4 tortas de arroz", fr: "Tahini 2 càc & 4 galettes de riz" },
     kcal_est: 240, p: 7, c: 28, f: 11,
     note: "Gluten-free εναλλακτικό",
+    instructions: "1. Άλειψε το ταχίνι στις ριζογκοφρέτες.",
+    serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα σε φέτες.",
     items: ["2 κγ ταχίνι (~30g)", "4 ριζογκοφρέτες"]
   },
   {
@@ -641,6 +651,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "1 φέτα τοστ, ξηροί καρποί, μέλι & ταχίνι", en: "1 slice of toast, nuts, honey & tahini", es: "1 tostada, frutos secos, miel & tahini", fr: "1 tranche de toast, noix, miel & tahini" },
     kcal_est: 220, p: 6, c: 24, f: 11,
     note: "Ενεργειακό & γρήγορο πρωινό",
+    instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε ταχίνι, στάξε μέλι, πασπάλισε ξηρούς καρπούς.",
+    serving: "Σέρβιρε αμέσως ζεστό. Ιδανικό πριν την προπόνηση.",
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ ταχίνι (~15g)"]
   },
   {
@@ -649,6 +661,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "1 φέτα τοστ, ξηροί καρποί, μέλι & φυστικοβούτυρο", en: "1 slice of toast, nuts, honey & peanut butter", es: "1 tostada, frutos secos, miel & mantequilla de cacahuete", fr: "1 tranche de toast, noix, miel & beurre de cacahuète" },
     kcal_est: 225, p: 7, c: 24, f: 12,
     note: "Ενεργειακό με φυστικοβούτυρο",
+    instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε φυστικοβούτυρο, στάξε μέλι, πασπάλισε ξηρούς καρπούς.",
+    serving: "Σέρβιρε αμέσως. Γεύμα με φυσική γλυκύτητα και καλά λιπαρά.",
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ φυστικοβούτυρο (~15g)"]
   },
   {
@@ -657,6 +671,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "1 φέτα τοστ, κασέρι, γαλοπούλα & 2 ασπράδια", en: "1 slice of toast, kasseri cheese, turkey & 2 egg whites", es: "1 tostada, queso kaseri, pavo & 2 claras de huevo", fr: "1 tranche de toast, fromage kasseri, dinde & 2 blancs d'œufs" },
     kcal_est: 210, p: 24, c: 14, f: 6,
     note: "Υψηλή πρωτεΐνη, χαμηλά λίπη",
+    instructions: "1. Βράσε 2 αυγά, χώρισε τα ασπράδια.\n2. Ψήσε το ψωμί στον τοστιέρα.\n3. Βάλε κασέρι, γαλοπούλα και ασπράδια από πάνω.",
+    serving: "Σέρβιρε αμέσως. Γρήγορο, υψηλής πρωτεΐνης πρωινό για απαιτητικές μέρες.",
     items: ["1 φέτα ψωμί τοστ (~30g)", "1 φέτα κασέρι light (~20g)", "30g γαλοπούλα φέτα", "2 βραστά ασπράδια αυγού"]
   },
   {
@@ -665,6 +681,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Αυγό βραστό, ντοματίνια & παξιμαδάκια", en: "Boiled egg, cherry tomatoes & rusks", es: "Huevo cocido, tomatitos & tostadas", fr: "Œuf dur, tomates cerises & biscottes" },
     kcal_est: 250, p: 8, c: 28, f: 6,
     note: "Ελαφρύ & χορταστικό",
+    instructions: "1. Βράσε το αυγό: 8 λεπτά από τη στιγμή που βράσει το νερό για σφιχτό.\n2. Κρύωσε σε κρύο νερό, ξεφλούδισε και κόψε στη μέση.",
+    serving: "Σέρβιρε με ντοματίνια δίπλα και παξιμαδάκια. Αλατοπίπερο και λίγο ελαιόλαδο από πάνω.",
     items: ["1 αυγό βραστό", "4-5 ντοματίνια", "2 παξιμαδάκια χαρουπιού (~30g)"]
   },
   {
@@ -673,6 +691,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Κουλούρι Θεσσαλονίκης ολικής", en: "Thessaloniki sesame bagel (whole grain)", es: "Rosca de sésamo de Salónica integral", fr: "Bagel au sésame de Thessalonique complet" },
     kcal_est: 300, p: 10, c: 56, f: 4,
     note: "Γρήγορο & ενεργειακό",
+    instructions: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.",
+    serving: "Τρώγε σκέτο ή με λίγο τυρί και γαλοπούλα. Συνόδεψε με καφέ ή τσάι.",
     items: ["1 κουλούρι Θεσσαλονίκης ολικής άλεσης"]
   },
   {
@@ -681,6 +701,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τοστ ολικής με γαλοπούλα & Philadelphia", en: "Whole grain toast with turkey & Philadelphia", es: "Tostada integral con pavo & Philadelphia", fr: "Toast complet avec dinde & Philadelphia" },
     kcal_est: 260, p: 12, c: 32, f: 7,
     note: "Πλήρες & ισορροπημένο πρωινό",
+    instructions: "1. Ψήσε τις φέτες ψωμιού στον τοστιέρα.\n2. Άλειψε Philadelphia σε κάθε φέτα.\n3. Βάλε γαλοπούλα, μαρούλι και ντομάτα.",
+    serving: "Σέρβιρε αμέσως. Συνόδεψε με φρέσκο χυμό πορτοκαλιού.",
     items: ["2 φέτες ψωμί ολικής", "1 φέτα γαλοπούλα", "½ φέτα κίτρινο τυρί", "1 κγ Philadelphia Light", "μαρούλι & ντομάτα"]
   },
   {
@@ -689,6 +711,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Porridge βρώμης (Σαββατοκύριακο)", en: "Oat porridge (Weekend)", es: "Porridge de avena (Fin de semana)", fr: "Porridge d'avoine (Week-end)" },
     kcal_est: 290, p: 9, c: 46, f: 5,
     note: "Χορταστικό & ζεστό — με κανέλα",
+    instructions: "1. Βράσε βρώμη με γάλα σε κατσαρολάκι σε χαμηλή φωτιά για 5 λεπτά, ανακατεύοντας.\n2. Αν θέλεις, πρόσθεσε κακάο και ανακάτεψε.\n3. Βγάλε από τη φωτιά, στάξε μέλι.",
+    serving: "Σέρβιρε ζεστό σε μπολ. Πασπάλισε με κανέλα. Ιδανικό για χαλαρό πρωινό Σαββατοκύριακου.",
     items: ["250ml γάλα 1,5%", "30g βρώμη (3 κσ)", "1 κγ μέλι", "1 κγ κακάο άγλυκο (προαιρετικό)", "κανέλα"]
   },
 
@@ -699,6 +723,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μήλο & 5 αμύγδαλα", en: "Apple & 5 almonds", es: "Manzana & 5 almendras", fr: "Pomme & 5 amandes" },
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ πρωινό σνακ",
+    instructions: "1. Κόψε το μήλο σε φέτες ή τρώγε ολόκληρο.",
+    serving: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, βιταμινών και καλών λιπαρών.",
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -707,6 +733,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μπανάνα & 5 αμύγδαλα", en: "Banana & 5 almonds", es: "Plátano & 5 almendras", fr: "Banane & 5 amandes" },
     kcal_est: 170, p: 4, c: 30, f: 5,
     note: "Ενέργεια pre-workout",
+    instructions: "1. Ξεφλούδισε τη μπανάνα. Έτοιμο!",
+    serving: "Φάε μπανάνα + αμύγδαλα 30-45 λεπτά πριν την προπόνηση για γρήγορη ενέργεια.",
     items: ["1 μπανάνα (~120g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -715,14 +743,18 @@ const STANDARD_MEALS = [
     nameI18n: { el: "3 παξιμάδια & 2 φέτες κασέρι χαμηλά λιπαρά", en: "3 rusks & 2 slices of low-fat kasseri cheese", es: "3 tostadas & 2 lonchas de queso kaseri bajo en grasa", fr: "3 biscottes & 2 tranches de fromage kasseri allégé" },
     kcal_est: 250, p: 14, c: 28, f: 8,
     note: "Πρωτεΐνη + υδατάνθρακες",
+    instructions: "1. Βάλε τα παξιμάδια σε πιατάκι.\n2. Τοποθέτησε κασέρι από πάνω ή δίπλα.",
+    serving: "Σέρβιρε με λίγη ντομάτα ή αγγούρι δίπλα για extra φρεσκάδα.",
     items: ["3 παξιμάδια (~90g)", "2 φέτες κασέρι light (~40g)"]
   },
   {
     id: "sm13", meal: "snack", emoji: "🥪",
     name: "Τοστ γαλοπούλα / κασέρι",
-    nameI18n: { el: "Τοστ γαλοπούλα / κασέρι", en: "Toast turkey / kasseri cheese", es: "Tostada pavo / queso kaseri", fr: "Toast dinde / fromage kasseri" },
+    nameI18n: { el: "Τοστ γαλοπούλα / κασέρι", en: "Tοast turkey / kasseri cheese", es: "Tostada pavo / queso kaseri", fr: "Toast dinde / fromage kasseri" },
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Κλασικό δεκατιανό",
+    instructions: "1. Βάλε γαλοπούλα και κασέρι ανάμεσα στις φέτες ψωμιού.\n2. Ψήσε στον τοστιέρα 3-4 λεπτά.",
+    serving: "Σέρβιρε αμέσως ζεστό. Τέλειο με ντομάτα ή μαρούλι δίπλα.",
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g κασέρι"]
   },
   {
@@ -731,6 +763,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "3 κριτσίνια & 2 φέτες κασέρι light", en: "3 breadsticks & 2 slices of light kasseri cheese", es: "3 palitos de pan & 2 lonchas de queso kaseri light", fr: "3 gressins & 2 tranches de fromage kasseri light" },
     kcal_est: 230, p: 13, c: 22, f: 9,
     note: "Τραγανό & χορταστικό",
+    instructions: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.",
+    serving: "Βάλε κασέρι πάνω στα κριτσίνια ή φάε χωριστά. Απλό και γρήγορο.",
     items: ["3 κριτσίνια (~30g)", "2 φέτες κασέρι light (~40g)"]
   },
   {
@@ -739,6 +773,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "5 καρότα", en: "5 carrots", es: "5 zanahorias", fr: "5 carottes" },
     kcal_est: 100, p: 2, c: 23, f: 0,
     note: "Ελαφρύ & χορταστικό",
+    instructions: "1. Πλύνε και ξεφλούδισε τα καρότα. Κόψε σε μπαστουνάκια ή φάε ολόκληρα.",
+    serving: "Συνόδεψε με λίγο χούμους ή cottage για επιπλέον πρωτεΐνη.",
     items: ["5 μεσαία καρότα (~250g)"]
   },
   {
@@ -747,6 +783,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "2 ακτινίδια", en: "2 kiwis", es: "2 kiwis", fr: "2 kiwis" },
     kcal_est: 90, p: 2, c: 20, f: 1,
     note: "Βιταμίνη C + φυτικές ίνες",
+    instructions: "1. Κόψε τα ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.",
+    serving: "Τρώγε κρύα — βγάλε από το ψυγείο λίγο πριν. Πλούσια σε βιταμίνη C.",
     items: ["2 ακτινίδια (~140g)"]
   },
   {
@@ -755,6 +793,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Πρωτεϊνούχο Σέικ", en: "Protein Shake", es: "Batido de Proteínas", fr: "Shake Protéiné" },
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ή απόγευμα",
+    instructions: "1. Ανακάτεψε 30g whey σε 300ml νερό με σέικερ ή κουτάλι.",
+    serving: "Πίνε αμέσως μετά την προπόνηση (εντός 30 λεπτών) για βέλτιστη απορρόφηση.",
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
   },
   {
@@ -763,6 +803,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Φρουί Ζελέ", en: "Fruit Jelly", es: "Gelatina de Frutas", fr: "Gelée de Fruits" },
     kcal_est: 90, p: 1, c: 20, f: 0,
     note: "Ελαφρύ γλυκό σνακ",
+    instructions: "1. Έτοιμο — βγάλε από το ψυγείο.",
+    serving: "Σέρβιρε κρύο. Ιδανικό για όταν θέλεις κάτι γλυκό με λίγες θερμίδες.",
     items: ["1 φρουί ζελέ (~90g)"]
   },
 
@@ -773,6 +815,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Φιλέτο κοτόπουλο 200g + ψητά λαχανικά & μανιτάρια + σαλάτα", en: "Chicken fillet 200g + grilled vegetables & mushrooms + salad", es: "Filete de pollo 200g + verduras a la plancha & champiñones + ensalada", fr: "Filet de poulet 200g + légumes grillés & champignons + salade" },
     kcal_est: 610, p: 50, c: 14, f: 18,
     note: "Μαρινάδα: λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι. Φούρνος/air fryer 190°C 16-18'. Ψήσε τα λαχανικά μαζί με σκόρδο και ρίγανη.",
+    instructions: "1. Μαρίνα το κοτόπουλο με λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι για 20+ λεπτά.\n2. Κόψε κολοκύθι, πιπεριά, κρεμμύδι και μανιτάρια σε κομμάτια.\n3. Ψήσε στον φούρνο ή air fryer στους 190°C για 16-18 λεπτά — κοτόπουλο και λαχανικά μαζί.",
+    serving: "Σέρβιρε κοτόπουλο με τα ψητά λαχανικά. Δίπλα βάλε φρέσκια σαλάτα εποχής.",
     items: ["200g φιλέτο κοτόπουλο", "150g κολοκύθι, πιπεριά, κρεμμύδι", "100g μανιτάρια", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -781,6 +825,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ομελέτα 4 αυγών + cottage + ψωμί ολικής + σαλάτα", en: "4-egg omelette + cottage cheese + whole grain bread + salad", es: "Tortilla de 4 huevos + cottage + pan integral + ensalada", fr: "Omelette de 4 œufs + cottage cheese + pain complet + salade" },
     kcal_est: 600, p: 38, c: 18, f: 38,
     note: "Σόταρε πρώτα τα λαχανικά, μετά τα αυγά. Ρίξε cottage πριν δέσει. Μπαχαρικά: κουρκουμάς, πάπρικα, ρίγανη, μαϊντανός.",
+    instructions: "1. Σόταρε ντομάτα, πιπεριά και μανιτάρια σε αντικολλητικό με λίγο ελαιόλαδο για 3 λεπτά.\n2. Χτύπα 4 αυγά με κουρκουμά, πάπρικα, ρίγανη, αλατοπίπερο.\n3. Ρίξε αυγά πάνω στα λαχανικά, άπλωσε cottage πριν δέσουν πλήρως.\n4. Δίπλωσε και βγάλε από τη φωτιά.",
+    serving: "Σέρβιρε ζεστή με ψωμί ολικής και σαλάτα στο πλάι.",
     items: ["4 αυγά", "ντομάτα, πιπεριά, μανιτάρια", "40g cottage cheese", "30g ψωμί ολικής", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -789,6 +835,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ρεβύθια φούρνου + cottage + σαλάτα", en: "Baked chickpeas + cottage cheese + salad", es: "Garbanzos al horno + cottage + ensalada", fr: "Pois chiches au four + cottage cheese + salade" },
     kcal_est: 662, p: 28, c: 72, f: 18,
     note: "Ψήσε με ντομάτα, κρεμμύδι, καρότο, πιπεριά. Μπαχαρικά: κύμινο, πάπρικα καπνιστή, κουρκουμάς, δάφνη. Πρόσθεσε cottage αφού βγουν.",
+    instructions: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψί βάλε ρεβύθια, ντομάτα, κρεμμύδι, καρότο, πιπεριά, ελαιόλαδο.\n3. Πασπάλισε κύμινο, πάπρικα καπνιστή, κουρκουμά, δάφνη, αλατοπίπερο.\n4. Ψήσε για 25-30 λεπτά μέχρι να ροδίσουν.",
+    serving: "Βγάλε από τον φούρνο και πρόσθεσε cottage cheese από πάνω. Σέρβιρε με φρέσκια σαλάτα.",
     items: ["250g ρεβύθια μαγειρεμένα (1½ φλ.)", "60g cottage cheese", "καρότο & πιπεριά", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -797,6 +845,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μακαρόνια με σάλτσα ντομάτας & μανιτάρια + σαλάτα", en: "Pasta with tomato sauce & mushrooms + salad", es: "Fideos con salsa de tomate & champiñones + ensalada", fr: "Pâtes à la sauce tomate & champignons + salade" },
     kcal_est: 622, p: 18, c: 96, f: 16,
     note: "Σάλτσα με ντομάτα, σκόρδο, κρεμμύδι. Σόταρε μανιτάρια χωρίς πολύ λάδι. Μπαχαρικά: βασιλικός, ρίγανη, θυμάρι.",
+    instructions: "1. Βράσε μακαρόνια σύμφωνα με οδηγίες (al dente).\n2. Σόταρε μανιτάρια σε αντικολλητικό χωρίς λάδι για 4-5 λεπτά μέχρι να χρυσίσουν.\n3. Σε κατσαρόλα σόταρε σκόρδο και κρεμμύδι, ρίξε ντομάτα, βασιλικό, ρίγανη, θυμάρι.\n4. Σιγόβρασε σάλτσα 10 λεπτά, ανακάτεψε μανιτάρια και μακαρόνια.",
+    serving: "Σέρβιρε με φρέσκια σαλάτα στο πλάι. Μπορείς να ρίξεις λίγη παρμεζάνα για γεύση.",
     items: ["300g βρασμένα μακαρόνια (2 φλ.)", "σάλτσα ντομάτας", "100g μανιτάρια", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -805,6 +855,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μπριάμ + ψωμί ολικής + cottage + φέτα", en: "Mixed vegetable roast + whole grain bread + cottage cheese + feta", es: "Verduras al horno + pan integral + cottage + feta", fr: "Légumes rôtis + pain complet + cottage cheese + feta" },
     kcal_est: 616, p: 20, c: 54, f: 28,
     note: "Ψήσε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι, ντομάτα. Μπαχαρικά: ρίγανη, θυμάρι, μαϊντανός. Cottage και φέτα στο σερβίρισμα.",
+    instructions: "1. Κόψε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι και ντομάτα σε κύβους.\n2. Βάλε σε ταψί με ελαιόλαδο, ρίγανη, θυμάρι, μαϊντανό, αλατοπίπερο.\n3. Ψήσε στους 180°C για 45-50 λεπτά μέχρι να μαλακώσουν και να ροδίσουν.",
+    serving: "Σέρβιρε μπριάμ με φέτα και cottage cheese από πάνω. Δίπλα βάλε ψωμί ολικής.",
     items: ["300g μπριάμ (κολοκύθι, μελιτζάνα, πατάτα, ντομάτα)", "30g ψωμί ολικής", "60g cottage cheese", "30g φέτα"]
   },
   {
@@ -813,6 +865,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ψάρι φούρνου + σαλάτα", en: "Baked fish + salad", es: "Pescado al horno + ensalada", fr: "Poisson au four + salade" },
     kcal_est: 558, p: 52, c: 4, f: 28,
     note: "Τσιπούρα ή λαυράκι στον φούρνο με λεμόνι, σκόρδο και ελαιόλαδο, 180°C 25'. Μπαχαρικά: θυμάρι, ρίγανη, λευκό πιπέρι. Σερβίρισε με βραστά χόρτα.",
+    instructions: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψάκι βάλε τσιπούρα ή λαυράκι, ρίξε χυμό λεμονιού, σκόρδο φέτες, ελαιόλαδο.\n3. Πασπάλισε θυμάρι, ρίγανη, λευκό πιπέρι, αλάτι.\n4. Ψήσε για 25 λεπτά μέχρι το ψάρι να ξεκολλά εύκολα.",
+    serving: "Σέρβιρε με φρέσκια σαλάτα εποχής. Στύψε επιπλέον λεμόνι πάνω στο ψάρι.",
     items: ["250g τσιπούρα ή λαυράκι (καθαρό βάρος)", "σαλάτα εποχής", "1 κγ ελαιόλαδο", "λεμόνι"]
   },
   {
@@ -821,6 +875,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μοσχαρίσιο συκώτι + βραστά λαχανικά + ψωμί ολικής", en: "Veal liver + steamed vegetables + whole grain bread", es: "Hígado de ternera + verduras al vapor + pan integral", fr: "Foie de veau + légumes vapeur + pain complet" },
     kcal_est: 615, p: 44, c: 28, f: 24,
     note: "Ψήσε σε δυνατή φωτιά 2-3 λεπτά ανά πλευρά. Λεμόνι μόνο μετά. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, σκόρδο σε σκόνη.",
+    instructions: "1. Ζέστανε τηγάνι σε δυνατή φωτιά χωρίς λάδι.\n2. Αλατοπίπερο, πάπρικα, ρίγανη και σκόρδο σε σκόνη στο συκώτι.\n3. Ψήσε 2-3 λεπτά ανά πλευρά — μην παραψήσεις.\n4. Βράσε μπρόκολο, κουνουπίδι, καρότα παράλληλα.",
+    serving: "Στύψε λεμόνι πάνω στο συκώτι μόνο αφού βγει από τη φωτιά. Σέρβιρε με βραστά λαχανικά και ψωμί ολικής.",
     items: ["180g μοσχαρίσιο συκώτι", "βρασμένα λαχανικά (μπρόκολο, κουνουπίδι, καρότα)", "30g ψωμί ολικής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -829,6 +885,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Συκώτι βοδινό + πατάτα + σαλάτα", en: "Beef liver + potato + salad", es: "Hígado de res + patata + ensalada", fr: "Foie de bœuf + pomme de terre + salade" },
     kcal_est: 580, p: 46, c: 36, f: 20,
     note: "Υψηλή συγκέντρωση σιδήρου και βιταμίνης Β12. Ψήσε σε δυνατή φωτιά με κρεμμύδι και λεμόνι. Μην παραψήσεις — μένει τρυφερό.",
+    instructions: "1. Βράσε πατάτα (20-25 λεπτά) παράλληλα με το μαγείρεμα.\n2. Ζέστανε τηγάνι σε δυνατή φωτιά, σόταρε κρεμμύδι σε ροδέλες.\n3. Πρόσθεσε συκώτι, ψήσε 2-3 λεπτά ανά πλευρά. Μην παραψήσεις.",
+    serving: "Στύψε λεμόνι πάνω μετά το μαγείρεμα. Σέρβιρε με βραστή πατάτα και σαλάτα εποχής. Πλούσιο σε σίδηρο και Β12.",
     items: ["180g συκώτι βοδινό", "200g πατάτα βραστή", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -837,6 +895,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Κοτόπουλο φιλέτο 250g + ρύζι 100g + σαλάτα", en: "Chicken fillet 250g + rice 100g + salad", es: "Filete de pollo 250g + arroz 100g + ensalada", fr: "Filet de poulet 250g + riz 100g + salade" },
     kcal_est: 640, p: 55, c: 62, f: 12,
     note: "Κλασικό μεσημεριανό με υψηλή πρωτεΐνη",
+    instructions: "1. Μαρίνα το κοτόπουλο με λεμόνι, ρίγανη, αλατοπίπερο για 20 λεπτά.\n2. Ψήσε σε σχάρα ή αντικολλητικό 7 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι σύμφωνα με τις οδηγίες της συσκευασίας.",
+    serving: "Σέρβιρε κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα ντομάτας με ελαιόλαδο και λεμόνι.",
     items: ["250g κοτόπουλο φιλέτο ψητό", "100g ρύζι μαγ.", "σαλάτα ντομάτα + 1 κγ ελαιόλαδο"]
   },
   {
@@ -845,6 +905,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Κοτόπουλο μπούτι 250g + ρύζι 100g", en: "Chicken thigh 250g + rice 100g", es: "Muslo de pollo 250g + arroz 100g", fr: "Cuisse de poulet 250g + riz 100g" },
     kcal_est: 720, p: 52, c: 60, f: 22,
     note: "Πιο λιπαρό, πιο γευστικό",
+    instructions: "1. Άλειψε μπούτια με ελαιόλαδο, σκόρδο, ρίγανη, αλατοπίπερο.\n2. Ψήσε σε φούρνο 190°C για 35-40 λεπτά ή σε σχάρα 10 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι παράλληλα.",
+    serving: "Σέρβιρε μπούτι πάνω στο ρύζι. Στύψε λεμόνι από πάνω και πρόσθεσε σαλάτα.",
     items: ["250g κοτόπουλο μπούτι ψητό", "100g ρύζι μαγ.", "λίγη σαλάτα"]
   },
   {
@@ -853,6 +915,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τόνος σε νερό (2 κουτάκια) + σαλάτα", en: "Tuna in water (2 cans) + salad", es: "Atún en agua (2 latas) + ensalada", fr: "Thon à l'eau (2 boîtes) + salade" },
     kcal_est: 300, p: 42, c: 8, f: 10,
     note: "Ελαφρύ & υψηλή πρωτεΐνη",
+    instructions: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Ανακάτεψε με χυμό λεμονιού, ρίγανη και αλατοπίπερο.\n3. Ετοίμασε σαλάτα με λαχανικά εποχής.",
+    serving: "Σέρβιρε τόνο πάνω στη σαλάτα. Ρίξε ελαιόλαδο και λεμόνι. Γρήγορο και πλούσιο σε πρωτεΐνη.",
     items: ["2 κουτάκια τόνος (~160g)", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
   },
   {
@@ -861,6 +925,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Χωριάτικη σαλάτα + 2 αυγά", en: "Greek salad + 2 eggs", es: "Ensalada griega + 2 huevos", fr: "Salade grecque + 2 œufs" },
     kcal_est: 350, p: 18, c: 12, f: 24,
     note: "Καλοκαιρινό γεύμα",
+    instructions: "1. Βράσε 2 αυγά (8 λεπτά για σφιχτά), κρύωσε και ξεφλούδισε.\n2. Κόψε ντομάτα, αγγούρι σε κύβους, πρόσθεσε ελιές και φέτα.",
+    serving: "Ρίξε ελαιόλαδο, ρίγανη και αλατοπίπερο. Βάλε αυγά κομμένα στα 4 από πάνω.",
     items: ["200g ντομάτα+αγγούρι+ελιές+φέτα", "2 βραστά αυγά", "1 κσ ελαιόλαδο"]
   },
   {
@@ -869,6 +935,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Φακές με ρύζι (Mujadarah)", en: "Lentils with rice (Mujadarah)", es: "Lentejas con arroz (Mujadarah)", fr: "Lentilles au riz (Mujadarah)" },
     kcal_est: 480, p: 22, c: 78, f: 10,
     note: "Πλήρης φυτική πρωτεΐνη",
+    instructions: "1. Βράσε φακές 20 λεπτά σε νερό, στράγγισε.\n2. Σοτάρισε κρεμμύδι σε ελαιόλαδο μέχρι να καραμελώσει (10 λεπτά).\n3. Ανακάτεψε φακές + ρύζι μαγειρεμένο + κρεμμύδι.",
+    serving: "Σέρβιρε ζεστό με γιαούρτι στο πλάι και λίγο κύμινο από πάνω. Κλασική μεσογειακή συνταγή.",
     items: ["200g φακές μαγ.", "80g ρύζι μαγ.", "1 κσ ελαιόλαδο", "κρεμμύδι"]
   },
 
@@ -879,6 +947,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μήλο & 5 αμύγδαλα", en: "Apple & 5 almonds", es: "Manzana & 5 almendras", fr: "Pomme & 5 amandes" },
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ απογευματινό σνακ",
+    instructions: "1. Πλύνε το μήλο καλά.\n2. Κόψε σε φέτες αν θέλεις ή φάε ολόκληρο.\n3. Μέτρησε 5 αμύγδαλα.",
+    serving: "Φάε μήλο και αμύγδαλα μαζί — ο συνδυασμός φυτικών ινών και καλών λιπαρών σε χορταίνει.",
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -887,6 +957,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Πρωτεϊνούχο Σέικ", en: "Protein Shake", es: "Batido de Proteínas", fr: "Shake Protéiné" },
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ιδανικό",
+    instructions: "1. Ρίξε 300ml κρύο νερό ή γάλα στο shaker.\n2. Πρόσθεσε 1 σκούπ whey (~30g).\n3. Κούνα δυνατά για 10-15 δευτερόλεπτα.",
+    serving: "Πιες μέσα σε 30 λεπτά μετά την προπόνηση για μέγιστη αποκατάσταση μυών.",
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
   },
   {
@@ -895,6 +967,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι 2% 200g & μέλι", en: "Yogurt 2% 200g & honey", es: "Yogur 2% 200g & miel", fr: "Yaourt 2% 200g & miel" },
     kcal_est: 196, p: 16, c: 20, f: 8,
     note: "Γλυκό & πρωτεϊνούχο",
+    instructions: "1. Βγάλε γιαούρτι από το ψυγείο.\n2. Στάξε 1 κγ μέλι από πάνω.",
+    serving: "Σέρβιρε κρύο σε μπολ. Μπορείς να προσθέσεις λίγη κανέλα ή καρύδια.",
     items: ["200g γιαούρτι 2%", "1 κγ μέλι (~15g)"]
   },
   {
@@ -903,6 +977,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μπανάνα & φυστικοβούτυρο", en: "Banana & peanut butter", es: "Plátano & mantequilla de cacahuete", fr: "Banane & beurre de cacahuète" },
     kcal_est: 210, p: 6, c: 32, f: 8,
     note: "Ενέργεια & χορτασμός",
+    instructions: "1. Ξεφλούδισε τη μπανάνα.\n2. Κόψε σε ροδέλες ή φάε ολόκληρη.\n3. Βγάλε 1 κγ φυστικοβούτυρο.",
+    serving: "Βούτα κομμάτια μπανάνας στο φυστικοβούτυρο ή άλειψε. Τέλεια επιλογή 30-60 λεπτά πριν την προπόνηση.",
     items: ["1 μπανάνα (~120g)", "1 κγ φυστικοβούτυρο (~15g)"]
   },
   {
@@ -911,6 +987,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Λαχανικά & χούμους", en: "Vegetables & hummus", es: "Verduras & hummus", fr: "Légumes & houmous" },
     kcal_est: 150, p: 5, c: 18, f: 6,
     note: "Υγιεινό & χορταστικό",
+    instructions: "1. Πλύνε και κόψε καρότο, αγγούρι, πιπεριά σε μπαστουνάκια.\n2. Βάλε χούμους σε μικρό μπολ για βούτηγμα.",
+    serving: "Σέρβιρε λαχανικά δίπλα στο μπολ με χούμους. Ιδανικό χαμηλοθερμιδικό σνακ.",
     items: ["150g καρότο+αγγούρι+πιπεριά", "50g χούμους"]
   },
   {
@@ -919,6 +997,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τοστ γαλοπούλα & τυρί", en: "Toast turkey & cheese", es: "Tostada pavo & queso", fr: "Toast dinde & fromage" },
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Πρωτεΐνη πριν την προπόνηση",
+    instructions: "1. Βάλε 2 φέτες ψωμί στην τοστιέρα.\n2. Πρόσθεσε γαλοπούλα και τυρί light.\n3. Τόσταρε μέχρι το τυρί να λιώσει.",
+    serving: "Σέρβιρε ζεστό. Ιδανικό σνακ πριν γυμναστήριο — πρωτεΐνη + υδατάνθρακες για ενέργεια.",
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g τυρί light"]
   },
   {
@@ -927,6 +1007,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "2 ακτινίδια & cottage cheese", en: "2 kiwis & cottage cheese", es: "2 kiwis & cottage cheese", fr: "2 kiwis & cottage cheese" },
     kcal_est: 180, p: 14, c: 24, f: 4,
     note: "Βιταμίνη C + πρωτεΐνη",
+    instructions: "1. Κόψε ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.\n2. Βγάλε 100g cottage cheese.",
+    serving: "Σέρβιρε ακτινίδια δίπλα ή πάνω στο cottage cheese. Εξαιρετικός συνδυασμός Βιταμίνης C και πρωτεΐνης.",
     items: ["2 ακτινίδια (~140g)", "100g cottage cheese"]
   },
   {
@@ -935,6 +1017,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ρυζόγαλο light", en: "Light rice pudding", es: "Arroz con leche light", fr: "Riz au lait light" },
     kcal_est: 200, p: 6, c: 38, f: 2,
     note: "Γλυκό ανέσεως",
+    instructions: "Έτοιμο.",
+    serving: "Σέρβιρε κρύο ή σε θερμοκρασία δωματίου. Μπορείς να ρίξεις κανέλα από πάνω.",
     items: ["1 ρυζόγαλο light (~200g)"]
   },
 
@@ -945,6 +1029,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τυρί cottage 200g + σαλάτα", en: "Cottage cheese 200g + salad", es: "Queso cottage 200g + ensalada", fr: "Cottage cheese 200g + salade" },
     kcal_est: 250, p: 24, c: 10, f: 12,
     note: "Ελαφρύ & πρωτεϊνούχο βραδινό",
+    instructions: "1. Βγάλε το cottage cheese από το ψυγείο.\n2. Ετοίμασε σαλάτα με ντομάτα, αγγούρι, πιπεριά — ό,τι έχεις στο χέρι.\n3. Ρίξε λεμόνι και αλατοπίπερο στη σαλάτα.",
+    serving: "Σέρβιρε cottage cheese δίπλα στη σαλάτα. Ρίξε λίγο ελαιόλαδο. Ιδανικό ελαφρύ βραδινό.",
     items: ["200g cottage cheese", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
   },
   {
@@ -953,6 +1039,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ομελέτα 3 αυγών + σαλάτα", en: "3-egg omelette + salad", es: "Tortilla de 3 huevos + ensalada", fr: "Omelette de 3 œufs + salade" },
     kcal_est: 320, p: 22, c: 8, f: 22,
     note: "Γρήγορο & χορταστικό",
+    instructions: "1. Χτύπα 3 αυγά με αλατοπίπερο και λίγο γάλα.\n2. Ζέστανε αντικολλητικό τηγάνι με λίγο ελαιόλαδο.\n3. Ρίξε αυγά, ανακάτεψε απαλά και δίπλωσε ομελέτα στα 2 λεπτά.",
+    serving: "Σέρβιρε αμέσως ζεστή με φρέσκια σαλάτα στο πλάι. Μπορείς να προσθέσεις τυρί ή λαχανικά μέσα.",
     items: ["3 αυγά", "λίγο τυρί", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -961,6 +1049,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Σολομός κονσέρβα + ψωμί", en: "Canned salmon + bread", es: "Salmón en conserva + pan", fr: "Saumon en conserve + pain" },
     kcal_est: 380, p: 28, c: 32, f: 16,
     note: "Ωμέγα-3 + εύκολο",
+    instructions: "1. Στράγγισε καλά τον σολομό.\n2. Ανακάτεψε με χυμό λεμονιού, άνηθο, αλατοπίπερο.\n3. Ψήσε ή τοστάρε το ψωμί ολικής.",
+    serving: "Απλώστε σολομό πάνω στο ψωμί. Ιδανικό γρήγορο βραδινό με Ωμέγα-3.",
     items: ["1 κονσέρβα σολομός (~125g)", "2 φέτες ψωμί ολικής"]
   },
   {
@@ -969,6 +1059,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι 200g + 2 μπανάνες", en: "Yogurt 200g + 2 bananas", es: "Yogur 200g + 2 plátanos", fr: "Yaourt 200g + 2 bananes" },
     kcal_est: 280, p: 10, c: 52, f: 4,
     note: "Ελαφρύ βραδινό",
+    instructions: "1. Βγάλε γιαούρτι από το ψυγείο 5 λεπτά πριν.\n2. Ξεφλούδισε και κόψε μπανάνες σε ροδέλες.",
+    serving: "Σέρβιρε μπανάνες πάνω στο γιαούρτι. Μπορείς να προσθέσεις λίγη κανέλα ή μέλι.",
     items: ["200g γιαούρτι 2%", "2 μπανάνες (~240g)"]
   },
   {
@@ -977,6 +1069,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Κοτοσαλάτα με παξιμαδάκια & σως γιαουρτιού", en: "Chicken salad with rusks & yogurt dressing", es: "Ensalada de pollo con tostadas & salsa de yogur", fr: "Salade de poulet avec biscottes & sauce au yaourt" },
     kcal_est: 520, p: 36, c: 42, f: 14,
     note: "Σως: γιαούρτι 2%, μουστάρδα, μέλι. Κόψε κοτόπουλο σε λωρίδες, σπάσε τα παξιμαδάκια σε κομμάτια. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, θυμάρι.",
+    instructions: "1. Ψήσε κοτόπουλο σε αντικολλητικό με πιπέρι, πάπρικα, ρίγανη, θυμάρι. Κόψε σε λωρίδες.\n2. Ετοίμασε σως: ανακάτεψε γιαούρτι, μουστάρδα, μέλι.\n3. Κόψε ντομάτα και πιπεριά. Σπάσε παξιμαδάκια σε κομμάτια.",
+    serving: "Ανακάτεψε κοτόπουλο, λαχανικά και παξιμαδάκια. Περιέχυσε τη σως πριν σερβίρεις.",
     items: ["100g ψητό φιλέτο κοτόπουλο", "120g ντομάτα", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού (2 τεμ.)", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
   },
   {
@@ -985,6 +1079,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Σαλάτα με τόνο σε λάδι + παξιμαδάκια", en: "Salad with tuna in oil + rusks", es: "Ensalada con atún en aceite + tostadas", fr: "Salade au thon à l'huile + biscottes" },
     kcal_est: 500, p: 30, c: 36, f: 22,
     note: "Στράγγισε καλά τον τόνο. Πρόσθεσε λεμόνι και κάπαρη. Μπαχαρικά: ρίγανη, πιπέρι, άνηθος.",
+    instructions: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, κάπαρη, ρίγανη, πιπέρι, άνηθο.",
+    serving: "Σέρβιρε σαλάτα με τόνο από πάνω. Σπάσε παξιμαδάκια δίπλα ή πάνω στη σαλάτα.",
     items: ["120g τόνος σε λάδι (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
   },
   {
@@ -993,6 +1089,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Σαλάτα με βραστά αυγά & σως γιαουρτιού", en: "Salad with boiled eggs & yogurt dressing", es: "Ensalada con huevos cocidos & salsa de yogur", fr: "Salade avec œufs durs & sauce au yaourt" },
     kcal_est: 490, p: 22, c: 44, f: 18,
     note: "Κόψε αυγά στα 4. Σως: γιαούρτι, μουστάρδα, μέλι — περιέχυσε λίγο πριν σερβίρεις. Μπαχαρικά: πάπρικα, πιπέρι, σχοινόπρασο.",
+    instructions: "1. Βράσε 2 αυγά 8 λεπτά, κρύωσε και ξεφλούδισε. Κόψε στα 4.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι.\n3. Φτιάξε σως: γιαούρτι + μουστάρδα + μέλι, ανακάτεψε καλά.",
+    serving: "Τοποθέτησε αυγά πάνω στη σαλάτα. Περιέχυσε τη σως και σπάσε παξιμαδάκια από πάνω.",
     items: ["2 βραστά αυγά", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "40g παξιμαδάκια χαρουπιού", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
   },
   {
@@ -1001,6 +1099,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Σαλάτα με τόνο σε νερό + παξιμαδάκια", en: "Salad with tuna in water + rusks", es: "Ensalada con atún en agua + tostadas", fr: "Salade au thon à l'eau + biscottes" },
     kcal_est: 470, p: 28, c: 36, f: 10,
     note: "Ιδανικό για ζεστές μέρες. Πρόσθεσε χυμό λεμονιού και λίγο ξίδι. Μπαχαρικά: ρίγανη, πιπέρι, βασιλικός.",
+    instructions: "1. Στράγγισε τον τόνο καλά.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, λίγο ξίδι, ρίγανη, πιπέρι, βασιλικό.",
+    serving: "Σέρβιρε κρύο με παξιμαδάκια στο πλάι. Ιδανικό για ζεστές μέρες — ελαφρύ και φρέσκο.",
     items: ["120g τόνος σε νερό (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
   },
   {
@@ -1009,6 +1109,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι με φρούτα δάσους, βρώμη & καρύδια", en: "Yogurt with berries, oats & walnuts", es: "Yogur con frutos del bosque, avena & nueces", fr: "Yaourt aux fruits des bois, avoine & noix" },
     kcal_est: 535, p: 16, c: 58, f: 22,
     note: "Σέρβιρε παγωμένο. Ανακάτεψε βρώμη με γιαούρτι, φρούτα από πάνω. Προαιρετικά: κανέλα, βανίλια.",
+    instructions: "1. Ανακάτεψε βρώμη με γιαούρτι σε μπολ.\n2. Από πάνω βάλε φρούτα του δάσους και σπασμένα καρύδια.\n3. Στάξε μέλι.",
+    serving: "Σέρβιρε κρύο. Μπορείς να προσθέσεις κανέλα ή βανίλια για επιπλέον άρωμα.",
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g καρύδια"]
   },
   {
@@ -1017,6 +1119,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τορτίγια ολικής με γαλοπούλα, κασέρι & αυγό", en: "Whole grain wrap with turkey, kasseri cheese & egg", es: "Tortilla integral con pavo, queso kaseri & huevo", fr: "Wrap complet avec dinde, fromage kasseri & œuf" },
     kcal_est: 501, p: 30, c: 38, f: 20,
     note: "Ζέστανε τορτίγια 30-60\". Άλειψε Philadelphia, βάλε υλικά, τύλιξε. Ψήσε 2' σε τοστιέρα. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη.",
+    instructions: "1. Βράσε αυγό 8 λεπτά, κρύωσε και κόψε σε φέτες.\n2. Ζέστανε τορτίγια 30-60 δευτερόλεπτα σε τηγάνι.\n3. Άλειψε Philadelphia, πρόσθεσε γαλοπούλα, κασέρι, μαρούλι, ντομάτα, αυγό.\n4. Πασπάλισε πιπέρι, πάπρικα, ρίγανη. Τύλιξε και ψήσε 2 λεπτά σε τοστιέρα.",
+    serving: "Σέρβιρε αμέσως ζεστό. Τέλειο ελαφρύ βραδινό με υψηλή πρωτεΐνη.",
     items: ["60g τορτίγια ολικής", "15g Philadelphia Light", "60g γαλοπούλα βραστή", "40g άπαχο κασέρι", "40g μαρούλι", "80g ντομάτα", "1 βραστό αυγό"]
   },
   {
@@ -1025,6 +1129,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γιαούρτι με φρούτα δάσους, βρώμη & αμύγδαλα", en: "Yogurt with berries, oats & almonds", es: "Yogur con frutos del bosque, avena & almendras", fr: "Yaourt aux fruits des bois, avoine & amandes" },
     kcal_est: 529, p: 16, c: 56, f: 20,
     note: "Overnight oats: ετοίμασε από το προηγούμενο βράδυ. Αμύγδαλα χοντροκομμένα. Προαιρετικά: κανέλα, βανίλια, ξύσμα λεμονιού.",
+    instructions: "1. Βράδυ: ανακάτεψε βρώμη με γιαούρτι σε βαζάκι, σκέπασε και βάλε στο ψυγείο overnight.\n2. Πρωί/βράδυ: βάλε φρούτα του δάσους και χοντροκομμένα αμύγδαλα από πάνω.\n3. Στάξε μέλι.",
+    serving: "Σέρβιρε κρύο. Προαιρετικά κανέλα, βανίλια ή ξύσμα λεμονιού.",
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g αμύγδαλα"]
   },
   {
@@ -1033,6 +1139,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Overnight Oats Πρωτεΐνης (1 μπολάκι/6)", en: "Protein Overnight Oats (1 bowl/6)", es: "Avena nocturna proteica (1 bol/6)", fr: "Overnight Oats protéinés (1 bol/6)" },
     kcal_est: 447, p: 22, c: 52, f: 16,
     note: "Ετοιμάζεις 6 μπολάκια μαζί — διαρκούν 2 μέρες στο ψυγείο",
+    instructions: "1. Ανακάτεψε όλα τα υλικά (βρώμη, chia, κακάο, φυστικοβούτυρο, γάλα, μέλι) σε μεγάλο μπολ.\n2. Μοίρασε ισόποσα σε 6 βαζάκια ή μπολάκια.\n3. Σκέπασε και βάλε στο ψυγείο τουλάχιστον 6-8 ώρες.",
+    serving: "Πρωί: βγάλε 1 μπολάκι από το ψυγείο. Πρόσθεσε 30g στραγγιστό γιαούρτι από πάνω. Διαρκούν 2 μέρες στο ψυγείο.",
     items: ["300g βρώμη ÷6", "30g chia ÷6", "20g κακάο ÷6", "120g φυστικοβούτυρο ÷6", "600ml γάλα ÷6", "40g μέλι ÷6", "30g γιαούρτι στρ. garnish"]
   },
   {
@@ -1041,6 +1149,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Τοστ Γαλοπούλα & Ντομάτα", en: "Turkey & Tomato Toast", es: "Tostada de Pavo & Tomate", fr: "Toast Dinde & Tomate" },
     kcal_est: 302, p: 20, c: 30, f: 10,
     note: "Γρήγορο & πλούσιο σε πρωτεΐνη",
+    instructions: "1. Άλειψε μαγιονέζα light στις φέτες ψωμιού.\n2. Πρόσθεσε γαλοπούλα και φέτες ντομάτας.\n3. Τοστάρε αν θέλεις ζεστό.",
+    serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις και λίγο μαρούλι ή αγγούρι.",
     items: ["2 φέτες ψωμί τοστ (~60g)", "80g γαλοπούλα φέτα", "15g μαγιονέζα light", "80g ντομάτα"]
   },
   {
@@ -1049,6 +1159,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Γύρος Κοτόπουλο Σπιτικός", en: "Homemade Chicken Gyros", es: "Gyros de Pollo Casero", fr: "Gyros de Poulet Maison" },
     kcal_est: 490, p: 34, c: 48, f: 14,
     note: "Ψήσε το κοτόπουλο με μπαχαρικά - τζατζίκι, ντομάτα, κρεμμύδι στην πίτα",
+    instructions: "1. Κόψε κοτόπουλο σε λωρίδες, αλατοπίπερο, ρίγανη, πάπρικα.\n2. Ψήσε σε αντικολλητικό τηγάνι 4-5 λεπτά μέχρι να ροδίσει.\n3. Ζέστανε πίτα 30 δευτερόλεπτα στο τηγάνι.",
+    serving: "Άπλωσε τζατζίκι στην πίτα, βάλε κοτόπουλο, ντομάτα κομμένη, κρεμμύδι. Τύλιξε και σέρβιρε αμέσως.",
     items: ["150g κοτόπουλο στήθος ψητό", "1 πίτα (~70g)", "50g τζατζίκι", "50g ντομάτα", "20g κρεμμύδι"]
   },
   {
@@ -1057,6 +1169,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Μπριζόλα Χοιρινή + Σαλάτα", en: "Pork Chop + Salad", es: "Chuleta de Cerdo + Ensalada", fr: "Côtelette de Porc + Salade" },
     kcal_est: 498, p: 40, c: 8, f: 32,
     note: "Χοιρινή χωρίς κόκκαλο - ψητή με λεμόνι, ρίγανη, σκόρδο",
+    instructions: "1. Αλατοπίπερο, ρίγανη και σκόρδο σε σκόνη στη μπριζόλα.\n2. Ψήσε σε αντικολλητικό ή σχάρα 4-5 λεπτά ανά πλευρά σε μέτρια-υψηλή φωτιά.\n3. Βγάλε και άφησε να ξεκουραστεί 2 λεπτά.",
+    serving: "Στύψε φρέσκο λεμόνι πάνω. Σέρβιρε με σαλάτα εποχής.",
     items: ["200g μπριζόλα χοιρινή", "4 ψεκ. ελαιόλαδο", "λεμόνι, ρίγανη, σκόρδο, πιπέρι"]
   },
   {
@@ -1065,6 +1179,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Ομελέτα + Παξιμάδι Χαρουπιού + Κότατζ", en: "Omelette + Carob Rusk + Cottage Cheese", es: "Tortilla + Tostada de Algarroba + Cottage", fr: "Omelette + Biscotte de Caroube + Cottage Cheese" },
     kcal_est: 516, p: 38, c: 22, f: 28,
     note: "Ελαφρύ αλλά χορταστικό βραδινό - υψηλή πρωτεΐνη",
+    instructions: "1. Χτύπα 2 αυγά με αλατοπίπερο.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά 2-3 λεπτά, δίπλωσε.\n3. Κόψε ντοματίνια στη μέση.",
+    serving: "Σέρβιρε ομελέτα με cottage cheese, ντοματίνια με βαλσαμικό και παξιμάδι χαρουπιού στο πλάι.",
     items: ["2 αυγά", "4 ψεκ. ελαιόλαδο", "200g cottage cheese", "100g ντοματίνια", "1.5 παξιμάδι χαρουπιού", "βαλσαμικό ξύδι, πιπέρι"]
   },
 
@@ -1075,6 +1191,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Protein Yogurt Bowl", en: "Protein Yogurt Bowl", es: "Bol de Yogur Proteico", fr: "Bol de Yaourt Protéiné" },
     kcal_est: 420, p: 28, c: 38, f: 17,
     note: "Ανακάτεψε γιαούρτι + βρώμη, πρόσθεσε φυστικοβούτυρο & σιρόπι zero",
+    instructions: "1. Βάλε γιαούρτι στραγγιστό σε μπολ.\n2. Ρίξε βρώμη ωμή από πάνω.\n3. Πρόσθεσε φυστικοβούτυρο και σιρόπι zero.",
+    serving: "Σέρβιρε αμέσως. Μπορείς να ανακατέψεις ή να αφήσεις σε στρώσεις για ωραίο εφέ.",
     items: ["300g γιαούρτι στραγγιστό 2%", "30g βρώμη", "20g φυστικοβούτυρο", "10–15g σιρόπι Zero"]
   },
   {
@@ -1083,6 +1201,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Protein Στραπατσάδα", en: "Protein Scrambled Eggs", es: "Huevos Revueltos Proteicos", fr: "Œufs Brouillés Protéinés" },
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Χτύπησε αυγά + ασπράδια, ψήσε σε αντικολλητικό, πρόσθεσε Philadelphia & καλαμπόκι",
+    instructions: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.",
+    serving: "Σέρβιρε αμέσως ζεστό. Πλούσιο σε πρωτεΐνη πρωινό γεύμα.",
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
   },
   {
@@ -1091,6 +1211,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Protein Στραπατσάδα (Βραδινό)", en: "Protein Scrambled Eggs (Dinner)", es: "Huevos Revueltos Proteicos (Cena)", fr: "Œufs Brouillés Protéinés (Dîner)" },
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Ίδια με πρωινό — σέρβιρε με σαλάτα ή λαχανικά",
+    instructions: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.",
+    serving: "Σέρβιρε με φρέσκια σαλάτα ή ψητά λαχανικά. Ελαφρύ αλλά χορταστικό βραδινό.",
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
   },
   {
@@ -1099,6 +1221,8 @@ const STANDARD_MEALS = [
     nameI18n: { el: "Viral Taco Burger", en: "Viral Taco Burger", es: "Viral Taco Burger", fr: "Viral Taco Burger" },
     kcal_est: 900, p: 62, c: 37, f: 54,
     note: "Άπλωσε κιμά στην τορτίγια, ψήσε από κιμά πρώτα 3-4', γύρισε, βάλε gouda. Σως: μαγιονέζα+κέτσαπ+μουστάρδα+χυμό πίκλας.",
+    instructions: "1. Χωρίστε τον κιμά σε 4 μπαλάκια (~55g) και τοποθετήστε πάνω στην τορτίγια.\n2. Απλώστε τον κιμά με ένα κουτάλι μέχρι να καλύψει την τορτίγια.\n3. Ψήστε σε ζεστό αντικολλητικό κιμά-πάνω για 3-4 λεπτά. Γυρίστε. Βάλτε Gouda να λιώσει.\n4. Ανακατέψτε σως: μαγιονέζα, κέτσαπ, μουστάρδα, χυμό πίκλας.",
+    serving: "Βάλτε μαρούλι, ντομάτα, κρεμμύδι και σως πάνω στον κιμά. Τυλίξτε και σερβίρετε αμέσως.",
     items: ["1 τορτίγια ολικής (~60g)", "225g κιμάς μοσχαρίσιος 5-10%", "40g Gouda (2 φέτες)", "30g μαρούλι", "50g ντομάτα", "20g κρεμμύδι", "15g κέτσαπ", "15g μαγιονέζα", "8g μουστάρδα", "30-45ml χυμός πίκλας", "αλάτι, πιπέρι, σκόνη σκόρδου"]
   },
 

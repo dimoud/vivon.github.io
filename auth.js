@@ -24,38 +24,58 @@
   let _appInitedForUserId = null;
   let _pendingOnboarding = false;
 
+  const _onAppPage = window.location.pathname.endsWith('app.html');
+
   async function bootAuth() {
-    renderAuthScreen();
-
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session) {
-      hideAuthScreen();
-      if (!_appInited) { _appInited = true; _appInitedForUserId = session.user.id; await initApp(); }
-    }
-
-    _supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        hideAuthScreen();
-        const newUserId = session.user.id;
-        if (!_appInited || _appInitedForUserId !== newUserId) {
-          _appInited = true;
-          _appInitedForUserId = newUserId;
-          await initApp();
-          if (_pendingOnboarding) {
-            _pendingOnboarding = false;
-            showOnboarding(function() {});
+    if (_onAppPage) {
+      // ── app.html: session is required; no auth UI here ──────
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (!session) { window.location.replace('index.html'); return; }
+      if (!_appInited) {
+        _appInited = true;
+        _appInitedForUserId = session.user.id;
+        try { _pendingOnboarding = localStorage.getItem('vivon_new_user') === '1'; localStorage.removeItem('vivon_new_user'); } catch(e) {}
+        await initApp();
+        if (_pendingOnboarding) { _pendingOnboarding = false; showOnboarding(function() {}); }
+      }
+      _supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          const newUserId = session.user.id;
+          if (!_appInited || _appInitedForUserId !== newUserId) {
+            _appInited = true;
+            _appInitedForUserId = newUserId;
+            if (!_pendingOnboarding) {
+              try { _pendingOnboarding = localStorage.getItem('vivon_new_user') === '1'; localStorage.removeItem('vivon_new_user'); } catch(e) {}
+            }
+            await initApp();
+            if (_pendingOnboarding) { _pendingOnboarding = false; showOnboarding(function() {}); }
           }
         }
-      }
-      if (event === 'SIGNED_OUT') {
-        _appInited = false;
-        _appInitedForUserId = null;
-        showAuthScreen();
-      }
-      if (event === 'PASSWORD_RECOVERY') {
-        authShowTab('reset-new');
-      }
-    });
+        if (event === 'SIGNED_OUT') {
+          window.location.replace('index.html');
+        }
+      });
+    } else {
+      // ── index.html: show auth UI; redirect to app on sign-in ─
+      renderAuthScreen();
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) { window.location.replace('app.html'); return; }
+      _supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          // Pass onboarding flag across the page boundary via localStorage
+          if (_pendingOnboarding) {
+            try { localStorage.setItem('vivon_new_user', '1'); } catch(e) {}
+          }
+          window.location.replace('app.html');
+        }
+        if (event === 'SIGNED_OUT') {
+          renderAuthScreen();
+        }
+        if (event === 'PASSWORD_RECOVERY') {
+          authShowTab('reset-new');
+        }
+      });
+    }
   }
 
   // ── Render ────────────────────────────────────────────────
@@ -64,6 +84,7 @@
     const el = document.getElementById('auth-screen');
     if (!el) return;
     el.innerHTML = `
+      <div class="auth-orb auth-orb-3"></div>
       <div class="auth-card">
 
         <!-- Logo -->
@@ -86,6 +107,13 @@
 
         <!-- LOGIN -->
         <form id="auth-form-login" class="auth-form" onsubmit="authLogin(event)">
+          <div class="auth-lang-row">
+            ${Object.entries(LANGUAGES).map(([code, info]) =>
+              `<button type="button" class="auth-lang-chip${_currentLang === code ? ' active' : ''}"
+                       data-lang="${code}" onclick="authSetLang('${code}')"
+                       title="${info.label}"><img src="https://flagcdn.com/w40/${info.cc}.png" alt="${info.label}" width="24" height="16" style="border-radius:3px;display:block"></button>`
+            ).join('')}
+          </div>
           <div class="auth-field">
             <label class="auth-label">${t('auth_email')}</label>
             <div class="auth-input-wrap">
@@ -126,7 +154,7 @@
             ${Object.entries(LANGUAGES).map(([code, info]) =>
               `<button type="button" class="auth-lang-chip${_currentLang === code ? ' active' : ''}"
                        data-lang="${code}" onclick="authSetRegisterLang('${code}')"
-                       title="${info.label}">${info.flag} ${info.label}</button>`
+                       title="${info.label}"><img src="https://flagcdn.com/w40/${info.cc}.png" alt="${info.label}" width="24" height="16" style="border-radius:3px;display:block"></button>`
             ).join('')}
           </div>
           <div class="auth-field">
@@ -339,14 +367,15 @@
     setLoading('register', false);
     if (error) { showError('register', _friendly(error.message)); return; }
 
+    // Write to localStorage immediately so it survives new tabs (email confirmation link opens in a new tab)
+    try { localStorage.setItem('vivon_new_user', '1'); } catch(e) {}
+    _pendingOnboarding = true;
+
     if (!data.session) {
-      // Email confirmation required — set flag so onboarding shows after they confirm & log in
-      _pendingOnboarding = true;
+      // Email confirmation required — flag is already in localStorage for when they return
       showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
-    } else {
-      // Auto-confirmed session — onboarding fires via onAuthStateChange
-      _pendingOnboarding = true;
     }
+    // Auto-confirmed: onAuthStateChange fires SIGNED_IN and redirects to app.html
   }
 
   window.authRegister = function(e) { return _doRegister(e); };
@@ -435,21 +464,16 @@
   // ── Sign-out (called from app UI) ─────────────────────────
 
   window.handleSignOut = async function () {
-    showAuthScreen();
     // Cancel pending debounced save
     if (typeof _saveTimer !== 'undefined') {
       try { clearTimeout(_saveTimer); _saveTimer = null; } catch(e) {}
     }
-    // Invalidate any in-flight syncToSupabase — it will log a warning but
-    // the write will still complete under the correct userId snapshot, which is safe.
     if (typeof _syncOwner !== 'undefined') {
       try { _syncOwner = null; } catch(e) {}
     }
     try { localStorage.removeItem('nutriApp_v2'); } catch (e) {}
-    if (typeof _freshState === 'function') {
-      try { state = _freshState(); } catch(e) {}
-    }
     await sbSignOut();
+    // SIGNED_OUT event will fire → redirect to index.html
   };
 
   // ── Language switcher inside register form ────────────────
@@ -459,9 +483,15 @@
   window.authSetRegisterLang = function(lang) {
     if (typeof setLang === 'function') setLang(lang);
     _langPickSelectedLang = lang;
-    // Re-render the auth screen so all labels update in the new language
     renderAuthScreen();
     authShowTab('register');
+  };
+
+  window.authSetLang = function(lang) {
+    if (typeof setLang === 'function') setLang(lang);
+    _langPickSelectedLang = lang;
+    renderAuthScreen();
+    authShowTab('login');
   };
 
   function _tLp(key, lang) {
@@ -520,6 +550,7 @@
         </div>`).join('');
 
       overlay.innerHTML = `<div class="onboarding-card">
+        <button class="onboarding-close-btn" onclick="window._obDone()" aria-label="Κλείσιμο">✕</button>
         <div class="onboarding-dots">${dots}</div>
         <div class="onboarding-card-title">${_tLp(card.titleKey, lang)}</div>
         <div class="onboarding-features">${features}</div>
@@ -541,13 +572,21 @@
       }
     };
 
-    window._obDone = function() {
+    let _obSwipeCleanup = null;
+    window._obDone = function(fromPopstate) {
+      if (_obSwipeCleanup) { _obSwipeCleanup(); _obSwipeCleanup = null; }
       overlay.style.display = 'none';
+      if (!fromPopstate) history.back();
       onDone && onDone();
     };
 
     render();
     overlay.style.display = 'flex';
+    if (typeof _addSwipeDismiss === 'function') {
+      const card = overlay.querySelector('.onboarding-card');
+      if (card) _obSwipeCleanup = _addSwipeDismiss(card, () => window._obDone(), { directions: ['left', 'right', 'down'], threshold: 80 });
+    }
+    history.pushState({ vivon: 'onboarding' }, '', location.pathname + location.search);
   }
 
   // ── Entry point ───────────────────────────────────────────
