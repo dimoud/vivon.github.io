@@ -2137,6 +2137,31 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
 
   function mealKey(r) { return r.foodGroup || r.id; }
 
+  // Two different recipe ids can still be near-duplicates (e.g. three
+  // different chicken-salad recipes) — RECIPES_DB has no ingredient-category
+  // tagging, so approximate "what is this meal really built around" by
+  // finding its single highest-protein-contributing FOODS_DB ingredient.
+  // Capping repeats of that ingredient (not just the exact recipe) across
+  // lunch+dinner keeps the week from feeling monotonous even when the exact
+  // recipe ids never repeat.
+  const PROTEIN_SOURCE_CAP = 2; // max times a given main protein source may appear across lunch+dinner in one week
+  const proteinSourceUse = {}; // foodId → count so far this week (lunch+dinner only)
+  const allFoodsForProteinKey = [...FOODS_DB, ...(state?.customFoods || [])];
+  const _proteinKeyCache = new Map();
+  function primaryProteinFoodId(r) {
+    if (!r || !Array.isArray(r.ingredients) || !r.ingredients.length) return null;
+    if (_proteinKeyCache.has(r.id)) return _proteinKeyCache.get(r.id);
+    let best = null, bestP = 0;
+    r.ingredients.forEach(ing => {
+      const food = allFoodsForProteinKey.find(f => f.id === ing.foodId);
+      if (!food || !food.per100) return;
+      const p = (food.per100.p || 0) * (ing.qty || 0) / 100;
+      if (p > bestP) { bestP = p; best = food.id; }
+    });
+    _proteinKeyCache.set(r.id, best);
+    return best;
+  }
+
   function pickOne(slotType) {
     const all = candidatesWithFallback(slotType);
     const simple  = all.filter(r => !GOURMET_IDS.has(r.id));
@@ -2158,12 +2183,27 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
     const used = usedPickKeys[slotType];
     let pool2 = preferred.filter(r => !used.has(mealKey(r)));
     if (!pool2.length) pool2 = preferred;
+
+    // For lunch/dinner, additionally avoid overusing the same main protein
+    // source (e.g. chicken breast in 4 different "chicken salad" recipes);
+    // relax only if it would otherwise leave nothing to pick.
+    if (SINGLE_FOOD_SLOTS.has(slotType)) {
+      const pool3 = pool2.filter(r => {
+        const pid = primaryProteinFoodId(r);
+        return !pid || (proteinSourceUse[pid] || 0) < PROTEIN_SOURCE_CAP;
+      });
+      if (pool3.length) pool2 = pool3;
+    }
     if (!pool2.length) return null;
 
     const picked = shuffle(pool2)[0];
     used.add(mealKey(picked));
     pickCount[slotType]++;
     if (GOURMET_IDS.has(picked.id)) gourmetCount[slotType]++;
+    if (SINGLE_FOOD_SLOTS.has(slotType)) {
+      const pid = primaryProteinFoodId(picked);
+      if (pid) proteinSourceUse[pid] = (proteinSourceUse[pid] || 0) + 1;
+    }
     return picked;
   }
 
@@ -2191,11 +2231,65 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
     });
   }
 
-  // Optimise each day independently to hit calorie + protein targets
+  // Even a "simple" plan shouldn't be 100% plain all week — guarantee at
+  // least one gourmet-tagged meal somewhere in lunch/dinner, and rarely
+  // (not "often") let one of those be a "eating out" treat (pizza, pasta
+  // out, restaurant) rather than always a home-cooked gourmet recipe.
+  _ensureAtLeastOneGourmetMeal(week, excSets);
+
+  // Optimise each day independently to hit calorie + protein targets.
+  // Each day is wrapped so a single bad day (unexpected data, division
+  // edge case) can't abort the loop and silently leave every later day
+  // at raw/unscaled portion sizes, wildly over the kcal target.
   const targets = state?.goals || DEFAULT_GOALS;
-  week.forEach(day => _optimiseDayMacros(day, targets));
+  week.forEach(day => {
+    try {
+      _optimiseDayMacros(day, targets);
+    } catch (e) {
+      console.error('generateSmartWeek: _optimiseDayMacros failed for day', day.day, e);
+    }
+  });
 
   return week;
+}
+
+const EATING_OUT_IDS = new Set(['ex_l54','ex_l55','ex_l56','ex_l57','ex_d21','ex_d22','ex_d23','ex_d24']);
+const EATING_OUT_CHANCE = 0.12; // rare — roughly 1 in 8 generated weeks gets a treat meal instead of a gourmet recipe
+
+function _ensureAtLeastOneGourmetMeal(week, excSets) {
+  const hasGourmet = week.some(day => day.meals.some(m => GOURMET_IDS.has(m.recipeId) || GOURMET_IDS.has(m.standardId)));
+  if (hasGourmet) return;
+
+  const wantEatingOut = Math.random() < EATING_OUT_CHANCE;
+  const slotCandidates = [];
+  week.forEach((day, di) => {
+    day.meals.forEach((meal, mi) => {
+      if (meal.type === 'lunch' || meal.type === 'dinner') slotCandidates.push({ di, mi, type: meal.type });
+    });
+  });
+  if (!slotCandidates.length) return;
+  const target = slotCandidates[Math.floor(Math.random() * slotCandidates.length)];
+
+  const excluded = excSets[target.type] || new Set();
+  const gourmetPool = [..._allMeals()].filter(r =>
+    GOURMET_IDS.has(r.id) &&
+    r.meal === target.type &&
+    !r.side &&
+    !excluded.has(r.id) &&
+    (wantEatingOut ? EATING_OUT_IDS.has(r.id) : !EATING_OUT_IDS.has(r.id))
+  );
+  // If the preferred flavor (eating-out vs. home-cooked gourmet) has no
+  // candidates for this slot, fall back to any gourmet option for it.
+  const pool = gourmetPool.length ? gourmetPool
+    : [..._allMeals()].filter(r => GOURMET_IDS.has(r.id) && r.meal === target.type && !r.side && !excluded.has(r.id));
+  if (!pool.length) return;
+
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  const meal = week[target.di].meals[target.mi];
+  meal.recipeId = picked.id;
+  meal.scaleFactor = undefined;
+  if (picked.kcal_est) meal.standardId = picked.id;
+  else delete meal.standardId;
 }
 
 /**
@@ -2211,10 +2305,33 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
  *  3. Reduce fat before carbs when freeing kcal for protein
  *  4. Carbs absorb remaining budget
  */
+// A protein target isn't achievable at every calorie budget — eating e.g.
+// 220g protein (880 kcal from protein alone) on a 1750 kcal day would mean
+// protein alone is >50% of intake, which isn't a realistic sustained diet.
+// Cap the *effective* protein target the optimizer chases at a nutritionally
+// plausible share of total calories, so it never gets asked to solve an
+// impossible equation (and blow the kcal ceiling trying). The user's raw
+// goal is left untouched in state.goals — only the day's optimization target
+// is capped; day._proteinShortfall still fires so the UI can tell the user
+// their protein goal is unrealistic for their calorie target, rather than
+// pretending the plan failed to "try hard enough".
+const MAX_PROTEIN_KCAL_SHARE = 0.40; // upper bound even for aggressive cutting/bodybuilding diets
+function _effectiveProteinTarget(targets) {
+  const kcalCap = (targets.kcal * MAX_PROTEIN_KCAL_SHARE) / 4; // 4 kcal per gram of protein
+  return Math.min(targets.protein, kcalCap);
+}
+
 function _optimiseDayMacros(day, targets) {
   const KCAL_MAX  = targets.kcal * 1.02;   // hard ceiling
-  const PROT_MIN  = targets.protein * 0.95; // acceptable protein floor
-  const SF_P_MAX  = 2.8;   // lean protein meals can go high
+  const effectiveProtein = _effectiveProteinTarget(targets);
+  const PROT_MIN  = effectiveProtein * 0.95; // acceptable protein floor, capped to a realistic target
+  // Kcal fit comes first, protein second: no single meal should balloon to
+  // an unrealistic serving size (e.g. a ~1000 kcal breakfast smoothie) just
+  // to chase the protein floor. 2.0x keeps portions plausible while still
+  // giving the optimizer real room to lean on high-protein meals — this is
+  // safe now that the protein target itself is capped to what's achievable
+  // within the kcal budget, so the optimizer isn't forced to overshoot.
+  const SF_P_MAX  = 2.0;   // lean protein meals can scale up, but only to a realistic portion
   const SF_P_MIN  = 0.5;   // never zero out a protein meal
   const SF_F_MAX  = 2.0;
   const SF_C_MAX  = 2.0;
@@ -2287,11 +2404,15 @@ function _optimiseDayMacros(day, targets) {
   });
 
   // ── Phase 2: Protein-first iteration ──────────────────────────
-  // While protein < target: increase best lean meal, free kcal by cutting fat then carbs
+  // While protein < target: increase best lean meal, freeing kcal room by
+  // cutting fat then carbs whenever there isn't enough room — regardless of
+  // whether THIS iteration's lever needs it, so fat/carb never just sits
+  // untouched while protein stays short (they're the lowest priority macro,
+  // so they should be cut before we give up on the protein floor).
   for (let iter = 0; iter < 40; iter++) {
     const cur = totals();
     const protGap  = PROT_MIN - cur.p;         // how much protein we still need
-    const kcalRoom = KCAL_MAX - cur.kcal;      // how much kcal room we have
+    let   kcalRoom = KCAL_MAX - cur.kcal;      // how much kcal room we have
 
     if (protGap <= 0) break; // protein target met
 
@@ -2304,7 +2425,25 @@ function _optimiseDayMacros(day, targets) {
       const ppk = it.b.p / it.b.kcal;
       if (ppk > bestPPerKcal) { bestPPerKcal = ppk; bestLever = it; }
     }
-    if (!bestLever) break; // no lean meals to scale up
+
+    // No lean lever left to scale up — the only way to still close the
+    // protein gap is to free more kcal room by cutting fat/carb further,
+    // in case a maxed-out lever could take more once room exists again.
+    const fatCarbHasRoom = fat.some(it => it.sf > SF_FC_MIN) || carb.some(it => it.sf > SF_FC_MIN);
+    if (!bestLever) {
+      if (!fatCarbHasRoom) break; // truly nothing left to do
+      let toFree = Math.max(0, PROT_MIN - cur.p) > 0 ? Infinity : 0; // free as much as possible
+      if (toFree <= 0) break;
+      for (const it of fat) {
+        if (it.sf <= SF_FC_MIN) continue;
+        it.sf = SF_FC_MIN;
+      }
+      for (const it of carb) {
+        if (it.sf <= SF_FC_MIN) continue;
+        it.sf = SF_FC_MIN;
+      }
+      continue; // re-evaluate levers next iteration now that kcal room reopened
+    }
 
     // How much can we increase bestLever?
     // ΔSF × kcal_base = extra kcal cost
@@ -2313,9 +2452,9 @@ function _optimiseDayMacros(day, targets) {
     const maxDeltaSF_bySF      = SF_P_MAX - bestLever.sf;
 
     let deltaSF = Math.min(maxDeltaSF_byProtein, maxDeltaSF_bySF);
-    const extraKcal = bestLever.b.kcal * deltaSF;
+    let extraKcal = bestLever.b.kcal * deltaSF;
 
-    if (extraKcal > kcalRoom + 1) {
+    if (extraKcal > kcalRoom + 1 && fatCarbHasRoom) {
       // Not enough kcal room — free kcal by reducing fat first, then carbs
       let toFree = extraKcal - kcalRoom;
 
@@ -2339,11 +2478,20 @@ function _optimiseDayMacros(day, targets) {
 
       // Recalculate available room
       const newRoom = KCAL_MAX - totals().kcal;
-      if (newRoom < 1) break; // truly stuck — kcal budget exhausted
-      deltaSF = Math.min(maxDeltaSF_byProtein, maxDeltaSF_bySF, newRoom / bestLever.b.kcal);
+      kcalRoom = newRoom;
+      deltaSF = Math.min(maxDeltaSF_byProtein, maxDeltaSF_bySF, Math.max(0, newRoom) / bestLever.b.kcal);
+    } else if (extraKcal > kcalRoom + 1) {
+      // No fat/carb room to free either — cap the increase to what fits.
+      deltaSF = Math.min(deltaSF, Math.max(0, kcalRoom) / bestLever.b.kcal);
     }
 
-    if (deltaSF <= 0.01) break;
+    if (deltaSF <= 0.01) {
+      // This lever is maxed out for now — try the next-best lever instead
+      // of giving up entirely, since a different lean item might still
+      // have SF headroom even though the top one doesn't.
+      bestLever.sf = SF_P_MAX; // mark exhausted so the next iteration picks another
+      continue;
+    }
     bestLever.sf = Math.min(SF_P_MAX, bestLever.sf + deltaSF);
   }
 
@@ -2366,11 +2514,28 @@ function _optimiseDayMacros(day, targets) {
   items.forEach(it => {
     if (it.cls === 'lean') it.sf = Math.min(SF_P_MAX, Math.max(SF_P_MIN, it.sf));
     else                   it.sf = Math.min(SF_C_MAX, Math.max(SF_FC_MIN, it.sf));
-    it.m.scaleFactor = Math.round(it.sf * 100) / 100;
   });
 
-  // Check shortfall
+  // ── Final hard cap: never end the day more than 5% over target ─────────
+  // The phases above should already stay within KCAL_MAX (2%), but this is
+  // a true last-resort guarantee — if anything upstream still overshoots,
+  // uniformly scale every meal down so the day can never exceed target+5%.
+  const HARD_KCAL_CAP = targets.kcal * 1.05;
+  const preClampKcal = totals().kcal;
+  if (preClampKcal > HARD_KCAL_CAP) {
+    const shrink = HARD_KCAL_CAP / preClampKcal;
+    items.forEach(it => { it.sf = Math.max(0.1, it.sf * shrink); });
+  }
+
+  items.forEach(it => { it.m.scaleFactor = Math.round(it.sf * 100) / 100; });
+
+  // Check shortfall against the (possibly capped) effective target used for
+  // optimization, and separately flag when the user's raw goal was above
+  // what's realistically achievable at this kcal budget — the two need
+  // different UI messaging ("swap for higher-protein meals" vs "this
+  // protein goal isn't realistic for this calorie target").
   const final = totals();
+  day._proteinGoalUnrealistic = targets.protein > effectiveProtein + 0.5;
   if (final.p < PROT_MIN) day._proteinShortfall = true;
 }
 // ─────────────────────────────────────────────────────────────
@@ -2390,6 +2555,17 @@ function swapToHighProteinMeals() {
   const cache = {};
   const getTop = type => { if (!cache[type]) cache[type] = bestForType(type); return cache[type]; };
 
+  // Track ids already used per meal type across the WHOLE week (not just the
+  // current day) — otherwise every shortfall day independently converges on
+  // the single highest-protein-density recipe for that slot, reintroducing
+  // the exact same repeat problem this function is meant to avoid.
+  const usedAcrossWeek = {};
+  MEAL_SLOT_TYPES.forEach(t => {
+    usedAcrossWeek[t] = new Set(
+      state.week.flatMap(d => d.meals.filter(m => m.type === t && m.recipeId).map(m => m.recipeId))
+    );
+  });
+
   state.week.forEach(day => {
     if (!day._proteinShortfall) return;
     day.meals.forEach(meal => {
@@ -2399,12 +2575,19 @@ function swapToHighProteinMeals() {
       const mac = calcRecipeMacros(r, 1);
       const density = mac.kcal > 0 ? mac.p / mac.kcal : 0;
       if (density >= LEAN_THRESHOLD) return; // already lean-protein
-      // Find highest-density recipe of same meal type that isn't already in this day
-      const usedIds = new Set(day.meals.map(m => m.recipeId));
-      const candidate = getTop(meal.type).find(({ r: cr }) => !usedIds.has(cr.id));
+      // Find highest-density recipe of same meal type not already used
+      // anywhere this week (falls back to "not in this day" if that empties the pool).
+      const usedWeek = usedAcrossWeek[meal.type];
+      let candidate = getTop(meal.type).find(({ r: cr }) => !usedWeek.has(cr.id));
+      if (!candidate) {
+        const usedDay = new Set(day.meals.map(m => m.recipeId));
+        candidate = getTop(meal.type).find(({ r: cr }) => !usedDay.has(cr.id));
+      }
       if (candidate) {
+        usedWeek.delete(meal.recipeId);
         meal.recipeId = candidate.r.id;
         meal.scaleFactor = 1;
+        usedWeek.add(candidate.r.id);
       }
     });
   });
