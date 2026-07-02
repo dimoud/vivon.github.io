@@ -2121,20 +2121,26 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
 }
 
 /**
- * Adjust meal scaleFactor values so the day hits calorie + protein targets.
- * Priority: protein first, then calories.
- * Scale bounds: 0.6–2.0.
- * Strategy:
- *   Pass 1 — uniform scale to hit kcal target
- *   Pass 2 — protein fix: scale protein-rich meals UP and offset excess kcal by
- *            scaling low-protein meals DOWN (calorie-neutral protein swap)
- *   Pass 3 — kcal correction if still off after protein fix
+ * Protein-first macro optimizer.
+ *
+ * Thinks in macros, not foods:
+ *  "I need Xg more protein — which meals are the best lever (highest p/kcal)
+ *   to scale up, and which carb/fat meals can I scale down to free kcal?"
+ *
+ * Priority order (strict):
+ *  1. Calories ≤ target × 1.02  (hard constraint)
+ *  2. Protein ≥ target × 0.95   (highest priority macro)
+ *  3. Reduce fat before carbs when freeing kcal for protein
+ *  4. Carbs absorb remaining budget
  */
 function _optimiseDayMacros(day, targets) {
-  const KCAL_TOL  = 60;
-  const PROT_TOL  = 5;
-  const SF_MIN    = 0.0;
-  const SF_MAX    = 2.0;
+  const KCAL_MAX  = targets.kcal * 1.02;   // hard ceiling
+  const PROT_MIN  = targets.protein * 0.95; // acceptable protein floor
+  const SF_P_MAX  = 2.8;   // lean protein meals can go high
+  const SF_P_MIN  = 0.5;   // never zero out a protein meal
+  const SF_F_MAX  = 2.0;
+  const SF_C_MAX  = 2.0;
+  const SF_FC_MIN = 0.0;   // fat/carb meals can be zeroed
 
   const allMeals = [...RECIPES_DB, ...(state?.customRecipes || []), ...STANDARD_MEALS];
 
@@ -2153,84 +2159,185 @@ function _optimiseDayMacros(day, targets) {
   }
 
   day.meals.forEach(m => { if (m.scaleFactor === undefined) m.scaleFactor = 1; });
+  day._proteinShortfall = false;
 
-  function dayTotals() {
-    return day.meals.reduce((acc, m) => {
-      const b = baseMacros(m);
-      const sf = m.scaleFactor || 1;
-      acc.kcal += b.kcal * sf;
-      acc.p    += b.p    * sf;
+  // Build working list with base macros + mutable SF
+  const items = day.meals
+    .map(m => ({ m, b: baseMacros(m), sf: m.scaleFactor || 1 }))
+    .filter(({ b }) => b.kcal > 0);
+  if (!items.length) return;
+
+  // Classify each item by protein density (p per kcal)
+  // Lean: chicken, turkey, tuna, whey, egg whites, skyr, greek yogurt 0% → p/kcal > 0.08
+  // Fat-dense: oils, nuts, butter, cheese → f*9/kcal > 0.5 and p/kcal < 0.08
+  // Carb: rice, oats, bread, pasta, fruit → rest
+  items.forEach(it => {
+    const d = it.b.p / it.b.kcal;
+    const fd = (it.b.f * 9) / it.b.kcal;
+    if (d >= 0.08) {
+      it.cls = 'lean';
+    } else if (fd >= 0.50) {
+      it.cls = 'fat';
+    } else {
+      it.cls = 'carb';
+    }
+  });
+
+  // Sort lean items by protein density desc (best levers first)
+  const lean = items.filter(x => x.cls === 'lean').sort((a, b) => (b.b.p/b.b.kcal) - (a.b.p/a.b.kcal));
+  // Fat items sorted by fat density desc (most dispensable first)
+  const fat  = items.filter(x => x.cls === 'fat').sort((a, b) => ((b.b.f*9)/b.b.kcal) - ((a.b.f*9)/a.b.kcal));
+  // Carb items sorted by carb density desc (most dispensable first)
+  const carb = items.filter(x => x.cls === 'carb').sort((a, b) => ((b.b.c*4)/b.b.kcal) - ((a.b.c*4)/a.b.kcal));
+
+  function totals() {
+    return items.reduce((acc, it) => {
+      acc.kcal += it.b.kcal * it.sf;
+      acc.p    += it.b.p    * it.sf;
+      acc.f    += it.b.f    * it.sf;
+      acc.c    += it.b.c    * it.sf;
       return acc;
-    }, { kcal: 0, p: 0 });
+    }, { kcal: 0, p: 0, f: 0, c: 0 });
   }
 
-  const raw = dayTotals();
-  if (raw.kcal < 1) return;
+  // ── Phase 1: Uniform scale to hit kcal target ─────────────────
+  const rawKcal = items.reduce((s, it) => s + it.b.kcal, 0);
+  const initSF = Math.min(SF_C_MAX, targets.kcal / rawKcal);
+  items.forEach(it => {
+    if (it.cls === 'lean') it.sf = Math.min(SF_P_MAX, Math.max(SF_P_MIN, initSF));
+    else                   it.sf = Math.min(SF_C_MAX, Math.max(SF_FC_MIN, initSF));
+  });
 
-  // ── Pass 1: Uniform scale to hit kcal target ──────────────────
-  const uniformSF = Math.min(SF_MAX, Math.max(SF_MIN, targets.kcal / raw.kcal));
-  day.meals.forEach(m => { m.scaleFactor = Math.round(uniformSF * 100) / 100; });
+  // ── Phase 2: Protein-first iteration ──────────────────────────
+  // While protein < target: increase best lean meal, free kcal by cutting fat then carbs
+  for (let iter = 0; iter < 40; iter++) {
+    const cur = totals();
+    const protGap  = PROT_MIN - cur.p;         // how much protein we still need
+    const kcalRoom = KCAL_MAX - cur.kcal;      // how much kcal room we have
 
-  // ── Pass 2: Protein fix via calorie-neutral swap ───────────────
-  // Scale protein-rich meals UP, offset extra kcal by scaling low-protein meals DOWN
-  const mealBases = day.meals.map(m => ({ m, b: baseMacros(m) })).filter(({ b }) => b.kcal > 0);
-  // Sort by protein density: high first = levers to increase protein
-  const byProtDens = [...mealBases].sort((a, b) => (b.b.p / b.b.kcal) - (a.b.p / a.b.kcal));
-  const proteinRich = byProtDens.filter(({ b }) => b.p > 0);
-  // Low-protein meals: levers to absorb kcal offset (scale down without losing much protein)
-  const lowProt = [...byProtDens].reverse().filter(({ b }) => b.p / b.kcal < 0.05);
+    if (protGap <= 0) break; // protein target met
 
-  for (let iter = 0; iter < 12; iter++) {
-    const cur = dayTotals();
-    const pErr = targets.protein - cur.p;
-    const kErr = targets.kcal - cur.kcal;
+    // Find the lean item that can contribute the most protein per kcal added
+    // and still has room to scale up
+    let bestLever = null;
+    let bestPPerKcal = 0;
+    for (const it of lean) {
+      if (it.sf >= SF_P_MAX) continue;
+      const ppk = it.b.p / it.b.kcal;
+      if (ppk > bestPPerKcal) { bestPPerKcal = ppk; bestLever = it; }
+    }
+    if (!bestLever) break; // no lean meals to scale up
 
-    if (Math.abs(pErr) <= PROT_TOL && Math.abs(kErr) <= KCAL_TOL) break;
+    // How much can we increase bestLever?
+    // ΔSF × kcal_base = extra kcal cost
+    // ΔSF × p_base    = extra protein gained
+    const maxDeltaSF_byProtein = protGap / bestLever.b.p;
+    const maxDeltaSF_bySF      = SF_P_MAX - bestLever.sf;
 
-    if (Math.abs(pErr) > PROT_TOL && proteinRich.length > 0) {
-      // Pick best protein lever
-      const { m, b } = proteinRich[0];
-      const curSF = m.scaleFactor || 1;
-      // How much SF change needed to fix protein gap?
-      const deltaSF = pErr / b.p;
-      const newSF = Math.min(SF_MAX, Math.max(SF_MIN, curSF + deltaSF));
-      const actualDelta = newSF - curSF;
-      const extraKcal = b.kcal * actualDelta;
-      m.scaleFactor = Math.round(newSF * 100) / 100;
+    let deltaSF = Math.min(maxDeltaSF_byProtein, maxDeltaSF_bySF);
+    const extraKcal = bestLever.b.kcal * deltaSF;
 
-      // Offset the extra kcal by scaling down low-protein meals to stay calorie-neutral
-      if (Math.abs(extraKcal) > 10 && lowProt.length > 0) {
-        let remaining = extraKcal;
-        for (const { m: lm, b: lb } of lowProt) {
-          if (lm === m || lb.kcal === 0) continue;
-          const lSF = lm.scaleFactor || 1;
-          const maxRemovable = lb.kcal * lSF; // kcal we can remove by going to SF=0
-          const toRemove = Math.min(Math.abs(remaining), maxRemovable) * Math.sign(remaining);
-          const lDelta = -toRemove / lb.kcal;
-          const lNewSF = Math.min(SF_MAX, Math.max(SF_MIN, lSF + lDelta));
-          lm.scaleFactor = Math.round(lNewSF * 100) / 100;
-          remaining -= toRemove;
-          if (Math.abs(remaining) < 10) break;
-        }
+    if (extraKcal > kcalRoom + 1) {
+      // Not enough kcal room — free kcal by reducing fat first, then carbs
+      let toFree = extraKcal - kcalRoom;
+
+      // Reduce fat items (highest fat density first)
+      for (const it of fat) {
+        if (it.sf <= SF_FC_MIN || toFree <= 0) continue;
+        const canFree = it.b.kcal * it.sf; // freeing all
+        const freeing = Math.min(toFree, canFree);
+        it.sf = Math.max(SF_FC_MIN, it.sf - freeing / it.b.kcal);
+        toFree -= freeing;
       }
-    } else if (Math.abs(kErr) > KCAL_TOL) {
-      // Protein OK, fix remaining kcal gap uniformly
-      const curK = dayTotals().kcal;
-      if (curK < 1) break;
-      const corrSF = targets.kcal / curK;
-      day.meals.forEach(m => {
-        m.scaleFactor = Math.round(Math.min(SF_MAX, Math.max(SF_MIN, (m.scaleFactor || 1) * corrSF)) * 100) / 100;
-      });
-      break;
+
+      // Reduce carb items (highest carb density first)
+      for (const it of carb) {
+        if (it.sf <= SF_FC_MIN || toFree <= 0) continue;
+        const canFree = it.b.kcal * it.sf;
+        const freeing = Math.min(toFree, canFree);
+        it.sf = Math.max(SF_FC_MIN, it.sf - freeing / it.b.kcal);
+        toFree -= freeing;
+      }
+
+      // Recalculate available room
+      const newRoom = KCAL_MAX - totals().kcal;
+      if (newRoom < 1) break; // truly stuck — kcal budget exhausted
+      deltaSF = Math.min(maxDeltaSF_byProtein, maxDeltaSF_bySF, newRoom / bestLever.b.kcal);
+    }
+
+    if (deltaSF <= 0.01) break;
+    bestLever.sf = Math.min(SF_P_MAX, bestLever.sf + deltaSF);
+  }
+
+  // ── Phase 3: Fill remaining kcal budget with carbs ────────────
+  const afterProtein = totals();
+  const leftover = targets.kcal - afterProtein.kcal;
+  if (leftover > 20 && carb.length > 0) {
+    const totalCarbBase = carb.reduce((s, it) => s + it.b.kcal * (1 - it.sf), 0);
+    // Distribute leftover proportionally across carb items that were reduced
+    for (const it of carb) {
+      if (it.sf >= SF_C_MAX) continue;
+      const headroom = it.b.kcal * (SF_C_MAX - it.sf);
+      if (totalCarbBase <= 0) break;
+      const share = leftover * (it.b.kcal * (1 - it.sf)) / totalCarbBase;
+      it.sf = Math.min(SF_C_MAX, it.sf + share / it.b.kcal);
     }
   }
 
-  // Final clamp
-  day.meals.forEach(m => {
-    m.scaleFactor = Math.round(Math.min(SF_MAX, Math.max(SF_MIN, m.scaleFactor || 1)) * 100) / 100;
+  // ── Apply SFs and clamp ───────────────────────────────────────
+  items.forEach(it => {
+    if (it.cls === 'lean') it.sf = Math.min(SF_P_MAX, Math.max(SF_P_MIN, it.sf));
+    else                   it.sf = Math.min(SF_C_MAX, Math.max(SF_FC_MIN, it.sf));
+    it.m.scaleFactor = Math.round(it.sf * 100) / 100;
   });
+
+  // Check shortfall
+  const final = totals();
+  if (final.p < PROT_MIN) day._proteinShortfall = true;
 }
 // ─────────────────────────────────────────────────────────────
+
+function swapToHighProteinMeals() {
+  const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
+  const LEAN_THRESHOLD = 0.07;
+
+  // For each meal type, pre-sort recipes by protein density descending
+  function bestForType(type) {
+    return allR
+      .filter(r => r.meal === type)
+      .map(r => { const m = calcRecipeMacros(r, 1); return { r, density: m.kcal > 0 ? m.p / m.kcal : 0, p: m.p, kcal: m.kcal }; })
+      .sort((a, b) => b.density - a.density);
+  }
+
+  const cache = {};
+  const getTop = type => { if (!cache[type]) cache[type] = bestForType(type); return cache[type]; };
+
+  state.week.forEach(day => {
+    if (!day._proteinShortfall) return;
+    day.meals.forEach(meal => {
+      if (meal.standardId) return; // skip standard meals
+      const r = allR.find(x => x.id === meal.recipeId);
+      if (!r) return;
+      const mac = calcRecipeMacros(r, 1);
+      const density = mac.kcal > 0 ? mac.p / mac.kcal : 0;
+      if (density >= LEAN_THRESHOLD) return; // already lean-protein
+      // Find highest-density recipe of same meal type that isn't already in this day
+      const usedIds = new Set(day.meals.map(m => m.recipeId));
+      const candidate = getTop(meal.type).find(({ r: cr }) => !usedIds.has(cr.id));
+      if (candidate) {
+        meal.recipeId = candidate.r.id;
+        meal.scaleFactor = 1;
+      }
+    });
+  });
+
+  // Re-optimise after swapping
+  const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
+  state.week.forEach(day => { if (day.meals && day.meals.length > 0) _optimiseDayMacros(day, targets); });
+  saveState();
+  renderWeek();
+  showToast('🔄 Αντικαταστάθηκαν γεύματα με υψηλότερη πρωτεΐνη');
+}
 
 function updatePlanCreatedUI() {
   const created = !!state.planCreated;
@@ -3009,8 +3116,19 @@ function renderWeek() {
           <div style="flex:1;min-width:200px">
             <div style="font-size:0.75rem;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">${t('week_macros_avg')}</div>
             ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#22c55e', true)}
-            ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6')}
-            ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b')}
+            ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6', true)}
+            ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b', true)}
+            ${(() => {
+              const shortDays = state.week.filter(d => d._proteinShortfall).length;
+              if (!shortDays) return '';
+              return `<div style="margin-top:10px;padding:10px 14px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <div style="flex:1;min-width:140px">
+                  <div style="font-size:0.75rem;font-weight:800;color:#dc2626;margin-bottom:2px">⚠️ Αδύνατο να επιτευχθεί ο στόχος πρωτεΐνης</div>
+                  <div style="font-size:0.68rem;color:#991b1b">${shortDays} μέρ${shortDays===1?'α':'ες'} δεν έχουν αρκετή πρωτεΐνη. Άλλαξε γεύματα ή πάτα αντικατάσταση.</div>
+                </div>
+                <button onclick="swapToHighProteinMeals()" style="flex-shrink:0;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap">🔄 Αντικατάσταση</button>
+              </div>`;
+            })()}
           </div>
           <!-- Week Goal Sliders -->
           <div style="display:flex;flex-direction:column;gap:10px;min-width:180px;flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)">
@@ -3044,6 +3162,21 @@ function renderWeek() {
           ${cols}
         </div>
       </div>
+
+      <!-- Protein shortfall warning -->
+      ${(() => {
+        const shortDays = state.week.filter(d => d._proteinShortfall).length;
+        if (!shortDays) return '';
+        return `<div style="margin:0 16px 12px;padding:12px 16px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:0.8rem;font-weight:800;color:#dc2626;margin-bottom:2px">⚠️ Αδύνατο να επιτευχθεί ο στόχος πρωτεΐνης</div>
+            <div style="font-size:0.72rem;color:#991b1b">Τα γεύματα σε ${shortDays} μέρ${shortDays===1?'α':'ες'} δεν έχουν αρκετή πρωτεΐνη ακόμα και στη μέγιστη ποσότητα. Άλλαξε σε γεύματα πλούσια σε πρωτεΐνη (κοτόπουλο, ψάρι, whey, αυγά).</div>
+          </div>
+          <button onclick="swapToHighProteinMeals()" style="flex-shrink:0;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:0.78rem;font-weight:800;cursor:pointer">
+            🔄 Αυτόματη Αντικατάσταση
+          </button>
+        </div>`;
+      })()}
 
       <!-- Weekly Deficit Summary -->
       ${(() => {

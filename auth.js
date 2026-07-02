@@ -533,61 +533,117 @@
     const lang = _langPickSelectedLang || _disclaimerLang();
     let current = 0;
     const total = _OB_CARDS.length;
+    let autoTimer = null;
 
-    function render() {
-      const card = _OB_CARDS[current];
+    function buildSlides() {
+      return _OB_CARDS.map((card, i) => {
+        const features = card.features.map(f => `
+          <div class="onboarding-feature">
+            <div class="onboarding-feature-icon">${_tLp(f.iconKey, lang)}</div>
+            <div class="onboarding-feature-text">
+              <div class="onboarding-feature-head">${_tLp(f.headKey, lang)}</div>
+              <div class="onboarding-feature-desc">${_tLp(f.descKey, lang)}</div>
+            </div>
+          </div>`).join('');
+        return `<div class="ob-slide">
+          <div class="onboarding-card-title">${_tLp(card.titleKey, lang)}</div>
+          <div class="onboarding-features">${features}</div>
+        </div>`;
+      }).join('');
+    }
+
+    overlay.innerHTML = `<div class="onboarding-card">
+      <button class="onboarding-close-btn" onclick="window._obDone()" aria-label="Κλείσιμο">✕</button>
+      <div class="onboarding-dots">${Array.from({ length: total }, (_, i) =>
+        `<div class="onboarding-dot${i === 0 ? ' active' : ''}"></div>`).join('')}
+      </div>
+      <div class="ob-track-wrap">
+        <button class="ob-arrow ob-arrow-left" onclick="window._obPrev()" aria-label="Προηγούμενο">&#8249;</button>
+        <div class="ob-track">${buildSlides()}</div>
+        <button class="ob-arrow ob-arrow-right" onclick="window._obNext()" aria-label="Επόμενο">&#8250;</button>
+      </div>
+      <div class="onboarding-actions">
+        <button class="onboarding-skip" onclick="window._obDone()">${_tLp('ob_skip', lang)}</button>
+        <button class="ob-cta-btn" id="ob-cta-btn" onclick="window._obNext()">
+          ${_tLp('ob_next', lang)}
+        </button>
+      </div>
+    </div>`;
+
+    const track = overlay.querySelector('.ob-track');
+    const dotsEl = overlay.querySelectorAll('.onboarding-dot');
+    const ctaBtn = overlay.querySelector('#ob-cta-btn');
+    const arrowLeft = overlay.querySelector('.ob-arrow-left');
+
+    function goTo(idx, dir) {
+      if (idx < 0 || idx >= total) return;
+      current = idx;
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dotsEl.forEach((d, i) => d.classList.toggle('active', i === current));
       const isLast = current === total - 1;
-      const dots = Array.from({ length: total }, (_, i) =>
-        `<div class="onboarding-dot${i === current ? ' active' : ''}"></div>`
-      ).join('');
-      const features = card.features.map(f => `
-        <div class="onboarding-feature">
-          <div class="onboarding-feature-icon">${_tLp(f.iconKey, lang)}</div>
-          <div class="onboarding-feature-text">
-            <div class="onboarding-feature-head">${_tLp(f.headKey, lang)}</div>
-            <div class="onboarding-feature-desc">${_tLp(f.descKey, lang)}</div>
-          </div>
-        </div>`).join('');
+      ctaBtn.textContent = isLast ? _tLp('ob_start', lang) : _tLp('ob_next', lang);
+      arrowLeft.style.visibility = current === 0 ? 'hidden' : 'visible';
+      resetAuto();
+    }
 
-      overlay.innerHTML = `<div class="onboarding-card">
-        <button class="onboarding-close-btn" onclick="window._obDone()" aria-label="Κλείσιμο">✕</button>
-        <div class="onboarding-dots">${dots}</div>
-        <div class="onboarding-card-title">${_tLp(card.titleKey, lang)}</div>
-        <div class="onboarding-features">${features}</div>
-        <div class="onboarding-actions">
-          <button class="onboarding-skip" onclick="window._obDone()">${_tLp('ob_skip', lang)}</button>
-          <button class="onboarding-next" onclick="window._obNext()">
-            ${isLast ? _tLp('ob_start', lang) : _tLp('ob_next', lang)}
-          </button>
-        </div>
-      </div>`;
+    function resetAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = setInterval(() => {
+        goTo(current < total - 1 ? current + 1 : 0);
+      }, 10000);
     }
 
     window._obNext = function() {
-      if (current < total - 1) {
-        current++;
-        render();
-      } else {
-        window._obDone();
-      }
+      if (current < total - 1) { goTo(current + 1); } else { window._obDone(); }
+    };
+    window._obPrev = function() {
+      if (current > 0) goTo(current - 1);
     };
 
     let _obSwipeCleanup = null;
     window._obDone = function(fromPopstate) {
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
       if (_obSwipeCleanup) { _obSwipeCleanup(); _obSwipeCleanup = null; }
       overlay.style.display = 'none';
       if (!fromPopstate) history.back();
       onDone && onDone();
     };
 
-    render();
+    goTo(0);
     overlay.style.display = 'flex';
-    if (typeof _addSwipeDismiss === 'function') {
-      const card = overlay.querySelector('.onboarding-card');
-      if (card) _obSwipeCleanup = _addSwipeDismiss(card, () => window._obDone(), { directions: ['left', 'right', 'down'], threshold: 80 });
+
+    // Swipe left/right to navigate between slides
+    const card = overlay.querySelector('.onboarding-card');
+    if (card) {
+      let tx = 0, ty = 0, dragging = false;
+      function onTouchStart(e) {
+        tx = e.touches[0].clientX;
+        ty = e.touches[0].clientY;
+        dragging = true;
+      }
+      function onTouchEnd(e) {
+        if (!dragging) return;
+        dragging = false;
+        const dx = e.changedTouches[0].clientX - tx;
+        const dy = e.changedTouches[0].clientY - ty;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+          if (dx < 0) window._obNext(); else window._obPrev();
+        }
+      }
+      card.addEventListener('touchstart', onTouchStart, { passive: true });
+      card.addEventListener('touchend', onTouchEnd, { passive: true });
+      _obSwipeCleanup = () => {
+        card.removeEventListener('touchstart', onTouchStart);
+        card.removeEventListener('touchend', onTouchEnd);
+      };
     }
+
     history.pushState({ vivon: 'onboarding' }, '', location.pathname + location.search);
   }
+
+  // ── Help FAB ──────────────────────────────────────────────
+
+  window._openHelp = function() { showOnboarding(function() {}); };
 
   // ── Entry point ───────────────────────────────────────────
 
