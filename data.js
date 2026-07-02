@@ -45,7 +45,7 @@ const PHILOSOPHY_QUOTES = [
   { text: "Σιωπῇ καὶ πόνῳ τὰ μεγάλα πράττεται.", author: "Αρχαία Γνώμη", translationI18n: { el: "Τα μεγάλα πράγματα γίνονται με σιωπή και κόπο.", en: "Great things are accomplished in silence and toil.", es: "Las grandes cosas se logran en silencio y con esfuerzo.", fr: "Les grandes choses s'accomplissent dans le silence et le labeur." } },
 ];
 
-const DEFAULT_GOALS = { kcal: 1000, protein: 60, carbs: 150, fat: 45 };
+const DEFAULT_GOALS = { kcal: 1700, protein: 130, carbs: 175, fat: 55 };
 
 // Προεπιλεγμένο προφίλ χρήστη
 const DEFAULT_PROFILE = {

@@ -527,6 +527,12 @@ const I18N = {
   prof_protein_hint:  { el: 'Συν. 1.9g/kg: {val}g', en: 'Rec. 1.9g/kg: {val}g', es: 'Rec. 1.9g/kg: {val}g', fr: 'Rec. 1.9g/kg : {val}g' },
   share_plan_title:   { el: 'Πλάνο', en: 'Plan', es: 'Plan', fr: 'Plan' },
   share_user:         { el: 'Χρήστης', en: 'User', es: 'Usuario', fr: 'Utilisateur' },
+  modal_new_food:     { el: 'Νέο Τρόφιμο', en: 'New Food', es: 'Nuevo Alimento', fr: 'Nouvel Aliment' },
+  copy_day_title:     { el: 'Αντιγραφή — Επέλεξε Πηγή', en: 'Copy — Choose Source', es: 'Copiar — Elige Origen', fr: 'Copier — Choisir la Source' },
+  copy_day_from:      { el: 'Από ποια ημέρα θέλεις να αντιγράψεις;', en: 'Which day do you want to copy from?', es: '¿De qué día quieres copiar?', fr: 'De quel jour veux-tu copier ?' },
+  copy_day_to_title:  { el: 'Αντιγραφή {src} σε...', en: 'Copy {src} to...', es: 'Copiar {src} a...', fr: 'Copier {src} vers...' },
+  copy_day_to:        { el: 'Σε ποια ημέρα θέλεις να επικολλήσεις;', en: 'Which day do you want to paste to?', es: '¿En qué día quieres pegar?', fr: 'Dans quel jour veux-tu coller ?' },
+  copy_day_done:      { el: '✅ Αντιγράφηκε στην {dst}', en: '✅ Copied to {dst}', es: '✅ Copiado a {dst}', fr: '✅ Copié vers {dst}' },
 
   // ── Macro abbreviations for display ──
   macro_p_abbr: { el: 'Π', en: 'P', es: 'P', fr: 'P' },

@@ -211,9 +211,10 @@ async function loadState() {
     });
   }
 
-  // Migrate old array-based supplements to new object structure
+  // Migrate old array-based supplements to new object structure (preserve active IDs)
   if (Array.isArray(state.supplements)) {
-    state.supplements = { ...SUPPLEMENTS_STATE_DEFAULT };
+    const oldIds = state.supplements.filter(id => typeof id === 'string');
+    state.supplements = { ...SUPPLEMENTS_STATE_DEFAULT, activeIds: oldIds.length ? oldIds : [] };
   }
   if (!state.supplements || typeof state.supplements !== 'object' || Array.isArray(state.supplements)) {
     state.supplements = { ...SUPPLEMENTS_STATE_DEFAULT };
@@ -333,7 +334,7 @@ function calcDayMacros(dayIdx, doneOnly = false) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   (day.meals || []).forEach(meal => {
     if (doneOnly && !meal.done) return;
-    const sf = meal.scaleFactor || 1;
+    const sf = Math.min(Math.max(meal.scaleFactor || 1, 0.1), 5);
     if (meal.standardId) {
       const sm = STANDARD_MEALS.find(s => s.id === meal.standardId);
       if (sm) {
@@ -354,12 +355,22 @@ function calcDayMacros(dayIdx, doneOnly = false) {
 
 // ── BODY MEASUREMENTS ──
 function _parseDecimal(str) {
-  // Normalize locale decimal separators: remove thousands dots/spaces, replace comma with dot
   if (str == null) return NaN;
-  const s = String(str).trim()
-    .replace(/\s/g, '')
-    .replace(/\.(?=\d{3}(?:[,.]|$))/g, '') // remove thousands dot (e.g. 1.000,5 → 1000,5)
-    .replace(',', '.');
+  let s = String(str).trim().replace(/\s/g, '');
+  // Detect format: if both . and , present, last one is decimal separator
+  const hasDot   = s.includes('.');
+  const hasComma = s.includes(',');
+  if (hasDot && hasComma) {
+    // e.g. "1.234,5" (EU) or "1,234.5" (US) — last separator wins
+    if (s.lastIndexOf('.') > s.lastIndexOf(',')) {
+      s = s.replace(/,/g, ''); // US thousands commas, keep dot
+    } else {
+      s = s.replace(/\./g, '').replace(',', '.'); // EU thousands dots, comma→dot
+    }
+  } else if (hasComma) {
+    s = s.replace(',', '.'); // single comma = decimal
+  }
+  // else: plain dot notation, leave as-is
   return parseFloat(s);
 }
 
@@ -4990,7 +5001,7 @@ function saveNewRecipe() {
 function openAddFoodModal() {
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Νέο Τρόφιμο</div>
+    <div class="modal-title">➕ ${t('modal_new_food')}</div>
     <div class="form-group"><label>${t('form_name')}</label><input type="text" id="nf-name" placeholder="${t('form_food_placeholder')}"></div>
     <div class="form-group"><label>${t('form_category')}</label>
       <select id="nf-cat">
@@ -5145,8 +5156,8 @@ function resetDayMeals() {
 function copyDay() {
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Αντιγραφή — Επέλεξε Πηγή</div>
-    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">Από ποια ημέρα θέλεις να αντιγράψεις;</div>
+    <div class="modal-title">📋 ${t('copy_day_title')}</div>
+    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">${t('copy_day_from')}</div>
     <div class="recipes-grid">
       ${state.week.map(d => `
         <div class="recipe-card" onclick="copyDayPickTarget(${d.day-1})">
@@ -5159,8 +5170,8 @@ function copyDay() {
 function copyDayPickTarget(originIdx) {
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Αντιγραφή ${state.week[originIdx].label} σε...</div>
-    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">Σε ποια ημέρα θέλεις να επικολλήσεις;</div>
+    <div class="modal-title">📋 ${tFmt('copy_day_to_title', { src: state.week[originIdx].label })}</div>
+    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">${t('copy_day_to')}</div>
     <div class="recipes-grid">
       ${state.week.filter((_,i)=>i!==originIdx).map(d => `
         <div class="recipe-card" onclick="doCopyDay(${originIdx},${d.day-1})">
@@ -5177,7 +5188,7 @@ function doCopyDay(originIdx, targetIdx) {
   closeModal();
   const weekPage = document.getElementById('page-week');
   if (weekPage && weekPage.classList.contains('active')) renderWeek();
-  showToast(`✅ Αντιγράφηκε στην ${state.week[targetIdx].label}`);
+  showToast(tFmt('copy_day_done', { dst: state.week[targetIdx].label }));
 }
 
 // ── PDF helper: person badge fixed at bottom-left ──
