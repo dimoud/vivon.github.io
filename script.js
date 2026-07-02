@@ -2060,7 +2060,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
         type: slotType,
         recipeId: picked ? picked.id : DEFAULT_WEEK[di].meals[si]?.recipeId,
         done: false,
-        waterNote: WATER_NOTES[si],
+        waterNoteIdx: si,
         ...(picked && picked.kcal_est ? { standardId: picked.id } : {}),
       };
     });
@@ -2508,7 +2508,7 @@ function renderToday() {
           </button>
         </div>
         ${bodyHtml}
-        ${meal.waterNote ? `<div class="water-note">💧 ${meal.waterNote}</div>` : ''}
+        ${meal.waterNoteIdx !== undefined ? `<div class="water-note">💧 ${getWaterNotes()[meal.waterNoteIdx]}</div>` : (meal.waterNote ? `<div class="water-note">💧 ${getWaterNotes()[meal.waterNote.includes('1L') ? 4 : ['0.5L','1.0L','1.5L','2.0L'].findIndex(x => meal.waterNote.includes(x))]||meal.waterNote}</div>` : '')}
         <div class="running-kcal">${t('today_running_total')}: <strong>${runningKcal} kcal</strong></div>
         <div class="meal-actions">
           <button class="btn btn-ghost btn-sm" onclick="openSwapMeal(${mi})">${t('meal_swap_btn')}</button>
@@ -4889,6 +4889,20 @@ function doCopyDay(targetIdx) {
   showToast(`✅ Αντιγράφηκε στην Ημέρα ${targetIdx+1}`);
 }
 
+// ── PDF helper: person badge fixed at bottom-left ──
+function _pdfPersonBadge() {
+  const p = state.profile;
+  const name = p.name || '';
+  const photoUrl = p.photoUrl;
+  const avatarHtml = _isSafeUrl(photoUrl)
+    ? `<img src="${photoUrl}" style="width:26px;height:26px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="">`
+    : `<div style="width:26px;height:26px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#6b7280;flex-shrink:0">${(name || 'V').charAt(0).toUpperCase()}</div>`;
+  return `<div style="position:fixed;bottom:6mm;left:7mm;display:flex;align-items:center;gap:6px;opacity:0.55;z-index:100">
+    ${avatarHtml}
+    ${name ? `<span style="font-size:9px;font-weight:700;color:#374151;white-space:nowrap">${esc(name)}</span>` : ''}
+  </div>`;
+}
+
 // ── PDF ΕΚΤΥΠΩΣΗ ΗΜΕΡΑΣ ──
 function exportDayPDF(dayIdx) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
@@ -4950,13 +4964,18 @@ function exportDayPDF(dayIdx) {
     : '';
 
   const html = `<style>@page { size: A4 portrait; margin: 0; }</style>
+    ${_pdfPersonBadge()}
     <div style="font-family:'Helvetica Neue',Arial,sans-serif;padding:10mm 12mm;min-height:277mm;box-sizing:border-box">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #22c55e">
         <div>
           <div style="font-size:17px;font-weight:800;color:#111">${day.label}${dateLabel}</div>
           <div style="font-size:10px;color:#6b7280;margin-top:2px">${t('stats_goal')}: ${g.kcal} kcal · Plan: ${tot.kcal} kcal (${pct}%) · ${p.name||'Vivon'}</div>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+          <div style="display:flex;align-items:center;gap:5px">
+            <img src="logo.png" alt="" style="height:18px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
+            <span style="font-size:13px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px">VIVON</span>
+          </div>
           <div style="font-size:11px;font-weight:700;color:#3b82f6">${t('macro_protein')}: ${tot.p}g</div>
           <div style="font-size:11px;font-weight:700;color:#8b5cf6">${t('macro_carbs')}: ${tot.c}g</div>
           <div style="font-size:11px;font-weight:700;color:#f59e0b">${t('macro_fat')}: ${tot.f}g</div>
@@ -5079,14 +5098,18 @@ function exportPDF_today() {
     <style>
       @page { size: A4 portrait; margin: 10mm; }
     </style>
+    ${_pdfPersonBadge()}
     <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:3px solid #22c55e">
         <div>
           <div style="font-size:22px;font-weight:900;color:#111">${day.label}${dateLabel}</div>
           <div style="font-size:12px;color:#6b7280;margin-top:3px">${t('stats_goal')}: ${g.kcal} kcal · Plan: ${tot.kcal} kcal (${pct}%)</div>
         </div>
-        <div style="text-align:right">
-          <div style="font-size:18px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-bottom:4px">VIVON</div>
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+            <img src="logo.png" alt="" style="height:22px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
+            <span style="font-size:18px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+          </div>
           <div style="font-size:13px;font-weight:700;color:#3b82f6">${t('macro_protein')}: ${tot.p}g</div>
           <div style="font-size:13px;font-weight:700;color:#8b5cf6">${t('macro_carbs')}: ${tot.c}g</div>
           <div style="font-size:13px;font-weight:700;color:#f59e0b">${t('macro_fat')}: ${tot.f}g</div>
@@ -5169,13 +5192,17 @@ function exportPDF_stats() {
     <style>
       @page { size: A4 portrait; margin: 10mm; }
     </style>
+    ${_pdfPersonBadge()}
     <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #22c55e">
         <div>
           <div style="font-size:22px;font-weight:900;color:#111">Στατιστικά Εβδομάδας</div>
           <div style="font-size:12px;color:#6b7280;margin-top:3px">Αναλυτική αναφορά</div>
         </div>
-        <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <img src="logo.png" alt="" style="height:22px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
+          <span style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+        </div>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px">
@@ -5261,13 +5288,17 @@ function exportPDF_body() {
     <style>
       @page { size: A4 portrait; margin: 10mm; }
     </style>
+    ${_pdfPersonBadge()}
     <div style="padding:8mm 10mm;font-family:'Helvetica Neue',Arial,sans-serif">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #f5c842">
         <div>
           <div style="font-size:22px;font-weight:900;color:#111">Μετρήσεις Σώματος</div>
           <div style="font-size:12px;color:#6b7280;margin-top:3px">${p.name || ''}</div>
         </div>
-        <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <img src="logo.png" alt="" style="height:22px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
+          <span style="font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+        </div>
       </div>
 
       ${latest ? `<div style="display:flex;gap:14px;margin-bottom:18px">
@@ -5452,16 +5483,19 @@ function exportPDF_week() {
   }).join('');
 
   const summaryPage = `
+    ${_pdfPersonBadge()}
     <div style="padding:5mm 5mm 4mm;font-family:'Helvetica Neue',Arial,sans-serif;background:#f8fafc;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb">
         <div>
           <div style="font-size:18px;font-weight:900;color:#111;letter-spacing:-0.5px">${t('pdf_week_title')}</div>
           <div style="font-size:9px;color:#6b7280;margin-top:1px">${tFmt('pdf_week_subtitle', { kcal: avgKcalW.toLocaleString() })}</div>
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
           ${weekRangePrint ? `<div style="font-size:8px;color:#6b7280">${weekRangePrint}</div>` : ''}
-          <div style="font-size:8px;color:#6b7280;margin-top:1px">${p.name || ''}</div>
-          <div style="font-size:15px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-top:1px">VIVON</div>
+          <div style="display:flex;align-items:center;gap:5px">
+            <img src="logo.png" alt="" style="height:16px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
+            <span style="font-size:15px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+          </div>
         </div>
       </div>
       <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:6px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid #e5e7eb">

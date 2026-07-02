@@ -512,77 +512,77 @@ const DEFAULT_WEEK = [
     // Κανόνας: πρωί γιαούρτι → βραδινό ΟΧΙ γιαούρτι (r51 αντί r20)
     day: 1, label: "Ημέρα 1",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r18", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r30", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r51", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r18", done: false, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r30", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r51", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ2: smoothie / whey / μακαρόνια κιμά / μήλο / τονοσαλάτα ≈ 1673 kcal
     day: 2, label: "Ημέρα 2",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r7",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r11", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r7",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r11", done: false, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ3: power oat / cottage+ριζογκ / κινόα bowl / whey / αβγά σπανάκι ≈ 1756 kcal
     day: 3, label: "Ημέρα 3",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r1",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r45", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r49", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r1",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r50", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r45", done: false, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r49", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ4: τοστ αυγά / μήλο / ρεβύθια σούπα / whey / αβγά βραστά σαλάτα ≈ 1639 kcal
     day: 4, label: "Ημέρα 4",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r4",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r41", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r24", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r4",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r41", done: false, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r32", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r24", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ5: cottage bowl / whey / σολομός light / μήλο / ομελέτα πιπεριάς ≈ 1701 kcal
     day: 5, label: "Ημέρα 5",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r6",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r13", done: false, scaleFactor: 0.8, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r21", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r6",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r13", done: false, scaleFactor: 0.8, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r21", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ6: overnight oats / μήλο / φακές / cottage+ριζογκ / τονοσαλάτα ≈ 1608 kcal
     day: 6, label: "Ημέρα 6",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r2",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r16", done: false, scaleFactor: 0.85, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r50", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r2",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r16", done: false, scaleFactor: 0.85, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r50", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r22", done: false, waterNoteIdx: 4 },
     ]
   },
   {
     // Ημ7: γιαούρτι+παξιμάδι / whey / κοτόπουλο κάρυ / μήλο / cottage βραδ ≈ 1612 kcal
     day: 7, label: "Ημέρα 7",
     meals: [
-      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 0.5L" },
-      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.0L" },
-      { time: "13:00", type: "lunch",     recipeId: "r48", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 1.5L" },
-      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNote: "Πιες 500ml νερό 💧 — Σύνολο ως τώρα: 2.0L" },
-      { time: "19:30", type: "dinner",    recipeId: "r25", done: false, waterNote: "Πιες 1L νερό 💧 — Στόχος: 3L ✅" },
+      { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNoteIdx: 0 },
+      { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
+      { time: "13:00", type: "lunch",     recipeId: "r48", done: false, waterNoteIdx: 2 },
+      { time: "16:00", type: "afternoon",     recipeId: "r31", done: false, waterNoteIdx: 3 },
+      { time: "19:30", type: "dinner",    recipeId: "r25", done: false, waterNoteIdx: 4 },
     ]
   },
 ];

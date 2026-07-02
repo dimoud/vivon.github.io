@@ -1603,6 +1603,175 @@ test('sets goalPace in state', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
+// SUITE 34 — sendFeedback GAS mail engine wiring
+// ══════════════════════════════════════════════════════════════════
+suite('sendFeedback — GAS mail engine');
+
+(function() {
+  const GAS_URL = 'https://script.google.com/macros/s/AKfycbx6XHAAeJMIUVUBtHmjNqu6NGSKvFWgkWeUT4x6x_UMsmEaoPXFPMqlhXLKH5dJ0aGlag/exec';
+  const REQUIRED_FIELDS = ['_to', '_key', '_hp', 'subject', 'message', 'name'];
+
+  // Intercept fetch and capture the last call made to the GAS URL
+  let _lastGasCall = null;
+  const _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    if (typeof url === 'string' && url === GAS_URL) {
+      _lastGasCall = { url, opts };
+      return Promise.resolve({ ok: true, json: async () => ({ result: 'success' }) });
+    }
+    // Let Supabase calls fall through (they will fail silently in the stub)
+    return Promise.resolve({ ok: false, json: async () => ({}) });
+  };
+
+  // Ensure DOM elements sendFeedback needs
+  function _ensureEl(id, tag) {
+    let el = document.getElementById(id);
+    if (!el) { el = document.createElement(tag || 'div'); el.id = id; document.body.appendChild(el); }
+    return el;
+  }
+
+  test('sendFeedback builds FormData with all required fields', async () => {
+    _lastGasCall = null;
+    _selectedFeedbackType = 'bug';
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'Test message for GAS';
+    _ensureEl('feedback-send-btn', 'button');
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch was not called with GAS URL');
+    const fd = _lastGasCall.opts.body;
+    assert(fd instanceof FormData, 'body must be FormData');
+    REQUIRED_FIELDS.forEach(f => {
+      assert(fd.get(f) !== null, `FormData missing field: ${f}`);
+    });
+  });
+
+  test('_to is always moudiotis.meng@gmail.com', async () => {
+    _lastGasCall = null;
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'Check recipient';
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch not called');
+    assertEq(_lastGasCall.opts.body.get('_to'), 'moudiotis.meng@gmail.com', '_to field');
+  });
+
+  test('_key is the agency key', async () => {
+    _lastGasCall = null;
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'Check key';
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch not called');
+    assertEq(_lastGasCall.opts.body.get('_key'), 'MyPrivateAgencyKey_99', '_key field');
+  });
+
+  test('_hp (honeypot) is empty', async () => {
+    _lastGasCall = null;
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'Check honeypot';
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch not called');
+    assertEq(_lastGasCall.opts.body.get('_hp'), '', 'honeypot must be empty');
+  });
+
+  test('subject contains feedback type', async () => {
+    _lastGasCall = null;
+    _selectedFeedbackType = 'idea';
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'New idea here';
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch not called');
+    const subject = _lastGasCall.opts.body.get('subject');
+    assert(subject && subject.includes('idea'), `subject should mention type, got: ${subject}`);
+  });
+
+  test('message field includes the user text', async () => {
+    _lastGasCall = null;
+    _selectedFeedbackType = 'general';
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'unique-marker-text-xyz';
+    await sendFeedback();
+    assert(_lastGasCall !== null, 'fetch not called');
+    const msg = _lastGasCall.opts.body.get('message');
+    assert(msg && msg.includes('unique-marker-text-xyz'), `message missing user text, got: ${msg}`);
+  });
+
+  test('empty text does NOT call fetch', async () => {
+    _lastGasCall = null;
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = '   ';
+    await sendFeedback();
+    assert(_lastGasCall === null, 'fetch should not be called for empty message');
+  });
+
+  // Restore fetch
+  window.fetch = _origFetch;
+})();
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 35 — Donation link integrity
+// Inject the same links as index.html and verify their attributes
+// ══════════════════════════════════════════════════════════════════
+suite('Donation link integrity');
+
+// Inject the two donate anchors from index.html into the test DOM
+(function() {
+  const REVOLUT = 'https://revolut.me/dimitrtxl';
+  // Drawer link
+  const drawerA = document.createElement('a');
+  drawerA.id = 'test-donate-drawer';
+  drawerA.href = REVOLUT;
+  drawerA.target = '_blank';
+  drawerA.rel = 'noopener';
+  drawerA.dataset.donateSrc = 'drawer';
+  document.body.appendChild(drawerA);
+  // Sidebar link
+  const sidebarA = document.createElement('a');
+  sidebarA.id = 'test-donate-sidebar';
+  sidebarA.href = REVOLUT;
+  sidebarA.target = '_blank';
+  sidebarA.rel = 'noopener';
+  sidebarA.dataset.donateSrc = 'sidebar';
+  document.body.appendChild(sidebarA);
+})();
+
+const REVOLUT_URL = 'https://revolut.me/dimitrtxl';
+
+test('at least one donate link exists in DOM', () => {
+  const links = document.querySelectorAll('a[href="' + REVOLUT_URL + '"]');
+  assert(links.length >= 1, 'No donate anchor found');
+});
+
+test('drawer donate link exists', () => {
+  const el = document.getElementById('test-donate-drawer');
+  assert(el !== null, 'drawer donate link not found');
+  assertEq(el.href, REVOLUT_URL, 'wrong href');
+});
+
+test('sidebar donate link exists', () => {
+  const el = document.getElementById('test-donate-sidebar');
+  assert(el !== null, 'sidebar donate link not found');
+  assertEq(el.href, REVOLUT_URL, 'wrong href');
+});
+
+test('all donate links open in _blank', () => {
+  const links = Array.from(document.querySelectorAll('a[href="' + REVOLUT_URL + '"]'));
+  assert(links.length > 0, 'no donate links');
+  links.forEach((a, i) => assertEq(a.target, '_blank', `link #${i} target`));
+});
+
+test('all donate links have rel noopener', () => {
+  const links = Array.from(document.querySelectorAll('a[href="' + REVOLUT_URL + '"]'));
+  assert(links.length > 0, 'no donate links');
+  links.forEach((a, i) => assert(a.rel.includes('noopener'), `link #${i} missing noopener`));
+});
+
+test('both donate placements present (drawer + sidebar)', () => {
+  const sources = Array.from(document.querySelectorAll('a[href="' + REVOLUT_URL + '"]'))
+    .map(a => a.dataset.donateSrc).filter(Boolean);
+  assert(sources.includes('drawer'),  'drawer placement missing');
+  assert(sources.includes('sidebar'), 'sidebar placement missing');
+});
+
+// ══════════════════════════════════════════════════════════════════
 // Render results
 // ══════════════════════════════════════════════════════════════════
 (function render() {
