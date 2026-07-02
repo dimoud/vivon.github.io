@@ -309,7 +309,7 @@
     // on success: onAuthStateChange SIGNED_IN fires → hideAuthScreen + initApp
   };
 
-  window.authRegister = async function (e) {
+  async function _doRegister(e) {
     e.preventDefault();
     const name  = document.getElementById('auth-name-register').value.trim();
     const email = document.getElementById('auth-email-register').value.trim();
@@ -329,10 +329,16 @@
     if (error) { showError('register', _friendly(error.message)); return; }
 
     if (!data.session) {
-      // Email confirmation required
-      showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
+      // Email confirmation required — show onboarding first
+      showOnboarding(function() {
+        showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
+      });
+    } else {
+      showOnboarding(function() {});
     }
-  };
+  }
+
+  window.authRegister = function(e) { return _doRegister(e); };
 
   window.authReset = async function (e) {
     e.preventDefault();
@@ -433,6 +439,158 @@
       try { state = _freshState(); } catch(e) {}
     }
     await sbSignOut();
+  };
+
+  // ── Language Picker ───────────────────────────────────────
+
+  let _langPickSelectedLang = null;
+
+  function _tLp(key, lang) {
+    const entry = (typeof I18N !== 'undefined') ? I18N[key] : null;
+    if (!entry) return key;
+    return entry[lang] || entry['el'] || key;
+  }
+
+  function showLangPicker(onDone) {
+    const overlay = document.getElementById('langpick-overlay');
+    if (!overlay) { onDone && onDone(); return; }
+
+    const langs = [
+      { code: 'el', flag: '🇬🇷', label: 'Ελληνικά' },
+      { code: 'en', flag: '🇬🇧', label: 'English' },
+      { code: 'es', flag: '🇪🇸', label: 'Español' },
+      { code: 'fr', flag: '🇫🇷', label: 'Français' },
+    ];
+
+    let selected = _disclaimerLang();
+
+    function render() {
+      overlay.innerHTML = `<div class="langpick-card">
+        <div class="langpick-logo">VIVON</div>
+        <div class="langpick-title" id="lp-title">${_tLp('langpick_title', selected)}</div>
+        <div class="langpick-sub" id="lp-sub">${_tLp('langpick_sub', selected)}</div>
+        <div class="langpick-grid">
+          ${langs.map(l => `
+            <button class="langpick-btn${l.code === selected ? ' selected' : ''}"
+                    data-lang="${l.code}" onclick="window._lpSelect('${l.code}')">
+              <span class="lp-flag">${l.flag}</span>
+              <span>${l.label}</span>
+            </button>`).join('')}
+        </div>
+        <button class="langpick-continue" id="lp-continue"
+                onclick="window._lpContinue()">
+          ${_tLp('langpick_btn', selected)}
+        </button>
+      </div>`;
+    }
+
+    window._lpSelect = function(lang) {
+      selected = lang;
+      render();
+    };
+
+    window._lpContinue = function() {
+      if (typeof setLang === 'function') setLang(selected);
+      _langPickSelectedLang = selected;
+      overlay.style.display = 'none';
+      onDone && onDone();
+    };
+
+    render();
+    overlay.style.display = 'flex';
+  }
+
+  // ── Onboarding Carousel ────────────────────────────────────
+
+  const _OB_CARDS = [
+    {
+      titleKey: 'ob1_title',
+      features: [
+        { iconKey: 'ob1_a_icon', headKey: 'ob1_a_head', descKey: 'ob1_a_desc' },
+        { iconKey: 'ob1_b_icon', headKey: 'ob1_b_head', descKey: 'ob1_b_desc' },
+      ],
+    },
+    {
+      titleKey: 'ob2_title',
+      features: [
+        { iconKey: 'ob2_a_icon', headKey: 'ob2_a_head', descKey: 'ob2_a_desc' },
+        { iconKey: 'ob2_b_icon', headKey: 'ob2_b_head', descKey: 'ob2_b_desc' },
+      ],
+    },
+    {
+      titleKey: 'ob3_title',
+      features: [
+        { iconKey: 'ob3_a_icon', headKey: 'ob3_a_head', descKey: 'ob3_a_desc' },
+        { iconKey: 'ob3_b_icon', headKey: 'ob3_b_head', descKey: 'ob3_b_desc' },
+      ],
+    },
+  ];
+
+  function showOnboarding(onDone) {
+    const overlay = document.getElementById('onboarding-overlay');
+    if (!overlay) { onDone && onDone(); return; }
+
+    const lang = _langPickSelectedLang || _disclaimerLang();
+    let current = 0;
+    const total = _OB_CARDS.length;
+
+    function render() {
+      const card = _OB_CARDS[current];
+      const isLast = current === total - 1;
+      const dots = Array.from({ length: total }, (_, i) =>
+        `<div class="onboarding-dot${i === current ? ' active' : ''}"></div>`
+      ).join('');
+      const features = card.features.map(f => `
+        <div class="onboarding-feature">
+          <div class="onboarding-feature-icon">${_tLp(f.iconKey, lang)}</div>
+          <div class="onboarding-feature-text">
+            <div class="onboarding-feature-head">${_tLp(f.headKey, lang)}</div>
+            <div class="onboarding-feature-desc">${_tLp(f.descKey, lang)}</div>
+          </div>
+        </div>`).join('');
+
+      overlay.innerHTML = `<div class="onboarding-card">
+        <div class="onboarding-dots">${dots}</div>
+        <div class="onboarding-card-title">${_tLp(card.titleKey, lang)}</div>
+        <div class="onboarding-features">${features}</div>
+        <div class="onboarding-actions">
+          <button class="onboarding-skip" onclick="window._obDone()">${_tLp('ob_skip', lang)}</button>
+          <button class="onboarding-next" onclick="window._obNext()">
+            ${isLast ? _tLp('ob_start', lang) : _tLp('ob_next', lang)}
+          </button>
+        </div>
+      </div>`;
+    }
+
+    window._obNext = function() {
+      if (current < total - 1) {
+        current++;
+        render();
+      } else {
+        window._obDone();
+      }
+    };
+
+    window._obDone = function() {
+      overlay.style.display = 'none';
+      onDone && onDone();
+    };
+
+    render();
+    overlay.style.display = 'flex';
+  }
+
+  // ── Hook: intercept "Register" tab click ──────────────────
+
+  const _origAuthShowTab = window.authShowTab;
+  window.authShowTab = function(tab) {
+    if (tab === 'register') {
+      showLangPicker(function() {
+        _origAuthShowTab('register');
+      });
+      return;
+    }
+    _origAuthShowTab(tab);
   };
 
   // ── Entry point ───────────────────────────────────────────

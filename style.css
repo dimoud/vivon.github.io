@@ -1227,6 +1227,18 @@ input[type="range"]::-moz-range-thumb {
   padding: 20px 20px 30px;
   animation: slideUp 0.28s cubic-bezier(.22,1,.36,1);
 }
+@media (min-width: 1024px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 40px 20px;
+  }
+  .modal-sheet {
+    border-radius: 20px;
+    max-height: 80vh;
+    width: 560px;
+    max-width: 560px;
+  }
+}
 @keyframes overlayFadeIn {
   from { background: rgba(0,0,0,0); }
   to   { background: rgba(0,0,0,0.45); }
@@ -3077,3 +3089,87 @@ input[type="number"] { -moz-appearance: textfield; }
   .wizard-modal { border-radius: 20px 20px 0 0; }
   .wizard-overlay { padding: 0; align-items: flex-end; }
 }
+
+/* ── Language Picker (sign-up step 0) ── */
+.langpick-overlay {
+  position: fixed; inset: 0; z-index: 9200;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn .2s ease;
+}
+.langpick-card {
+  background: var(--card); border-radius: 20px;
+  padding: 32px 28px 24px; width: min(340px, 92vw);
+  text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.25);
+}
+.langpick-logo { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; color: var(--primary); margin-bottom: 4px; }
+.langpick-title { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.langpick-sub { font-size: 0.85rem; color: var(--text2); margin-bottom: 22px; }
+.langpick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.langpick-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px; border-radius: 12px; border: 2px solid var(--border);
+  background: var(--bg); cursor: pointer; transition: border-color .15s, background .15s;
+  font-size: 0.9rem; font-weight: 600; color: var(--text);
+}
+.langpick-btn .lp-flag { font-size: 1.4rem; }
+.langpick-btn:hover { border-color: var(--primary); background: var(--primary-alpha, rgba(79,142,247,.08)); }
+.langpick-btn.selected { border-color: var(--primary); background: var(--primary-alpha, rgba(79,142,247,.12)); color: var(--primary); }
+.langpick-continue {
+  width: 100%; padding: 13px; border-radius: 12px;
+  background: var(--primary); color: #fff; border: none;
+  font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  transition: opacity .15s;
+}
+.langpick-continue:disabled { opacity: .4; cursor: not-allowed; }
+.langpick-continue:not(:disabled):hover { opacity: .88; }
+
+/* ── Onboarding Carousel ── */
+.onboarding-overlay {
+  position: fixed; inset: 0; z-index: 9300;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(7px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn .25s ease;
+}
+.onboarding-card {
+  background: var(--card); border-radius: 22px;
+  width: min(380px, 94vw); padding: 32px 26px 26px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.28);
+  position: relative; overflow: hidden;
+}
+.onboarding-dots {
+  display: flex; justify-content: center; gap: 7px; margin-bottom: 26px;
+}
+.onboarding-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border); transition: background .2s, width .2s;
+}
+.onboarding-dot.active { background: var(--primary); width: 22px; border-radius: 4px; }
+.onboarding-card-title {
+  font-size: 1.1rem; font-weight: 700; color: var(--text);
+  text-align: center; margin-bottom: 20px;
+}
+.onboarding-features { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
+.onboarding-feature {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--bg); border-radius: 14px; padding: 14px;
+}
+.onboarding-feature-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; margin-top: 1px; }
+.onboarding-feature-text {}
+.onboarding-feature-head { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.onboarding-feature-desc { font-size: 0.78rem; color: var(--text2); line-height: 1.45; }
+.onboarding-actions {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.onboarding-skip {
+  font-size: 0.82rem; color: var(--text2); background: none; border: none;
+  cursor: pointer; padding: 6px 4px; opacity: .7;
+}
+.onboarding-skip:hover { opacity: 1; }
+.onboarding-next {
+  padding: 11px 24px; border-radius: 12px;
+  background: var(--primary); color: #fff; border: none;
+  font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  transition: opacity .15s;
+}
+.onboarding-next:hover { opacity: .88; }

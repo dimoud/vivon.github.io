@@ -31,10 +31,9 @@
 
     <!-- SIDEBAR (desktop) -->
     <nav class="sidebar" id="sidebar">
-      <div class="sidebar-logo" style="position:relative">
+      <div class="sidebar-logo">
         <img src="logo.png" alt="VIVON" class="sidebar-logo-img" onerror="this.style.display='none'">
         <div class="sidebar-brand-title">VIVON</div>
-        <a id="sidebar-donate-btn" href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="position:absolute;top:8px;right:10px;display:flex;align-items:center;gap:3px;padding:3px 7px;border-radius:6px;background:transparent;color:var(--text2);font-size:0.7rem;font-weight:600;text-decoration:none;opacity:0.55;transition:opacity 0.15s,color 0.15s" onmouseover="this.style.opacity='1';this.style.color='#e8b94a'" onmouseout="this.style.opacity='0.55';this.style.color='var(--text2)'">&#9829; Δωρεά</a>
       </div>
       <div class="sidebar-nav">
         <button class="sidebar-item active" data-tab="today">
@@ -90,7 +89,6 @@
             <span id="hero-title">VIVON</span>
           </div>
           <div style="display:flex;gap:4px;align-items:center">
-            <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:2px;padding:4px 8px;border-radius:6px;color:var(--text2);font-size:0.68rem;font-weight:600;text-decoration:none;opacity:0.5;transition:opacity 0.15s" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">&#9829; Δωρεά</a>
             <button class="topnav-icon-btn" id="drawer-open-btn" onclick="openDrawer()" title="Μενού">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
@@ -221,6 +219,12 @@
 
   <!-- AUTH SCREEN (shown before login, hidden after) -->
   <div id="auth-screen" class="auth-screen"></div>
+
+  <!-- LANGUAGE PICKER (shown when user clicks Register, before the form) -->
+  <div id="langpick-overlay" class="langpick-overlay" style="display:none"></div>
+
+  <!-- ONBOARDING CAROUSEL (shown right after language is chosen, for new users) -->
+  <div id="onboarding-overlay" class="onboarding-overlay" style="display:none"></div>
 
   <!-- SCRIPTS -->
   <script src="i18n.js"></script>

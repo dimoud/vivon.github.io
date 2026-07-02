@@ -712,6 +712,40 @@ const I18N = {
   add_meal_modal_title: { el: '➕ Προσθήκη Γεύματος', en: '➕ Add Meal',        es: '➕ Añadir Comida',   fr: '➕ Ajouter un repas' },
   optimize_mode1:       { el: 'Mode 1',               en: 'Mode 1',             es: 'Modo 1',             fr: 'Mode 1' },
 
+  // ── Language picker (sign-up first step) ──
+  langpick_title:   { el: 'Καλώς ήρθες!',       en: 'Welcome!',             es: '¡Bienvenido!',         fr: 'Bienvenue !' },
+  langpick_sub:     { el: 'Επίλεξε τη γλώσσα σου', en: 'Choose your language', es: 'Elige tu idioma',   fr: 'Choisissez votre langue' },
+  langpick_btn:     { el: 'Συνέχεια →',          en: 'Continue →',           es: 'Continuar →',          fr: 'Continuer →' },
+
+  // ── Onboarding cards ──
+  ob_skip:          { el: 'Παράλειψη',           en: 'Skip',                 es: 'Omitir',               fr: 'Ignorer' },
+  ob_next:          { el: 'Επόμενο',             en: 'Next',                 es: 'Siguiente',             fr: 'Suivant' },
+  ob_start:         { el: 'Ξεκινάμε!',           en: 'Let\'s go!',           es: '¡Vamos!',              fr: 'C\'est parti !' },
+  // Card 1: Calculate kcal + Set profile & goals
+  ob1_title:        { el: 'Γνώρισε το VIVON',    en: 'Meet VIVON',           es: 'Conoce VIVON',         fr: 'Découvrez VIVON' },
+  ob1_a_icon:       { el: '🔥',                  en: '🔥',                   es: '🔥',                   fr: '🔥' },
+  ob1_a_head:       { el: 'Υπολόγισε kcal',      en: 'Calculate kcal',       es: 'Calcula kcal',         fr: 'Calcule tes kcal' },
+  ob1_a_desc:       { el: 'Δες πόσες θερμίδες χρειάζεσαι κάθε μέρα βάσει σώματος & δραστηριότητας.', en: 'See how many calories you need daily based on your body & activity.', es: 'Descubre cuántas calorías necesitas al día según tu cuerpo y actividad.', fr: 'Découvre combien de calories tu as besoin chaque jour selon ton corps et ton activité.' },
+  ob1_b_icon:       { el: '🎯',                  en: '🎯',                   es: '🎯',                   fr: '🎯' },
+  ob1_b_head:       { el: 'Προφίλ & Στόχοι',    en: 'Profile & Goals',      es: 'Perfil y objetivos',   fr: 'Profil & objectifs' },
+  ob1_b_desc:       { el: 'Ρύθμισε ύψος, βάρος, ηλικία και διάλεξε αν θες απώλεια, συντήρηση ή μάζα.', en: 'Set your height, weight, age and choose weight loss, maintenance or bulk.', es: 'Configura tu altura, peso, edad y elige pérdida, mantenimiento o volumen.', fr: 'Configure ta taille, ton poids, ton âge et choisis perte de poids, maintien ou prise de masse.' },
+  // Card 2: Select foods + Create your plan
+  ob2_title:        { el: 'Φτιάξε το πλάνο σου', en: 'Build your plan',     es: 'Crea tu plan',         fr: 'Crée ton plan' },
+  ob2_a_icon:       { el: '🥗',                  en: '🥗',                   es: '🥗',                   fr: '🥗' },
+  ob2_a_head:       { el: 'Επίλεξε τρόφιμα',    en: 'Choose your foods',    es: 'Elige tus alimentos',  fr: 'Choisis tes aliments' },
+  ob2_a_desc:       { el: 'Ορίσε τι σου αρέσει να τρως — απλά, μικτά ή gourmet γεύματα.', en: 'Tell us what you like to eat — simple, mixed or gourmet meals.', es: 'Dinos qué te gusta comer: simple, mixto o gourmet.', fr: 'Dis-nous ce que tu aimes manger : simple, mixte ou gourmet.' },
+  ob2_b_icon:       { el: '📋',                  en: '📋',                   es: '📋',                   fr: '📋' },
+  ob2_b_head:       { el: 'Δημιούργησε πλάνο',  en: 'Create your plan',     es: 'Crea tu plan',         fr: 'Crée ton plan' },
+  ob2_b_desc:       { el: 'Δημιούργησε αυτόματα εβδομαδιαίο διατροφικό πρόγραμμα με ένα κλικ.', en: 'Auto-generate a full weekly nutrition plan with one click.', es: 'Genera automáticamente un plan semanal completo con un clic.', fr: 'Génère automatiquement un plan nutritionnel hebdomadaire complet en un clic.' },
+  // Card 3: Adjust + Track progress
+  ob3_title:        { el: 'Προσαρμόσου & Παρακολούθει', en: 'Adjust & Track', es: 'Ajusta y sigue',    fr: 'Ajuste et suis' },
+  ob3_a_icon:       { el: '✏️',                  en: '✏️',                   es: '✏️',                   fr: '✏️' },
+  ob3_a_head:       { el: 'Προσάρμοσε το πλάνο', en: 'Adjust your plan',   es: 'Ajusta tu plan',        fr: 'Ajuste ton plan' },
+  ob3_a_desc:       { el: 'Άλλαξε γεύματα, ρύθμισε μερίδες και εναλλάσσε επιλογές όποτε θέλεις.', en: 'Swap meals, adjust portions and change options any time you like.', es: 'Cambia comidas, ajusta porciones y modifica opciones cuando quieras.', fr: 'Change des repas, ajuste les portions et modifie les options quand tu veux.' },
+  ob3_b_icon:       { el: '📊',                  en: '📊',                   es: '📊',                   fr: '📊' },
+  ob3_b_head:       { el: 'Παρακολούθει & Εκτύπωσε', en: 'Track & Print',  es: 'Sigue e imprime',      fr: 'Suis et imprime' },
+  ob3_b_desc:       { el: 'Δες τα στατιστικά σου και εκτύπωσε το πλάνο σου για να το έχεις πάντα μαζί σου.', en: 'View your stats and print your plan to keep it with you anywhere.', es: 'Consulta tus estadísticas e imprime tu plan para llevarlo siempre contigo.', fr: 'Consulte tes statistiques et imprime ton plan pour l\'avoir toujours avec toi.' },
+
   // ── Swap meal modal ──
   swap_title:       { el: 'Επιλογή Γεύματος',  en: 'Select Meal',         es: 'Seleccionar Comida',  fr: 'Sélectionner un Repas' },
   swap_apply:       { el: '✓ Εφαρμογή',        en: '✓ Apply',             es: '✓ Aplicar',           fr: '✓ Appliquer' },

@@ -2519,6 +2519,10 @@ function renderToday() {
 
   document.getElementById('page-today').innerHTML = `
     <div class="container">
+      <!-- Donate -->
+      <div style="display:flex;justify-content:flex-end;padding-top:10px;padding-bottom:2px">
+        <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
+      </div>
       <!-- Day selector -->
       <div class="card card-sm fade-in">
         <div class="week-grid">
@@ -3660,6 +3664,7 @@ function renderBuilderPage(typeFilter) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
           <span style="font-size:0.65rem;font-weight:700;display:block;margin-top:1px">PDF</span>
         </button>
+        <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
       </div>
       <div class="dplanner-status-row ${totalKcal > 0 ? '' : 'dplanner-status-empty'}">
         <div class="dplanner-status-left">
@@ -4424,7 +4429,13 @@ function openSwapMeal(mi, dayIdx) {
   openModal(`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div class="modal-title" style="margin:0">${t('swap_title')} — ${mealTypeLabel}</div>
-      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
+      <div style="display:flex;align-items:center;gap:6px">
+        <button onclick="_openAddRecipeFromSwap()" title="${t('btn_new_recipe')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Νέα
+        </button>
+        <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
+      </div>
     </div>
     <div class="swap-search-wrap">
       <input class="swap-search" id="swap-search-input" type="text" placeholder="${t('search_meal')}" oninput="filterSwapList(this.value)" autocomplete="off">
@@ -4453,6 +4464,13 @@ function openSwapMeal(mi, dayIdx) {
     _swapSfChange(currentSf);
     _swapUpdatePreview();
   }, 120);
+}
+
+function _openAddRecipeFromSwap() {
+  const { mi, dayIdx } = _swapPending;
+  openAddRecipeModal(function() {
+    openSwapMeal(mi, dayIdx);
+  });
 }
 
 function _swapRowClick(el) {
@@ -4654,7 +4672,10 @@ function addRecipeToDay(rid) {
   showToast(t('toast_added'));
 }
 
-function openAddRecipeModal() {
+let _addRecipeAfterSave = null;
+
+function openAddRecipeModal(afterSaveFn) {
+  _addRecipeAfterSave = afterSaveFn || null;
   const allFoods = [...FOODS_DB, ...state.customFoods];
   openModal(`
     <div class="modal-handle"></div>
@@ -4710,8 +4731,14 @@ function saveNewRecipe() {
   state.customRecipes.push(newRecipe);
   saveState();
   closeModal();
-  renderRecipes();
   showToast('✅ Συνταγή αποθηκεύτηκε');
+  if (_addRecipeAfterSave) {
+    const cb = _addRecipeAfterSave;
+    _addRecipeAfterSave = null;
+    setTimeout(cb, 260);
+  } else {
+    renderRecipes();
+  }
 }
 
 function openAddFoodModal() {
@@ -5628,11 +5655,12 @@ function renderIdeasPage() {
   // Render sub-tabs: Συνταγές | Τρόφιμα
   el.innerHTML = `
     <div class="fade-in ideas-page-wrap">
-      <div class="ideas-tabs-bar">
+      <div class="ideas-tabs-bar" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
         <div class="segment">
           <button class="seg-btn active" id="ideas-tab-recipes" onclick="showIdeasTab('recipes')">📖 ${t('nav_ideas_recipes')}</button>
           <button class="seg-btn" id="ideas-tab-foods" onclick="showIdeasTab('foods')">🥦 ${t('nav_ideas_foods')}</button>
         </div>
+        <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
       </div>
       <div id="ideas-recipes-content"></div>
       <div id="ideas-foods-content" style="display:none"></div>
@@ -5713,6 +5741,11 @@ function renderStatsPage() {
 
   el.innerHTML = `
     <div class="container fade-in" style="padding-top:14px;display:flex;flex-direction:column;gap:14px;padding-bottom:20px">
+
+      <!-- Donate -->
+      <div style="display:flex;justify-content:flex-end">
+        <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
+      </div>
 
       <!-- Summary cards -->
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
