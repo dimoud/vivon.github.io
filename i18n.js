@@ -208,8 +208,10 @@ const I18N = {
   empty_recipes:  { el: 'Δεν βρέθηκαν συνταγές', en: 'No recipes found', es: 'No se encontraron recetas', fr: 'Aucune recette trouvée' },
 
   // ── Recipe / Food page ──
-  recipes_title:    { el: '📖 Συνταγές',       en: '📖 Recipes',      es: '📖 Recetas',       fr: '📖 Recettes' },
-  foods_title:      { el: '🔬 Λεξικό Τροφών',  en: '🔬 Food Lexicon', es: '🔬 Léxico de alimentos', fr: '🔬 Lexique alimentaire' },
+  recipes_title:      { el: '📖 Συνταγές',       en: '📖 Recipes',      es: '📖 Recetas',       fr: '📖 Recettes' },
+  foods_title:        { el: '🔬 Λεξικό Τροφών',  en: '🔬 Food Lexicon', es: '🔬 Léxico de alimentos', fr: '🔬 Lexique alimentaire' },
+  nav_ideas_recipes:  { el: 'Συνταγές',           en: 'Recipes',         es: 'Recetas',           fr: 'Recettes' },
+  nav_ideas_foods:    { el: 'Τρόφιμα',            en: 'Foods',           es: 'Alimentos',         fr: 'Aliments' },
   filter_all:       { el: 'Όλες',              en: 'All',             es: 'Todas',            fr: 'Toutes' },
   recipe_serving:   { el: 'Σερβίρισμα',        en: 'Serving',         es: 'Servicio',         fr: 'Service' },
   recipe_instruct:  { el: 'Οδηγίες',           en: 'Instructions',    es: 'Instrucciones',    fr: 'Instructions' },
@@ -463,12 +465,41 @@ const I18N = {
   macro_c_abbr: { el: 'Υ', en: 'C', es: 'C', fr: 'G' },
   macro_f_abbr: { el: 'Λ', en: 'F', es: 'G', fr: 'L' },
 
+  // ── Foods page ──
+  foods_new_btn:       { el: '➕ Νέα',             en: '➕ New',              es: '➕ Nuevo',              fr: '➕ Nouveau' },
+
   // ── Builder / Planner page ──
   builder_title:      { el: 'Σχεδιαστής Ημέρας', en: 'Day Planner', es: 'Planificador diario', fr: 'Planificateur journalier' },
   builder_your_day:   { el: 'Η μέρα σου',         en: 'Your day',    es: 'Tu día',              fr: 'Ta journée' },
   builder_templates:  { el: 'Πρότυπα',             en: 'Templates',   es: 'Plantillas',          fr: 'Modèles' },
   builder_save_tpl:   { el: '💾 Αποθήκευση ως πρότυπο', en: '💾 Save as template', es: '💾 Guardar como plantilla', fr: '💾 Enregistrer comme modèle' },
-  builder_apply_day:       { el: 'Εφαρμογή στην εβδομάδα', en: 'Apply to week', es: 'Aplicar a la semana', fr: 'Appliquer à la semaine' },
+  builder_apply_day:           { el: 'Εφαρμογή στην εβδομάδα',       en: 'Apply to week',              es: 'Aplicar a la semana',           fr: 'Appliquer à la semaine' },
+  builder_topcard_title:       { el: 'Σχεδιαστής',                   en: 'Planner',                    es: 'Planificador',                  fr: 'Planificateur' },
+  builder_topcard_sub:         { el: 'Σχεδίασε τα γεύματά σου για σήμερα', en: 'Plan your meals for today', es: 'Planifica tus comidas de hoy', fr: 'Planifie tes repas pour aujourd\'hui' },
+  builder_preview_btn:         { el: 'Προεπισκόπηση',                en: 'Preview',                    es: 'Vista previa',                  fr: 'Aperçu' },
+  builder_clear_btn:           { el: 'Καθαρισμός επιλογής',          en: 'Clear selection',            es: 'Limpiar selección',             fr: 'Effacer la sélection' },
+  builder_week_plan_title:     { el: 'Δημιουργία εβδομαδιαίου πλάνου', en: 'Create weekly plan',      es: 'Crear plan semanal',            fr: 'Créer un plan hebdomadaire' },
+  builder_week_plan_desc:      { el: 'Επίλεξε γεύματα και αποθήκευσέ τα σε κάθε μέρα. Πάτα ξανά σε μια μέρα για αποεπιλογή.', en: 'Select meals and save them to each day. Tap a day again to deselect.', es: 'Selecciona comidas y guárdalas en cada día. Toca un día de nuevo para deseleccionarlo.', fr: 'Sélectionne des repas et enregistre-les pour chaque jour. Appuie à nouveau sur un jour pour le désélectionner.' },
+  builder_lib_title:           { el: 'Βιβλιοθήκη τροφίμων',         en: 'Food Library',               es: 'Biblioteca de alimentos',       fr: 'Bibliothèque d\'aliments' },
+  builder_day_plan_title:      { el: 'Το πλάνο της ημέρας',          en: 'Day Plan',                   es: 'Plan del día',                  fr: 'Plan du jour' },
+  builder_empty_select:        { el: 'Επίλεξε γεύματα από αριστερά', en: 'Select meals from the left', es: 'Selecciona comidas de la izquierda', fr: 'Sélectionne des repas à gauche' },
+  builder_empty_meals:         { el: 'Δεν βρέθηκαν γεύματα',         en: 'No meals found',             es: 'No se encontraron comidas',     fr: 'Aucun repas trouvé' },
+  builder_summary_title:       { el: 'Σύνοψη ημέρας',                en: 'Day Summary',                es: 'Resumen del día',               fr: 'Résumé du jour' },
+  builder_macros_title:        { el: 'Μακροθρεπτικά',                en: 'Macros',                     es: 'Macronutrientes',               fr: 'Macronutriments' },
+  builder_energy_title:        { el: 'Ενέργεια & Στόχοι',            en: 'Energy & Goals',             es: 'Energía y Objetivos',           fr: 'Énergie & Objectifs' },
+  builder_total_kcal:          { el: '🔥 Συνολικές θερμίδες',        en: '🔥 Total calories',          es: '🔥 Calorías totales',           fr: '🔥 Calories totales' },
+  builder_hydration:           { el: '💧 Ενυδάτωση (στόχος 3L)',     en: '💧 Hydration (goal 3L)',     es: '💧 Hidratación (objetivo 3L)',  fr: '💧 Hydratation (objectif 3L)' },
+  builder_score:               { el: '⭐ Βαθμολογία πλάνου',         en: '⭐ Plan score',              es: '⭐ Puntuación del plan',        fr: '⭐ Score du plan' },
+  builder_templates_title:     { el: '💾 Πρότυπα',                   en: '💾 Templates',               es: '💾 Plantillas',                 fr: '💾 Modèles' },
+  builder_tpl_placeholder:     { el: 'Όνομα προτύπου...',            en: 'Template name...',           es: 'Nombre de plantilla...',        fr: 'Nom du modèle...' },
+  builder_tpl_empty:           { el: 'Δεν υπάρχουν αποθηκευμένα πρότυπα.', en: 'No saved templates.', es: 'No hay plantillas guardadas.',  fr: 'Aucun modèle enregistré.' },
+  builder_tpl_meals:           { el: '{n} γεύματα',                  en: '{n} meals',                  es: '{n} comidas',                   fr: '{n} repas' },
+  builder_add_food_btn:        { el: '+ Προσθήκη τροφίμου',          en: '+ Add food',                 es: '+ Añadir alimento',             fr: '+ Ajouter un aliment' },
+  builder_remove_title:        { el: 'Αφαίρεση',                     en: 'Remove',                     es: 'Eliminar',                      fr: 'Supprimer' },
+  builder_goal_label:          { el: 'Στόχος',                       en: 'Goal',                       es: 'Objetivo',                      fr: 'Objectif' },
+  builder_remaining_label:     { el: 'Υπόλοιπο',                     en: 'Remaining',                  es: 'Restante',                      fr: 'Restant' },
+  builder_no_meals_toast:      { el: '⚠️ Δεν επιλέχτηκαν γεύματα',  en: '⚠️ No meals selected',       es: '⚠️ No hay comidas seleccionadas', fr: '⚠️ Aucun repas sélectionné' },
+  builder_meals_count:         { el: '{n} γεύματα',                  en: '{n} meals',                  es: '{n} comidas',                   fr: '{n} repas' },
   builder_quality_great:      { el: 'Πολύ καλή επιλογή!',    en: 'Great choice!',        es: '¡Excelente elección!',    fr: 'Excellent choix !' },
   builder_quality_good:       { el: 'Καλή πρόοδος',          en: 'Good progress',        es: 'Buen progreso',           fr: 'Bon progrès' },
   builder_quality_start:      { el: 'Επίλεξε γεύματα',       en: 'Select meals',         es: 'Selecciona comidas',      fr: 'Sélectionne des repas' },
@@ -496,6 +527,17 @@ const I18N = {
   tdee_label:     { el: 'TDEE (kcal/ημέρα)', en: 'TDEE (kcal/day)', es: 'TDEE (kcal/día)', fr: 'TDEE (kcal/jour)' },
   tdee_suggested: { el: 'Προτεινόμενο TDEE', en: 'Suggested TDEE',  es: 'TDEE sugerido',   fr: 'TDEE suggéré' },
   tdee_custom:    { el: 'Χειροκίνητο',       en: 'Manual',          es: 'Manual',           fr: 'Manuel' },
+
+  // ── Meal card chip labels ──
+  chip_prot:           { el: 'πρωτ.',           en: 'prot.',           es: 'prot.',          fr: 'prot.' },
+  chip_carb:           { el: 'υδατ.',           en: 'carb.',           es: 'carb.',          fr: 'gluc.' },
+  chip_fat:            { el: 'λίπος',           en: 'fat',             es: 'grasa',          fr: 'lipide' },
+  chip_portion:        { el: 'Μερίδα',          en: 'Portion',         es: 'Porción',        fr: 'Portion' },
+  meal_swap_btn:       { el: '🔄 Αλλαγή',       en: '🔄 Swap',         es: '🔄 Cambiar',      fr: '🔄 Changer' },
+  meal_scale_btn:      { el: '⚖️ Ποσότητα',     en: '⚖️ Quantity',     es: '⚖️ Cantidad',     fr: '⚖️ Quantité' },
+  meal_serving_btn:    { el: '📋 Πρόταση Σερβιρίσματος', en: '📋 Serving Suggestion', es: '📋 Sugerencia de servicio', fr: '📋 Suggestion de service' },
+  meal_recipe_btn:     { el: '📋 Συνταγή &amp; Σερβίρισμα', en: '📋 Recipe &amp; Serving', es: '📋 Receta y servicio', fr: '📋 Recette et service' },
+  today_yesterday_extra: { el: '⚠️ Χθες έφαγες +{n} kcal παραπάνω. Προσαρμόσου σήμερα!', en: '⚠️ Yesterday you had +{n} kcal extra. Adjust today!', es: '⚠️ Ayer tomaste +{n} kcal extra. ¡Ajústate hoy!', fr: '⚠️ Hier tu as mangé +{n} kcal en plus. Adapte-toi aujourd\'hui !' },
 
   // ── Daily page ──
   today_remaining:      { el: 'ΑΠΟΜΕΝΟΥΝ',         en: 'REMAINING',          es: 'RESTANTE',           fr: 'RESTANT' },
@@ -584,6 +626,27 @@ const I18N = {
   ai_optimize_btn:      { el: '✨ Βελτιστοποίηση με AI', en: '✨ Optimize with AI', es: '✨ Optimizar con IA', fr: '✨ Optimiser avec IA' },
   ai_generate_btn:      { el: '✨ Δημιουργία Πλάνου με AI', en: '✨ Create Plan with AI', es: '✨ Crear Plan con IA', fr: '✨ Créer le plan avec IA' },
 
+  // ── Week day card ──
+  week_no_meal_pdf:     { el: 'Κανένα γεύμα',    en: 'No meals',         es: 'Sin comidas',      fr: 'Aucun repas' },
+  week_completed_short: { el: '✓ Ολοκλ.',        en: '✓ Done',           es: '✓ Hecho',          fr: '✓ Fait' },
+  week_no_meal:         { el: 'Κανένα γεύμα',            en: 'No meals',             es: 'Sin comidas',          fr: 'Aucun repas' },
+  week_completed:       { el: '✓ Ολοκληρώθηκε',         en: '✓ Completed',          es: '✓ Completado',         fr: '✓ Terminé' },
+  week_extra_kcal:      { el: '⚠️ +{n} kcal εκτός',     en: '⚠️ +{n} kcal extra',  es: '⚠️ +{n} kcal extra',  fr: '⚠️ +{n} kcal en plus' },
+  week_go_to_day:       { el: 'Μετάβαση στην ημέρα',    en: 'Go to day',            es: 'Ir al día',            fr: 'Aller au jour' },
+  week_today_btn:       { el: 'Σήμερα',                  en: 'Today',                es: 'Hoy',                  fr: 'Aujourd\'hui' },
+  week_copy_btn:        { el: 'Αντιγραφή',               en: 'Copy',                 es: 'Copiar',               fr: 'Copier' },
+
+  // ── Week deficit panel ──
+  week_activity_title:  { el: '🏃 Εβδομαδιαία Δραστηριότητα & Έλλειμμα', en: '🏃 Weekly Activity & Deficit', es: '🏃 Actividad semanal y déficit', fr: '🏃 Activité hebdomadaire et déficit' },
+  week_total_burn:      { el: '🔥 Συνολική καύση:',      en: '🔥 Total burn:',        es: '🔥 Quema total:',       fr: '🔥 Brûlure totale :' },
+  week_total_consumed:  { el: '🍽️ Συνολική κατανάλωση:', en: '🍽️ Total consumed:',   es: '🍽️ Consumo total:',    fr: '🍽️ Total consommé :' },
+  week_tdee_based:      { el: '📐 Βάσει TDEE',           en: '📐 Based on TDEE',     es: '📐 Basado en TDEE',    fr: '📐 Basé sur le TDEE' },
+  week_tdee_goal:       { el: 'TDEE: {tdee} · Στόχος: {goal} kcal', en: 'TDEE: {tdee} · Goal: {goal} kcal', es: 'TDEE: {tdee} · Objetivo: {goal} kcal', fr: 'TDEE : {tdee} · Objectif : {goal} kcal' },
+  week_real_burn:       { el: '🏃 Πραγματική Καύση',     en: '🏃 Real Burn',         es: '🏃 Quema real',         fr: '🏃 Brûlure réelle' },
+  week_real_burn_detail:{ el: 'Καύση: {burn} · Κατ/ση: {consumed} kcal', en: 'Burn: {burn} · Consumed: {consumed} kcal', es: 'Quema: {burn} · Consumo: {consumed} kcal', fr: 'Brûlure : {burn} · Consommé : {consumed} kcal' },
+  week_real_weight:     { el: '⚖️ Πραγματική Μεταβολή Βάρους', en: '⚖️ Actual Weight Change', es: '⚖️ Cambio de peso real', fr: '⚖️ Variation de poids réelle' },
+  week_real_change:     { el: 'πραγματική αλλαγή',       en: 'actual change',        es: 'cambio real',          fr: 'changement réel' },
+
   // ── Week footer stats ──
   week_food_variety:    { el: 'Ποικιλία τροφών',    en: 'Food variety',       es: 'Variedad de alimentos', fr: 'Variété alimentaire' },
   week_food_variety_count: { el: '{n} διαφ. τρόφιμα', en: '{n} diff. foods', es: '{n} alimentos dif.', fr: '{n} aliments diff.' },
@@ -619,6 +682,14 @@ const I18N = {
   day_reset_ok:         { el: '✅ Ημέρα επαναφέρθηκε στα default', en: '✅ Day reset to defaults', es: '✅ Día restablecido a valores predeterminados', fr: '✅ Jour réinitialisé aux valeurs par défaut' },
   add_meal_modal_title: { el: '➕ Προσθήκη Γεύματος', en: '➕ Add Meal',        es: '➕ Añadir Comida',   fr: '➕ Ajouter un repas' },
   optimize_mode1:       { el: 'Mode 1',               en: 'Mode 1',             es: 'Modo 1',             fr: 'Mode 1' },
+
+  // ── Swap meal modal ──
+  swap_title:       { el: 'Επιλογή Γεύματος',  en: 'Select Meal',         es: 'Seleccionar Comida',  fr: 'Sélectionner un Repas' },
+  swap_apply:       { el: '✓ Εφαρμογή',        en: '✓ Apply',             es: '✓ Aplicar',           fr: '✓ Appliquer' },
+  swap_sf_normal:   { el: '1× (κανονική)',     en: '1× (normal)',         es: '1× (normal)',         fr: '1× (normal)' },
+  swap_sf_smaller:  { el: '{sf}× (μικρότερη)', en: '{sf}× (smaller)',     es: '{sf}× (menor)',       fr: '{sf}× (plus petit)' },
+  swap_sf_larger:   { el: '{sf}× (μεγαλύτερη)',en: '{sf}× (larger)',      es: '{sf}× (mayor)',       fr: '{sf}× (plus grand)' },
+  swap_saved:       { el: '✅ Γεύμα αποθηκεύτηκε', en: '✅ Meal saved',   es: '✅ Comida guardada',  fr: '✅ Repas enregistré' },
 };
 
 // ── Current language (default: Greek) ──
@@ -689,11 +760,12 @@ function updateUILanguage() {
 
   // Re-render whichever page is currently active
   const activePages = {
-    'page-today':    () => typeof renderToday    === 'function' && renderToday(),
-    'page-week':     () => typeof renderWeek     === 'function' && renderWeek(),
-    'page-stats':    () => typeof renderStats    === 'function' && renderStats(),
-    'page-builder':  () => typeof renderBuilder  === 'function' && renderBuilder(),
-    'page-body':     () => typeof renderBody     === 'function' && renderBody(),
+    'page-today':    () => typeof renderToday       === 'function' && renderToday(),
+    'page-week':     () => typeof renderWeek        === 'function' && renderWeek(),
+    'page-ideas':    () => typeof renderIdeasPage   === 'function' && renderIdeasPage(),
+    'page-stats':    () => typeof renderStats       === 'function' && renderStats(),
+    'page-builder':  () => typeof renderBuilder     === 'function' && renderBuilder(),
+    'page-body':     () => typeof renderBody        === 'function' && renderBody(),
     'page-settings': () => typeof renderSettingsPage === 'function' && renderSettingsPage(),
   };
   for (const [pageId, render] of Object.entries(activePages)) {
@@ -738,7 +810,14 @@ function tMeal(key) {
 
 // ── Meal type plural label helper ──
 function tMealPlural(key) {
-  return t('meal_' + key + 's') || tMeal(key);
+  const pluralMap = {
+    breakfast: 'meal_breakfasts',
+    snack:     'meal_snacks',
+    lunch:     'meal_lunches',
+    afternoon: 'meal_afternoons',
+    dinner:    'meal_dinners',
+  };
+  return t(pluralMap[key] || ('meal_' + key + 's')) || tMeal(key);
 }
 
 // ── Activity label helper ──

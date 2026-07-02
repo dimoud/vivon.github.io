@@ -138,7 +138,9 @@ const RECIPES_DB = [
       { foodId: "fr1", qty: 60 }
     ],
     instructions: "1. Βράσε βρώμη με γάλα σε κατσαρολάκι για 5 λεπτά, ανακατεύοντας συνεχώς.\n2. Άφησε να κρυώσει 2-3 λεπτά.\n3. Ανακάτεψε το whey και το κακάο μέχρι να ομογενοποιηθούν.\n4. Κόψε τη μπανάνα σε ροδέλες και βάλε από πάνω.\n5. Πασπάλισε με κανέλα και γλύκανε με στέβια αν χρειάζεται.",
-    serving: "Σέρβιρε αμέσως ζεστό. Μπορείς να προσθέσεις και λίγη μαύρη σοκολάτα τριμμένη για extra γεύση."
+    instructionsI18n: { el: "1. Βράσε βρώμη με γάλα σε κατσαρολάκι για 5 λεπτά, ανακατεύοντας συνεχώς.\n2. Άφησε να κρυώσει 2-3 λεπτά.\n3. Ανακάτεψε το whey και το κακάο μέχρι να ομογενοποιηθούν.\n4. Κόψε τη μπανάνα σε ροδέλες και βάλε από πάνω.\n5. Πασπάλισε με κανέλα και γλύκανε με στέβια αν χρειάζεται.", en: "1. Boil oats with milk in a small saucepan for 5 minutes, stirring constantly.\n2. Let cool for 2-3 minutes.\n3. Mix in the whey and cocoa until fully combined.\n4. Slice the banana into rounds and place on top.\n5. Sprinkle with cinnamon and sweeten with stevia if needed.", es: "1. Hierve la avena con la leche en un cazo pequeño durante 5 minutos, removiendo constantemente.\n2. Deja enfriar 2-3 minutos.\n3. Mezcla el whey y el cacao hasta que quede homogéneo.\n4. Corta el plátano en rodajas y colócalo encima.\n5. Espolvorea con canela y endulza con stevia si lo deseas.", fr: "1. Fais bouillir l'avoine avec le lait dans une petite casserole pendant 5 minutes, en remuant continuellement.\n2. Laisse refroidir 2-3 minutes.\n3. Incorpore le whey et le cacao jusqu'à obtenir un mélange homogène.\n4. Coupe la banane en rondelles et dispose-les par-dessus.\n5. Saupoudre de cannelle et sucre avec de la stévia si nécessaire." },
+    serving: "Σέρβιρε αμέσως ζεστό. Μπορείς να προσθέσεις και λίγη μαύρη σοκολάτα τριμμένη για extra γεύση.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Μπορείς να προσθέσεις και λίγη μαύρη σοκολάτα τριμμένη για extra γεύση.", en: "Serve immediately while hot. You can also add a little grated dark chocolate for extra flavour.", es: "Sirve inmediatamente caliente. Puedes añadir un poco de chocolate negro rallado para un sabor extra.", fr: "Sers immédiatement chaud. Tu peux aussi ajouter un peu de chocolat noir râpé pour plus de saveur." }
   },
   {
     id: "r2", name: "Overnight Oats Βανίλια & Ροδάκινο", nameI18n: { el: "Overnight Oats Βανίλια & Ροδάκινο", en: "Vanilla & Peach Overnight Oats", es: "Overnight oats vainilla y melocotón", fr: "Overnight oats vanille et pêche" }, meal: "breakfast", emoji: "🌙",
@@ -148,7 +150,9 @@ const RECIPES_DB = [
       { foodId: "o1", qty: 10 }
     ],
     instructions: "1. Βράδυ: σε βαζάκι mason jar ανακάτεψε γιαούρτι, βρώμη, whey βανίλια και μέλι.\n2. Σκέπασε και βάλε στο ψυγείο για τουλάχιστον 6-8 ώρες.\n3. Πρωί: βγάλε από το ψυγείο 5 λεπτά πριν φας.",
-    serving: "Κόψε το ροδάκινο σε κομμάτια και βάλε από πάνω. Πρόσθεσε λίγο επιπλέον μέλι αν θέλεις πιο γλυκό."
+    instructionsI18n: { el: "1. Βράδυ: σε βαζάκι mason jar ανακάτεψε γιαούρτι, βρώμη, whey βανίλια και μέλι.\n2. Σκέπασε και βάλε στο ψυγείο για τουλάχιστον 6-8 ώρες.\n3. Πρωί: βγάλε από το ψυγείο 5 λεπτά πριν φας.", en: "1. Evening: in a mason jar, mix together yogurt, oats, vanilla whey and honey.\n2. Cover and refrigerate for at least 6-8 hours.\n3. Morning: take out of the fridge 5 minutes before eating.", es: "1. Noche: en un frasco mason jar, mezcla yogur, avena, whey de vainilla y miel.\n2. Tapa y refrigera durante al menos 6-8 horas.\n3. Mañana: saca del frigorífico 5 minutos antes de comer.", fr: "1. Le soir : dans un pot mason jar, mélange le yaourt, l'avoine, le whey vanille et le miel.\n2. Couvre et réfrigère pendant au moins 6-8 heures.\n3. Le matin : sors du réfrigérateur 5 minutes avant de manger." },
+    serving: "Κόψε το ροδάκινο σε κομμάτια και βάλε από πάνω. Πρόσθεσε λίγο επιπλέον μέλι αν θέλεις πιο γλυκό.",
+    servingI18n: { el: "Κόψε το ροδάκινο σε κομμάτια και βάλε από πάνω. Πρόσθεσε λίγο επιπλέον μέλι αν θέλεις πιο γλυκό.", en: "Cut the peach into pieces and place on top. Add a little extra honey if you prefer it sweeter.", es: "Corta el melocotón en trozos y colócalo encima. Añade un poco más de miel si lo quieres más dulce.", fr: "Coupe la pêche en morceaux et dispose-les par-dessus. Ajoute un peu de miel supplémentaire si tu le veux plus sucré." }
   },
   {
     id: "r3", name: "Γιαούρτι Bowl Φρούτων", nameI18n: { el: "Γιαούρτι Bowl Φρούτων", en: "Fruit Yogurt Bowl", es: "Bowl de yogur con frutas", fr: "Bowl yaourt aux fruits" }, meal: "breakfast", emoji: "🫙",
@@ -157,7 +161,9 @@ const RECIPES_DB = [
       { foodId: "f9", qty: 30 },  { foodId: "fr2", qty: 100 }
     ],
     instructions: "1. Σε μπολ ανακάτεψε το γιαούρτι με το whey μέχρι να γίνει ομοιόμορφο.\n2. Ρίξε τη βρώμη από πάνω.\n3. Τρίψε το μήλο με τον τρίφτη ή κόψε σε μικρά κομμάτια.",
-    serving: "Πασπάλισε με κανέλα από πάνω. Σέρβιρε αμέσως ώστε η βρώμη να παραμένει τραγανή."
+    instructionsI18n: { el: "1. Σε μπολ ανακάτεψε το γιαούρτι με το whey μέχρι να γίνει ομοιόμορφο.\n2. Ρίξε τη βρώμη από πάνω.\n3. Τρίψε το μήλο με τον τρίφτη ή κόψε σε μικρά κομμάτια.", en: "1. In a bowl, mix the yogurt with the whey until smooth.\n2. Pour the oats on top.\n3. Grate the apple or cut into small pieces.", es: "1. En un bol, mezcla el yogur con el whey hasta que quede homogéneo.\n2. Vierte la avena por encima.\n3. Ralla la manzana o córtala en trozos pequeños.", fr: "1. Dans un bol, mélange le yaourt avec le whey jusqu'à obtenir une consistance homogène.\n2. Verse l'avoine par-dessus.\n3. Râpe la pomme ou coupe-la en petits morceaux." },
+    serving: "Πασπάλισε με κανέλα από πάνω. Σέρβιρε αμέσως ώστε η βρώμη να παραμένει τραγανή.",
+    servingI18n: { el: "Πασπάλισε με κανέλα από πάνω. Σέρβιρε αμέσως ώστε η βρώμη να παραμένει τραγανή.", en: "Sprinkle with cinnamon on top. Serve immediately so the oats stay crunchy.", es: "Espolvorea con canela por encima. Sirve inmediatamente para que la avena permanezca crujiente.", fr: "Saupoudre de cannelle par-dessus. Sers immédiatement pour que l'avoine reste croustillante." }
   },
   {
     id: "r4", name: "Τοστ Αβοκάντο & Αυγά Σκραμπλ", nameI18n: { el: "Τοστ Αβοκάντο & Αυγά Σκραμπλ", en: "Avocado Toast & Scrambled Eggs", es: "Tostada aguacate y huevos revueltos", fr: "Toast avocat et œufs brouillés" }, meal: "breakfast", emoji: "🥑",
@@ -166,7 +172,9 @@ const RECIPES_DB = [
       { foodId: "v2", qty: 60 },  { foodId: "v3", qty: 80 }
     ],
     instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Χτύπησε τα αυγά με αλατοπίπερο.\n3. Ψήσε σε αντικολλητικό τηγάνι σε μέτρια φωτιά, ανακατεύοντας αργά, χωρίς λάδι.\n4. Βγάλε από τη φωτιά όσο είναι ακόμα λίγο υγρά — θα συνεχίσουν να ψήνονται.",
-    serving: "Βάλε τα αυγά πάνω στο ψωμί. Γύρω γύρω ντοματίνια κομμένα στη μέση και αγγούρι σε φέτες. Λίγο πιπέρι φρέσκο από πάνω."
+    instructionsI18n: { el: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Χτύπησε τα αυγά με αλατοπίπερο.\n3. Ψήσε σε αντικολλητικό τηγάνι σε μέτρια φωτιά, ανακατεύοντας αργά, χωρίς λάδι.\n4. Βγάλε από τη φωτιά όσο είναι ακόμα λίγο υγρά — θα συνεχίσουν να ψήνονται.", en: "1. Toast the bread in the toaster.\n2. Beat the eggs with salt and pepper.\n3. Cook in a non-stick pan over medium heat, stirring slowly, without oil.\n4. Remove from heat while still slightly runny — they will continue cooking.", es: "1. Tuesta el pan en la tostadora.\n2. Bate los huevos con sal y pimienta.\n3. Cocina en una sartén antiadherente a fuego medio, removiendo lentamente, sin aceite.\n4. Retira del fuego mientras aún están un poco húmedos — seguirán cocinándose.", fr: "1. Fais griller le pain dans le grille-pain.\n2. Bats les œufs avec du sel et du poivre.\n3. Fais cuire dans une poêle antiadhésive à feu moyen, en remuant lentement, sans huile.\n4. Retire du feu quand ils sont encore légèrement humides — ils continueront à cuire." },
+    serving: "Βάλε τα αυγά πάνω στο ψωμί. Γύρω γύρω ντοματίνια κομμένα στη μέση και αγγούρι σε φέτες. Λίγο πιπέρι φρέσκο από πάνω.",
+    servingI18n: { el: "Βάλε τα αυγά πάνω στο ψωμί. Γύρω γύρω ντοματίνια κομμένα στη μέση και αγγούρι σε φέτες. Λίγο πιπέρι φρέσκο από πάνω.", en: "Place the eggs on top of the toast. Surround with halved cherry tomatoes and cucumber slices. Add a little fresh pepper on top.", es: "Coloca los huevos sobre el pan. Rodea con tomatitos cortados por la mitad y pepino en rodajas. Añade un poco de pimienta fresca por encima.", fr: "Place les œufs sur le pain grillé. Entoure de tomates cerises coupées en deux et de tranches de concombre. Ajoute un peu de poivre frais par-dessus." }
   },
   {
     id: "r5", name: "Βρώμη με Μήλο & Κανέλα", nameI18n: { el: "Βρώμη με Μήλο & Κανέλα", en: "Oats with Apple & Cinnamon", es: "Avena con manzana y canela", fr: "Avoine pomme et cannelle" }, meal: "breakfast", emoji: "🍎",
@@ -176,7 +184,9 @@ const RECIPES_DB = [
       { foodId: "o1", qty: 8 }
     ],
     instructions: "1. Βράσε τη βρώμη με το γάλα σε χαμηλή φωτιά για 3-4 λεπτά.\n2. Άφησε να κρυώσει 2 λεπτά.\n3. Ανακάτεψε το whey μέχρι να διαλυθεί πλήρως.\n4. Τρίψε ή κόψε το μήλο.",
-    serving: "Βάλε το μήλο από πάνω, πασπάλισε με κανέλα και στάξε το μέλι. Σέρβιρε ζεστό."
+    instructionsI18n: { el: "1. Βράσε τη βρώμη με το γάλα σε χαμηλή φωτιά για 3-4 λεπτά.\n2. Άφησε να κρυώσει 2 λεπτά.\n3. Ανακάτεψε το whey μέχρι να διαλυθεί πλήρως.\n4. Τρίψε ή κόψε το μήλο.", en: "1. Boil the oats with the milk over low heat for 3-4 minutes.\n2. Let cool for 2 minutes.\n3. Stir in the whey until fully dissolved.\n4. Grate or cut the apple.", es: "1. Hierve la avena con la leche a fuego lento durante 3-4 minutos.\n2. Deja enfriar 2 minutos.\n3. Mezcla el whey hasta que se disuelva completamente.\n4. Ralla o corta la manzana.", fr: "1. Fais bouillir l'avoine avec le lait à feu doux pendant 3-4 minutes.\n2. Laisse refroidir 2 minutes.\n3. Incorpore le whey jusqu'à ce qu'il soit complètement dissous.\n4. Râpe ou coupe la pomme." },
+    serving: "Βάλε το μήλο από πάνω, πασπάλισε με κανέλα και στάξε το μέλι. Σέρβιρε ζεστό.",
+    servingI18n: { el: "Βάλε το μήλο από πάνω, πασπάλισε με κανέλα και στάξε το μέλι. Σέρβιρε ζεστό.", en: "Place the apple on top, sprinkle with cinnamon and drizzle with honey. Serve hot.", es: "Coloca la manzana encima, espolvorea con canela y chorrea la miel. Sirve caliente.", fr: "Dispose la pomme par-dessus, saupoudre de cannelle et arrose de miel. Sers chaud." }
   },
   {
     id: "r6", name: "Cottage Bowl Πρωτεΐνης", nameI18n: { el: "Cottage Bowl Πρωτεΐνης", en: "Protein Cottage Bowl", es: "Bowl proteico de cottage", fr: "Bowl cottage protéiné" }, meal: "breakfast", emoji: "🧀",
@@ -185,7 +195,9 @@ const RECIPES_DB = [
       { foodId: "fr1", qty: 80 }, { foodId: "o1", qty: 10 }
     ],
     instructions: "1. Βάλε το cottage cheese σε μπολ.\n2. Ρίξε τη βρώμη ωμή από πάνω (δεν χρειάζεται μαγείρεμα).\n3. Κόψε τη μπανάνα σε ροδέλες.",
-    serving: "Στρώσε τη μπανάνα από πάνω και στάξε το μέλι. Έτοιμο σε 2 λεπτά — χωρίς μαγείρεμα."
+    instructionsI18n: { el: "1. Βάλε το cottage cheese σε μπολ.\n2. Ρίξε τη βρώμη ωμή από πάνω (δεν χρειάζεται μαγείρεμα).\n3. Κόψε τη μπανάνα σε ροδέλες.", en: "1. Place the cottage cheese in a bowl.\n2. Pour the raw oats on top (no cooking needed).\n3. Slice the banana into rounds.", es: "1. Coloca el cottage cheese en un bol.\n2. Vierte la avena cruda por encima (no necesita cocción).\n3. Corta el plátano en rodajas.", fr: "1. Place le cottage cheese dans un bol.\n2. Verse l'avoine crue par-dessus (pas de cuisson nécessaire).\n3. Coupe la banane en rondelles." },
+    serving: "Στρώσε τη μπανάνα από πάνω και στάξε το μέλι. Έτοιμο σε 2 λεπτά — χωρίς μαγείρεμα.",
+    servingI18n: { el: "Στρώσε τη μπανάνα από πάνω και στάξε το μέλι. Έτοιμο σε 2 λεπτά — χωρίς μαγείρεμα.", en: "Lay the banana slices on top and drizzle with honey. Ready in 2 minutes — no cooking required.", es: "Coloca el plátano encima y chorrea la miel. Listo en 2 minutos — sin cocción.", fr: "Dispose les rondelles de banane par-dessus et arrose de miel. Prêt en 2 minutes — sans cuisson." }
   },
   {
     id: "r7", name: "Smoothie Πρωτεΐνης", nameI18n: { el: "Smoothie Πρωτεΐνης", en: "Protein Smoothie", es: "Batido de proteínas", fr: "Smoothie protéiné" }, meal: "breakfast", emoji: "🥤",
@@ -195,7 +207,9 @@ const RECIPES_DB = [
       { foodId: "l4", qty: 15 }
     ],
     instructions: "1. Βάλε πρώτα το γάλα στο blender.\n2. Πρόσθεσε τη μπανάνα (κατεψυγμένη αν θέλεις πιο κρεμώδη υφή), τη βρώμη, το whey και το φυστικοβούτυρο.\n3. Πολτοποίησε σε υψηλή ταχύτητα για 60 δευτερόλεπτα.",
-    serving: "Πίνε αμέσως. Μπορείς να προσθέσεις παγάκια για πιο δροσερό αποτέλεσμα."
+    instructionsI18n: { el: "1. Βάλε πρώτα το γάλα στο blender.\n2. Πρόσθεσε τη μπανάνα (κατεψυγμένη αν θέλεις πιο κρεμώδη υφή), τη βρώμη, το whey και το φυστικοβούτυρο.\n3. Πολτοποίησε σε υψηλή ταχύτητα για 60 δευτερόλεπτα.", en: "1. Add the milk to the blender first.\n2. Add the banana (frozen for a creamier texture), oats, whey and peanut butter.\n3. Blend on high speed for 60 seconds.", es: "1. Añade primero la leche a la batidora.\n2. Incorpora el plátano (congelado para una textura más cremosa), la avena, el whey y la mantequilla de cacahuete.\n3. Mezcla a alta velocidad durante 60 segundos.", fr: "1. Mets d'abord le lait dans le blender.\n2. Ajoute la banane (congelée pour une texture plus crémeuse), l'avoine, le whey et le beurre de cacahuètes.\n3. Mixe à haute vitesse pendant 60 secondes." },
+    serving: "Πίνε αμέσως. Μπορείς να προσθέσεις παγάκια για πιο δροσερό αποτέλεσμα.",
+    servingI18n: { el: "Πίνε αμέσως. Μπορείς να προσθέσεις παγάκια για πιο δροσερό αποτέλεσμα.", en: "Drink immediately. You can add ice cubes for a cooler result.", es: "Bebe inmediatamente. Puedes añadir cubitos de hielo para un resultado más fresco.", fr: "Bois immédiatement. Tu peux ajouter des glaçons pour un résultat plus frais." }
   },
   {
     id: "r8", name: "Γιαούρτι με Παξιμάδι & Ελιές", nameI18n: { el: "Γιαούρτι με Παξιμάδι & Ελιές", en: "Yogurt with Rusk & Olives", es: "Yogur con tostada y aceitunas", fr: "Yaourt avec biscotte et olives" }, meal: "dinner", emoji: "🫒",
@@ -204,7 +218,9 @@ const RECIPES_DB = [
       { foodId: "l4", qty: 30 },  { foodId: "l1", qty: 1 }
     ],
     instructions: "1. Βάλε το γιαούρτι σε μπολ.\n2. Σπάσε τα παξιμάδια σε κομμάτια ή άφησε τα ολόκληρα δίπλα.\n3. Πρόσθεσε τις ελιές.",
-    serving: "Στάξε το ελαιόλαδο από πάνω και πασπάλισε με ρίγανη. Γρήγορο, χορταστικό και μεσογειακό."
+    instructionsI18n: { el: "1. Βάλε το γιαούρτι σε μπολ.\n2. Σπάσε τα παξιμάδια σε κομμάτια ή άφησε τα ολόκληρα δίπλα.\n3. Πρόσθεσε τις ελιές.", en: "1. Place the yogurt in a bowl.\n2. Break the rusks into pieces or leave them whole alongside.\n3. Add the olives.", es: "1. Coloca el yogur en un bol.\n2. Rompe las tostadas en trozos o déjalas enteras al lado.\n3. Añade las aceitunas.", fr: "1. Place le yaourt dans un bol.\n2. Casse les biscottes en morceaux ou laisse-les entières à côté.\n3. Ajoute les olives." },
+    serving: "Στάξε το ελαιόλαδο από πάνω και πασπάλισε με ρίγανη. Γρήγορο, χορταστικό και μεσογειακό.",
+    servingI18n: { el: "Στάξε το ελαιόλαδο από πάνω και πασπάλισε με ρίγανη. Γρήγορο, χορταστικό και μεσογειακό.", en: "Drizzle olive oil on top and sprinkle with oregano. Quick, filling and Mediterranean.", es: "Chorrea aceite de oliva por encima y espolvorea con orégano. Rápido, saciante y mediterráneo.", fr: "Arrose d'huile d'olive par-dessus et saupoudre d'origan. Rapide, rassasiant et méditerranéen." }
   },
   // ─── ΜΕΣΗΜΕΡΙΑΝΑ ───
   {
@@ -215,7 +231,9 @@ const RECIPES_DB = [
       { foodId: "v4", qty: 60 },  { foodId: "l1", qty: 2 }
     ],
     instructions: "1. Μαρίνα το κοτόπουλο με λεμόνι, ρίγανη, πιπέρι και σκόρδο για τουλάχιστον 30 λεπτά (ή overnight).\n2. Βράσε το ρύζι σύμφωνα με τις οδηγίες της συσκευασίας.\n3. Ψήσε το κοτόπουλο σε σχάρα ή τηγάνι για 7-8 λεπτά ανά πλευρά σε μέτρια-υψηλή φωτιά.",
-    serving: "Σέρβιρε το κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα με ντοματίνια, αγγούρι και πιπεριά με ελαιόλαδο και λεμόνι."
+    instructionsI18n: { el: "1. Μαρίνα το κοτόπουλο με λεμόνι, ρίγανη, πιπέρι και σκόρδο για τουλάχιστον 30 λεπτά (ή overnight).\n2. Βράσε το ρύζι σύμφωνα με τις οδηγίες της συσκευασίας.\n3. Ψήσε το κοτόπουλο σε σχάρα ή τηγάνι για 7-8 λεπτά ανά πλευρά σε μέτρια-υψηλή φωτιά.", en: "1. Marinate the chicken with lemon, oregano, pepper and garlic for at least 30 minutes (or overnight).\n2. Cook the rice according to the packet instructions.\n3. Grill the chicken on a grill or pan for 7-8 minutes per side over medium-high heat.", es: "1. Marina el pollo con limón, orégano, pimienta y ajo durante al menos 30 minutos (o toda la noche).\n2. Cuece el arroz según las instrucciones del paquete.\n3. Asa el pollo en una parrilla o sartén durante 7-8 minutos por lado a fuego medio-alto.", fr: "1. Marine le poulet avec du citron, de l'origan, du poivre et de l'ail pendant au moins 30 minutes (ou toute une nuit).\n2. Cuis le riz selon les instructions du paquet.\n3. Fais griller le poulet sur un gril ou une poêle 7-8 minutes de chaque côté à feu moyen-vif." },
+    serving: "Σέρβιρε το κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα με ντοματίνια, αγγούρι και πιπεριά με ελαιόλαδο και λεμόνι.",
+    servingI18n: { el: "Σέρβιρε το κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα με ντοματίνια, αγγούρι και πιπεριά με ελαιόλαδο και λεμόνι.", en: "Serve the chicken on top of the rice. Alongside, add a salad with cherry tomatoes, cucumber and pepper with olive oil and lemon.", es: "Sirve el pollo sobre el arroz. Al lado, coloca una ensalada con tomatitos, pepino y pimiento con aceite de oliva y limón.", fr: "Sers le poulet sur le riz. À côté, ajoute une salade de tomates cerises, concombre et poivron avec de l'huile d'olive et du citron." }
   },
   {
     id: "r11", name: "Μακαρόνια με Κιμά", nameI18n: { el: "Μακαρόνια με Κιμά", en: "Pasta with Meat Sauce", es: "Pasta con carne picada", fr: "Pâtes à la viande hachée" }, meal: "lunch", emoji: "🍝",
@@ -225,7 +243,9 @@ const RECIPES_DB = [
       { foodId: "v5", qty: 60 }
     ],
     instructions: "1. Βράσε τα μακαρόνια σε αλατισμένο νερό σύμφωνα με τις οδηγίες (συνήθως 10-12 λεπτά).\n2. Σε αντικολλητικό τηγάνι σε μέτρια-υψηλή φωτιά, σοτάρισε τον κιμά χωρίς λάδι μέχρι να ροδίσει (5-6 λεπτά), σπάζοντάς τον με ξύλινη κουτάλα.\n3. Πρόσθεσε τριμμένα ντοματίνια (ή έτοιμη σάλτσα ντομάτας), σκόρδο, κανέλα και ρίγανη.\n4. Σιγόβρασε τη σάλτσα για 10 λεπτά σε χαμηλή φωτιά.\n5. Στράγγισε τα μακαρόνια και ανακάτεψε με τη σάλτσα.",
-    serving: "Σέρβιρε σε πιάτο. Δίπλα βάλε σαλάτα με μαρούλι και καρότο τριμμένο, με λίγο ελαιόλαδο και λεμόνι."
+    instructionsI18n: { el: "1. Βράσε τα μακαρόνια σε αλατισμένο νερό σύμφωνα με τις οδηγίες (συνήθως 10-12 λεπτά).\n2. Σε αντικολλητικό τηγάνι σε μέτρια-υψηλή φωτιά, σοτάρισε τον κιμά χωρίς λάδι μέχρι να ροδίσει (5-6 λεπτά), σπάζοντάς τον με ξύλινη κουτάλα.\n3. Πρόσθεσε τριμμένα ντοματίνια (ή έτοιμη σάλτσα ντομάτας), σκόρδο, κανέλα και ρίγανη.\n4. Σιγόβρασε τη σάλτσα για 10 λεπτά σε χαμηλή φωτιά.\n5. Στράγγισε τα μακαρόνια και ανακάτεψε με τη σάλτσα.", en: "1. Boil the pasta in salted water according to the instructions (usually 10-12 minutes).\n2. In a non-stick pan over medium-high heat, sauté the minced meat without oil until browned (5-6 minutes), breaking it up with a wooden spoon.\n3. Add grated tomatoes (or ready tomato sauce), garlic, cinnamon and oregano.\n4. Simmer the sauce for 10 minutes over low heat.\n5. Drain the pasta and mix with the sauce.", es: "1. Hierve la pasta en agua salada según las instrucciones (normalmente 10-12 minutos).\n2. En una sartén antiadherente a fuego medio-alto, saltea la carne picada sin aceite hasta que se dore (5-6 minutos), rompiéndola con una cuchara de madera.\n3. Añade tomates triturados (o salsa de tomate lista), ajo, canela y orégano.\n4. Hierve la salsa a fuego lento durante 10 minutos.\n5. Escurre la pasta y mezcla con la salsa.", fr: "1. Fais bouillir les pâtes dans de l'eau salée selon les instructions (généralement 10-12 minutes).\n2. Dans une poêle antiadhésive à feu moyen-vif, fais revenir la viande hachée sans huile jusqu'à ce qu'elle soit dorée (5-6 minutes), en la émiettant avec une cuillère en bois.\n3. Ajoute des tomates râpées (ou de la sauce tomate prête), de l'ail, de la cannelle et de l'origan.\n4. Laisse mijoter la sauce pendant 10 minutes à feu doux.\n5. Égoutte les pâtes et mélange avec la sauce." },
+    serving: "Σέρβιρε σε πιάτο. Δίπλα βάλε σαλάτα με μαρούλι και καρότο τριμμένο, με λίγο ελαιόλαδο και λεμόνι.",
+    servingI18n: { el: "Σέρβιρε σε πιάτο. Δίπλα βάλε σαλάτα με μαρούλι και καρότο τριμμένο, με λίγο ελαιόλαδο και λεμόνι.", en: "Serve on a plate. Alongside, add a salad of lettuce and grated carrot with a little olive oil and lemon.", es: "Sirve en un plato. Al lado, añade una ensalada de lechuga y zanahoria rallada con un poco de aceite de oliva y limón.", fr: "Sers dans une assiette. À côté, ajoute une salade de laitue et de carotte râpée avec un peu d'huile d'olive et de citron." }
   },
   {
     id: "r12", name: "Μπιφτέκια Κοτόπουλο + Πουρές", nameI18n: { el: "Μπιφτέκια Κοτόπουλο + Πουρές", en: "Chicken Burgers + Mash", es: "Hamburguesas de pollo + puré", fr: "Burgers de poulet + purée" }, meal: "lunch", emoji: "🍔",
@@ -235,7 +255,9 @@ const RECIPES_DB = [
       { foodId: "d2", qty: 100 }, { foodId: "l1", qty: 1 }
     ],
     instructions: "1. Πολτοποίησε το κοτόπουλο στο multi ή ψιλοκόψε. Ανάμιξε με ψιλοκομμένη κόκκινη πιπεριά, ρίγανη, αλατοπίπερο.\n2. Μόρφωσε σε μπιφτέκια και ψήσε σε αντικολλητικό για 4 λεπτά ανά πλευρά σε μέτρια φωτιά.\n3. Για τον πουρέ: βράσε τις πατάτες, στράγγισε και λιώσε. Πρόσθεσε γάλα και λίγο ελαιόλαδο, αλατοπίπερο.",
-    serving: "Σέρβιρε τα μπιφτέκια πάνω στον πουρέ. Δίπλα βάλε αγγούρι σε φέτες."
+    instructionsI18n: { el: "1. Πολτοποίησε το κοτόπουλο στο multi ή ψιλοκόψε. Ανάμιξε με ψιλοκομμένη κόκκινη πιπεριά, ρίγανη, αλατοπίπερο.\n2. Μόρφωσε σε μπιφτέκια και ψήσε σε αντικολλητικό για 4 λεπτά ανά πλευρά σε μέτρια φωτιά.\n3. Για τον πουρέ: βράσε τις πατάτες, στράγγισε και λιώσε. Πρόσθεσε γάλα και λίγο ελαιόλαδο, αλατοπίπερο.", en: "1. Mince the chicken in a food processor or chop finely. Mix with finely chopped red pepper, oregano, salt and pepper.\n2. Shape into patties and cook in a non-stick pan for 4 minutes per side over medium heat.\n3. For the mash: boil the potatoes, drain and mash. Add milk and a little olive oil, salt and pepper.", es: "1. Tritura el pollo en el robot de cocina o pícalo finamente. Mezcla con pimiento rojo picado fino, orégano, sal y pimienta.\n2. Forma hamburguesas y cocina en una sartén antiadherente durante 4 minutos por lado a fuego medio.\n3. Para el puré: hierve las patatas, escurre y tritura. Añade leche y un poco de aceite de oliva, sal y pimienta.", fr: "1. Mixe le poulet au robot ou hache-le finement. Mélange avec du poivron rouge émincé, de l'origan, du sel et du poivre.\n2. Forme en galettes et fais cuire dans une poêle antiadhésive 4 minutes de chaque côté à feu moyen.\n3. Pour la purée : fais bouillir les pommes de terre, égoutte et écrase. Ajoute du lait et un peu d'huile d'olive, sel et poivre." },
+    serving: "Σέρβιρε τα μπιφτέκια πάνω στον πουρέ. Δίπλα βάλε αγγούρι σε φέτες.",
+    servingI18n: { el: "Σέρβιρε τα μπιφτέκια πάνω στον πουρέ. Δίπλα βάλε αγγούρι σε φέτες.", en: "Serve the patties on top of the mash. Alongside, add cucumber slices.", es: "Sirve las hamburguesas sobre el puré. Al lado, coloca pepino en rodajas.", fr: "Sers les galettes sur la purée. À côté, ajoute des tranches de concombre." }
   },
   {
     id: "r13", name: "Σολομός + Ρύζι & Λαχανικά", nameI18n: { el: "Σολομός + Ρύζι & Λαχανικά", en: "Salmon + Rice & Vegetables", es: "Salmón + arroz y verduras", fr: "Saumon + riz et légumes" }, meal: "lunch", emoji: "🐟",
@@ -245,7 +267,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 1.5 }
     ],
     instructions: "1. Προθέρμανε τον φούρνο στους 180°C.\n2. Βάλε τον σολομό σε ταψάκι, πρόσθεσε χυμό λεμονιού, δεντρολίβανο και πιπέρι. Ψήσε για 16-18 λεπτά.\n3. Βράσε το ρύζι παράλληλα.\n4. Κόψε πιπεριά και κολοκυθάκι σε κομμάτια, σοτάρισε σε ελαιόλαδο για 5-6 λεπτά.",
-    serving: "Σέρβιρε το ρύζι σαν βάση, πάνω τα λαχανικά και τελευταίο τον σολομό. Στάξε λίγο επιπλέον λεμόνι."
+    instructionsI18n: { el: "1. Προθέρμανε τον φούρνο στους 180°C.\n2. Βάλε τον σολομό σε ταψάκι, πρόσθεσε χυμό λεμονιού, δεντρολίβανο και πιπέρι. Ψήσε για 16-18 λεπτά.\n3. Βράσε το ρύζι παράλληλα.\n4. Κόψε πιπεριά και κολοκυθάκι σε κομμάτια, σοτάρισε σε ελαιόλαδο για 5-6 λεπτά.", en: "1. Preheat the oven to 180°C.\n2. Place the salmon in a baking dish, add lemon juice, rosemary and pepper. Bake for 16-18 minutes.\n3. Cook the rice in parallel.\n4. Cut the pepper and courgette into pieces, sauté in olive oil for 5-6 minutes.", es: "1. Precalienta el horno a 180°C.\n2. Coloca el salmón en una bandeja, añade zumo de limón, romero y pimienta. Hornea durante 16-18 minutos.\n3. Cuece el arroz en paralelo.\n4. Corta el pimiento y el calabacín en trozos, saltea en aceite de oliva durante 5-6 minutos.", fr: "1. Préchauffe le four à 180°C.\n2. Place le saumon dans un plat allant au four, ajoute du jus de citron, du romarin et du poivre. Fais cuire 16-18 minutes.\n3. Cuis le riz en parallèle.\n4. Coupe le poivron et la courgette en morceaux, fais-les revenir dans de l'huile d'olive pendant 5-6 minutes." },
+    serving: "Σέρβιρε το ρύζι σαν βάση, πάνω τα λαχανικά και τελευταίο τον σολομό. Στάξε λίγο επιπλέον λεμόνι.",
+    servingI18n: { el: "Σέρβιρε το ρύζι σαν βάση, πάνω τα λαχανικά και τελευταίο τον σολομό. Στάξε λίγο επιπλέον λεμόνι.", en: "Serve the rice as a base, top with the vegetables and finally the salmon. Drizzle a little extra lemon.", es: "Sirve el arroz como base, encima las verduras y por último el salmón. Chorrea un poco más de limón.", fr: "Sers le riz comme base, par-dessus les légumes et enfin le saumon. Arrose d'un peu de citron supplémentaire." }
   },
   {
     id: "r14", name: "Ρεβύθια Σαλάτα + Ψωμί", nameI18n: { el: "Ρεβύθια Σαλάτα + Ψωμί", en: "Chickpea Salad + Bread", es: "Ensalada de garbanzos + pan", fr: "Salade de pois chiches + pain" }, meal: "lunch", emoji: "🫘",
@@ -574,6 +598,7 @@ const STANDARD_MEALS = [
   {
     id: "sm1", meal: "breakfast", emoji: "🫙",
     name: "Ταχίνι 2κγ & 2 φέτες τοστ",
+    nameI18n: { el: "Ταχίνι 2κγ & 2 φέτες τοστ", en: "Tahini 2 tsp & 2 slices of toast", es: "Tahini 2 cdita & 2 tostadas", fr: "Tahini 2 càc & 2 tranches de toast" },
     kcal_est: 250, p: 8, c: 32, f: 10,
     note: "Κλασικό γρήγορο πρωινό",
     items: ["2 κγ ταχίνι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
@@ -581,6 +606,7 @@ const STANDARD_MEALS = [
   {
     id: "sm2", meal: "breakfast", emoji: "🫙",
     name: "Γιαούρτι 2% 200g",
+    nameI18n: { el: "Γιαούρτι 2% 200g", en: "Yogurt 2% 200g", es: "Yogur 2% 200g", fr: "Yaourt 2% 200g" },
     kcal_est: 136, p: 16, c: 8, f: 8,
     note: "Συχνά ως συμπλήρωμα πρωινού",
     items: ["200g γιαούρτι 2%"]
@@ -588,6 +614,7 @@ const STANDARD_MEALS = [
   {
     id: "sm3", meal: "breakfast", emoji: "🍯",
     name: "Μέλι 2κγ & 2 φέτες τοστ",
+    nameI18n: { el: "Μέλι 2κγ & 2 φέτες τοστ", en: "Honey 2 tsp & 2 slices of toast", es: "Miel 2 cdita & 2 tostadas", fr: "Miel 2 càc & 2 tranches de toast" },
     kcal_est: 200, p: 5, c: 40, f: 2,
     note: "Γλυκό εναλλακτικό πρωινό",
     items: ["2 κγ μέλι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
@@ -595,6 +622,7 @@ const STANDARD_MEALS = [
   {
     id: "sm4", meal: "breakfast", emoji: "🫙",
     name: "Γιαούρτι 200g + Πρωτεΐνη 30g + Βρώμη 5κσ",
+    nameI18n: { el: "Γιαούρτι 200g + Πρωτεΐνη 30g + Βρώμη 5κσ", en: "Yogurt 200g + Protein 30g + Oats 5 tbsp", es: "Yogur 200g + Proteína 30g + Avena 5 cdas", fr: "Yaourt 200g + Protéine 30g + Avoine 5 càs" },
     kcal_est: 350, p: 42, c: 30, f: 5,
     note: "Υψηλή πρωτεΐνη, χορταστικό",
     items: ["200g γιαούρτι 2%", "30g whey isolate", "5 κ.σ. βρώμη (~50g)"]
@@ -602,6 +630,7 @@ const STANDARD_MEALS = [
   {
     id: "sm5", meal: "breakfast", emoji: "🌾",
     name: "Ταχίνι 2κγ & 4 ριζογκοφρέτες",
+    nameI18n: { el: "Ταχίνι 2κγ & 4 ριζογκοφρέτες", en: "Tahini 2 tsp & 4 rice cakes", es: "Tahini 2 cdita & 4 tortas de arroz", fr: "Tahini 2 càc & 4 galettes de riz" },
     kcal_est: 240, p: 7, c: 28, f: 11,
     note: "Gluten-free εναλλακτικό",
     items: ["2 κγ ταχίνι (~30g)", "4 ριζογκοφρέτες"]
@@ -609,6 +638,7 @@ const STANDARD_MEALS = [
   {
     id: "sm6", meal: "breakfast", emoji: "🍞",
     name: "1 φέτα τοστ, ξηροί καρποί, μέλι & ταχίνι",
+    nameI18n: { el: "1 φέτα τοστ, ξηροί καρποί, μέλι & ταχίνι", en: "1 slice of toast, nuts, honey & tahini", es: "1 tostada, frutos secos, miel & tahini", fr: "1 tranche de toast, noix, miel & tahini" },
     kcal_est: 220, p: 6, c: 24, f: 11,
     note: "Ενεργειακό & γρήγορο πρωινό",
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ ταχίνι (~15g)"]
@@ -616,6 +646,7 @@ const STANDARD_MEALS = [
   {
     id: "sm7", meal: "breakfast", emoji: "🍞",
     name: "1 φέτα τοστ, ξηροί καρποί, μέλι & φυστικοβούτυρο",
+    nameI18n: { el: "1 φέτα τοστ, ξηροί καρποί, μέλι & φυστικοβούτυρο", en: "1 slice of toast, nuts, honey & peanut butter", es: "1 tostada, frutos secos, miel & mantequilla de cacahuete", fr: "1 tranche de toast, noix, miel & beurre de cacahuète" },
     kcal_est: 225, p: 7, c: 24, f: 12,
     note: "Ενεργειακό με φυστικοβούτυρο",
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ φυστικοβούτυρο (~15g)"]
@@ -623,6 +654,7 @@ const STANDARD_MEALS = [
   {
     id: "sm8", meal: "breakfast", emoji: "🥚",
     name: "1 φέτα τοστ, κασέρι, γαλοπούλα & 2 ασπράδια",
+    nameI18n: { el: "1 φέτα τοστ, κασέρι, γαλοπούλα & 2 ασπράδια", en: "1 slice of toast, kasseri cheese, turkey & 2 egg whites", es: "1 tostada, queso kaseri, pavo & 2 claras de huevo", fr: "1 tranche de toast, fromage kasseri, dinde & 2 blancs d'œufs" },
     kcal_est: 210, p: 24, c: 14, f: 6,
     note: "Υψηλή πρωτεΐνη, χαμηλά λίπη",
     items: ["1 φέτα ψωμί τοστ (~30g)", "1 φέτα κασέρι light (~20g)", "30g γαλοπούλα φέτα", "2 βραστά ασπράδια αυγού"]
@@ -630,6 +662,7 @@ const STANDARD_MEALS = [
   {
     id: "sm9", meal: "breakfast", emoji: "🥚",
     name: "Αυγό βραστό, ντοματίνια & παξιμαδάκια",
+    nameI18n: { el: "Αυγό βραστό, ντοματίνια & παξιμαδάκια", en: "Boiled egg, cherry tomatoes & rusks", es: "Huevo cocido, tomatitos & tostadas", fr: "Œuf dur, tomates cerises & biscottes" },
     kcal_est: 250, p: 8, c: 28, f: 6,
     note: "Ελαφρύ & χορταστικό",
     items: ["1 αυγό βραστό", "4-5 ντοματίνια", "2 παξιμαδάκια χαρουπιού (~30g)"]
@@ -637,6 +670,7 @@ const STANDARD_MEALS = [
   {
     id: "sm19", meal: "breakfast", emoji: "🥨",
     name: "Κουλούρι Θεσσαλονίκης ολικής",
+    nameI18n: { el: "Κουλούρι Θεσσαλονίκης ολικής", en: "Thessaloniki sesame bagel (whole grain)", es: "Rosca de sésamo de Salónica integral", fr: "Bagel au sésame de Thessalonique complet" },
     kcal_est: 300, p: 10, c: 56, f: 4,
     note: "Γρήγορο & ενεργειακό",
     items: ["1 κουλούρι Θεσσαλονίκης ολικής άλεσης"]
@@ -644,6 +678,7 @@ const STANDARD_MEALS = [
   {
     id: "sm25", meal: "breakfast", emoji: "🥪",
     name: "Τοστ ολικής με γαλοπούλα & Philadelphia",
+    nameI18n: { el: "Τοστ ολικής με γαλοπούλα & Philadelphia", en: "Whole grain toast with turkey & Philadelphia", es: "Tostada integral con pavo & Philadelphia", fr: "Toast complet avec dinde & Philadelphia" },
     kcal_est: 260, p: 12, c: 32, f: 7,
     note: "Πλήρες & ισορροπημένο πρωινό",
     items: ["2 φέτες ψωμί ολικής", "1 φέτα γαλοπούλα", "½ φέτα κίτρινο τυρί", "1 κγ Philadelphia Light", "μαρούλι & ντομάτα"]
@@ -651,6 +686,7 @@ const STANDARD_MEALS = [
   {
     id: "sm26", meal: "breakfast", emoji: "🥣",
     name: "Porridge βρώμης (Σαββατοκύριακο)",
+    nameI18n: { el: "Porridge βρώμης (Σαββατοκύριακο)", en: "Oat porridge (Weekend)", es: "Porridge de avena (Fin de semana)", fr: "Porridge d'avoine (Week-end)" },
     kcal_est: 290, p: 9, c: 46, f: 5,
     note: "Χορταστικό & ζεστό — με κανέλα",
     items: ["250ml γάλα 1,5%", "30g βρώμη (3 κσ)", "1 κγ μέλι", "1 κγ κακάο άγλυκο (προαιρετικό)", "κανέλα"]
@@ -660,6 +696,7 @@ const STANDARD_MEALS = [
   {
     id: "sm10", meal: "snack", emoji: "🍎",
     name: "Μήλο & 5 αμύγδαλα",
+    nameI18n: { el: "Μήλο & 5 αμύγδαλα", en: "Apple & 5 almonds", es: "Manzana & 5 almendras", fr: "Pomme & 5 amandes" },
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ πρωινό σνακ",
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
@@ -667,6 +704,7 @@ const STANDARD_MEALS = [
   {
     id: "sm11", meal: "snack", emoji: "🍌",
     name: "Μπανάνα & 5 αμύγδαλα",
+    nameI18n: { el: "Μπανάνα & 5 αμύγδαλα", en: "Banana & 5 almonds", es: "Plátano & 5 almendras", fr: "Banane & 5 amandes" },
     kcal_est: 170, p: 4, c: 30, f: 5,
     note: "Ενέργεια pre-workout",
     items: ["1 μπανάνα (~120g)", "5 αμύγδαλα (~10g)"]
@@ -674,6 +712,7 @@ const STANDARD_MEALS = [
   {
     id: "sm12", meal: "snack", emoji: "🧀",
     name: "3 παξιμάδια & 2 φέτες κασέρι χαμηλά λιπαρά",
+    nameI18n: { el: "3 παξιμάδια & 2 φέτες κασέρι χαμηλά λιπαρά", en: "3 rusks & 2 slices of low-fat kasseri cheese", es: "3 tostadas & 2 lonchas de queso kaseri bajo en grasa", fr: "3 biscottes & 2 tranches de fromage kasseri allégé" },
     kcal_est: 250, p: 14, c: 28, f: 8,
     note: "Πρωτεΐνη + υδατάνθρακες",
     items: ["3 παξιμάδια (~90g)", "2 φέτες κασέρι light (~40g)"]
@@ -681,6 +720,7 @@ const STANDARD_MEALS = [
   {
     id: "sm13", meal: "snack", emoji: "🥪",
     name: "Τοστ γαλοπούλα / κασέρι",
+    nameI18n: { el: "Τοστ γαλοπούλα / κασέρι", en: "Toast turkey / kasseri cheese", es: "Tostada pavo / queso kaseri", fr: "Toast dinde / fromage kasseri" },
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Κλασικό δεκατιανό",
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g κασέρι"]
@@ -688,6 +728,7 @@ const STANDARD_MEALS = [
   {
     id: "sm14", meal: "snack", emoji: "🥨",
     name: "3 κριτσίνια & 2 φέτες κασέρι light",
+    nameI18n: { el: "3 κριτσίνια & 2 φέτες κασέρι light", en: "3 breadsticks & 2 slices of light kasseri cheese", es: "3 palitos de pan & 2 lonchas de queso kaseri light", fr: "3 gressins & 2 tranches de fromage kasseri light" },
     kcal_est: 230, p: 13, c: 22, f: 9,
     note: "Τραγανό & χορταστικό",
     items: ["3 κριτσίνια (~30g)", "2 φέτες κασέρι light (~40g)"]
@@ -695,6 +736,7 @@ const STANDARD_MEALS = [
   {
     id: "sm15", meal: "snack", emoji: "🥕",
     name: "5 καρότα",
+    nameI18n: { el: "5 καρότα", en: "5 carrots", es: "5 zanahorias", fr: "5 carottes" },
     kcal_est: 100, p: 2, c: 23, f: 0,
     note: "Ελαφρύ & χορταστικό",
     items: ["5 μεσαία καρότα (~250g)"]
@@ -702,6 +744,7 @@ const STANDARD_MEALS = [
   {
     id: "sm16", meal: "snack", emoji: "🥝",
     name: "2 ακτινίδια",
+    nameI18n: { el: "2 ακτινίδια", en: "2 kiwis", es: "2 kiwis", fr: "2 kiwis" },
     kcal_est: 90, p: 2, c: 20, f: 1,
     note: "Βιταμίνη C + φυτικές ίνες",
     items: ["2 ακτινίδια (~140g)"]
@@ -709,6 +752,7 @@ const STANDARD_MEALS = [
   {
     id: "sm17", meal: "snack", emoji: "💪",
     name: "Πρωτεϊνούχο Σέικ",
+    nameI18n: { el: "Πρωτεϊνούχο Σέικ", en: "Protein Shake", es: "Batido de Proteínas", fr: "Shake Protéiné" },
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ή απόγευμα",
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
@@ -716,6 +760,7 @@ const STANDARD_MEALS = [
   {
     id: "sm18", meal: "snack", emoji: "🍮",
     name: "Φρουί Ζελέ",
+    nameI18n: { el: "Φρουί Ζελέ", en: "Fruit Jelly", es: "Gelatina de Frutas", fr: "Gelée de Fruits" },
     kcal_est: 90, p: 1, c: 20, f: 0,
     note: "Ελαφρύ γλυκό σνακ",
     items: ["1 φρουί ζελέ (~90g)"]
@@ -725,6 +770,7 @@ const STANDARD_MEALS = [
   {
     id: "sm50", meal: "lunch", emoji: "🍗",
     name: "Φιλέτο κοτόπουλο 200g + ψητά λαχανικά & μανιτάρια + σαλάτα",
+    nameI18n: { el: "Φιλέτο κοτόπουλο 200g + ψητά λαχανικά & μανιτάρια + σαλάτα", en: "Chicken fillet 200g + grilled vegetables & mushrooms + salad", es: "Filete de pollo 200g + verduras a la plancha & champiñones + ensalada", fr: "Filet de poulet 200g + légumes grillés & champignons + salade" },
     kcal_est: 610, p: 50, c: 14, f: 18,
     note: "Μαρινάδα: λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι. Φούρνος/air fryer 190°C 16-18'. Ψήσε τα λαχανικά μαζί με σκόρδο και ρίγανη.",
     items: ["200g φιλέτο κοτόπουλο", "150g κολοκύθι, πιπεριά, κρεμμύδι", "100g μανιτάρια", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
@@ -732,6 +778,7 @@ const STANDARD_MEALS = [
   {
     id: "sm51", meal: "lunch", emoji: "🍳",
     name: "Ομελέτα 4 αυγών + cottage + ψωμί ολικής + σαλάτα",
+    nameI18n: { el: "Ομελέτα 4 αυγών + cottage + ψωμί ολικής + σαλάτα", en: "4-egg omelette + cottage cheese + whole grain bread + salad", es: "Tortilla de 4 huevos + cottage + pan integral + ensalada", fr: "Omelette de 4 œufs + cottage cheese + pain complet + salade" },
     kcal_est: 600, p: 38, c: 18, f: 38,
     note: "Σόταρε πρώτα τα λαχανικά, μετά τα αυγά. Ρίξε cottage πριν δέσει. Μπαχαρικά: κουρκουμάς, πάπρικα, ρίγανη, μαϊντανός.",
     items: ["4 αυγά", "ντομάτα, πιπεριά, μανιτάρια", "40g cottage cheese", "30g ψωμί ολικής", "σαλάτα", "1 κγ ελαιόλαδο"]
@@ -739,6 +786,7 @@ const STANDARD_MEALS = [
   {
     id: "sm52", meal: "lunch", emoji: "🫘",
     name: "Ρεβύθια φούρνου + cottage + σαλάτα",
+    nameI18n: { el: "Ρεβύθια φούρνου + cottage + σαλάτα", en: "Baked chickpeas + cottage cheese + salad", es: "Garbanzos al horno + cottage + ensalada", fr: "Pois chiches au four + cottage cheese + salade" },
     kcal_est: 662, p: 28, c: 72, f: 18,
     note: "Ψήσε με ντομάτα, κρεμμύδι, καρότο, πιπεριά. Μπαχαρικά: κύμινο, πάπρικα καπνιστή, κουρκουμάς, δάφνη. Πρόσθεσε cottage αφού βγουν.",
     items: ["250g ρεβύθια μαγειρεμένα (1½ φλ.)", "60g cottage cheese", "καρότο & πιπεριά", "σαλάτα", "1 κγ ελαιόλαδο"]
@@ -746,6 +794,7 @@ const STANDARD_MEALS = [
   {
     id: "sm53", meal: "lunch", emoji: "🍝",
     name: "Μακαρόνια με σάλτσα ντομάτας & μανιτάρια + σαλάτα",
+    nameI18n: { el: "Μακαρόνια με σάλτσα ντομάτας & μανιτάρια + σαλάτα", en: "Pasta with tomato sauce & mushrooms + salad", es: "Fideos con salsa de tomate & champiñones + ensalada", fr: "Pâtes à la sauce tomate & champignons + salade" },
     kcal_est: 622, p: 18, c: 96, f: 16,
     note: "Σάλτσα με ντομάτα, σκόρδο, κρεμμύδι. Σόταρε μανιτάρια χωρίς πολύ λάδι. Μπαχαρικά: βασιλικός, ρίγανη, θυμάρι.",
     items: ["300g βρασμένα μακαρόνια (2 φλ.)", "σάλτσα ντομάτας", "100g μανιτάρια", "σαλάτα", "1 κγ ελαιόλαδο"]
@@ -753,6 +802,7 @@ const STANDARD_MEALS = [
   {
     id: "sm54", meal: "lunch", emoji: "🥘",
     name: "Μπριάμ + ψωμί ολικής + cottage + φέτα",
+    nameI18n: { el: "Μπριάμ + ψωμί ολικής + cottage + φέτα", en: "Mixed vegetable roast + whole grain bread + cottage cheese + feta", es: "Verduras al horno + pan integral + cottage + feta", fr: "Légumes rôtis + pain complet + cottage cheese + feta" },
     kcal_est: 616, p: 20, c: 54, f: 28,
     note: "Ψήσε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι, ντομάτα. Μπαχαρικά: ρίγανη, θυμάρι, μαϊντανός. Cottage και φέτα στο σερβίρισμα.",
     items: ["300g μπριάμ (κολοκύθι, μελιτζάνα, πατάτα, ντομάτα)", "30g ψωμί ολικής", "60g cottage cheese", "30g φέτα"]
@@ -760,6 +810,7 @@ const STANDARD_MEALS = [
   {
     id: "sm55", meal: "lunch", emoji: "🐟",
     name: "Ψάρι φούρνου + σαλάτα",
+    nameI18n: { el: "Ψάρι φούρνου + σαλάτα", en: "Baked fish + salad", es: "Pescado al horno + ensalada", fr: "Poisson au four + salade" },
     kcal_est: 558, p: 52, c: 4, f: 28,
     note: "Τσιπούρα ή λαυράκι στον φούρνο με λεμόνι, σκόρδο και ελαιόλαδο, 180°C 25'. Μπαχαρικά: θυμάρι, ρίγανη, λευκό πιπέρι. Σερβίρισε με βραστά χόρτα.",
     items: ["250g τσιπούρα ή λαυράκι (καθαρό βάρος)", "σαλάτα εποχής", "1 κγ ελαιόλαδο", "λεμόνι"]
@@ -767,6 +818,7 @@ const STANDARD_MEALS = [
   {
     id: "sm56", meal: "lunch", emoji: "🥩",
     name: "Μοσχαρίσιο συκώτι + βραστά λαχανικά + ψωμί ολικής",
+    nameI18n: { el: "Μοσχαρίσιο συκώτι + βραστά λαχανικά + ψωμί ολικής", en: "Veal liver + steamed vegetables + whole grain bread", es: "Hígado de ternera + verduras al vapor + pan integral", fr: "Foie de veau + légumes vapeur + pain complet" },
     kcal_est: 615, p: 44, c: 28, f: 24,
     note: "Ψήσε σε δυνατή φωτιά 2-3 λεπτά ανά πλευρά. Λεμόνι μόνο μετά. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, σκόρδο σε σκόνη.",
     items: ["180g μοσχαρίσιο συκώτι", "βρασμένα λαχανικά (μπρόκολο, κουνουπίδι, καρότα)", "30g ψωμί ολικής", "1 κγ ελαιόλαδο"]
@@ -774,6 +826,7 @@ const STANDARD_MEALS = [
   {
     id: "sm57", meal: "lunch", emoji: "🥩",
     name: "Συκώτι βοδινό + πατάτα + σαλάτα",
+    nameI18n: { el: "Συκώτι βοδινό + πατάτα + σαλάτα", en: "Beef liver + potato + salad", es: "Hígado de res + patata + ensalada", fr: "Foie de bœuf + pomme de terre + salade" },
     kcal_est: 580, p: 46, c: 36, f: 20,
     note: "Υψηλή συγκέντρωση σιδήρου και βιταμίνης Β12. Ψήσε σε δυνατή φωτιά με κρεμμύδι και λεμόνι. Μην παραψήσεις — μένει τρυφερό.",
     items: ["180g συκώτι βοδινό", "200g πατάτα βραστή", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
@@ -781,6 +834,7 @@ const STANDARD_MEALS = [
   {
     id: "sm20", meal: "lunch", emoji: "🍗",
     name: "Κοτόπουλο φιλέτο 250g + ρύζι 100g + σαλάτα",
+    nameI18n: { el: "Κοτόπουλο φιλέτο 250g + ρύζι 100g + σαλάτα", en: "Chicken fillet 250g + rice 100g + salad", es: "Filete de pollo 250g + arroz 100g + ensalada", fr: "Filet de poulet 250g + riz 100g + salade" },
     kcal_est: 640, p: 55, c: 62, f: 12,
     note: "Κλασικό μεσημεριανό με υψηλή πρωτεΐνη",
     items: ["250g κοτόπουλο φιλέτο ψητό", "100g ρύζι μαγ.", "σαλάτα ντομάτα + 1 κγ ελαιόλαδο"]
@@ -788,6 +842,7 @@ const STANDARD_MEALS = [
   {
     id: "sm21", meal: "lunch", emoji: "🍗",
     name: "Κοτόπουλο μπούτι 250g + ρύζι 100g",
+    nameI18n: { el: "Κοτόπουλο μπούτι 250g + ρύζι 100g", en: "Chicken thigh 250g + rice 100g", es: "Muslo de pollo 250g + arroz 100g", fr: "Cuisse de poulet 250g + riz 100g" },
     kcal_est: 720, p: 52, c: 60, f: 22,
     note: "Πιο λιπαρό, πιο γευστικό",
     items: ["250g κοτόπουλο μπούτι ψητό", "100g ρύζι μαγ.", "λίγη σαλάτα"]
@@ -795,6 +850,7 @@ const STANDARD_MEALS = [
   {
     id: "sm22", meal: "lunch", emoji: "🐟",
     name: "Τόνος σε νερό (2 κουτάκια) + σαλάτα",
+    nameI18n: { el: "Τόνος σε νερό (2 κουτάκια) + σαλάτα", en: "Tuna in water (2 cans) + salad", es: "Atún en agua (2 latas) + ensalada", fr: "Thon à l'eau (2 boîtes) + salade" },
     kcal_est: 300, p: 42, c: 8, f: 10,
     note: "Ελαφρύ & υψηλή πρωτεΐνη",
     items: ["2 κουτάκια τόνος (~160g)", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
@@ -802,6 +858,7 @@ const STANDARD_MEALS = [
   {
     id: "sm23", meal: "lunch", emoji: "🥗",
     name: "Χωριάτικη σαλάτα + 2 αυγά",
+    nameI18n: { el: "Χωριάτικη σαλάτα + 2 αυγά", en: "Greek salad + 2 eggs", es: "Ensalada griega + 2 huevos", fr: "Salade grecque + 2 œufs" },
     kcal_est: 350, p: 18, c: 12, f: 24,
     note: "Καλοκαιρινό γεύμα",
     items: ["200g ντομάτα+αγγούρι+ελιές+φέτα", "2 βραστά αυγά", "1 κσ ελαιόλαδο"]
@@ -809,6 +866,7 @@ const STANDARD_MEALS = [
   {
     id: "sm24", meal: "lunch", emoji: "🫘",
     name: "Φακές με ρύζι (Mujadarah)",
+    nameI18n: { el: "Φακές με ρύζι (Mujadarah)", en: "Lentils with rice (Mujadarah)", es: "Lentejas con arroz (Mujadarah)", fr: "Lentilles au riz (Mujadarah)" },
     kcal_est: 480, p: 22, c: 78, f: 10,
     note: "Πλήρης φυτική πρωτεΐνη",
     items: ["200g φακές μαγ.", "80g ρύζι μαγ.", "1 κσ ελαιόλαδο", "κρεμμύδι"]
@@ -818,6 +876,7 @@ const STANDARD_MEALS = [
   {
     id: "sm40", meal: "afternoon", emoji: "🍎",
     name: "Μήλο & 5 αμύγδαλα",
+    nameI18n: { el: "Μήλο & 5 αμύγδαλα", en: "Apple & 5 almonds", es: "Manzana & 5 almendras", fr: "Pomme & 5 amandes" },
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ απογευματινό σνακ",
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
@@ -825,6 +884,7 @@ const STANDARD_MEALS = [
   {
     id: "sm41", meal: "afternoon", emoji: "💪",
     name: "Πρωτεϊνούχο Σέικ",
+    nameI18n: { el: "Πρωτεϊνούχο Σέικ", en: "Protein Shake", es: "Batido de Proteínas", fr: "Shake Protéiné" },
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ιδανικό",
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
@@ -832,6 +892,7 @@ const STANDARD_MEALS = [
   {
     id: "sm42", meal: "afternoon", emoji: "🫙",
     name: "Γιαούρτι 2% 200g & μέλι",
+    nameI18n: { el: "Γιαούρτι 2% 200g & μέλι", en: "Yogurt 2% 200g & honey", es: "Yogur 2% 200g & miel", fr: "Yaourt 2% 200g & miel" },
     kcal_est: 196, p: 16, c: 20, f: 8,
     note: "Γλυκό & πρωτεϊνούχο",
     items: ["200g γιαούρτι 2%", "1 κγ μέλι (~15g)"]
@@ -839,6 +900,7 @@ const STANDARD_MEALS = [
   {
     id: "sm43", meal: "afternoon", emoji: "🍌",
     name: "Μπανάνα & φυστικοβούτυρο",
+    nameI18n: { el: "Μπανάνα & φυστικοβούτυρο", en: "Banana & peanut butter", es: "Plátano & mantequilla de cacahuete", fr: "Banane & beurre de cacahuète" },
     kcal_est: 210, p: 6, c: 32, f: 8,
     note: "Ενέργεια & χορτασμός",
     items: ["1 μπανάνα (~120g)", "1 κγ φυστικοβούτυρο (~15g)"]
@@ -846,6 +908,7 @@ const STANDARD_MEALS = [
   {
     id: "sm44", meal: "afternoon", emoji: "🥕",
     name: "Λαχανικά & χούμους",
+    nameI18n: { el: "Λαχανικά & χούμους", en: "Vegetables & hummus", es: "Verduras & hummus", fr: "Légumes & houmous" },
     kcal_est: 150, p: 5, c: 18, f: 6,
     note: "Υγιεινό & χορταστικό",
     items: ["150g καρότο+αγγούρι+πιπεριά", "50g χούμους"]
@@ -853,6 +916,7 @@ const STANDARD_MEALS = [
   {
     id: "sm45", meal: "afternoon", emoji: "🧀",
     name: "Τοστ γαλοπούλα & τυρί",
+    nameI18n: { el: "Τοστ γαλοπούλα & τυρί", en: "Toast turkey & cheese", es: "Tostada pavo & queso", fr: "Toast dinde & fromage" },
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Πρωτεΐνη πριν την προπόνηση",
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g τυρί light"]
@@ -860,6 +924,7 @@ const STANDARD_MEALS = [
   {
     id: "sm46", meal: "afternoon", emoji: "🥝",
     name: "2 ακτινίδια & cottage cheese",
+    nameI18n: { el: "2 ακτινίδια & cottage cheese", en: "2 kiwis & cottage cheese", es: "2 kiwis & cottage cheese", fr: "2 kiwis & cottage cheese" },
     kcal_est: 180, p: 14, c: 24, f: 4,
     note: "Βιταμίνη C + πρωτεΐνη",
     items: ["2 ακτινίδια (~140g)", "100g cottage cheese"]
@@ -867,6 +932,7 @@ const STANDARD_MEALS = [
   {
     id: "sm47", meal: "afternoon", emoji: "🍮",
     name: "Ρυζόγαλο light",
+    nameI18n: { el: "Ρυζόγαλο light", en: "Light rice pudding", es: "Arroz con leche light", fr: "Riz au lait light" },
     kcal_est: 200, p: 6, c: 38, f: 2,
     note: "Γλυκό ανέσεως",
     items: ["1 ρυζόγαλο light (~200g)"]
@@ -876,6 +942,7 @@ const STANDARD_MEALS = [
   {
     id: "sm30", meal: "dinner", emoji: "🥗",
     name: "Τυρί cottage 200g + σαλάτα",
+    nameI18n: { el: "Τυρί cottage 200g + σαλάτα", en: "Cottage cheese 200g + salad", es: "Queso cottage 200g + ensalada", fr: "Cottage cheese 200g + salade" },
     kcal_est: 250, p: 24, c: 10, f: 12,
     note: "Ελαφρύ & πρωτεϊνούχο βραδινό",
     items: ["200g cottage cheese", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
@@ -883,6 +950,7 @@ const STANDARD_MEALS = [
   {
     id: "sm31", meal: "dinner", emoji: "🍳",
     name: "Ομελέτα 3 αυγών + σαλάτα",
+    nameI18n: { el: "Ομελέτα 3 αυγών + σαλάτα", en: "3-egg omelette + salad", es: "Tortilla de 3 huevos + ensalada", fr: "Omelette de 3 œufs + salade" },
     kcal_est: 320, p: 22, c: 8, f: 22,
     note: "Γρήγορο & χορταστικό",
     items: ["3 αυγά", "λίγο τυρί", "σαλάτα", "1 κγ ελαιόλαδο"]
@@ -890,6 +958,7 @@ const STANDARD_MEALS = [
   {
     id: "sm32", meal: "dinner", emoji: "🐟",
     name: "Σολομός κονσέρβα + ψωμί",
+    nameI18n: { el: "Σολομός κονσέρβα + ψωμί", en: "Canned salmon + bread", es: "Salmón en conserva + pan", fr: "Saumon en conserve + pain" },
     kcal_est: 380, p: 28, c: 32, f: 16,
     note: "Ωμέγα-3 + εύκολο",
     items: ["1 κονσέρβα σολομός (~125g)", "2 φέτες ψωμί ολικής"]
@@ -897,6 +966,7 @@ const STANDARD_MEALS = [
   {
     id: "sm33", meal: "dinner", emoji: "🧀",
     name: "Γιαούρτι 200g + 2 μπανάνες",
+    nameI18n: { el: "Γιαούρτι 200g + 2 μπανάνες", en: "Yogurt 200g + 2 bananas", es: "Yogur 200g + 2 plátanos", fr: "Yaourt 200g + 2 bananes" },
     kcal_est: 280, p: 10, c: 52, f: 4,
     note: "Ελαφρύ βραδινό",
     items: ["200g γιαούρτι 2%", "2 μπανάνες (~240g)"]
@@ -904,6 +974,7 @@ const STANDARD_MEALS = [
   {
     id: "sm60", meal: "dinner", emoji: "🥗",
     name: "Κοτοσαλάτα με παξιμαδάκια & σως γιαουρτιού",
+    nameI18n: { el: "Κοτοσαλάτα με παξιμαδάκια & σως γιαουρτιού", en: "Chicken salad with rusks & yogurt dressing", es: "Ensalada de pollo con tostadas & salsa de yogur", fr: "Salade de poulet avec biscottes & sauce au yaourt" },
     kcal_est: 520, p: 36, c: 42, f: 14,
     note: "Σως: γιαούρτι 2%, μουστάρδα, μέλι. Κόψε κοτόπουλο σε λωρίδες, σπάσε τα παξιμαδάκια σε κομμάτια. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, θυμάρι.",
     items: ["100g ψητό φιλέτο κοτόπουλο", "120g ντομάτα", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού (2 τεμ.)", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
@@ -911,6 +982,7 @@ const STANDARD_MEALS = [
   {
     id: "sm61", meal: "dinner", emoji: "🐟",
     name: "Σαλάτα με τόνο σε λάδι + παξιμαδάκια",
+    nameI18n: { el: "Σαλάτα με τόνο σε λάδι + παξιμαδάκια", en: "Salad with tuna in oil + rusks", es: "Ensalada con atún en aceite + tostadas", fr: "Salade au thon à l'huile + biscottes" },
     kcal_est: 500, p: 30, c: 36, f: 22,
     note: "Στράγγισε καλά τον τόνο. Πρόσθεσε λεμόνι και κάπαρη. Μπαχαρικά: ρίγανη, πιπέρι, άνηθος.",
     items: ["120g τόνος σε λάδι (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
@@ -918,6 +990,7 @@ const STANDARD_MEALS = [
   {
     id: "sm62", meal: "dinner", emoji: "🥚",
     name: "Σαλάτα με βραστά αυγά & σως γιαουρτιού",
+    nameI18n: { el: "Σαλάτα με βραστά αυγά & σως γιαουρτιού", en: "Salad with boiled eggs & yogurt dressing", es: "Ensalada con huevos cocidos & salsa de yogur", fr: "Salade avec œufs durs & sauce au yaourt" },
     kcal_est: 490, p: 22, c: 44, f: 18,
     note: "Κόψε αυγά στα 4. Σως: γιαούρτι, μουστάρδα, μέλι — περιέχυσε λίγο πριν σερβίρεις. Μπαχαρικά: πάπρικα, πιπέρι, σχοινόπρασο.",
     items: ["2 βραστά αυγά", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "40g παξιμαδάκια χαρουπιού", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
@@ -925,6 +998,7 @@ const STANDARD_MEALS = [
   {
     id: "sm63", meal: "dinner", emoji: "🐟",
     name: "Σαλάτα με τόνο σε νερό + παξιμαδάκια",
+    nameI18n: { el: "Σαλάτα με τόνο σε νερό + παξιμαδάκια", en: "Salad with tuna in water + rusks", es: "Ensalada con atún en agua + tostadas", fr: "Salade au thon à l'eau + biscottes" },
     kcal_est: 470, p: 28, c: 36, f: 10,
     note: "Ιδανικό για ζεστές μέρες. Πρόσθεσε χυμό λεμονιού και λίγο ξίδι. Μπαχαρικά: ρίγανη, πιπέρι, βασιλικός.",
     items: ["120g τόνος σε νερό (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
@@ -932,6 +1006,7 @@ const STANDARD_MEALS = [
   {
     id: "sm64", meal: "dinner", emoji: "🫐",
     name: "Γιαούρτι με φρούτα δάσους, βρώμη & καρύδια",
+    nameI18n: { el: "Γιαούρτι με φρούτα δάσους, βρώμη & καρύδια", en: "Yogurt with berries, oats & walnuts", es: "Yogur con frutos del bosque, avena & nueces", fr: "Yaourt aux fruits des bois, avoine & noix" },
     kcal_est: 535, p: 16, c: 58, f: 22,
     note: "Σέρβιρε παγωμένο. Ανακάτεψε βρώμη με γιαούρτι, φρούτα από πάνω. Προαιρετικά: κανέλα, βανίλια.",
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g καρύδια"]
@@ -939,6 +1014,7 @@ const STANDARD_MEALS = [
   {
     id: "sm65", meal: "dinner", emoji: "🌯",
     name: "Τορτίγια ολικής με γαλοπούλα, κασέρι & αυγό",
+    nameI18n: { el: "Τορτίγια ολικής με γαλοπούλα, κασέρι & αυγό", en: "Whole grain wrap with turkey, kasseri cheese & egg", es: "Tortilla integral con pavo, queso kaseri & huevo", fr: "Wrap complet avec dinde, fromage kasseri & œuf" },
     kcal_est: 501, p: 30, c: 38, f: 20,
     note: "Ζέστανε τορτίγια 30-60\". Άλειψε Philadelphia, βάλε υλικά, τύλιξε. Ψήσε 2' σε τοστιέρα. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη.",
     items: ["60g τορτίγια ολικής", "15g Philadelphia Light", "60g γαλοπούλα βραστή", "40g άπαχο κασέρι", "40g μαρούλι", "80g ντομάτα", "1 βραστό αυγό"]
@@ -946,6 +1022,7 @@ const STANDARD_MEALS = [
   {
     id: "sm66", meal: "dinner", emoji: "🫐",
     name: "Γιαούρτι με φρούτα δάσους, βρώμη & αμύγδαλα",
+    nameI18n: { el: "Γιαούρτι με φρούτα δάσους, βρώμη & αμύγδαλα", en: "Yogurt with berries, oats & almonds", es: "Yogur con frutos del bosque, avena & almendras", fr: "Yaourt aux fruits des bois, avoine & amandes" },
     kcal_est: 529, p: 16, c: 56, f: 20,
     note: "Overnight oats: ετοίμασε από το προηγούμενο βράδυ. Αμύγδαλα χοντροκομμένα. Προαιρετικά: κανέλα, βανίλια, ξύσμα λεμονιού.",
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g αμύγδαλα"]
@@ -953,6 +1030,7 @@ const STANDARD_MEALS = [
   {
     id: "sm34", meal: "breakfast", emoji: "🥣",
     name: "Overnight Oats Πρωτεΐνης (1 μπολάκι/6)",
+    nameI18n: { el: "Overnight Oats Πρωτεΐνης (1 μπολάκι/6)", en: "Protein Overnight Oats (1 bowl/6)", es: "Avena nocturna proteica (1 bol/6)", fr: "Overnight Oats protéinés (1 bol/6)" },
     kcal_est: 447, p: 22, c: 52, f: 16,
     note: "Ετοιμάζεις 6 μπολάκια μαζί — διαρκούν 2 μέρες στο ψυγείο",
     items: ["300g βρώμη ÷6", "30g chia ÷6", "20g κακάο ÷6", "120g φυστικοβούτυρο ÷6", "600ml γάλα ÷6", "40g μέλι ÷6", "30g γιαούρτι στρ. garnish"]
@@ -960,6 +1038,7 @@ const STANDARD_MEALS = [
   {
     id: "sm35", meal: "lunch", emoji: "🥫",
     name: "Τοστ Γαλοπούλα & Ντομάτα",
+    nameI18n: { el: "Τοστ Γαλοπούλα & Ντομάτα", en: "Turkey & Tomato Toast", es: "Tostada de Pavo & Tomate", fr: "Toast Dinde & Tomate" },
     kcal_est: 302, p: 20, c: 30, f: 10,
     note: "Γρήγορο & πλούσιο σε πρωτεΐνη",
     items: ["2 φέτες ψωμί τοστ (~60g)", "80g γαλοπούλα φέτα", "15g μαγιονέζα light", "80g ντομάτα"]
@@ -967,6 +1046,7 @@ const STANDARD_MEALS = [
   {
     id: "sm36", meal: "lunch", emoji: "🌯",
     name: "Γύρος Κοτόπουλο Σπιτικός",
+    nameI18n: { el: "Γύρος Κοτόπουλο Σπιτικός", en: "Homemade Chicken Gyros", es: "Gyros de Pollo Casero", fr: "Gyros de Poulet Maison" },
     kcal_est: 490, p: 34, c: 48, f: 14,
     note: "Ψήσε το κοτόπουλο με μπαχαρικά - τζατζίκι, ντομάτα, κρεμμύδι στην πίτα",
     items: ["150g κοτόπουλο στήθος ψητό", "1 πίτα (~70g)", "50g τζατζίκι", "50g ντομάτα", "20g κρεμμύδι"]
@@ -974,6 +1054,7 @@ const STANDARD_MEALS = [
   {
     id: "sm37", meal: "dinner", emoji: "🥩",
     name: "Μπριζόλα Χοιρινή + Σαλάτα",
+    nameI18n: { el: "Μπριζόλα Χοιρινή + Σαλάτα", en: "Pork Chop + Salad", es: "Chuleta de Cerdo + Ensalada", fr: "Côtelette de Porc + Salade" },
     kcal_est: 498, p: 40, c: 8, f: 32,
     note: "Χοιρινή χωρίς κόκκαλο - ψητή με λεμόνι, ρίγανη, σκόρδο",
     items: ["200g μπριζόλα χοιρινή", "4 ψεκ. ελαιόλαδο", "λεμόνι, ρίγανη, σκόρδο, πιπέρι"]
@@ -981,6 +1062,7 @@ const STANDARD_MEALS = [
   {
     id: "sm38", meal: "dinner", emoji: "🍳",
     name: "Ομελέτα + Παξιμάδι Χαρουπιού + Κότατζ",
+    nameI18n: { el: "Ομελέτα + Παξιμάδι Χαρουπιού + Κότατζ", en: "Omelette + Carob Rusk + Cottage Cheese", es: "Tortilla + Tostada de Algarroba + Cottage", fr: "Omelette + Biscotte de Caroube + Cottage Cheese" },
     kcal_est: 516, p: 38, c: 22, f: 28,
     note: "Ελαφρύ αλλά χορταστικό βραδινό - υψηλή πρωτεΐνη",
     items: ["2 αυγά", "4 ψεκ. ελαιόλαδο", "200g cottage cheese", "100g ντοματίνια", "1.5 παξιμάδι χαρουπιού", "βαλσαμικό ξύδι, πιπέρι"]
@@ -990,6 +1072,7 @@ const STANDARD_MEALS = [
   {
     id: "sm70", meal: "breakfast", emoji: "🫙",
     name: "Protein Yogurt Bowl",
+    nameI18n: { el: "Protein Yogurt Bowl", en: "Protein Yogurt Bowl", es: "Bol de Yogur Proteico", fr: "Bol de Yaourt Protéiné" },
     kcal_est: 420, p: 28, c: 38, f: 17,
     note: "Ανακάτεψε γιαούρτι + βρώμη, πρόσθεσε φυστικοβούτυρο & σιρόπι zero",
     items: ["300g γιαούρτι στραγγιστό 2%", "30g βρώμη", "20g φυστικοβούτυρο", "10–15g σιρόπι Zero"]
@@ -997,6 +1080,7 @@ const STANDARD_MEALS = [
   {
     id: "sm71", meal: "breakfast", emoji: "🍳",
     name: "Protein Στραπατσάδα",
+    nameI18n: { el: "Protein Στραπατσάδα", en: "Protein Scrambled Eggs", es: "Huevos Revueltos Proteicos", fr: "Œufs Brouillés Protéinés" },
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Χτύπησε αυγά + ασπράδια, ψήσε σε αντικολλητικό, πρόσθεσε Philadelphia & καλαμπόκι",
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
@@ -1004,6 +1088,7 @@ const STANDARD_MEALS = [
   {
     id: "sm72", meal: "dinner", emoji: "🍳",
     name: "Protein Στραπατσάδα (Βραδινό)",
+    nameI18n: { el: "Protein Στραπατσάδα (Βραδινό)", en: "Protein Scrambled Eggs (Dinner)", es: "Huevos Revueltos Proteicos (Cena)", fr: "Œufs Brouillés Protéinés (Dîner)" },
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Ίδια με πρωινό — σέρβιρε με σαλάτα ή λαχανικά",
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
@@ -1011,6 +1096,7 @@ const STANDARD_MEALS = [
   {
     id: "sm73", meal: "dinner", emoji: "🌮",
     name: "Viral Taco Burger",
+    nameI18n: { el: "Viral Taco Burger", en: "Viral Taco Burger", es: "Viral Taco Burger", fr: "Viral Taco Burger" },
     kcal_est: 900, p: 62, c: 37, f: 54,
     note: "Άπλωσε κιμά στην τορτίγια, ψήσε από κιμά πρώτα 3-4', γύρισε, βάλε gouda. Σως: μαγιονέζα+κέτσαπ+μουστάρδα+χυμό πίκλας.",
     items: ["1 τορτίγια ολικής (~60g)", "225g κιμάς μοσχαρίσιος 5-10%", "40g Gouda (2 φέτες)", "30g μαρούλι", "50g ντομάτα", "20g κρεμμύδι", "15g κέτσαπ", "15g μαγιονέζα", "8g μουστάρδα", "30-45ml χυμός πίκλας", "αλάτι, πιπέρι, σκόνη σκόρδου"]
@@ -1018,203 +1104,203 @@ const STANDARD_MEALS = [
 
   // ─── ΜΕΣΗΜΕΡΙΑΝΑ — ΚΡΕΑΤΑ & ΨΑΡΙΑ ───
   // foodGroup = same food, different portion — wizard shows one row per group
-  { id: "ex_l1",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 150γρ",       kcal_est: 250, p: 47, c: 0,  f: 6,  foodGroup: "g_chicken_fillet", wizardName: "Κοτόπουλο φιλέτο ψητό",      items: ["150γρ κοτόπουλο φιλέτο ψητό"] },
-  { id: "ex_l2",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 200γρ",       kcal_est: 330, p: 62, c: 0,  f: 7,  foodGroup: "g_chicken_fillet", items: ["200γρ κοτόπουλο φιλέτο ψητό"] },
-  { id: "ex_l3",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 250γρ",       kcal_est: 410, p: 78, c: 0,  f: 9,  foodGroup: "g_chicken_fillet", items: ["250γρ κοτόπουλο φιλέτο ψητό"] },
-  { id: "ex_l4",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 300γρ",       kcal_est: 500, p: 93, c: 0,  f: 11, foodGroup: "g_chicken_fillet", items: ["300γρ κοτόπουλο φιλέτο ψητό"] },
-  { id: "ex_l5",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×2",       kcal_est: 330, p: 40, c: 2,  f: 16, foodGroup: "g_souvlaki_chk",  wizardName: "Σουβλάκι κοτόπουλο",          items: ["2 σουβλάκια κοτόπουλο"] },
-  { id: "ex_l6",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×3",       kcal_est: 500, p: 60, c: 3,  f: 24, foodGroup: "g_souvlaki_chk",  items: ["3 σουβλάκια κοτόπουλο"] },
-  { id: "ex_l7",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×4",       kcal_est: 660, p: 80, c: 4,  f: 32, foodGroup: "g_souvlaki_chk",  items: ["4 σουβλάκια κοτόπουλο"] },
-  { id: "ex_l8",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο τηγανία 200γρ",      kcal_est: 440, p: 44, c: 2,  f: 28, foodGroup: "g_chicken_pan",   wizardName: "Κοτόπουλο τηγανία",           items: ["200γρ κοτόπουλο τηγανία"] },
-  { id: "ex_l9",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο τηγανία 250γρ",      kcal_est: 550, p: 55, c: 3,  f: 35, foodGroup: "g_chicken_pan",   items: ["250γρ κοτόπουλο τηγανία"] },
-  { id: "ex_l10", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 150γρ",     kcal_est: 270, p: 32, c: 4,  f: 14, foodGroup: "g_burger_chk",    wizardName: "Μπιφτέκι κοτόπουλο",          items: ["150γρ μπιφτέκι κοτόπουλο"] },
-  { id: "ex_l11", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 200γρ",     kcal_est: 360, p: 43, c: 5,  f: 18, foodGroup: "g_burger_chk",    items: ["200γρ μπιφτέκι κοτόπουλο"] },
-  { id: "ex_l12", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 250γρ",     kcal_est: 450, p: 54, c: 6,  f: 23, foodGroup: "g_burger_chk",    items: ["250γρ μπιφτέκι κοτόπουλο"] },
-  { id: "ex_l13", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 150γρ",    kcal_est: 380, p: 30, c: 0,  f: 28, foodGroup: "g_pork_chop",     wizardName: "Χοιρινά μπριζολάκια ψητά",    items: ["150γρ χοιρινά μπριζολάκια ψητά"] },
-  { id: "ex_l14", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 200γρ",    kcal_est: 500, p: 40, c: 0,  f: 37, foodGroup: "g_pork_chop",     items: ["200γρ χοιρινά μπριζολάκια ψητά"] },
-  { id: "ex_l15", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 250γρ",    kcal_est: 630, p: 50, c: 0,  f: 47, foodGroup: "g_pork_chop",     items: ["250γρ χοιρινά μπριζολάκια ψητά"] },
-  { id: "ex_l16", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 300γρ",    kcal_est: 750, p: 60, c: 0,  f: 56, foodGroup: "g_pork_chop",     items: ["300γρ χοιρινά μπριζολάκια ψητά"] },
-  { id: "ex_l17", meal: "lunch", emoji: "🥩", name: "Τηγανία χοιρινή 200γρ",         kcal_est: 560, p: 38, c: 2,  f: 44, foodGroup: "g_pork_pan",      wizardName: "Τηγανία χοιρινή",             items: ["200γρ τηγανία χοιρινή"] },
-  { id: "ex_l18", meal: "lunch", emoji: "🥩", name: "Τηγανία χοιρινή 250γρ",         kcal_est: 700, p: 48, c: 3,  f: 55, foodGroup: "g_pork_pan",      items: ["250γρ τηγανία χοιρινή"] },
-  { id: "ex_l19", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 150γρ",     kcal_est: 350, p: 28, c: 4,  f: 24, foodGroup: "g_burger_mix",    wizardName: "Μπιφτέκι ανάμεικτο",          items: ["150γρ μπιφτέκι ανάμεικτο"] },
-  { id: "ex_l20", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 200γρ",     kcal_est: 460, p: 37, c: 5,  f: 32, foodGroup: "g_burger_mix",    items: ["200γρ μπιφτέκι ανάμεικτο"] },
-  { id: "ex_l21", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 250γρ",     kcal_est: 580, p: 46, c: 6,  f: 40, foodGroup: "g_burger_mix",    items: ["250γρ μπιφτέκι ανάμεικτο"] },
-  { id: "ex_l22", meal: "lunch", emoji: "🥩", name: "Φιλέτο μοσχάρι 200γρ",          kcal_est: 360, p: 46, c: 0,  f: 18, foodGroup: "g_beef_fillet",   wizardName: "Φιλέτο μοσχάρι ψητό",         items: ["200γρ φιλέτο μοσχάρι ψητό"] },
-  { id: "ex_l23", meal: "lunch", emoji: "🥩", name: "Φιλέτο μοσχάρι 300γρ",          kcal_est: 540, p: 69, c: 0,  f: 27, foodGroup: "g_beef_fillet",   items: ["300γρ φιλέτο μοσχάρι ψητό"] },
-  { id: "ex_l24", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 150γρ",        kcal_est: 320, p: 32, c: 3,  f: 20, foodGroup: "g_burger_beef",   wizardName: "Μπιφτέκι μοσχάρι",            items: ["150γρ μπιφτέκι μοσχάρι"] },
-  { id: "ex_l25", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 200γρ",        kcal_est: 420, p: 43, c: 4,  f: 26, foodGroup: "g_burger_beef",   items: ["200γρ μπιφτέκι μοσχάρι"] },
-  { id: "ex_l26", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 250γρ",        kcal_est: 530, p: 54, c: 5,  f: 33, foodGroup: "g_burger_beef",   items: ["250γρ μπιφτέκι μοσχάρι"] },
-  { id: "ex_l27", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 300γρ",        kcal_est: 630, p: 65, c: 6,  f: 39, foodGroup: "g_burger_beef",   items: ["300γρ μπιφτέκι μοσχάρι"] },
-  { id: "ex_l28", meal: "lunch", emoji: "🐟", name: "Σολομός 100γρ",                  kcal_est: 210, p: 20, c: 0,  f: 13, foodGroup: "g_salmon",        wizardName: "Σολομός ψητός",               items: ["100γρ σολομός ψητός"] },
-  { id: "ex_l29", meal: "lunch", emoji: "🐟", name: "Σολομός 150γρ",                  kcal_est: 310, p: 30, c: 0,  f: 20, foodGroup: "g_salmon",        items: ["150γρ σολομός ψητός"] },
-  { id: "ex_l30", meal: "lunch", emoji: "🐟", name: "Σολομός 200γρ",                  kcal_est: 410, p: 40, c: 0,  f: 26, foodGroup: "g_salmon",        items: ["200γρ σολομός ψητός"] },
-  { id: "ex_l31", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 150γρ",             kcal_est: 180, p: 27, c: 0,  f: 1,  foodGroup: "g_cod",           wizardName: "Μπακαλίαρος ψητός",           items: ["150γρ μπακαλίαρος ψητός"] },
-  { id: "ex_l32", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 200γρ",             kcal_est: 240, p: 36, c: 0,  f: 1,  foodGroup: "g_cod",           items: ["200γρ μπακαλίαρος ψητός"] },
-  { id: "ex_l33", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 250γρ",             kcal_est: 300, p: 45, c: 0,  f: 2,  foodGroup: "g_cod",           items: ["250γρ μπακαλίαρος ψητός"] },
-  { id: "ex_l34", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 300γρ",             kcal_est: 360, p: 54, c: 0,  f: 2,  foodGroup: "g_cod",           items: ["300γρ μπακαλίαρος ψητός"] },
-  { id: "ex_l35", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 2 αυγά",      kcal_est: 180, p: 12, c: 1,  f: 14, foodGroup: "g_omelette",      wizardName: "Ομελέτα λαχανικών",           items: ["2 αυγά", "1 κγ ελαιόλαδο"] },
-  { id: "ex_l36", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 3 αυγά",      kcal_est: 270, p: 18, c: 2,  f: 21, foodGroup: "g_omelette",      items: ["3 αυγά", "1 κγ ελαιόλαδο"] },
-  { id: "ex_l37", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 4 αυγά",      kcal_est: 360, p: 24, c: 2,  f: 28, foodGroup: "g_omelette",      items: ["4 αυγά", "1 κγ ελαιόλαδο"] },
-  { id: "ex_l38", meal: "lunch", emoji: "🫘", name: "Ρεβύθια",                        kcal_est: 400, p: 22, c: 67, f: 6,  items: ["250γρ ρεβύθια μαγειρεμένα"] },
-  { id: "ex_l39", meal: "lunch", emoji: "🥣", name: "Φακές",                          kcal_est: 290, p: 22, c: 50, f: 1,  items: ["250γρ φακές μαγειρεμένες"] },
-  { id: "ex_l40", meal: "lunch", emoji: "🍝", name: "Μακαρόνια με μανιτάρια & κόκκινη σάλτσα", kcal_est: 410, p: 14, c: 72, f: 8, items: ["250γρ μακαρόνια", "100γρ κόκκινη σάλτσα", "μανιτάρια"] },
-  { id: "ex_l41", meal: "lunch", emoji: "🍝", name: "Μακαρόνια με κιμά",              kcal_est: 550, p: 30, c: 62, f: 18, items: ["250γρ μακαρόνια", "150γρ σάλτσα κιμά"] },
-  { id: "ex_l42", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές με κιμά",     kcal_est: 500, p: 28, c: 44, f: 20, foodGroup: "g_gemista",       wizardName: "Γεμιστές πιπεριές με κιμά",   items: ["2 γεμιστές πιπεριές με κιμά"] },
-  { id: "ex_l43", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές κιμά ×3",     kcal_est: 750, p: 42, c: 66, f: 30, foodGroup: "g_gemista",       items: ["3 γεμιστές πιπεριές με κιμά"] },
-  { id: "ex_l44", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές κιμά ×4",     kcal_est:1000, p: 56, c: 88, f: 40, foodGroup: "g_gemista",       items: ["4 γεμιστές πιπεριές με κιμά"] },
-  { id: "ex_l45", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×2",          kcal_est: 400, p: 32, c: 2,  f: 28, foodGroup: "g_souvlaki_pork", wizardName: "Σουβλάκι χοιρινό",            items: ["2 σουβλάκια χοιρινά"] },
-  { id: "ex_l46", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×3",          kcal_est: 580, p: 48, c: 3,  f: 42, foodGroup: "g_souvlaki_pork", items: ["3 σουβλάκια χοιρινά"] },
-  { id: "ex_l47", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×4",          kcal_est: 760, p: 64, c: 4,  f: 56, foodGroup: "g_souvlaki_pork", items: ["4 σουβλάκια χοιρινά"] },
-  { id: "ex_l48", meal: "lunch", emoji: "🍲", name: "Κοτόσουπα με ρύζι",             kcal_est: 420, p: 38, c: 36, f: 12, items: ["1½ φλ σούπα", "120γρ κοτόπουλο"] },
-  { id: "ex_l49", meal: "lunch", emoji: "🥣", name: "Γιουβαρλάκια σούπα",            kcal_est: 480, p: 26, c: 38, f: 20, items: ["1½ φλ σούπα", "5 γιουβαρλάκια ~180γρ"] },
-  { id: "ex_l50", meal: "lunch", emoji: "🥩", name: "Συκώτι μοσχαρίσιο ψητό + σαλάτα + ψωμί", kcal_est: 520, p: 40, c: 20, f: 28, items: ["150γρ συκώτι", "1 φλ σαλάτα", "1 φέτα ψωμί"] },
-  { id: "ex_l51", meal: "lunch", emoji: "🥘", name: "Μοσχάρι κοκκινιστό + ρύζι",    kcal_est: 550, p: 42, c: 46, f: 18, items: ["120γρ μοσχάρι", "150γρ ρύζι", "1 κσ ελαιόλαδο"] },
-  { id: "ex_l52", meal: "lunch", emoji: "🥗", name: "Ψητά λαχανικά με φέτα + ψωμί", kcal_est: 460, p: 14, c: 48, f: 22, items: ["250γρ λαχανικά ψητά", "40γρ φέτα", "1 φέτα ψωμί"] },
-  { id: "ex_l53", meal: "lunch", emoji: "🌿", name: "Σπανακόρυζο + φέτα",            kcal_est: 490, p: 16, c: 62, f: 18, items: ["300γρ σπανακόρυζο", "40γρ φέτα"] },
-  { id: "ex_l54", meal: "lunch", emoji: "🍽️", name: "Φαγητό εξω εστιατόριο",        kcal_est: 800, p: 30, c: 70, f: 38, items: ["Εξωτερικό εστιατόριο ~800 kcal"] },
-  { id: "ex_l55", meal: "lunch", emoji: "🥙", name: "Φαγητό εξω σουβλάκι",           kcal_est: 800, p: 36, c: 72, f: 34, items: ["Σουβλάκι + πίτα + σάλτσα"] },
-  { id: "ex_l56", meal: "lunch", emoji: "🍕", name: "Πίτσα εξω",                     kcal_est: 700, p: 28, c: 80, f: 28, items: ["Πίτσα εξω ~700 kcal"] },
-  { id: "ex_l57", meal: "lunch", emoji: "🍝", name: "Μακαρόνια εξω",                  kcal_est: 800, p: 26, c: 100, f:28, items: ["Μακαρόνια εστιατόριο ~800 kcal"] },
+  { id: "ex_l1",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 150γρ",       nameI18n: { el: "Κοτόπουλο φιλέτο 150γρ", en: "Chicken fillet 150g", es: "Filete de pollo 150g", fr: "Filet de poulet 150g" }, kcal_est: 250, p: 47, c: 0,  f: 6,  foodGroup: "g_chicken_fillet", wizardName: "Κοτόπουλο φιλέτο ψητό",      items: ["150γρ κοτόπουλο φιλέτο ψητό"] },
+  { id: "ex_l2",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 200γρ",       nameI18n: { el: "Κοτόπουλο φιλέτο 200γρ", en: "Chicken fillet 200g", es: "Filete de pollo 200g", fr: "Filet de poulet 200g" }, kcal_est: 330, p: 62, c: 0,  f: 7,  foodGroup: "g_chicken_fillet", items: ["200γρ κοτόπουλο φιλέτο ψητό"] },
+  { id: "ex_l3",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 250γρ",       nameI18n: { el: "Κοτόπουλο φιλέτο 250γρ", en: "Chicken fillet 250g", es: "Filete de pollo 250g", fr: "Filet de poulet 250g" }, kcal_est: 410, p: 78, c: 0,  f: 9,  foodGroup: "g_chicken_fillet", items: ["250γρ κοτόπουλο φιλέτο ψητό"] },
+  { id: "ex_l4",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο φιλέτο 300γρ",       nameI18n: { el: "Κοτόπουλο φιλέτο 300γρ", en: "Chicken fillet 300g", es: "Filete de pollo 300g", fr: "Filet de poulet 300g" }, kcal_est: 500, p: 93, c: 0,  f: 11, foodGroup: "g_chicken_fillet", items: ["300γρ κοτόπουλο φιλέτο ψητό"] },
+  { id: "ex_l5",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×2",       nameI18n: { el: "Σουβλάκια κοτόπουλο ×2", en: "Chicken souvlaki ×2", es: "Souvlaki de pollo ×2", fr: "Souvlaki de poulet ×2" }, kcal_est: 330, p: 40, c: 2,  f: 16, foodGroup: "g_souvlaki_chk",  wizardName: "Σουβλάκι κοτόπουλο",          items: ["2 σουβλάκια κοτόπουλο"] },
+  { id: "ex_l6",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×3",       nameI18n: { el: "Σουβλάκια κοτόπουλο ×3", en: "Chicken souvlaki ×3", es: "Souvlaki de pollo ×3", fr: "Souvlaki de poulet ×3" }, kcal_est: 500, p: 60, c: 3,  f: 24, foodGroup: "g_souvlaki_chk",  items: ["3 σουβλάκια κοτόπουλο"] },
+  { id: "ex_l7",  meal: "lunch", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×4",       nameI18n: { el: "Σουβλάκια κοτόπουλο ×4", en: "Chicken souvlaki ×4", es: "Souvlaki de pollo ×4", fr: "Souvlaki de poulet ×4" }, kcal_est: 660, p: 80, c: 4,  f: 32, foodGroup: "g_souvlaki_chk",  items: ["4 σουβλάκια κοτόπουλο"] },
+  { id: "ex_l8",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο τηγανία 200γρ",      nameI18n: { el: "Κοτόπουλο τηγανία 200γρ", en: "Pan-fried chicken 200g", es: "Pollo a la sartén 200g", fr: "Poulet à la poêle 200g" }, kcal_est: 440, p: 44, c: 2,  f: 28, foodGroup: "g_chicken_pan",   wizardName: "Κοτόπουλο τηγανία",           items: ["200γρ κοτόπουλο τηγανία"] },
+  { id: "ex_l9",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο τηγανία 250γρ",      nameI18n: { el: "Κοτόπουλο τηγανία 250γρ", en: "Pan-fried chicken 250g", es: "Pollo a la sartén 250g", fr: "Poulet à la poêle 250g" }, kcal_est: 550, p: 55, c: 3,  f: 35, foodGroup: "g_chicken_pan",   items: ["250γρ κοτόπουλο τηγανία"] },
+  { id: "ex_l10", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 150γρ",     nameI18n: { el: "Μπιφτέκι κοτόπουλο 150γρ", en: "Chicken burger 150g", es: "Hamburguesa de pollo 150g", fr: "Burger de poulet 150g" }, kcal_est: 270, p: 32, c: 4,  f: 14, foodGroup: "g_burger_chk",    wizardName: "Μπιφτέκι κοτόπουλο",          items: ["150γρ μπιφτέκι κοτόπουλο"] },
+  { id: "ex_l11", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 200γρ",     nameI18n: { el: "Μπιφτέκι κοτόπουλο 200γρ", en: "Chicken burger 200g", es: "Hamburguesa de pollo 200g", fr: "Burger de poulet 200g" }, kcal_est: 360, p: 43, c: 5,  f: 18, foodGroup: "g_burger_chk",    items: ["200γρ μπιφτέκι κοτόπουλο"] },
+  { id: "ex_l12", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι κοτόπουλο 250γρ",     nameI18n: { el: "Μπιφτέκι κοτόπουλο 250γρ", en: "Chicken burger 250g", es: "Hamburguesa de pollo 250g", fr: "Burger de poulet 250g" }, kcal_est: 450, p: 54, c: 6,  f: 23, foodGroup: "g_burger_chk",    items: ["250γρ μπιφτέκι κοτόπουλο"] },
+  { id: "ex_l13", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 150γρ",    nameI18n: { el: "Χοιρινά μπριζολάκια 150γρ", en: "Pork chops 150g", es: "Chuletas de cerdo 150g", fr: "Côtelettes de porc 150g" }, kcal_est: 380, p: 30, c: 0,  f: 28, foodGroup: "g_pork_chop",     wizardName: "Χοιρινά μπριζολάκια ψητά",    items: ["150γρ χοιρινά μπριζολάκια ψητά"] },
+  { id: "ex_l14", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 200γρ",    nameI18n: { el: "Χοιρινά μπριζολάκια 200γρ", en: "Pork chops 200g", es: "Chuletas de cerdo 200g", fr: "Côtelettes de porc 200g" }, kcal_est: 500, p: 40, c: 0,  f: 37, foodGroup: "g_pork_chop",     items: ["200γρ χοιρινά μπριζολάκια ψητά"] },
+  { id: "ex_l15", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 250γρ",    nameI18n: { el: "Χοιρινά μπριζολάκια 250γρ", en: "Pork chops 250g", es: "Chuletas de cerdo 250g", fr: "Côtelettes de porc 250g" }, kcal_est: 630, p: 50, c: 0,  f: 47, foodGroup: "g_pork_chop",     items: ["250γρ χοιρινά μπριζολάκια ψητά"] },
+  { id: "ex_l16", meal: "lunch", emoji: "🥩", name: "Χοιρινά μπριζολάκια 300γρ",    nameI18n: { el: "Χοιρινά μπριζολάκια 300γρ", en: "Pork chops 300g", es: "Chuletas de cerdo 300g", fr: "Côtelettes de porc 300g" }, kcal_est: 750, p: 60, c: 0,  f: 56, foodGroup: "g_pork_chop",     items: ["300γρ χοιρινά μπριζολάκια ψητά"] },
+  { id: "ex_l17", meal: "lunch", emoji: "🥩", name: "Τηγανία χοιρινή 200γρ",         nameI18n: { el: "Τηγανία χοιρινή 200γρ", en: "Pan-fried pork 200g", es: "Cerdo a la sartén 200g", fr: "Porc à la poêle 200g" }, kcal_est: 560, p: 38, c: 2,  f: 44, foodGroup: "g_pork_pan",      wizardName: "Τηγανία χοιρινή",             items: ["200γρ τηγανία χοιρινή"] },
+  { id: "ex_l18", meal: "lunch", emoji: "🥩", name: "Τηγανία χοιρινή 250γρ",         nameI18n: { el: "Τηγανία χοιρινή 250γρ", en: "Pan-fried pork 250g", es: "Cerdo a la sartén 250g", fr: "Porc à la poêle 250g" }, kcal_est: 700, p: 48, c: 3,  f: 55, foodGroup: "g_pork_pan",      items: ["250γρ τηγανία χοιρινή"] },
+  { id: "ex_l19", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 150γρ",     nameI18n: { el: "Μπιφτέκι ανάμεικτο 150γρ", en: "Mixed meat burger 150g", es: "Hamburguesa mixta 150g", fr: "Burger mixte 150g" }, kcal_est: 350, p: 28, c: 4,  f: 24, foodGroup: "g_burger_mix",    wizardName: "Μπιφτέκι ανάμεικτο",          items: ["150γρ μπιφτέκι ανάμεικτο"] },
+  { id: "ex_l20", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 200γρ",     nameI18n: { el: "Μπιφτέκι ανάμεικτο 200γρ", en: "Mixed meat burger 200g", es: "Hamburguesa mixta 200g", fr: "Burger mixte 200g" }, kcal_est: 460, p: 37, c: 5,  f: 32, foodGroup: "g_burger_mix",    items: ["200γρ μπιφτέκι ανάμεικτο"] },
+  { id: "ex_l21", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι ανάμεικτο 250γρ",     nameI18n: { el: "Μπιφτέκι ανάμεικτο 250γρ", en: "Mixed meat burger 250g", es: "Hamburguesa mixta 250g", fr: "Burger mixte 250g" }, kcal_est: 580, p: 46, c: 6,  f: 40, foodGroup: "g_burger_mix",    items: ["250γρ μπιφτέκι ανάμεικτο"] },
+  { id: "ex_l22", meal: "lunch", emoji: "🥩", name: "Φιλέτο μοσχάρι 200γρ",          nameI18n: { el: "Φιλέτο μοσχάρι 200γρ", en: "Beef fillet 200g", es: "Filete de ternera 200g", fr: "Filet de bœuf 200g" }, kcal_est: 360, p: 46, c: 0,  f: 18, foodGroup: "g_beef_fillet",   wizardName: "Φιλέτο μοσχάρι ψητό",         items: ["200γρ φιλέτο μοσχάρι ψητό"] },
+  { id: "ex_l23", meal: "lunch", emoji: "🥩", name: "Φιλέτο μοσχάρι 300γρ",          nameI18n: { el: "Φιλέτο μοσχάρι 300γρ", en: "Beef fillet 300g", es: "Filete de ternera 300g", fr: "Filet de bœuf 300g" }, kcal_est: 540, p: 69, c: 0,  f: 27, foodGroup: "g_beef_fillet",   items: ["300γρ φιλέτο μοσχάρι ψητό"] },
+  { id: "ex_l24", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 150γρ",        nameI18n: { el: "Μπιφτέκι μοσχάρι 150γρ", en: "Beef burger 150g", es: "Hamburguesa de ternera 150g", fr: "Burger de bœuf 150g" }, kcal_est: 320, p: 32, c: 3,  f: 20, foodGroup: "g_burger_beef",   wizardName: "Μπιφτέκι μοσχάρι",            items: ["150γρ μπιφτέκι μοσχάρι"] },
+  { id: "ex_l25", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 200γρ",        nameI18n: { el: "Μπιφτέκι μοσχάρι 200γρ", en: "Beef burger 200g", es: "Hamburguesa de ternera 200g", fr: "Burger de bœuf 200g" }, kcal_est: 420, p: 43, c: 4,  f: 26, foodGroup: "g_burger_beef",   items: ["200γρ μπιφτέκι μοσχάρι"] },
+  { id: "ex_l26", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 250γρ",        nameI18n: { el: "Μπιφτέκι μοσχάρι 250γρ", en: "Beef burger 250g", es: "Hamburguesa de ternera 250g", fr: "Burger de bœuf 250g" }, kcal_est: 530, p: 54, c: 5,  f: 33, foodGroup: "g_burger_beef",   items: ["250γρ μπιφτέκι μοσχάρι"] },
+  { id: "ex_l27", meal: "lunch", emoji: "🍔", name: "Μπιφτέκι μοσχάρι 300γρ",        nameI18n: { el: "Μπιφτέκι μοσχάρι 300γρ", en: "Beef burger 300g", es: "Hamburguesa de ternera 300g", fr: "Burger de bœuf 300g" }, kcal_est: 630, p: 65, c: 6,  f: 39, foodGroup: "g_burger_beef",   items: ["300γρ μπιφτέκι μοσχάρι"] },
+  { id: "ex_l28", meal: "lunch", emoji: "🐟", name: "Σολομός 100γρ",                  nameI18n: { el: "Σολομός 100γρ", en: "Salmon 100g", es: "Salmón 100g", fr: "Saumon 100g" }, kcal_est: 210, p: 20, c: 0,  f: 13, foodGroup: "g_salmon",        wizardName: "Σολομός ψητός",               items: ["100γρ σολομός ψητός"] },
+  { id: "ex_l29", meal: "lunch", emoji: "🐟", name: "Σολομός 150γρ",                  nameI18n: { el: "Σολομός 150γρ", en: "Salmon 150g", es: "Salmón 150g", fr: "Saumon 150g" }, kcal_est: 310, p: 30, c: 0,  f: 20, foodGroup: "g_salmon",        items: ["150γρ σολομός ψητός"] },
+  { id: "ex_l30", meal: "lunch", emoji: "🐟", name: "Σολομός 200γρ",                  nameI18n: { el: "Σολομός 200γρ", en: "Salmon 200g", es: "Salmón 200g", fr: "Saumon 200g" }, kcal_est: 410, p: 40, c: 0,  f: 26, foodGroup: "g_salmon",        items: ["200γρ σολομός ψητός"] },
+  { id: "ex_l31", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 150γρ",             nameI18n: { el: "Μπακαλίαρος 150γρ", en: "Cod 150g", es: "Bacalao 150g", fr: "Cabillaud 150g" }, kcal_est: 180, p: 27, c: 0,  f: 1,  foodGroup: "g_cod",           wizardName: "Μπακαλίαρος ψητός",           items: ["150γρ μπακαλίαρος ψητός"] },
+  { id: "ex_l32", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 200γρ",             nameI18n: { el: "Μπακαλίαρος 200γρ", en: "Cod 200g", es: "Bacalao 200g", fr: "Cabillaud 200g" }, kcal_est: 240, p: 36, c: 0,  f: 1,  foodGroup: "g_cod",           items: ["200γρ μπακαλίαρος ψητός"] },
+  { id: "ex_l33", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 250γρ",             nameI18n: { el: "Μπακαλίαρος 250γρ", en: "Cod 250g", es: "Bacalao 250g", fr: "Cabillaud 250g" }, kcal_est: 300, p: 45, c: 0,  f: 2,  foodGroup: "g_cod",           items: ["250γρ μπακαλίαρος ψητός"] },
+  { id: "ex_l34", meal: "lunch", emoji: "🐟", name: "Μπακαλίαρος 300γρ",             nameI18n: { el: "Μπακαλίαρος 300γρ", en: "Cod 300g", es: "Bacalao 300g", fr: "Cabillaud 300g" }, kcal_est: 360, p: 54, c: 0,  f: 2,  foodGroup: "g_cod",           items: ["300γρ μπακαλίαρος ψητός"] },
+  { id: "ex_l35", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 2 αυγά",      nameI18n: { el: "Ομελέτα λαχανικών 2 αυγά", en: "Vegetable omelette 2 eggs", es: "Tortilla de verduras 2 huevos", fr: "Omelette aux légumes 2 œufs" }, kcal_est: 180, p: 12, c: 1,  f: 14, foodGroup: "g_omelette",      wizardName: "Ομελέτα λαχανικών",           items: ["2 αυγά", "1 κγ ελαιόλαδο"] },
+  { id: "ex_l36", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 3 αυγά",      nameI18n: { el: "Ομελέτα λαχανικών 3 αυγά", en: "Vegetable omelette 3 eggs", es: "Tortilla de verduras 3 huevos", fr: "Omelette aux légumes 3 œufs" }, kcal_est: 270, p: 18, c: 2,  f: 21, foodGroup: "g_omelette",      items: ["3 αυγά", "1 κγ ελαιόλαδο"] },
+  { id: "ex_l37", meal: "lunch", emoji: "🍳", name: "Ομελέτα λαχανικών 4 αυγά",      nameI18n: { el: "Ομελέτα λαχανικών 4 αυγά", en: "Vegetable omelette 4 eggs", es: "Tortilla de verduras 4 huevos", fr: "Omelette aux légumes 4 œufs" }, kcal_est: 360, p: 24, c: 2,  f: 28, foodGroup: "g_omelette",      items: ["4 αυγά", "1 κγ ελαιόλαδο"] },
+  { id: "ex_l38", meal: "lunch", emoji: "🫘", name: "Ρεβύθια",                        nameI18n: { el: "Ρεβύθια", en: "Chickpeas", es: "Garbanzos", fr: "Pois chiches" }, kcal_est: 400, p: 22, c: 67, f: 6,  items: ["250γρ ρεβύθια μαγειρεμένα"] },
+  { id: "ex_l39", meal: "lunch", emoji: "🥣", name: "Φακές",                          nameI18n: { el: "Φακές", en: "Lentils", es: "Lentejas", fr: "Lentilles" }, kcal_est: 290, p: 22, c: 50, f: 1,  items: ["250γρ φακές μαγειρεμένες"] },
+  { id: "ex_l40", meal: "lunch", emoji: "🍝", name: "Μακαρόνια με μανιτάρια & κόκκινη σάλτσα", nameI18n: { el: "Μακαρόνια με μανιτάρια & κόκκινη σάλτσα", en: "Pasta with mushrooms & tomato sauce", es: "Fideos con champiñones & salsa roja", fr: "Pâtes aux champignons & sauce tomate" }, kcal_est: 410, p: 14, c: 72, f: 8, items: ["250γρ μακαρόνια", "100γρ κόκκινη σάλτσα", "μανιτάρια"] },
+  { id: "ex_l41", meal: "lunch", emoji: "🍝", name: "Μακαρόνια με κιμά",              nameI18n: { el: "Μακαρόνια με κιμά", en: "Pasta with meat sauce", es: "Fideos con carne picada", fr: "Pâtes à la bolognaise" }, kcal_est: 550, p: 30, c: 62, f: 18, items: ["250γρ μακαρόνια", "150γρ σάλτσα κιμά"] },
+  { id: "ex_l42", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές με κιμά",     nameI18n: { el: "Γεμιστές πιπεριές με κιμά", en: "Stuffed peppers with minced meat", es: "Pimientos rellenos con carne picada", fr: "Poivrons farcis à la viande hachée" }, kcal_est: 500, p: 28, c: 44, f: 20, foodGroup: "g_gemista",       wizardName: "Γεμιστές πιπεριές με κιμά",   items: ["2 γεμιστές πιπεριές με κιμά"] },
+  { id: "ex_l43", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές κιμά ×3",     nameI18n: { el: "Γεμιστές πιπεριές κιμά ×3", en: "Stuffed peppers with minced meat ×3", es: "Pimientos rellenos con carne ×3", fr: "Poivrons farcis à la viande ×3" }, kcal_est: 750, p: 42, c: 66, f: 30, foodGroup: "g_gemista",       items: ["3 γεμιστές πιπεριές με κιμά"] },
+  { id: "ex_l44", meal: "lunch", emoji: "🫑", name: "Γεμιστές πιπεριές κιμά ×4",     nameI18n: { el: "Γεμιστές πιπεριές κιμά ×4", en: "Stuffed peppers with minced meat ×4", es: "Pimientos rellenos con carne ×4", fr: "Poivrons farcis à la viande ×4" }, kcal_est:1000, p: 56, c: 88, f: 40, foodGroup: "g_gemista",       items: ["4 γεμιστές πιπεριές με κιμά"] },
+  { id: "ex_l45", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×2",          nameI18n: { el: "Σουβλάκια χοιρινά ×2", en: "Pork souvlaki ×2", es: "Souvlaki de cerdo ×2", fr: "Souvlaki de porc ×2" }, kcal_est: 400, p: 32, c: 2,  f: 28, foodGroup: "g_souvlaki_pork", wizardName: "Σουβλάκι χοιρινό",            items: ["2 σουβλάκια χοιρινά"] },
+  { id: "ex_l46", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×3",          nameI18n: { el: "Σουβλάκια χοιρινά ×3", en: "Pork souvlaki ×3", es: "Souvlaki de cerdo ×3", fr: "Souvlaki de porc ×3" }, kcal_est: 580, p: 48, c: 3,  f: 42, foodGroup: "g_souvlaki_pork", items: ["3 σουβλάκια χοιρινά"] },
+  { id: "ex_l47", meal: "lunch", emoji: "🍡", name: "Σουβλάκια χοιρινά ×4",          nameI18n: { el: "Σουβλάκια χοιρινά ×4", en: "Pork souvlaki ×4", es: "Souvlaki de cerdo ×4", fr: "Souvlaki de porc ×4" }, kcal_est: 760, p: 64, c: 4,  f: 56, foodGroup: "g_souvlaki_pork", items: ["4 σουβλάκια χοιρινά"] },
+  { id: "ex_l48", meal: "lunch", emoji: "🍲", name: "Κοτόσουπα με ρύζι",             nameI18n: { el: "Κοτόσουπα με ρύζι", en: "Chicken soup with rice", es: "Sopa de pollo con arroz", fr: "Soupe de poulet au riz" }, kcal_est: 420, p: 38, c: 36, f: 12, items: ["1½ φλ σούπα", "120γρ κοτόπουλο"] },
+  { id: "ex_l49", meal: "lunch", emoji: "🥣", name: "Γιουβαρλάκια σούπα",            nameI18n: { el: "Γιουβαρλάκια σούπα", en: "Giouvetsi meatball soup", es: "Sopa de albóndigas de arroz", fr: "Soupe de boulettes de riz" }, kcal_est: 480, p: 26, c: 38, f: 20, items: ["1½ φλ σούπα", "5 γιουβαρλάκια ~180γρ"] },
+  { id: "ex_l50", meal: "lunch", emoji: "🥩", name: "Συκώτι μοσχαρίσιο ψητό + σαλάτα + ψωμί", nameI18n: { el: "Συκώτι μοσχαρίσιο ψητό + σαλάτα + ψωμί", en: "Grilled veal liver + salad + bread", es: "Hígado de ternera a la plancha + ensalada + pan", fr: "Foie de veau grillé + salade + pain" }, kcal_est: 520, p: 40, c: 20, f: 28, items: ["150γρ συκώτι", "1 φλ σαλάτα", "1 φέτα ψωμί"] },
+  { id: "ex_l51", meal: "lunch", emoji: "🥘", name: "Μοσχάρι κοκκινιστό + ρύζι",    nameI18n: { el: "Μοσχάρι κοκκινιστό + ρύζι", en: "Beef in tomato sauce + rice", es: "Ternera en salsa roja + arroz", fr: "Bœuf à la sauce tomate + riz" }, kcal_est: 550, p: 42, c: 46, f: 18, items: ["120γρ μοσχάρι", "150γρ ρύζι", "1 κσ ελαιόλαδο"] },
+  { id: "ex_l52", meal: "lunch", emoji: "🥗", name: "Ψητά λαχανικά με φέτα + ψωμί", nameI18n: { el: "Ψητά λαχανικά με φέτα + ψωμί", en: "Grilled vegetables with feta + bread", es: "Verduras a la plancha con feta + pan", fr: "Légumes grillés avec feta + pain" }, kcal_est: 460, p: 14, c: 48, f: 22, items: ["250γρ λαχανικά ψητά", "40γρ φέτα", "1 φέτα ψωμί"] },
+  { id: "ex_l53", meal: "lunch", emoji: "🌿", name: "Σπανακόρυζο + φέτα",            nameI18n: { el: "Σπανακόρυζο + φέτα", en: "Spinach rice + feta", es: "Arroz con espinacas + feta", fr: "Riz aux épinards + feta" }, kcal_est: 490, p: 16, c: 62, f: 18, items: ["300γρ σπανακόρυζο", "40γρ φέτα"] },
+  { id: "ex_l54", meal: "lunch", emoji: "🍽️", name: "Φαγητό εξω εστιατόριο",        nameI18n: { el: "Φαγητό εξω εστιατόριο", en: "Eating out - restaurant", es: "Comer fuera - restaurante", fr: "Restaurant - repas à l'extérieur" }, kcal_est: 800, p: 30, c: 70, f: 38, items: ["Εξωτερικό εστιατόριο ~800 kcal"] },
+  { id: "ex_l55", meal: "lunch", emoji: "🥙", name: "Φαγητό εξω σουβλάκι",           nameI18n: { el: "Φαγητό εξω σουβλάκι", en: "Eating out - souvlaki", es: "Comer fuera - souvlaki", fr: "Souvlaki à l'extérieur" }, kcal_est: 800, p: 36, c: 72, f: 34, items: ["Σουβλάκι + πίτα + σάλτσα"] },
+  { id: "ex_l56", meal: "lunch", emoji: "🍕", name: "Πίτσα εξω",                     nameI18n: { el: "Πίτσα εξω", en: "Pizza out", es: "Pizza fuera", fr: "Pizza à l'extérieur" }, kcal_est: 700, p: 28, c: 80, f: 28, items: ["Πίτσα εξω ~700 kcal"] },
+  { id: "ex_l57", meal: "lunch", emoji: "🍝", name: "Μακαρόνια εξω",                  nameI18n: { el: "Μακαρόνια εξω", en: "Pasta out", es: "Pasta fuera", fr: "Pâtes à l'extérieur" }, kcal_est: 800, p: 26, c: 100, f:28, items: ["Μακαρόνια εστιατόριο ~800 kcal"] },
 
   // ─── ΜΕΣΗΜΕΡΙΑΝΑ — ΣΥΝΟΔΕΥΤΙΚΑ (side:true → excluded from plan generator) ───
-  { id: "ex_s1",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 100γρ",              kcal_est: 130, p: 3,  c: 28, f: 0,  foodGroup: "g_rice",         wizardName: "Ρύζι",              items: ["100γρ ρύζι μαγειρεμένο"] },
-  { id: "ex_s2",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 150γρ",              kcal_est: 200, p: 4,  c: 43, f: 0,  foodGroup: "g_rice",         items: ["150γρ ρύζι μαγειρεμένο"] },
-  { id: "ex_s3",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 200γρ",              kcal_est: 260, p: 5,  c: 56, f: 1,  foodGroup: "g_rice",         items: ["200γρ ρύζι μαγειρεμένο"] },
-  { id: "ex_s4",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 100γρ",   kcal_est: 150, p: 3,  c: 30, f: 2,  foodGroup: "g_rice_mix",     wizardName: "Ρύζι ανάμεικτο",   items: ["100γρ ρύζι ανάμεικτο"] },
-  { id: "ex_s5",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 150γρ",   kcal_est: 230, p: 5,  c: 45, f: 3,  foodGroup: "g_rice_mix",     items: ["150γρ ρύζι ανάμεικτο"] },
-  { id: "ex_s6",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 200γρ",   kcal_est: 300, p: 6,  c: 60, f: 4,  foodGroup: "g_rice_mix",     items: ["200γρ ρύζι ανάμεικτο"] },
-  { id: "ex_s7",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 100γρ",          kcal_est: 120, p: 3,  c: 18, f: 0,  foodGroup: "g_bulghur",      wizardName: "Πληγούρι",          items: ["100γρ πληγούρι μαγειρεμένο"] },
-  { id: "ex_s8",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 150γρ",          kcal_est: 180, p: 5,  c: 27, f: 0,  foodGroup: "g_bulghur",      items: ["150γρ πληγούρι μαγειρεμένο"] },
-  { id: "ex_s9",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 200γρ",          kcal_est: 240, p: 6,  c: 36, f: 1,  foodGroup: "g_bulghur",      items: ["200γρ πληγούρι μαγειρεμένο"] },
-  { id: "ex_s10", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 100γρ",         kcal_est: 110, p: 4,  c: 23, f: 0,  foodGroup: "g_couscous",     wizardName: "Κους Κους",         items: ["100γρ κους κους μαγειρεμένο"] },
-  { id: "ex_s11", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 150γρ",         kcal_est: 170, p: 6,  c: 35, f: 0,  foodGroup: "g_couscous",     items: ["150γρ κους κους μαγειρεμένο"] },
-  { id: "ex_s12", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 200γρ",         kcal_est: 220, p: 8,  c: 46, f: 0,  foodGroup: "g_couscous",     items: ["200γρ κους κους μαγειρεμένο"] },
-  { id: "ex_s13", meal: "lunch", side: true, emoji: "🥦", name: "Λαχανικά ψητά",           kcal_est: 120, p: 3,  c: 14, f: 5,  items: ["200γρ λαχανικά ψητά + λάδι"] },
-  { id: "ex_s14", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα πράσινη",          kcal_est: 100, p: 2,  c: 6,  f: 6,  items: ["σαλάτα πράσινη + 1κγ λάδι"] },
-  { id: "ex_s15", meal: "lunch", side: true, emoji: "🍅", name: "Σαλάτα ντομάτα",          kcal_est: 100, p: 1,  c: 8,  f: 6,  items: ["σαλάτα ντομάτα + 1κγ λάδι"] },
-  { id: "ex_s16", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα λάχανο",           kcal_est: 100, p: 2,  c: 10, f: 6,  items: ["σαλάτα λάχανο + 1κγ λάδι"] },
-  { id: "ex_s17", meal: "lunch", side: true, emoji: "🥕", name: "Σαλάτα καρότο",           kcal_est: 100, p: 1,  c: 12, f: 6,  items: ["σαλάτα καρότο + 1κγ λάδι"] },
-  { id: "ex_s18", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα σπανάκι",          kcal_est: 100, p: 3,  c: 5,  f: 6,  items: ["σαλάτα σπανάκι + 1κγ λάδι"] },
-  { id: "ex_s19", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα ανάμεικτη",        kcal_est: 100, p: 2,  c: 8,  f: 6,  items: ["σαλάτα ανάμεικτη + 1κγ λάδι"] },
-  { id: "ex_s20", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 150γρ",     kcal_est: 120, p: 2,  c: 28, f: 0,  foodGroup: "g_potato_boiled",wizardName: "Πατάτα βραστή",     items: ["150γρ πατάτα βραστή"] },
-  { id: "ex_s21", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 250γρ",     kcal_est: 190, p: 4,  c: 44, f: 0,  foodGroup: "g_potato_boiled",items: ["250γρ πατάτα βραστή"] },
-  { id: "ex_s22", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 350γρ",     kcal_est: 270, p: 6,  c: 62, f: 0,  foodGroup: "g_potato_boiled",items: ["350γρ πατάτα βραστή"] },
-  { id: "ex_s23", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 150γρ",             kcal_est: 160, p: 3,  c: 28, f: 4,  foodGroup: "g_puree",        wizardName: "Πουρές πατάτας",    items: ["150γρ πατατοπουρές"] },
-  { id: "ex_s24", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 200γρ",             kcal_est: 220, p: 4,  c: 38, f: 5,  foodGroup: "g_puree",        items: ["200γρ πατατοπουρές"] },
-  { id: "ex_s25", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 250γρ",             kcal_est: 270, p: 5,  c: 46, f: 6,  foodGroup: "g_puree",        items: ["250γρ πατατοπουρές"] },
-  { id: "ex_s26", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 150γρ",    kcal_est: 200, p: 2,  c: 32, f: 6,  foodGroup: "g_potato_oven",  wizardName: "Πατάτα φούρνου",    items: ["150γρ πατάτα ψητή φούρνου"] },
-  { id: "ex_s27", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 250γρ",    kcal_est: 330, p: 4,  c: 54, f: 10, foodGroup: "g_potato_oven",  items: ["250γρ πατάτα ψητή φούρνου"] },
-  { id: "ex_s28", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 350γρ",    kcal_est: 460, p: 5,  c: 74, f: 14, foodGroup: "g_potato_oven",  items: ["350γρ πατάτα ψητή φούρνου"] },
-  { id: "ex_s29", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 150γρ",  kcal_est: 210, p: 2,  c: 34, f: 7,  foodGroup: "g_potato_af",    wizardName: "Πατάτα air fryer",  items: ["150γρ πατάτα air fryer"] },
-  { id: "ex_s30", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 250γρ",  kcal_est: 350, p: 4,  c: 56, f: 12, foodGroup: "g_potato_af",    items: ["250γρ πατάτα air fryer"] },
-  { id: "ex_s31", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 350γρ",  kcal_est: 490, p: 5,  c: 78, f: 16, foodGroup: "g_potato_af",    items: ["350γρ πατάτα air fryer"] },
-  { id: "ex_s32", meal: "lunch", side: true, emoji: "🍠", name: "Γλυκοπατάτα 150γρ",       kcal_est: 180, p: 2,  c: 42, f: 0,  foodGroup: "g_sweet_potato", wizardName: "Γλυκοπατάτα",       items: ["150γρ γλυκοπατάτα"] },
-  { id: "ex_s33", meal: "lunch", side: true, emoji: "🍠", name: "Γλυκοπατάτα 200γρ",       kcal_est: 240, p: 3,  c: 56, f: 0,  foodGroup: "g_sweet_potato", items: ["200γρ γλυκοπατάτα"] },
-  { id: "ex_s34", meal: "lunch", side: true, emoji: "🌽", name: "Καλαμπόκι",               kcal_est: 100, p: 3,  c: 21, f: 1,  items: ["100γρ καλαμπόκι"] },
-  { id: "ex_s35", meal: "lunch", side: true, emoji: "🍝", name: "Μακαρόνια",               kcal_est: 130, p: 4,  c: 26, f: 1,  items: ["100γρ μακαρόνια μαγειρεμένα"] },
-  { id: "ex_s36", meal: "lunch", side: true, emoji: "🍆", name: "Μελιτζάνες ψητές",        kcal_est: 120, p: 2,  c: 10, f: 7,  items: ["200γρ μελιτζάνες ψητές"] },
-  { id: "ex_s37", meal: "lunch", side: true, emoji: "🌾", name: "Κινόα",                   kcal_est: 240, p: 9,  c: 44, f: 4,  items: ["200γρ κινόα μαγειρεμένη"] },
+  { id: "ex_s1",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 100γρ",              nameI18n: { el: "Ρύζι 100γρ", en: "Rice 100g", es: "Arroz 100g", fr: "Riz 100g" }, kcal_est: 130, p: 3,  c: 28, f: 0,  foodGroup: "g_rice",         wizardName: "Ρύζι",              items: ["100γρ ρύζι μαγειρεμένο"] },
+  { id: "ex_s2",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 150γρ",              nameI18n: { el: "Ρύζι 150γρ", en: "Rice 150g", es: "Arroz 150g", fr: "Riz 150g" }, kcal_est: 200, p: 4,  c: 43, f: 0,  foodGroup: "g_rice",         items: ["150γρ ρύζι μαγειρεμένο"] },
+  { id: "ex_s3",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι 200γρ",              nameI18n: { el: "Ρύζι 200γρ", en: "Rice 200g", es: "Arroz 200g", fr: "Riz 200g" }, kcal_est: 260, p: 5,  c: 56, f: 1,  foodGroup: "g_rice",         items: ["200γρ ρύζι μαγειρεμένο"] },
+  { id: "ex_s4",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 100γρ",   nameI18n: { el: "Ρύζι ανάμεικτο 100γρ", en: "Mixed rice 100g", es: "Arroz mixto 100g", fr: "Riz mélangé 100g" }, kcal_est: 150, p: 3,  c: 30, f: 2,  foodGroup: "g_rice_mix",     wizardName: "Ρύζι ανάμεικτο",   items: ["100γρ ρύζι ανάμεικτο"] },
+  { id: "ex_s5",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 150γρ",   nameI18n: { el: "Ρύζι ανάμεικτο 150γρ", en: "Mixed rice 150g", es: "Arroz mixto 150g", fr: "Riz mélangé 150g" }, kcal_est: 230, p: 5,  c: 45, f: 3,  foodGroup: "g_rice_mix",     items: ["150γρ ρύζι ανάμεικτο"] },
+  { id: "ex_s6",  meal: "lunch", side: true, emoji: "🍚", name: "Ρύζι ανάμεικτο 200γρ",   nameI18n: { el: "Ρύζι ανάμεικτο 200γρ", en: "Mixed rice 200g", es: "Arroz mixto 200g", fr: "Riz mélangé 200g" }, kcal_est: 300, p: 6,  c: 60, f: 4,  foodGroup: "g_rice_mix",     items: ["200γρ ρύζι ανάμεικτο"] },
+  { id: "ex_s7",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 100γρ",          nameI18n: { el: "Πληγούρι 100γρ", en: "Bulgur 100g", es: "Bulgur 100g", fr: "Boulgour 100g" }, kcal_est: 120, p: 3,  c: 18, f: 0,  foodGroup: "g_bulghur",      wizardName: "Πληγούρι",          items: ["100γρ πληγούρι μαγειρεμένο"] },
+  { id: "ex_s8",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 150γρ",          nameI18n: { el: "Πληγούρι 150γρ", en: "Bulgur 150g", es: "Bulgur 150g", fr: "Boulgour 150g" }, kcal_est: 180, p: 5,  c: 27, f: 0,  foodGroup: "g_bulghur",      items: ["150γρ πληγούρι μαγειρεμένο"] },
+  { id: "ex_s9",  meal: "lunch", side: true, emoji: "🌾", name: "Πληγούρι 200γρ",          nameI18n: { el: "Πληγούρι 200γρ", en: "Bulgur 200g", es: "Bulgur 200g", fr: "Boulgour 200g" }, kcal_est: 240, p: 6,  c: 36, f: 1,  foodGroup: "g_bulghur",      items: ["200γρ πληγούρι μαγειρεμένο"] },
+  { id: "ex_s10", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 100γρ",         nameI18n: { el: "Κους Κους 100γρ", en: "Couscous 100g", es: "Cuscús 100g", fr: "Couscous 100g" }, kcal_est: 110, p: 4,  c: 23, f: 0,  foodGroup: "g_couscous",     wizardName: "Κους Κους",         items: ["100γρ κους κους μαγειρεμένο"] },
+  { id: "ex_s11", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 150γρ",         nameI18n: { el: "Κους Κους 150γρ", en: "Couscous 150g", es: "Cuscús 150g", fr: "Couscous 150g" }, kcal_est: 170, p: 6,  c: 35, f: 0,  foodGroup: "g_couscous",     items: ["150γρ κους κους μαγειρεμένο"] },
+  { id: "ex_s12", meal: "lunch", side: true, emoji: "🌾", name: "Κους Κους 200γρ",         nameI18n: { el: "Κους Κους 200γρ", en: "Couscous 200g", es: "Cuscús 200g", fr: "Couscous 200g" }, kcal_est: 220, p: 8,  c: 46, f: 0,  foodGroup: "g_couscous",     items: ["200γρ κους κους μαγειρεμένο"] },
+  { id: "ex_s13", meal: "lunch", side: true, emoji: "🥦", name: "Λαχανικά ψητά",           nameI18n: { el: "Λαχανικά ψητά", en: "Grilled vegetables", es: "Verduras a la plancha", fr: "Légumes grillés" }, kcal_est: 120, p: 3,  c: 14, f: 5,  items: ["200γρ λαχανικά ψητά + λάδι"] },
+  { id: "ex_s14", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα πράσινη",          nameI18n: { el: "Σαλάτα πράσινη", en: "Green salad", es: "Ensalada verde", fr: "Salade verte" }, kcal_est: 100, p: 2,  c: 6,  f: 6,  items: ["σαλάτα πράσινη + 1κγ λάδι"] },
+  { id: "ex_s15", meal: "lunch", side: true, emoji: "🍅", name: "Σαλάτα ντομάτα",          nameI18n: { el: "Σαλάτα ντομάτα", en: "Tomato salad", es: "Ensalada de tomate", fr: "Salade de tomates" }, kcal_est: 100, p: 1,  c: 8,  f: 6,  items: ["σαλάτα ντομάτα + 1κγ λάδι"] },
+  { id: "ex_s16", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα λάχανο",           nameI18n: { el: "Σαλάτα λάχανο", en: "Cabbage salad", es: "Ensalada de repollo", fr: "Salade de chou" }, kcal_est: 100, p: 2,  c: 10, f: 6,  items: ["σαλάτα λάχανο + 1κγ λάδι"] },
+  { id: "ex_s17", meal: "lunch", side: true, emoji: "🥕", name: "Σαλάτα καρότο",           nameI18n: { el: "Σαλάτα καρότο", en: "Carrot salad", es: "Ensalada de zanahoria", fr: "Salade de carottes" }, kcal_est: 100, p: 1,  c: 12, f: 6,  items: ["σαλάτα καρότο + 1κγ λάδι"] },
+  { id: "ex_s18", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα σπανάκι",          nameI18n: { el: "Σαλάτα σπανάκι", en: "Spinach salad", es: "Ensalada de espinacas", fr: "Salade d'épinards" }, kcal_est: 100, p: 3,  c: 5,  f: 6,  items: ["σαλάτα σπανάκι + 1κγ λάδι"] },
+  { id: "ex_s19", meal: "lunch", side: true, emoji: "🥗", name: "Σαλάτα ανάμεικτη",        nameI18n: { el: "Σαλάτα ανάμεικτη", en: "Mixed salad", es: "Ensalada mixta", fr: "Salade mélangée" }, kcal_est: 100, p: 2,  c: 8,  f: 6,  items: ["σαλάτα ανάμεικτη + 1κγ λάδι"] },
+  { id: "ex_s20", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 150γρ",     nameI18n: { el: "Πατάτα βραστή 150γρ", en: "Boiled potato 150g", es: "Patata cocida 150g", fr: "Pomme de terre bouillie 150g" }, kcal_est: 120, p: 2,  c: 28, f: 0,  foodGroup: "g_potato_boiled",wizardName: "Πατάτα βραστή",     items: ["150γρ πατάτα βραστή"] },
+  { id: "ex_s21", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 250γρ",     nameI18n: { el: "Πατάτα βραστή 250γρ", en: "Boiled potato 250g", es: "Patata cocida 250g", fr: "Pomme de terre bouillie 250g" }, kcal_est: 190, p: 4,  c: 44, f: 0,  foodGroup: "g_potato_boiled",items: ["250γρ πατάτα βραστή"] },
+  { id: "ex_s22", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα βραστή 350γρ",     nameI18n: { el: "Πατάτα βραστή 350γρ", en: "Boiled potato 350g", es: "Patata cocida 350g", fr: "Pomme de terre bouillie 350g" }, kcal_est: 270, p: 6,  c: 62, f: 0,  foodGroup: "g_potato_boiled",items: ["350γρ πατάτα βραστή"] },
+  { id: "ex_s23", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 150γρ",             nameI18n: { el: "Πουρές 150γρ", en: "Mashed potato 150g", es: "Puré de patata 150g", fr: "Purée de pommes de terre 150g" }, kcal_est: 160, p: 3,  c: 28, f: 4,  foodGroup: "g_puree",        wizardName: "Πουρές πατάτας",    items: ["150γρ πατατοπουρές"] },
+  { id: "ex_s24", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 200γρ",             nameI18n: { el: "Πουρές 200γρ", en: "Mashed potato 200g", es: "Puré de patata 200g", fr: "Purée de pommes de terre 200g" }, kcal_est: 220, p: 4,  c: 38, f: 5,  foodGroup: "g_puree",        items: ["200γρ πατατοπουρές"] },
+  { id: "ex_s25", meal: "lunch", side: true, emoji: "🥔", name: "Πουρές 250γρ",             nameI18n: { el: "Πουρές 250γρ", en: "Mashed potato 250g", es: "Puré de patata 250g", fr: "Purée de pommes de terre 250g" }, kcal_est: 270, p: 5,  c: 46, f: 6,  foodGroup: "g_puree",        items: ["250γρ πατατοπουρές"] },
+  { id: "ex_s26", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 150γρ",    nameI18n: { el: "Πατάτα φούρνου 150γρ", en: "Baked potato 150g", es: "Patata al horno 150g", fr: "Pomme de terre au four 150g" }, kcal_est: 200, p: 2,  c: 32, f: 6,  foodGroup: "g_potato_oven",  wizardName: "Πατάτα φούρνου",    items: ["150γρ πατάτα ψητή φούρνου"] },
+  { id: "ex_s27", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 250γρ",    nameI18n: { el: "Πατάτα φούρνου 250γρ", en: "Baked potato 250g", es: "Patata al horno 250g", fr: "Pomme de terre au four 250g" }, kcal_est: 330, p: 4,  c: 54, f: 10, foodGroup: "g_potato_oven",  items: ["250γρ πατάτα ψητή φούρνου"] },
+  { id: "ex_s28", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα φούρνου 350γρ",    nameI18n: { el: "Πατάτα φούρνου 350γρ", en: "Baked potato 350g", es: "Patata al horno 350g", fr: "Pomme de terre au four 350g" }, kcal_est: 460, p: 5,  c: 74, f: 14, foodGroup: "g_potato_oven",  items: ["350γρ πατάτα ψητή φούρνου"] },
+  { id: "ex_s29", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 150γρ",  nameI18n: { el: "Πατάτα air fryer 150γρ", en: "Air fryer potato 150g", es: "Patata air fryer 150g", fr: "Pomme de terre air fryer 150g" }, kcal_est: 210, p: 2,  c: 34, f: 7,  foodGroup: "g_potato_af",    wizardName: "Πατάτα air fryer",  items: ["150γρ πατάτα air fryer"] },
+  { id: "ex_s30", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 250γρ",  nameI18n: { el: "Πατάτα air fryer 250γρ", en: "Air fryer potato 250g", es: "Patata air fryer 250g", fr: "Pomme de terre air fryer 250g" }, kcal_est: 350, p: 4,  c: 56, f: 12, foodGroup: "g_potato_af",    items: ["250γρ πατάτα air fryer"] },
+  { id: "ex_s31", meal: "lunch", side: true, emoji: "🥔", name: "Πατάτα air fryer 350γρ",  nameI18n: { el: "Πατάτα air fryer 350γρ", en: "Air fryer potato 350g", es: "Patata air fryer 350g", fr: "Pomme de terre air fryer 350g" }, kcal_est: 490, p: 5,  c: 78, f: 16, foodGroup: "g_potato_af",    items: ["350γρ πατάτα air fryer"] },
+  { id: "ex_s32", meal: "lunch", side: true, emoji: "🍠", name: "Γλυκοπατάτα 150γρ",       nameI18n: { el: "Γλυκοπατάτα 150γρ", en: "Sweet potato 150g", es: "Boniato 150g", fr: "Patate douce 150g" }, kcal_est: 180, p: 2,  c: 42, f: 0,  foodGroup: "g_sweet_potato", wizardName: "Γλυκοπατάτα",       items: ["150γρ γλυκοπατάτα"] },
+  { id: "ex_s33", meal: "lunch", side: true, emoji: "🍠", name: "Γλυκοπατάτα 200γρ",       nameI18n: { el: "Γλυκοπατάτα 200γρ", en: "Sweet potato 200g", es: "Boniato 200g", fr: "Patate douce 200g" }, kcal_est: 240, p: 3,  c: 56, f: 0,  foodGroup: "g_sweet_potato", items: ["200γρ γλυκοπατάτα"] },
+  { id: "ex_s34", meal: "lunch", side: true, emoji: "🌽", name: "Καλαμπόκι",               nameI18n: { el: "Καλαμπόκι", en: "Corn", es: "Maíz", fr: "Maïs" }, kcal_est: 100, p: 3,  c: 21, f: 1,  items: ["100γρ καλαμπόκι"] },
+  { id: "ex_s35", meal: "lunch", side: true, emoji: "🍝", name: "Μακαρόνια",               nameI18n: { el: "Μακαρόνια", en: "Pasta", es: "Fideos", fr: "Pâtes" }, kcal_est: 130, p: 4,  c: 26, f: 1,  items: ["100γρ μακαρόνια μαγειρεμένα"] },
+  { id: "ex_s36", meal: "lunch", side: true, emoji: "🍆", name: "Μελιτζάνες ψητές",        nameI18n: { el: "Μελιτζάνες ψητές", en: "Grilled aubergines", es: "Berenjenas a la plancha", fr: "Aubergines grillées" }, kcal_est: 120, p: 2,  c: 10, f: 7,  items: ["200γρ μελιτζάνες ψητές"] },
+  { id: "ex_s37", meal: "lunch", side: true, emoji: "🌾", name: "Κινόα",                   nameI18n: { el: "Κινόα", en: "Quinoa", es: "Quinoa", fr: "Quinoa" }, kcal_est: 240, p: 9,  c: 44, f: 4,  items: ["200γρ κινόα μαγειρεμένη"] },
 
   // ─── ΣΝΑΚ — ΝΕΕΣ ΕΠΙΛΟΓΕΣ ───
-  { id: "ex_sn1",  meal: "snack", emoji: "🍍", name: "Χυμός ανανά 300ml & 2 παξιμάδια", kcal_est: 230, p: 4,  c: 52, f: 1, items: ["300ml χυμός ανανά", "2 παξιμάδια"] },
-  { id: "ex_sn2",  meal: "snack", emoji: "🍊", name: "1 πορτοκάλι & 1 παξιμάδι",        kcal_est: 140, p: 3,  c: 30, f: 1, items: ["1 πορτοκάλι", "1 παξιμάδι"] },
-  { id: "ex_sn3",  meal: "snack", emoji: "🫙", name: "Γιαούρτι 2% με 1κγ μέλι",         kcal_est: 160, p: 8,  c: 20, f: 4, items: ["200γρ γιαούρτι 2%", "1 κγ μέλι"] },
-  { id: "ex_sn4",  meal: "snack", emoji: "🍎", name: "1 φρούτο & 10 αμύγδαλα",          kcal_est: 170, p: 4,  c: 22, f: 8, items: ["1 φρούτο", "10 αμύγδαλα"] },
-  { id: "ex_sn5",  meal: "snack", emoji: "🫙", name: "Γιαούρτι 2% & 3 καρύδια & 10 αμύγδαλα", kcal_est: 250, p: 12, c: 14, f: 16, items: ["1 γιαούρτι 2%", "3 καρύδια", "10 αμύγδαλα"] },
-  { id: "ex_sn6",  meal: "snack", emoji: "🌾", name: "Μπάρα δημητριακών & 10 αμύγδαλα & 1 φρούτο", kcal_est: 280, p: 7, c: 42, f: 10, items: ["1 μπάρα δημητριακών", "10 αμύγδαλα", "1 φρούτο"] },
-  { id: "ex_sn7",  meal: "snack", emoji: "🍮", name: "Κρέμα χαμηλών θερμίδων",          kcal_est: 120, p: 4,  c: 22, f: 2, items: ["1 μερίδα κρέμα light (~150g)"] },
+  { id: "ex_sn1",  meal: "snack", emoji: "🍍", name: "Χυμός ανανά 300ml & 2 παξιμάδια", nameI18n: { el: "Χυμός ανανά 300ml & 2 παξιμάδια", en: "Pineapple juice 300ml & 2 rusks", es: "Zumo de piña 300ml & 2 tostadas", fr: "Jus d'ananas 300ml & 2 biscottes" }, kcal_est: 230, p: 4,  c: 52, f: 1, items: ["300ml χυμός ανανά", "2 παξιμάδια"] },
+  { id: "ex_sn2",  meal: "snack", emoji: "🍊", name: "1 πορτοκάλι & 1 παξιμάδι",        nameI18n: { el: "1 πορτοκάλι & 1 παξιμάδι", en: "1 orange & 1 rusk", es: "1 naranja & 1 tostada", fr: "1 orange & 1 biscotte" }, kcal_est: 140, p: 3,  c: 30, f: 1, items: ["1 πορτοκάλι", "1 παξιμάδι"] },
+  { id: "ex_sn3",  meal: "snack", emoji: "🫙", name: "Γιαούρτι 2% με 1κγ μέλι",         nameI18n: { el: "Γιαούρτι 2% με 1κγ μέλι", en: "Yogurt 2% with 1 tsp honey", es: "Yogur 2% con 1 cdita de miel", fr: "Yaourt 2% avec 1 càc de miel" }, kcal_est: 160, p: 8,  c: 20, f: 4, items: ["200γρ γιαούρτι 2%", "1 κγ μέλι"] },
+  { id: "ex_sn4",  meal: "snack", emoji: "🍎", name: "1 φρούτο & 10 αμύγδαλα",          nameI18n: { el: "1 φρούτο & 10 αμύγδαλα", en: "1 fruit & 10 almonds", es: "1 fruta & 10 almendras", fr: "1 fruit & 10 amandes" }, kcal_est: 170, p: 4,  c: 22, f: 8, items: ["1 φρούτο", "10 αμύγδαλα"] },
+  { id: "ex_sn5",  meal: "snack", emoji: "🫙", name: "Γιαούρτι 2% & 3 καρύδια & 10 αμύγδαλα", nameI18n: { el: "Γιαούρτι 2% & 3 καρύδια & 10 αμύγδαλα", en: "Yogurt 2% & 3 walnuts & 10 almonds", es: "Yogur 2% & 3 nueces & 10 almendras", fr: "Yaourt 2% & 3 noix & 10 amandes" }, kcal_est: 250, p: 12, c: 14, f: 16, items: ["1 γιαούρτι 2%", "3 καρύδια", "10 αμύγδαλα"] },
+  { id: "ex_sn6",  meal: "snack", emoji: "🌾", name: "Μπάρα δημητριακών & 10 αμύγδαλα & 1 φρούτο", nameI18n: { el: "Μπάρα δημητριακών & 10 αμύγδαλα & 1 φρούτο", en: "Cereal bar & 10 almonds & 1 fruit", es: "Barrita de cereales & 10 almendras & 1 fruta", fr: "Barre de céréales & 10 amandes & 1 fruit" }, kcal_est: 280, p: 7, c: 42, f: 10, items: ["1 μπάρα δημητριακών", "10 αμύγδαλα", "1 φρούτο"] },
+  { id: "ex_sn7",  meal: "snack", emoji: "🍮", name: "Κρέμα χαμηλών θερμίδων",          nameI18n: { el: "Κρέμα χαμηλών θερμίδων", en: "Low-calorie pudding cream", es: "Crema de bajas calorías", fr: "Crème allégée" }, kcal_est: 120, p: 4,  c: 22, f: 2, items: ["1 μερίδα κρέμα light (~150g)"] },
 
   // ─── ΠΡΩΙΝΑ — ΝΕΕΣ ΕΠΙΛΟΓΕΣ ───
-  { id: "ex_b1",  meal: "breakfast", emoji: "🍯", name: "Μέλι 2κγ & 2 φέτες τοστ",      kcal_est: 200, p: 5,  c: 40, f: 2, items: ["2 κγ μέλι", "2 φέτες τοστ"] },
-  { id: "ex_b2",  meal: "breakfast", emoji: "🌾", name: "Βρώμη 150γρ, σοκολάτα & γάλα", kcal_est: 520, p: 18, c: 68, f: 20, items: ["150γρ βρώμη", "30γρ μαύρη σοκολάτα", "100ml γάλα 2%"] },
-  { id: "ex_b3",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι 2% Activia",           kcal_est: 120, p: 5,  c: 16, f: 4, items: ["1 Activia γιαούρτι 2%"] },
-  { id: "ex_b4",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι, δημητριακά, cranberries, μέλι, καρύδια", kcal_est: 350, p: 14, c: 46, f: 12, items: ["γιαούρτι 2%", "3 κσ δημητριακά", "1 κσ cranberries", "1 κγ μέλι", "3 καρύδια"] },
-  { id: "ex_b5",  meal: "breakfast", emoji: "🌯", name: "Τορτίγια ολικής, γαλοπούλα, κασέρι & χυμός", kcal_est: 390, p: 22, c: 46, f: 12, items: ["1 τορτίγια ολικής", "2 φέτες γαλοπούλα", "1 φέτα κασέρι", "ντοματίνια", "1 ποτήρι χυμό πορτοκάλι"] },
-  { id: "ex_b6",  meal: "breakfast", emoji: "🧀", name: "Τοστ κασέρι γαλοπούλα & ποτήρι γάλα", kcal_est: 360, p: 22, c: 34, f: 14, items: ["2 φέτες τοστ", "κασέρι", "γαλοπούλα", "1 ποτήρι γάλα 2%"] },
+  { id: "ex_b1",  meal: "breakfast", emoji: "🍯", name: "Μέλι 2κγ & 2 φέτες τοστ",      nameI18n: { el: "Μέλι 2κγ & 2 φέτες τοστ", en: "Honey 2 tsp & 2 slices of toast", es: "Miel 2 cdita & 2 tostadas", fr: "Miel 2 càc & 2 tranches de toast" }, kcal_est: 200, p: 5,  c: 40, f: 2, items: ["2 κγ μέλι", "2 φέτες τοστ"] },
+  { id: "ex_b2",  meal: "breakfast", emoji: "🌾", name: "Βρώμη 150γρ, σοκολάτα & γάλα", nameI18n: { el: "Βρώμη 150γρ, σοκολάτα & γάλα", en: "Oats 150g, chocolate & milk", es: "Avena 150g, chocolate & leche", fr: "Avoine 150g, chocolat & lait" }, kcal_est: 520, p: 18, c: 68, f: 20, items: ["150γρ βρώμη", "30γρ μαύρη σοκολάτα", "100ml γάλα 2%"] },
+  { id: "ex_b3",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι 2% Activia",           nameI18n: { el: "Γιαούρτι 2% Activia", en: "Yogurt 2% Activia", es: "Yogur 2% Activia", fr: "Yaourt 2% Activia" }, kcal_est: 120, p: 5,  c: 16, f: 4, items: ["1 Activia γιαούρτι 2%"] },
+  { id: "ex_b4",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι, δημητριακά, cranberries, μέλι, καρύδια", nameI18n: { el: "Γιαούρτι, δημητριακά, cranberries, μέλι, καρύδια", en: "Yogurt, cereals, cranberries, honey, walnuts", es: "Yogur, cereales, arándanos rojos, miel, nueces", fr: "Yaourt, céréales, cranberries, miel, noix" }, kcal_est: 350, p: 14, c: 46, f: 12, items: ["γιαούρτι 2%", "3 κσ δημητριακά", "1 κσ cranberries", "1 κγ μέλι", "3 καρύδια"] },
+  { id: "ex_b5",  meal: "breakfast", emoji: "🌯", name: "Τορτίγια ολικής, γαλοπούλα, κασέρι & χυμός", nameI18n: { el: "Τορτίγια ολικής, γαλοπούλα, κασέρι & χυμός", en: "Whole grain wrap, turkey, kasseri cheese & juice", es: "Tortilla integral, pavo, queso kaseri & zumo", fr: "Wrap complet, dinde, fromage kasseri & jus" }, kcal_est: 390, p: 22, c: 46, f: 12, items: ["1 τορτίγια ολικής", "2 φέτες γαλοπούλα", "1 φέτα κασέρι", "ντοματίνια", "1 ποτήρι χυμό πορτοκάλι"] },
+  { id: "ex_b6",  meal: "breakfast", emoji: "🧀", name: "Τοστ κασέρι γαλοπούλα & ποτήρι γάλα", nameI18n: { el: "Τοστ κασέρι γαλοπούλα & ποτήρι γάλα", en: "Toast kasseri cheese turkey & glass of milk", es: "Tostada queso kaseri pavo & vaso de leche", fr: "Toast fromage kasseri dinde & verre de lait" }, kcal_est: 360, p: 22, c: 34, f: 14, items: ["2 φέτες τοστ", "κασέρι", "γαλοπούλα", "1 ποτήρι γάλα 2%"] },
 
   // ─── ΒΡΑΔΙΝΑ — ΝΕΕΣ ΕΠΙΛΟΓΕΣ ───
-  { id: "ex_d1",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 150γρ & σαλάτα",           kcal_est: 300, p: 40, c: 5,  f: 12, foodGroup: "g_d_chicken_salad",    wizardName: "Κοτόπουλο ψητό & σαλάτα",   items: ["150γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
-  { id: "ex_d2",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 200γρ & σαλάτα",           kcal_est: 360, p: 53, c: 5,  f: 13, foodGroup: "g_d_chicken_salad",    items: ["200γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
-  { id: "ex_d3",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 250γρ & σαλάτα",           kcal_est: 420, p: 66, c: 5,  f: 15, foodGroup: "g_d_chicken_salad",    items: ["250γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
-  { id: "ex_d4",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×2 & σαλάτα",   kcal_est: 390, p: 46, c: 6,  f: 20, foodGroup: "g_d_souvlaki_chk",    wizardName: "Σουβλάκι κοτόπουλο & σαλάτα",items: ["2 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
-  { id: "ex_d5",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×3 & σαλάτα",   kcal_est: 560, p: 68, c: 8,  f: 28, foodGroup: "g_d_souvlaki_chk",    items: ["3 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
-  { id: "ex_d6",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×4 & σαλάτα",   kcal_est: 720, p: 90, c: 10, f: 36, foodGroup: "g_d_souvlaki_chk",    items: ["4 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
-  { id: "ex_d7",  meal: "dinner", emoji: "🍳", name: "Ομελέτα 3 αυγά & σαλάτα & ψωμί",kcal_est: 400, p: 24, c: 22, f: 26, items: ["3 αυγά", "1 φλ σαλάτα", "1 φέτα ψωμί", "1 κγ λάδι"] },
-  { id: "ex_d8",  meal: "dinner", emoji: "🧀", name: "2 παξιμάδια, ντομάτα & cottage 200γρ", kcal_est: 350, p: 26, c: 28, f: 12, items: ["2 παξιμάδια", "ντομάτα", "200γρ cottage", "2 κγ λάδι"] },
-  { id: "ex_d9",  meal: "dinner", emoji: "🐟", name: "Τόνος νερό & σαλάτα & 2 παξιμάδια", kcal_est: 320, p: 30, c: 24, f: 8, items: ["80-100γρ τόνος σε νερό", "1 φλ σαλάτα", "2 παξιμάδια", "1 κγ λάδι"] },
-  { id: "ex_d10", meal: "dinner", emoji: "🫙", name: "Γιαούρτι 200γρ & μούρα & μέλι", kcal_est: 230, p: 10, c: 36, f: 6, items: ["200γρ γιαούρτι", "50γρ μπέριες", "2 κγ μέλι"] },
-  { id: "ex_d11", meal: "dinner", emoji: "🥗", name: "Αγγουροντομάτα, βαλσάμικο & παξιμάδι 60γρ", kcal_est: 260, p: 5, c: 32, f: 12, items: ["αγγουροντομάτα", "2 κσ λάδι", "βαλσάμικο", "60γρ παξιμάδι"] },
-  { id: "ex_d12", meal: "dinner", emoji: "🧀", name: "Cottage 150γρ, ντομάτα & παξιμάδι 60γρ", kcal_est: 350, p: 20, c: 28, f: 18, items: ["150γρ cottage", "1 ντομάτα", "2 κσ λάδι", "60γρ παξιμάδι"] },
-  { id: "ex_d13", meal: "dinner", emoji: "🥗", name: "Σαλάτα πράσινη & 2 αυγά βραστά", kcal_est: 300, p: 16, c: 6,  f: 22, items: ["σαλάτα πράσινη", "2 αυγά βραστά", "1 κγ λάδι"] },
-  { id: "ex_d14", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×2 & σαλάτα",  kcal_est: 450, p: 38, c: 6,  f: 30, foodGroup: "g_d_souvlaki_pork", wizardName: "Σουβλάκι χοιρινό & σαλάτα", items: ["2 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
-  { id: "ex_d15", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×3 & σαλάτα",  kcal_est: 650, p: 56, c: 8,  f: 44, foodGroup: "g_d_souvlaki_pork", items: ["3 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
-  { id: "ex_d16", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×4 & σαλάτα",  kcal_est: 820, p: 74, c: 10, f: 58, foodGroup: "g_d_souvlaki_pork", items: ["4 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
-  { id: "ex_d17", meal: "dinner", emoji: "🌯", name: "Λουκάνικο σε τορτίγια & σαλάτα", kcal_est: 380, p: 18, c: 38, f: 16, items: ["1 κοτολουκάνικο", "1 τορτίγια ολικής", "ντομάτα, μαρούλι, γιαούρτι", "150γρ σαλάτα"] },
-  { id: "ex_d18", meal: "dinner", emoji: "🐟", name: "Τονοσαλάτα με καλαμπόκι",        kcal_est: 300, p: 24, c: 18, f: 10, items: ["1 κουτί τόνος νερό", "1 ντομάτα", "3 κσ καλαμπόκι", "1 κσ ελαιόλαδο"] },
-  { id: "ex_d19", meal: "dinner", emoji: "🥝", name: "Ακτινίδια, μπανάνα, γιαούρτι & χυμός ανανά", kcal_est: 460, p: 12, c: 88, f: 8, items: ["1½ ακτινίδιο", "1 γιαούρτι 2%", "1 μπανάνα", "4 καρύδια", "2 κγ μέλι", "250ml χυμός ανανά"] },
-  { id: "ex_d20", meal: "dinner", emoji: "🥝", name: "Ακτινίδια, μπανάνα & καρύδια",   kcal_est: 260, p: 5,  c: 50, f: 8, items: ["1½ ακτινίδιο", "1 μπανάνα", "4 καρύδια", "1 κγ μέλι", "1 κσ cranberries"] },
-  { id: "ex_d21", meal: "dinner", emoji: "🍽️", name: "Φαγητό εξω εστιατόριο",         kcal_est: 800, p: 30, c: 70, f: 38, items: ["Εξωτερικό εστιατόριο ~800 kcal"] },
-  { id: "ex_d22", meal: "dinner", emoji: "🥙", name: "Φαγητό εξω σουβλάκι",            kcal_est: 800, p: 36, c: 72, f: 34, items: ["Σουβλάκι + πίτα + σάλτσα"] },
-  { id: "ex_d23", meal: "dinner", emoji: "🍕", name: "Πίτσα εξω",                      kcal_est: 700, p: 28, c: 80, f: 28, items: ["Πίτσα εξω ~700 kcal"] },
-  { id: "ex_d24", meal: "dinner", emoji: "🍝", name: "Μακαρόνια εξω",                  kcal_est: 800, p: 26, c: 100,f: 28, items: ["Μακαρόνια εστιατόριο ~800 kcal"] },
+  { id: "ex_d1",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 150γρ & σαλάτα",           nameI18n: { el: "Κοτόπουλο 150γρ & σαλάτα", en: "Chicken 150g & salad", es: "Pollo 150g & ensalada", fr: "Poulet 150g & salade" }, kcal_est: 300, p: 40, c: 5,  f: 12, foodGroup: "g_d_chicken_salad",    wizardName: "Κοτόπουλο ψητό & σαλάτα",   items: ["150γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
+  { id: "ex_d2",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 200γρ & σαλάτα",           nameI18n: { el: "Κοτόπουλο 200γρ & σαλάτα", en: "Chicken 200g & salad", es: "Pollo 200g & ensalada", fr: "Poulet 200g & salade" }, kcal_est: 360, p: 53, c: 5,  f: 13, foodGroup: "g_d_chicken_salad",    items: ["200γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
+  { id: "ex_d3",  meal: "dinner", emoji: "🍗", name: "Κοτόπουλο 250γρ & σαλάτα",           nameI18n: { el: "Κοτόπουλο 250γρ & σαλάτα", en: "Chicken 250g & salad", es: "Pollo 250g & ensalada", fr: "Poulet 250g & salade" }, kcal_est: 420, p: 66, c: 5,  f: 15, foodGroup: "g_d_chicken_salad",    items: ["250γρ κοτόπουλο", "1 φλ σαλάτα", "1 κγ λάδι"] },
+  { id: "ex_d4",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×2 & σαλάτα",   nameI18n: { el: "Σουβλάκια κοτόπουλο ×2 & σαλάτα", en: "Chicken souvlaki ×2 & salad", es: "Souvlaki de pollo ×2 & ensalada", fr: "Souvlaki de poulet ×2 & salade" }, kcal_est: 390, p: 46, c: 6,  f: 20, foodGroup: "g_d_souvlaki_chk",    wizardName: "Σουβλάκι κοτόπουλο & σαλάτα",items: ["2 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
+  { id: "ex_d5",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×3 & σαλάτα",   nameI18n: { el: "Σουβλάκια κοτόπουλο ×3 & σαλάτα", en: "Chicken souvlaki ×3 & salad", es: "Souvlaki de pollo ×3 & ensalada", fr: "Souvlaki de poulet ×3 & salade" }, kcal_est: 560, p: 68, c: 8,  f: 28, foodGroup: "g_d_souvlaki_chk",    items: ["3 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
+  { id: "ex_d6",  meal: "dinner", emoji: "🍡", name: "Σουβλάκια κοτόπουλο ×4 & σαλάτα",   nameI18n: { el: "Σουβλάκια κοτόπουλο ×4 & σαλάτα", en: "Chicken souvlaki ×4 & salad", es: "Souvlaki de pollo ×4 & ensalada", fr: "Souvlaki de poulet ×4 & salade" }, kcal_est: 720, p: 90, c: 10, f: 36, foodGroup: "g_d_souvlaki_chk",    items: ["4 σουβλάκια κοτόπουλο", "1 φλ σαλάτα"] },
+  { id: "ex_d7",  meal: "dinner", emoji: "🍳", name: "Ομελέτα 3 αυγά & σαλάτα & ψωμί",nameI18n: { el: "Ομελέτα 3 αυγά & σαλάτα & ψωμί", en: "3-egg omelette & salad & bread", es: "Tortilla de 3 huevos & ensalada & pan", fr: "Omelette de 3 œufs & salade & pain" }, kcal_est: 400, p: 24, c: 22, f: 26, items: ["3 αυγά", "1 φλ σαλάτα", "1 φέτα ψωμί", "1 κγ λάδι"] },
+  { id: "ex_d8",  meal: "dinner", emoji: "🧀", name: "2 παξιμάδια, ντομάτα & cottage 200γρ", nameI18n: { el: "2 παξιμάδια, ντομάτα & cottage 200γρ", en: "2 rusks, tomato & cottage cheese 200g", es: "2 tostadas, tomate & cottage 200g", fr: "2 biscottes, tomate & cottage cheese 200g" }, kcal_est: 350, p: 26, c: 28, f: 12, items: ["2 παξιμάδια", "ντομάτα", "200γρ cottage", "2 κγ λάδι"] },
+  { id: "ex_d9",  meal: "dinner", emoji: "🐟", name: "Τόνος νερό & σαλάτα & 2 παξιμάδια", nameI18n: { el: "Τόνος νερό & σαλάτα & 2 παξιμάδια", en: "Tuna in water & salad & 2 rusks", es: "Atún en agua & ensalada & 2 tostadas", fr: "Thon à l'eau & salade & 2 biscottes" }, kcal_est: 320, p: 30, c: 24, f: 8, items: ["80-100γρ τόνος σε νερό", "1 φλ σαλάτα", "2 παξιμάδια", "1 κγ λάδι"] },
+  { id: "ex_d10", meal: "dinner", emoji: "🫙", name: "Γιαούρτι 200γρ & μούρα & μέλι", nameI18n: { el: "Γιαούρτι 200γρ & μούρα & μέλι", en: "Yogurt 200g & berries & honey", es: "Yogur 200g & moras & miel", fr: "Yaourt 200g & baies & miel" }, kcal_est: 230, p: 10, c: 36, f: 6, items: ["200γρ γιαούρτι", "50γρ μπέριες", "2 κγ μέλι"] },
+  { id: "ex_d11", meal: "dinner", emoji: "🥗", name: "Αγγουροντομάτα, βαλσάμικο & παξιμάδι 60γρ", nameI18n: { el: "Αγγουροντομάτα, βαλσάμικο & παξιμάδι 60γρ", en: "Cucumber-tomato salad, balsamic & rusk 60g", es: "Ensalada pepino-tomate, balsámico & tostada 60g", fr: "Salade concombre-tomate, balsamique & biscotte 60g" }, kcal_est: 260, p: 5, c: 32, f: 12, items: ["αγγουροντομάτα", "2 κσ λάδι", "βαλσάμικο", "60γρ παξιμάδι"] },
+  { id: "ex_d12", meal: "dinner", emoji: "🧀", name: "Cottage 150γρ, ντομάτα & παξιμάδι 60γρ", nameI18n: { el: "Cottage 150γρ, ντομάτα & παξιμάδι 60γρ", en: "Cottage cheese 150g, tomato & rusk 60g", es: "Cottage 150g, tomate & tostada 60g", fr: "Cottage cheese 150g, tomate & biscotte 60g" }, kcal_est: 350, p: 20, c: 28, f: 18, items: ["150γρ cottage", "1 ντομάτα", "2 κσ λάδι", "60γρ παξιμάδι"] },
+  { id: "ex_d13", meal: "dinner", emoji: "🥗", name: "Σαλάτα πράσινη & 2 αυγά βραστά", nameI18n: { el: "Σαλάτα πράσινη & 2 αυγά βραστά", en: "Green salad & 2 boiled eggs", es: "Ensalada verde & 2 huevos cocidos", fr: "Salade verte & 2 œufs durs" }, kcal_est: 300, p: 16, c: 6,  f: 22, items: ["σαλάτα πράσινη", "2 αυγά βραστά", "1 κγ λάδι"] },
+  { id: "ex_d14", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×2 & σαλάτα",  nameI18n: { el: "Σουβλάκια χοιρινά ×2 & σαλάτα", en: "Pork souvlaki ×2 & salad", es: "Souvlaki de cerdo ×2 & ensalada", fr: "Souvlaki de porc ×2 & salade" }, kcal_est: 450, p: 38, c: 6,  f: 30, foodGroup: "g_d_souvlaki_pork", wizardName: "Σουβλάκι χοιρινό & σαλάτα", items: ["2 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
+  { id: "ex_d15", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×3 & σαλάτα",  nameI18n: { el: "Σουβλάκια χοιρινά ×3 & σαλάτα", en: "Pork souvlaki ×3 & salad", es: "Souvlaki de cerdo ×3 & ensalada", fr: "Souvlaki de porc ×3 & salade" }, kcal_est: 650, p: 56, c: 8,  f: 44, foodGroup: "g_d_souvlaki_pork", items: ["3 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
+  { id: "ex_d16", meal: "dinner", emoji: "🍡", name: "Σουβλάκια χοιρινά ×4 & σαλάτα",  nameI18n: { el: "Σουβλάκια χοιρινά ×4 & σαλάτα", en: "Pork souvlaki ×4 & salad", es: "Souvlaki de cerdo ×4 & ensalada", fr: "Souvlaki de porc ×4 & salade" }, kcal_est: 820, p: 74, c: 10, f: 58, foodGroup: "g_d_souvlaki_pork", items: ["4 σουβλάκια χοιρινά", "1 φλ σαλάτα"] },
+  { id: "ex_d17", meal: "dinner", emoji: "🌯", name: "Λουκάνικο σε τορτίγια & σαλάτα", nameI18n: { el: "Λουκάνικο σε τορτίγια & σαλάτα", en: "Sausage in a wrap & salad", es: "Salchicha en tortilla & ensalada", fr: "Saucisse en wrap & salade" }, kcal_est: 380, p: 18, c: 38, f: 16, items: ["1 κοτολουκάνικο", "1 τορτίγια ολικής", "ντομάτα, μαρούλι, γιαούρτι", "150γρ σαλάτα"] },
+  { id: "ex_d18", meal: "dinner", emoji: "🐟", name: "Τονοσαλάτα με καλαμπόκι",        nameI18n: { el: "Τονοσαλάτα με καλαμπόκι", en: "Tuna salad with corn", es: "Ensalada de atún con maíz", fr: "Salade de thon au maïs" }, kcal_est: 300, p: 24, c: 18, f: 10, items: ["1 κουτί τόνος νερό", "1 ντομάτα", "3 κσ καλαμπόκι", "1 κσ ελαιόλαδο"] },
+  { id: "ex_d19", meal: "dinner", emoji: "🥝", name: "Ακτινίδια, μπανάνα, γιαούρτι & χυμός ανανά", nameI18n: { el: "Ακτινίδια, μπανάνα, γιαούρτι & χυμός ανανά", en: "Kiwis, banana, yogurt & pineapple juice", es: "Kiwis, plátano, yogur & zumo de piña", fr: "Kiwis, banane, yaourt & jus d'ananas" }, kcal_est: 460, p: 12, c: 88, f: 8, items: ["1½ ακτινίδιο", "1 γιαούρτι 2%", "1 μπανάνα", "4 καρύδια", "2 κγ μέλι", "250ml χυμός ανανά"] },
+  { id: "ex_d20", meal: "dinner", emoji: "🥝", name: "Ακτινίδια, μπανάνα & καρύδια",   nameI18n: { el: "Ακτινίδια, μπανάνα & καρύδια", en: "Kiwis, banana & walnuts", es: "Kiwis, plátano & nueces", fr: "Kiwis, banane & noix" }, kcal_est: 260, p: 5,  c: 50, f: 8, items: ["1½ ακτινίδιο", "1 μπανάνα", "4 καρύδια", "1 κγ μέλι", "1 κσ cranberries"] },
+  { id: "ex_d21", meal: "dinner", emoji: "🍽️", name: "Φαγητό εξω εστιατόριο",         nameI18n: { el: "Φαγητό εξω εστιατόριο", en: "Eating out - restaurant", es: "Comer fuera - restaurante", fr: "Restaurant - repas à l'extérieur" }, kcal_est: 800, p: 30, c: 70, f: 38, items: ["Εξωτερικό εστιατόριο ~800 kcal"] },
+  { id: "ex_d22", meal: "dinner", emoji: "🥙", name: "Φαγητό εξω σουβλάκι",            nameI18n: { el: "Φαγητό εξω σουβλάκι", en: "Eating out - souvlaki", es: "Comer fuera - souvlaki", fr: "Souvlaki à l'extérieur" }, kcal_est: 800, p: 36, c: 72, f: 34, items: ["Σουβλάκι + πίτα + σάλτσα"] },
+  { id: "ex_d23", meal: "dinner", emoji: "🍕", name: "Πίτσα εξω",                      nameI18n: { el: "Πίτσα εξω", en: "Pizza out", es: "Pizza fuera", fr: "Pizza à l'extérieur" }, kcal_est: 700, p: 28, c: 80, f: 28, items: ["Πίτσα εξω ~700 kcal"] },
+  { id: "ex_d24", meal: "dinner", emoji: "🍝", name: "Μακαρόνια εξω",                  nameI18n: { el: "Μακαρόνια εξω", en: "Pasta out", es: "Pasta fuera", fr: "Pâtes à l'extérieur" }, kcal_est: 800, p: 26, c: 100,f: 28, items: ["Μακαρόνια εστιατόριο ~800 kcal"] },
 
   // ─── ΠΡΩΙΝΑ — EXTRA ΣΥΝΔΥΑΣΜΟΙ ───
-  { id: "cb_b1",  meal: "breakfast", emoji: "🥚", name: "3 αυγά scramble + ντοματίνια + ψωμί ολικής",         kcal_est: 370, p: 24, c: 28, f: 18, note: "Χτύπησε αυγά με λίγο γάλα. Ψήσε σε αντικολλητικό, βγάλε ζουμερά. Σέρβιρε με ντοματίνια και ψωμί.", items: ["3 αυγά", "50ml γάλα 1,5%", "80g ντοματίνια", "60g ψωμί ολικής", "1 κγ ελαιόλαδο"] },
-  { id: "cb_b2",  meal: "breakfast", emoji: "🧇", name: "Pancakes βρώμης 3τεμ + μέλι + μπανάνα",              kcal_est: 430, p: 22, c: 62, f: 10, note: "Blender: βρώμη + αυγά + γάλα + μπέικιν. 2 λεπτά ανά πλευρά σε μέτρια φωτιά.", items: ["80g βρώμη", "2 αυγά", "100ml γάλα", "1 κγ μπέικιν", "1 μπανάνα", "1 κγ μέλι"] },
-  { id: "cb_b3",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι στραγγιστό + granola + φράουλες",           kcal_est: 340, p: 18, c: 44, f: 8,  note: "Βάλε πρώτα γιαούρτι, ρίξε granola από πάνω τελευταία στιγμή για τραγανή υφή.", items: ["250g γιαούρτι στραγγιστό 2%", "30g granola", "100g φράουλες", "1 κγ μέλι"] },
-  { id: "cb_b4",  meal: "breakfast", emoji: "🥑", name: "Αβοκάντο toast + 2 αυγά ποσέ + φέτα",                kcal_est: 490, p: 22, c: 32, f: 30, note: "Λίγο ξύδι στο νερό για τέλεια ποσέ αυγά. Πατσατέ αβοκάντο με λεμόνι, αλάτι, νιφάδες πιπεριάς.", items: ["2 φέτες ψωμί ολικής", "½ αβοκάντο", "2 αυγά", "20g φέτα", "λεμόνι, πιπέρι"] },
-  { id: "cb_b5",  meal: "breakfast", emoji: "🥤", name: "Green smoothie: σπανάκι, μπανάνα, γάλα & whey",       kcal_est: 380, p: 32, c: 44, f: 6,  note: "Βάλε πρώτα το υγρό, μετά σπανάκι, μετά μπανάνα και whey. Blender 60\". Κρύο γάλα = καλύτερη υφή.", items: ["50g σπανάκι φρέσκο", "1 μπανάνα κατεψυγμένη", "250ml γάλα 1,5%", "25g whey isolate"] },
-  { id: "cb_b6",  meal: "breakfast", emoji: "🍞", name: "French toast πρωτεΐνης + μέλι",                       kcal_est: 410, p: 28, c: 46, f: 12, note: "Βούτηξε ψωμί σε μείγμα αυγών+γάλακτος+κανέλας. Ψήσε σε αντικολλητικό. Σέρβιρε με μέλι.", items: ["3 φέτες ψωμί ολικής", "2 αυγά", "80ml γάλα", "κανέλα", "15g μέλι", "4 ψεκ. ελαιόλαδο"] },
-  { id: "cb_b7",  meal: "breakfast", emoji: "🌯", name: "Wrap αυγών & γαλοπούλας",                              kcal_est: 420, p: 32, c: 38, f: 14, note: "Κάνε scramble αυγά+ασπράδια. Ζέστανε τορτίγια, βάλε αυγά+γαλοπούλα+ντοματίνια+σπανάκι.", items: ["2 αυγά + 2 ασπράδια", "60g γαλοπούλα", "1 τορτίγια ολικής", "30g σπανάκι μωρό", "50g ντοματίνια"] },
-  { id: "cb_b8",  meal: "breakfast", emoji: "🍌", name: "Banana protein muffin + καφές",                        kcal_est: 290, p: 18, c: 36, f: 7,  note: "Χτύπησε μπανάνα+αυγά+βρώμη+whey+μπέικιν. Φούρνος 180°C 20'. Μπορείς να φτιάξεις παρτίδα 6 τεμ.", items: ["1 μπανάνα", "2 αυγά", "40g βρώμη", "20g whey", "½ κγ μπέικιν πάουντερ"] },
-  { id: "cb_b9",  meal: "breakfast", emoji: "☕", name: "Καφές με γάλα + 2 παξιμάδια & ανθότυρο",              kcal_est: 260, p: 14, c: 32, f: 7,  note: "Ελαφρύ και γρήγορο. Ανθότυρο ή cottage αντί βουτύρου.", items: ["200ml γάλα 1,5%", "2 παξιμάδια", "60g ανθότυρο ή cottage", "κανέλα"] },
-  { id: "cb_b10", meal: "breakfast", emoji: "🫙", name: "Γιαούρτι 0% + αχλάδι + καρύδια + κανέλα",             kcal_est: 310, p: 24, c: 34, f: 8,  note: "Γιαούρτι στραγγιστό 0% — υψηλή πρωτεΐνη, χαμηλά λίπη. Τέλειο αν θέλεις ελαφρύ αλλά χορταστικό.", items: ["250g γιαούρτι στραγγιστό 0%", "1 αχλάδι (~150g)", "15g καρύδια", "κανέλα"] },
+  { id: "cb_b1",  meal: "breakfast", emoji: "🥚", name: "3 αυγά scramble + ντοματίνια + ψωμί ολικής",         nameI18n: { el: "3 αυγά scramble + ντοματίνια + ψωμί ολικής", en: "3 scrambled eggs + cherry tomatoes + whole grain bread", es: "3 huevos revueltos + tomatitos + pan integral", fr: "3 œufs brouillés + tomates cerises + pain complet" }, kcal_est: 370, p: 24, c: 28, f: 18, note: "Χτύπησε αυγά με λίγο γάλα. Ψήσε σε αντικολλητικό, βγάλε ζουμερά. Σέρβιρε με ντοματίνια και ψωμί.", items: ["3 αυγά", "50ml γάλα 1,5%", "80g ντοματίνια", "60g ψωμί ολικής", "1 κγ ελαιόλαδο"] },
+  { id: "cb_b2",  meal: "breakfast", emoji: "🧇", name: "Pancakes βρώμης 3τεμ + μέλι + μπανάνα",              nameI18n: { el: "Pancakes βρώμης 3τεμ + μέλι + μπανάνα", en: "Oat pancakes 3pcs + honey + banana", es: "Tortitas de avena 3 uds + miel + plátano", fr: "Pancakes à l'avoine 3 pcs + miel + banane" }, kcal_est: 430, p: 22, c: 62, f: 10, note: "Blender: βρώμη + αυγά + γάλα + μπέικιν. 2 λεπτά ανά πλευρά σε μέτρια φωτιά.", items: ["80g βρώμη", "2 αυγά", "100ml γάλα", "1 κγ μπέικιν", "1 μπανάνα", "1 κγ μέλι"] },
+  { id: "cb_b3",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι στραγγιστό + granola + φράουλες",           nameI18n: { el: "Γιαούρτι στραγγιστό + granola + φράουλες", en: "Greek yogurt + granola + strawberries", es: "Yogur griego + granola + fresas", fr: "Yaourt grec + granola + fraises" }, kcal_est: 340, p: 18, c: 44, f: 8,  note: "Βάλε πρώτα γιαούρτι, ρίξε granola από πάνω τελευταία στιγμή για τραγανή υφή.", items: ["250g γιαούρτι στραγγιστό 2%", "30g granola", "100g φράουλες", "1 κγ μέλι"] },
+  { id: "cb_b4",  meal: "breakfast", emoji: "🥑", name: "Αβοκάντο toast + 2 αυγά ποσέ + φέτα",                nameI18n: { el: "Αβοκάντο toast + 2 αυγά ποσέ + φέτα", en: "Avocado toast + 2 poached eggs + feta", es: "Tostada de aguacate + 2 huevos escalfados + feta", fr: "Toast à l'avocat + 2 œufs pochés + feta" }, kcal_est: 490, p: 22, c: 32, f: 30, note: "Λίγο ξύδι στο νερό για τέλεια ποσέ αυγά. Πατσατέ αβοκάντο με λεμόνι, αλάτι, νιφάδες πιπεριάς.", items: ["2 φέτες ψωμί ολικής", "½ αβοκάντο", "2 αυγά", "20g φέτα", "λεμόνι, πιπέρι"] },
+  { id: "cb_b5",  meal: "breakfast", emoji: "🥤", name: "Green smoothie: σπανάκι, μπανάνα, γάλα & whey",       nameI18n: { el: "Green smoothie: σπανάκι, μπανάνα, γάλα & whey", en: "Green smoothie: spinach, banana, milk & whey", es: "Smoothie verde: espinacas, plátano, leche & whey", fr: "Smoothie vert: épinards, banane, lait & whey" }, kcal_est: 380, p: 32, c: 44, f: 6,  note: "Βάλε πρώτα το υγρό, μετά σπανάκι, μετά μπανάνα και whey. Blender 60\". Κρύο γάλα = καλύτερη υφή.", items: ["50g σπανάκι φρέσκο", "1 μπανάνα κατεψυγμένη", "250ml γάλα 1,5%", "25g whey isolate"] },
+  { id: "cb_b6",  meal: "breakfast", emoji: "🍞", name: "French toast πρωτεΐνης + μέλι",                       nameI18n: { el: "French toast πρωτεΐνης + μέλι", en: "Protein French toast + honey", es: "French toast proteico + miel", fr: "French toast protéiné + miel" }, kcal_est: 410, p: 28, c: 46, f: 12, note: "Βούτηξε ψωμί σε μείγμα αυγών+γάλακτος+κανέλας. Ψήσε σε αντικολλητικό. Σέρβιρε με μέλι.", items: ["3 φέτες ψωμί ολικής", "2 αυγά", "80ml γάλα", "κανέλα", "15g μέλι", "4 ψεκ. ελαιόλαδο"] },
+  { id: "cb_b7",  meal: "breakfast", emoji: "🌯", name: "Wrap αυγών & γαλοπούλας",                              nameI18n: { el: "Wrap αυγών & γαλοπούλας", en: "Egg & turkey wrap", es: "Wrap de huevos & pavo", fr: "Wrap aux œufs & dinde" }, kcal_est: 420, p: 32, c: 38, f: 14, note: "Κάνε scramble αυγά+ασπράδια. Ζέστανε τορτίγια, βάλε αυγά+γαλοπούλα+ντοματίνια+σπανάκι.", items: ["2 αυγά + 2 ασπράδια", "60g γαλοπούλα", "1 τορτίγια ολικής", "30g σπανάκι μωρό", "50g ντοματίνια"] },
+  { id: "cb_b8",  meal: "breakfast", emoji: "🍌", name: "Banana protein muffin + καφές",                        nameI18n: { el: "Banana protein muffin + καφές", en: "Banana protein muffin + coffee", es: "Muffin proteico de plátano + café", fr: "Muffin protéiné à la banane + café" }, kcal_est: 290, p: 18, c: 36, f: 7,  note: "Χτύπησε μπανάνα+αυγά+βρώμη+whey+μπέικιν. Φούρνος 180°C 20'. Μπορείς να φτιάξεις παρτίδα 6 τεμ.", items: ["1 μπανάνα", "2 αυγά", "40g βρώμη", "20g whey", "½ κγ μπέικιν πάουντερ"] },
+  { id: "cb_b9",  meal: "breakfast", emoji: "☕", name: "Καφές με γάλα + 2 παξιμάδια & ανθότυρο",              nameI18n: { el: "Καφές με γάλα + 2 παξιμάδια & ανθότυρο", en: "Coffee with milk + 2 rusks & soft white cheese", es: "Café con leche + 2 tostadas & queso blanco", fr: "Café au lait + 2 biscottes & fromage blanc" }, kcal_est: 260, p: 14, c: 32, f: 7,  note: "Ελαφρύ και γρήγορο. Ανθότυρο ή cottage αντί βουτύρου.", items: ["200ml γάλα 1,5%", "2 παξιμάδια", "60g ανθότυρο ή cottage", "κανέλα"] },
+  { id: "cb_b10", meal: "breakfast", emoji: "🫙", name: "Γιαούρτι 0% + αχλάδι + καρύδια + κανέλα",             nameI18n: { el: "Γιαούρτι 0% + αχλάδι + καρύδια + κανέλα", en: "Yogurt 0% + pear + walnuts + cinnamon", es: "Yogur 0% + pera + nueces + canela", fr: "Yaourt 0% + poire + noix + cannelle" }, kcal_est: 310, p: 24, c: 34, f: 8,  note: "Γιαούρτι στραγγιστό 0% — υψηλή πρωτεΐνη, χαμηλά λίπη. Τέλειο αν θέλεις ελαφρύ αλλά χορταστικό.", items: ["250g γιαούρτι στραγγιστό 0%", "1 αχλάδι (~150g)", "15g καρύδια", "κανέλα"] },
 
   // ─── ΣΝΑΚ — EXTRA ΣΥΝΔΥΑΣΜΟΙ ───
-  { id: "cb_sn1",  meal: "snack", emoji: "🧀", name: "Rice cakes + φυστικοβούτυρο + μπανάνα",                 kcal_est: 250, p: 8,  c: 38, f: 8,  note: "Απλό, γρήγορο, ισορροπημένο. 2 rice cakes + 1 κγ φυστικοβούτυρο + μισή μπανάνα.", items: ["2 rice cakes", "15g φυστικοβούτυρο", "½ μπανάνα"] },
-  { id: "cb_sn2",  meal: "snack", emoji: "🫙", name: "Cottage + αγγούρι + ελιές",                              kcal_est: 180, p: 16, c: 5,  f: 10, note: "Αλμυρό σνακ υψηλής πρωτεΐνης. Λίγο ρίγανη και ελαιόλαδο από πάνω.", items: ["150g cottage cheese", "½ αγγούρι", "5-6 ελιές", "ρίγανη"] },
-  { id: "cb_sn3",  meal: "snack", emoji: "🥚", name: "2 αυγά βραστά + 1 φέτα ψωμί ολικής",                   kcal_est: 220, p: 16, c: 18, f: 10, note: "Κλασικό πρωτεϊνούχο σνακ. Λίγο αλατοπίπερο αρκεί.", items: ["2 αυγά βραστά", "1 φέτα ψωμί ολικής"] },
-  { id: "cb_sn4",  meal: "snack", emoji: "🍇", name: "Σταφύλι 150γρ + 10 αμύγδαλα",                           kcal_est: 190, p: 4,  c: 30, f: 7,  note: "Φρέσκο και ενεργειακό. Καλό pre-workout σνακ.", items: ["150g σταφύλι", "10 αμύγδαλα"] },
-  { id: "cb_sn5",  meal: "snack", emoji: "🥤", name: "Protein shake + μπανάνα",                                kcal_est: 280, p: 28, c: 34, f: 2,  note: "Ιδανικό post-workout. Μπανάνα για γρήγορους υδατάνθρακες.", items: ["30g whey isolate", "300ml νερό", "1 μπανάνα"] },
-  { id: "cb_sn6",  meal: "snack", emoji: "🍫", name: "Μαύρη σοκολάτα 85% + καρύδια",                          kcal_est: 200, p: 4,  c: 12, f: 16, note: "20g σοκολάτα + 15g καρύδια. Αντιοξειδωτικό σνακ, κορέννει γλυκές λιγούρες.", items: ["20g μαύρη σοκολάτα 85%", "15g καρύδια"] },
-  { id: "cb_sn7",  meal: "snack", emoji: "🥛", name: "Γάλα 250ml + 2 μπισκότα ολικής",                        kcal_est: 210, p: 10, c: 28, f: 6,  note: "Απλό και χορταστικό. Μπισκότα ολικής ή digestive.", items: ["250ml γάλα 1,5%", "2 μπισκότα ολικής"] },
-  { id: "cb_sn8",  meal: "snack", emoji: "🫐", name: "Γιαούρτι + μύρτιλλα + 1 κγ μέλι",                      kcal_est: 175, p: 9,  c: 28, f: 3,  note: "Αντιοξειδωτικό και ελαφρύ. Μύρτιλλα κατεψυγμένα δουλεύουν εξίσου.", items: ["150g γιαούρτι 2%", "80g μύρτιλλα", "1 κγ μέλι"] },
-  { id: "cb_sn9",  meal: "snack", emoji: "🌰", name: "Χούμους 60γρ + καρότο + πιτάκι ολικής",                 kcal_est: 240, p: 8,  c: 34, f: 8,  note: "Φυτική πρωτεΐνη + φυτικές ίνες. Χούμους ready-made ή σπιτικό.", items: ["60g χούμους", "100g καρότο σε μπαστουνάκια", "½ πίτα ολικής"] },
-  { id: "cb_sn10", meal: "snack", emoji: "🍊", name: "2 μανταρίνια + 1 γιαούρτι 2%",                          kcal_est: 165, p: 8,  c: 26, f: 3,  note: "Βιταμίνη C + πρωτεΐνη. Ιδανικό χειμωνιάτικο σνακ.", items: ["2 μανταρίνια", "150g γιαούρτι 2%"] },
+  { id: "cb_sn1",  meal: "snack", emoji: "🧀", name: "Rice cakes + φυστικοβούτυρο + μπανάνα",                 nameI18n: { el: "Rice cakes + φυστικοβούτυρο + μπανάνα", en: "Rice cakes + peanut butter + banana", es: "Tortas de arroz + mantequilla de cacahuete + plátano", fr: "Galettes de riz + beurre de cacahuète + banane" }, kcal_est: 250, p: 8,  c: 38, f: 8,  note: "Απλό, γρήγορο, ισορροπημένο. 2 rice cakes + 1 κγ φυστικοβούτυρο + μισή μπανάνα.", items: ["2 rice cakes", "15g φυστικοβούτυρο", "½ μπανάνα"] },
+  { id: "cb_sn2",  meal: "snack", emoji: "🫙", name: "Cottage + αγγούρι + ελιές",                              nameI18n: { el: "Cottage + αγγούρι + ελιές", en: "Cottage cheese + cucumber + olives", es: "Cottage + pepino + aceitunas", fr: "Cottage cheese + concombre + olives" }, kcal_est: 180, p: 16, c: 5,  f: 10, note: "Αλμυρό σνακ υψηλής πρωτεΐνης. Λίγο ρίγανη και ελαιόλαδο από πάνω.", items: ["150g cottage cheese", "½ αγγούρι", "5-6 ελιές", "ρίγανη"] },
+  { id: "cb_sn3",  meal: "snack", emoji: "🥚", name: "2 αυγά βραστά + 1 φέτα ψωμί ολικής",                   nameI18n: { el: "2 αυγά βραστά + 1 φέτα ψωμί ολικής", en: "2 boiled eggs + 1 slice of whole grain bread", es: "2 huevos cocidos + 1 rebanada de pan integral", fr: "2 œufs durs + 1 tranche de pain complet" }, kcal_est: 220, p: 16, c: 18, f: 10, note: "Κλασικό πρωτεϊνούχο σνακ. Λίγο αλατοπίπερο αρκεί.", items: ["2 αυγά βραστά", "1 φέτα ψωμί ολικής"] },
+  { id: "cb_sn4",  meal: "snack", emoji: "🍇", name: "Σταφύλι 150γρ + 10 αμύγδαλα",                           nameI18n: { el: "Σταφύλι 150γρ + 10 αμύγδαλα", en: "Grapes 150g + 10 almonds", es: "Uvas 150g + 10 almendras", fr: "Raisins 150g + 10 amandes" }, kcal_est: 190, p: 4,  c: 30, f: 7,  note: "Φρέσκο και ενεργειακό. Καλό pre-workout σνακ.", items: ["150g σταφύλι", "10 αμύγδαλα"] },
+  { id: "cb_sn5",  meal: "snack", emoji: "🥤", name: "Protein shake + μπανάνα",                                nameI18n: { el: "Protein shake + μπανάνα", en: "Protein shake + banana", es: "Batido de proteínas + plátano", fr: "Shake protéiné + banane" }, kcal_est: 280, p: 28, c: 34, f: 2,  note: "Ιδανικό post-workout. Μπανάνα για γρήγορους υδατάνθρακες.", items: ["30g whey isolate", "300ml νερό", "1 μπανάνα"] },
+  { id: "cb_sn6",  meal: "snack", emoji: "🍫", name: "Μαύρη σοκολάτα 85% + καρύδια",                          nameI18n: { el: "Μαύρη σοκολάτα 85% + καρύδια", en: "Dark chocolate 85% + walnuts", es: "Chocolate negro 85% + nueces", fr: "Chocolat noir 85% + noix" }, kcal_est: 200, p: 4,  c: 12, f: 16, note: "20g σοκολάτα + 15g καρύδια. Αντιοξειδωτικό σνακ, κορέννει γλυκές λιγούρες.", items: ["20g μαύρη σοκολάτα 85%", "15g καρύδια"] },
+  { id: "cb_sn7",  meal: "snack", emoji: "🥛", name: "Γάλα 250ml + 2 μπισκότα ολικής",                        nameI18n: { el: "Γάλα 250ml + 2 μπισκότα ολικής", en: "Milk 250ml + 2 whole grain biscuits", es: "Leche 250ml + 2 galletas integrales", fr: "Lait 250ml + 2 biscuits complets" }, kcal_est: 210, p: 10, c: 28, f: 6,  note: "Απλό και χορταστικό. Μπισκότα ολικής ή digestive.", items: ["250ml γάλα 1,5%", "2 μπισκότα ολικής"] },
+  { id: "cb_sn8",  meal: "snack", emoji: "🫐", name: "Γιαούρτι + μύρτιλλα + 1 κγ μέλι",                      nameI18n: { el: "Γιαούρτι + μύρτιλλα + 1 κγ μέλι", en: "Yogurt + blueberries + 1 tsp honey", es: "Yogur + arándanos + 1 cdita de miel", fr: "Yaourt + myrtilles + 1 càc de miel" }, kcal_est: 175, p: 9,  c: 28, f: 3,  note: "Αντιοξειδωτικό και ελαφρύ. Μύρτιλλα κατεψυγμένα δουλεύουν εξίσου.", items: ["150g γιαούρτι 2%", "80g μύρτιλλα", "1 κγ μέλι"] },
+  { id: "cb_sn9",  meal: "snack", emoji: "🌰", name: "Χούμους 60γρ + καρότο + πιτάκι ολικής",                 nameI18n: { el: "Χούμους 60γρ + καρότο + πιτάκι ολικής", en: "Hummus 60g + carrot + whole grain pita", es: "Hummus 60g + zanahoria + pan de pita integral", fr: "Houmous 60g + carotte + pita complet" }, kcal_est: 240, p: 8,  c: 34, f: 8,  note: "Φυτική πρωτεΐνη + φυτικές ίνες. Χούμους ready-made ή σπιτικό.", items: ["60g χούμους", "100g καρότο σε μπαστουνάκια", "½ πίτα ολικής"] },
+  { id: "cb_sn10", meal: "snack", emoji: "🍊", name: "2 μανταρίνια + 1 γιαούρτι 2%",                          nameI18n: { el: "2 μανταρίνια + 1 γιαούρτι 2%", en: "2 mandarins + 1 yogurt 2%", es: "2 mandarinas + 1 yogur 2%", fr: "2 mandarines + 1 yaourt 2%" }, kcal_est: 165, p: 8,  c: 26, f: 3,  note: "Βιταμίνη C + πρωτεΐνη. Ιδανικό χειμωνιάτικο σνακ.", items: ["2 μανταρίνια", "150g γιαούρτι 2%"] },
 
   // ─── ΜΕΣΗΜΕΡΙΑΝΑ — EXTRA ΣΥΝΔΥΑΣΜΟΙ ───
-  { id: "cb_l1",  meal: "lunch", emoji: "🥗", name: "Σαλάτα τόνου με ρεβύθια & feta",                          kcal_est: 520, p: 38, c: 44, f: 18, note: "Ανάμειξε τόνο, ρεβύθια, ντομάτα, αγγούρι, φέτα, ελιές. Ντρέσινγκ: λεμόνι+λάδι+ρίγανη.", items: ["160g τόνος νερό", "150g ρεβύθια μαγ.", "80g ντομάτα", "60g αγγούρι", "40g φέτα", "1 κσ ελαιόλαδο"] },
-  { id: "cb_l2",  meal: "lunch", emoji: "🍛", name: "Κοτόπουλο κάρυ με κινόα",                                  kcal_est: 590, p: 52, c: 52, f: 14, note: "Σόταρε κρεμμύδι+σκόρδο, πρόσθεσε κοτόπουλο+κάρυ+κουρκουμά+κανέλα, μετά γάλα καρύδας λίγο.", items: ["200g κοτόπουλο στήθος", "150g κινόα μαγ.", "50ml γάλα καρύδας light", "1 κγ κάρυ", "½ κγ κουρκουμάς"] },
-  { id: "cb_l3",  meal: "lunch", emoji: "🥩", name: "Μοσχάρι stir-fry με λαχανικά & ρύζι",                    kcal_est: 580, p: 46, c: 54, f: 16, note: "Κόψε μοσχάρι λεπτό. Wok σε δυνατή φωτιά: πρώτα λαχανικά, μετά κρέας. Σάλτσα: σόγια+τζίντζερ+σκόρδο.", items: ["180g φιλέτο μοσχάρι", "200g μίξ λαχανικών (πιπεριά, μπρόκολο, καρότο)", "150g ρύζι μαγ.", "1 κσ σάλτσα σόγιας", "1 κγ ελαιόλαδο"] },
-  { id: "cb_l4",  meal: "lunch", emoji: "🫙", name: "Greek power bowl: κοτόπουλο, ρύζι, τζατζίκι, σαλάτα",    kcal_est: 650, p: 55, c: 64, f: 16, note: "Η ελληνική εκδοχή του rice bowl. Ψητό κοτόπουλο σε κύβους, ρύζι, τζατζίκι, ντομάτα, αγγούρι, ελιές.", items: ["200g κοτόπουλο ψητό", "150g ρύζι μαγ.", "60g τζατζίκι", "σαλάτα εποχής", "5 ελιές"] },
-  { id: "cb_l5",  meal: "lunch", emoji: "🐟", name: "Σολομός με γλυκοπατάτα & σπανάκι",                        kcal_est: 580, p: 42, c: 44, f: 22, note: "Φούρνος 200°C: σολομός 12-15', γλυκοπατάτα 25'. Σπανάκι σοταρισμένο με σκόρδο.", items: ["180g σολομός", "200g γλυκοπατάτα", "100g σπανάκι", "1 κγ ελαιόλαδο", "λεμόνι, άνηθος"] },
-  { id: "cb_l6",  meal: "lunch", emoji: "🥚", name: "Ομελέτα λαχανικών στον φούρνο (5 αυγά)",                  kcal_est: 490, p: 34, c: 14, f: 34, note: "Σόταρε λαχανικά, ρίξε χτυπημένα αυγά+γάλα+τυρί. Φούρνος 180°C 15-18'. Μπορείς να κόψεις σε μερίδες.", items: ["5 αυγά", "150g κολοκύθι+πιπεριά+μανιτάρια", "40g φέτα", "30ml γάλα", "1 κγ ελαιόλαδο"] },
-  { id: "cb_l7",  meal: "lunch", emoji: "🌯", name: "Wrap κοτόπουλο ψητό + τζατζίκι + πιπεριά",               kcal_est: 530, p: 44, c: 46, f: 14, note: "Ζέστανε τορτίγια, βάλε κοτόπουλο σε λωρίδες, τζατζίκι, πιπεριά, μαρούλι. Τύλιξε σφιχτά.", items: ["160g κοτόπουλο στήθος ψητό", "1 τορτίγια ολικής", "50g τζατζίκι", "60g πιπεριά", "30g μαρούλι"] },
-  { id: "cb_l8",  meal: "lunch", emoji: "🍲", name: "Φακόσουπα με καρότο & κρεμμύδι",                         kcal_est: 420, p: 24, c: 64, f: 6,  note: "Κλασική. Βράσε φακές με καρότο, σέλινο, κρεμμύδι, δαφνόφυλλο. Ξύδι στο τέλος. Με ψωμί.", items: ["200g φακές ωμές", "1 καρότο", "1 κρεμμύδι", "σέλινο", "1 φέτα ψωμί ολικής", "1 κσ ξύδι"] },
-  { id: "cb_l9",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο με κους κους & ντομάτα",                        kcal_est: 560, p: 48, c: 60, f: 12, note: "Βράσε κους κους με ζωμό. Κοτόπουλο ψητό με ντομάτα+σκόρδο+κανέλα. Ανάμειξε.", items: ["200g κοτόπουλο", "200g κους κους μαγ.", "100g ντομάτα τριμμένη", "σκόρδο, κανέλα, μαϊντανός"] },
-  { id: "cb_l10", meal: "lunch", emoji: "🥘", name: "Μπακαλίαρος πλακί με πατάτα",                             kcal_est: 510, p: 44, c: 48, f: 10, note: "Σε ταψί: πατάτα σε φέτες, κρεμμύδι, σκόρδο, ντομάτα, μπακαλίαρος. Φούρνος 180°C 35'. Πλούσια γεύση.", items: ["220g μπακαλίαρος", "200g πατάτα", "100g ντομάτα", "κρεμμύδι, σκόρδο, μαϊντανός", "1 κσ ελαιόλαδο"] },
-  { id: "cb_l11", meal: "lunch", emoji: "🥗", name: "Νικουάζ σαλάτα με τόνο & αυγό",                          kcal_est: 480, p: 36, c: 28, f: 24, note: "Τόνος, βραστό αυγό, πράσινα φασολάκια, πατάτα, ελιές, ντομάτα. Ντρέσινγκ: λεμόνι+μουστάρδα+λάδι.", items: ["160g τόνος νερό", "2 αυγά βραστά", "100g φασολάκια", "100g πατάτα βραστή", "5 ελιές", "1 κσ ελαιόλαδο"] },
-  { id: "cb_l12", meal: "lunch", emoji: "🫘", name: "Μαυρομάτικα με λαχανικά & φέτα",                         kcal_est: 500, p: 22, c: 68, f: 14, note: "Μαυρομάτικα με ντομάτα, πιπεριά, κρεμμύδι. Φέτα στο τέλος. Μπαχαρικά: θυμάρι, κύμινο.", items: ["250g μαυρομάτικα μαγ.", "100g ντομάτα", "1 πιπεριά", "40g φέτα", "1 κγ ελαιόλαδο"] },
-  { id: "cb_l13", meal: "lunch", emoji: "🍝", name: "Ολικής μακαρόνια με σολομό & σπανάκι",                   kcal_est: 620, p: 42, c: 68, f: 18, note: "Σολομός ψητός σε κομμάτια. Ανάμειξε με μαγ. μακαρόνια, σπανάκι, λεμόνι, λίγο ελαιόλαδο.", items: ["160g σολομός", "200g μακαρόνια ολικής μαγ.", "80g σπανάκι", "λεμόνι", "1 κγ ελαιόλαδο"] },
-  { id: "cb_l14", meal: "lunch", emoji: "🥙", name: "Γύρος γαλοπούλας σπιτικός",                               kcal_est: 500, p: 38, c: 48, f: 14, note: "Γαλοπούλα σε μπαχαρικά+ξύδι, ψητή σε τηγάνι. Πίτα, τζατζίκι, ντομάτα, κρεμμύδι.", items: ["180g γαλοπούλα φέτα", "1 πίτα (~70g)", "50g τζατζίκι", "ντομάτα, κρεμμύδι, πάπρικα"] },
-  { id: "cb_l15", meal: "lunch", emoji: "🍆", name: "Μουσακάς light",                                           kcal_est: 580, p: 34, c: 44, f: 24, note: "Μελιτζάνα ψημένη (όχι τηγανητή). Κιμάς άπαχος με κανέλα+μοσχοκάρυδο. Μπεσαμέλ με γάλα 1,5%.", items: ["200g κιμάς μοσχάρι 5%", "250g μελιτζάνα ψητή", "50g μπεσαμέλ light", "ντομάτα, κανέλα"] },
+  { id: "cb_l1",  meal: "lunch", emoji: "🥗", name: "Σαλάτα τόνου με ρεβύθια & feta",                          nameI18n: { el: "Σαλάτα τόνου με ρεβύθια & feta", en: "Tuna salad with chickpeas & feta", es: "Ensalada de atún con garbanzos & feta", fr: "Salade de thon aux pois chiches & feta" }, kcal_est: 520, p: 38, c: 44, f: 18, note: "Ανάμειξε τόνο, ρεβύθια, ντομάτα, αγγούρι, φέτα, ελιές. Ντρέσινγκ: λεμόνι+λάδι+ρίγανη.", items: ["160g τόνος νερό", "150g ρεβύθια μαγ.", "80g ντομάτα", "60g αγγούρι", "40g φέτα", "1 κσ ελαιόλαδο"] },
+  { id: "cb_l2",  meal: "lunch", emoji: "🍛", name: "Κοτόπουλο κάρυ με κινόα",                                  nameI18n: { el: "Κοτόπουλο κάρυ με κινόα", en: "Chicken curry with quinoa", es: "Pollo al curry con quinoa", fr: "Poulet au curry avec quinoa" }, kcal_est: 590, p: 52, c: 52, f: 14, note: "Σόταρε κρεμμύδι+σκόρδο, πρόσθεσε κοτόπουλο+κάρυ+κουρκουμά+κανέλα, μετά γάλα καρύδας λίγο.", items: ["200g κοτόπουλο στήθος", "150g κινόα μαγ.", "50ml γάλα καρύδας light", "1 κγ κάρυ", "½ κγ κουρκουμάς"] },
+  { id: "cb_l3",  meal: "lunch", emoji: "🥩", name: "Μοσχάρι stir-fry με λαχανικά & ρύζι",                    nameI18n: { el: "Μοσχάρι stir-fry με λαχανικά & ρύζι", en: "Beef stir-fry with vegetables & rice", es: "Ternera stir-fry con verduras & arroz", fr: "Bœuf sauté avec légumes & riz" }, kcal_est: 580, p: 46, c: 54, f: 16, note: "Κόψε μοσχάρι λεπτό. Wok σε δυνατή φωτιά: πρώτα λαχανικά, μετά κρέας. Σάλτσα: σόγια+τζίντζερ+σκόρδο.", items: ["180g φιλέτο μοσχάρι", "200g μίξ λαχανικών (πιπεριά, μπρόκολο, καρότο)", "150g ρύζι μαγ.", "1 κσ σάλτσα σόγιας", "1 κγ ελαιόλαδο"] },
+  { id: "cb_l4",  meal: "lunch", emoji: "🫙", name: "Greek power bowl: κοτόπουλο, ρύζι, τζατζίκι, σαλάτα",    nameI18n: { el: "Greek power bowl: κοτόπουλο, ρύζι, τζατζίκι, σαλάτα", en: "Greek power bowl: chicken, rice, tzatziki, salad", es: "Greek power bowl: pollo, arroz, tzatziki, ensalada", fr: "Greek power bowl: poulet, riz, tzatziki, salade" }, kcal_est: 650, p: 55, c: 64, f: 16, note: "Η ελληνική εκδοχή του rice bowl. Ψητό κοτόπουλο σε κύβους, ρύζι, τζατζίκι, ντομάτα, αγγούρι, ελιές.", items: ["200g κοτόπουλο ψητό", "150g ρύζι μαγ.", "60g τζατζίκι", "σαλάτα εποχής", "5 ελιές"] },
+  { id: "cb_l5",  meal: "lunch", emoji: "🐟", name: "Σολομός με γλυκοπατάτα & σπανάκι",                        nameI18n: { el: "Σολομός με γλυκοπατάτα & σπανάκι", en: "Salmon with sweet potato & spinach", es: "Salmón con boniato & espinacas", fr: "Saumon avec patate douce & épinards" }, kcal_est: 580, p: 42, c: 44, f: 22, note: "Φούρνος 200°C: σολομός 12-15', γλυκοπατάτα 25'. Σπανάκι σοταρισμένο με σκόρδο.", items: ["180g σολομός", "200g γλυκοπατάτα", "100g σπανάκι", "1 κγ ελαιόλαδο", "λεμόνι, άνηθος"] },
+  { id: "cb_l6",  meal: "lunch", emoji: "🥚", name: "Ομελέτα λαχανικών στον φούρνο (5 αυγά)",                  nameI18n: { el: "Ομελέτα λαχανικών στον φούρνο (5 αυγά)", en: "Baked vegetable omelette (5 eggs)", es: "Tortilla de verduras al horno (5 huevos)", fr: "Omelette aux légumes au four (5 œufs)" }, kcal_est: 490, p: 34, c: 14, f: 34, note: "Σόταρε λαχανικά, ρίξε χτυπημένα αυγά+γάλα+τυρί. Φούρνος 180°C 15-18'. Μπορείς να κόψεις σε μερίδες.", items: ["5 αυγά", "150g κολοκύθι+πιπεριά+μανιτάρια", "40g φέτα", "30ml γάλα", "1 κγ ελαιόλαδο"] },
+  { id: "cb_l7",  meal: "lunch", emoji: "🌯", name: "Wrap κοτόπουλο ψητό + τζατζίκι + πιπεριά",               nameI18n: { el: "Wrap κοτόπουλο ψητό + τζατζίκι + πιπεριά", en: "Grilled chicken wrap + tzatziki + pepper", es: "Wrap de pollo a la plancha + tzatziki + pimiento", fr: "Wrap poulet grillé + tzatziki + poivron" }, kcal_est: 530, p: 44, c: 46, f: 14, note: "Ζέστανε τορτίγια, βάλε κοτόπουλο σε λωρίδες, τζατζίκι, πιπεριά, μαρούλι. Τύλιξε σφιχτά.", items: ["160g κοτόπουλο στήθος ψητό", "1 τορτίγια ολικής", "50g τζατζίκι", "60g πιπεριά", "30g μαρούλι"] },
+  { id: "cb_l8",  meal: "lunch", emoji: "🍲", name: "Φακόσουπα με καρότο & κρεμμύδι",                         nameI18n: { el: "Φακόσουπα με καρότο & κρεμμύδι", en: "Lentil soup with carrot & onion", es: "Sopa de lentejas con zanahoria & cebolla", fr: "Soupe de lentilles aux carottes & oignon" }, kcal_est: 420, p: 24, c: 64, f: 6,  note: "Κλασική. Βράσε φακές με καρότο, σέλινο, κρεμμύδι, δαφνόφυλλο. Ξύδι στο τέλος. Με ψωμί.", items: ["200g φακές ωμές", "1 καρότο", "1 κρεμμύδι", "σέλινο", "1 φέτα ψωμί ολικής", "1 κσ ξύδι"] },
+  { id: "cb_l9",  meal: "lunch", emoji: "🍗", name: "Κοτόπουλο με κους κους & ντομάτα",                        nameI18n: { el: "Κοτόπουλο με κους κους & ντομάτα", en: "Chicken with couscous & tomato", es: "Pollo con cuscús & tomate", fr: "Poulet au couscous & tomate" }, kcal_est: 560, p: 48, c: 60, f: 12, note: "Βράσε κους κους με ζωμό. Κοτόπουλο ψητό με ντομάτα+σκόρδο+κανέλα. Ανάμειξε.", items: ["200g κοτόπουλο", "200g κους κους μαγ.", "100g ντομάτα τριμμένη", "σκόρδο, κανέλα, μαϊντανός"] },
+  { id: "cb_l10", meal: "lunch", emoji: "🥘", name: "Μπακαλίαρος πλακί με πατάτα",                             nameI18n: { el: "Μπακαλίαρος πλακί με πατάτα", en: "Baked cod with potato", es: "Bacalao al horno con patata", fr: "Cabillaud au four avec pomme de terre" }, kcal_est: 510, p: 44, c: 48, f: 10, note: "Σε ταψί: πατάτα σε φέτες, κρεμμύδι, σκόρδο, ντομάτα, μπακαλίαρος. Φούρνος 180°C 35'. Πλούσια γεύση.", items: ["220g μπακαλίαρος", "200g πατάτα", "100g ντομάτα", "κρεμμύδι, σκόρδο, μαϊντανός", "1 κσ ελαιόλαδο"] },
+  { id: "cb_l11", meal: "lunch", emoji: "🥗", name: "Νικουάζ σαλάτα με τόνο & αυγό",                          nameI18n: { el: "Νικουάζ σαλάτα με τόνο & αυγό", en: "Niçoise salad with tuna & egg", es: "Ensalada niçoise con atún & huevo", fr: "Salade niçoise au thon & œuf" }, kcal_est: 480, p: 36, c: 28, f: 24, note: "Τόνος, βραστό αυγό, πράσινα φασολάκια, πατάτα, ελιές, ντομάτα. Ντρέσινγκ: λεμόνι+μουστάρδα+λάδι.", items: ["160g τόνος νερό", "2 αυγά βραστά", "100g φασολάκια", "100g πατάτα βραστή", "5 ελιές", "1 κσ ελαιόλαδο"] },
+  { id: "cb_l12", meal: "lunch", emoji: "🫘", name: "Μαυρομάτικα με λαχανικά & φέτα",                         nameI18n: { el: "Μαυρομάτικα με λαχανικά & φέτα", en: "Black-eyed peas with vegetables & feta", es: "Alubias de ojo negro con verduras & feta", fr: "Haricots à œil noir avec légumes & feta" }, kcal_est: 500, p: 22, c: 68, f: 14, note: "Μαυρομάτικα με ντομάτα, πιπεριά, κρεμμύδι. Φέτα στο τέλος. Μπαχαρικά: θυμάρι, κύμινο.", items: ["250g μαυρομάτικα μαγ.", "100g ντομάτα", "1 πιπεριά", "40g φέτα", "1 κγ ελαιόλαδο"] },
+  { id: "cb_l13", meal: "lunch", emoji: "🍝", name: "Ολικής μακαρόνια με σολομό & σπανάκι",                   nameI18n: { el: "Ολικής μακαρόνια με σολομό & σπανάκι", en: "Whole grain pasta with salmon & spinach", es: "Pasta integral con salmón & espinacas", fr: "Pâtes complètes au saumon & épinards" }, kcal_est: 620, p: 42, c: 68, f: 18, note: "Σολομός ψητός σε κομμάτια. Ανάμειξε με μαγ. μακαρόνια, σπανάκι, λεμόνι, λίγο ελαιόλαδο.", items: ["160g σολομός", "200g μακαρόνια ολικής μαγ.", "80g σπανάκι", "λεμόνι", "1 κγ ελαιόλαδο"] },
+  { id: "cb_l14", meal: "lunch", emoji: "🥙", name: "Γύρος γαλοπούλας σπιτικός",                               nameI18n: { el: "Γύρος γαλοπούλας σπιτικός", en: "Homemade turkey gyros", es: "Gyros de pavo casero", fr: "Gyros de dinde maison" }, kcal_est: 500, p: 38, c: 48, f: 14, note: "Γαλοπούλα σε μπαχαρικά+ξύδι, ψητή σε τηγάνι. Πίτα, τζατζίκι, ντομάτα, κρεμμύδι.", items: ["180g γαλοπούλα φέτα", "1 πίτα (~70g)", "50g τζατζίκι", "ντομάτα, κρεμμύδι, πάπρικα"] },
+  { id: "cb_l15", meal: "lunch", emoji: "🍆", name: "Μουσακάς light",                                           nameI18n: { el: "Μουσακάς light", en: "Light moussaka", es: "Moussaka light", fr: "Moussaka allégée" }, kcal_est: 580, p: 34, c: 44, f: 24, note: "Μελιτζάνα ψημένη (όχι τηγανητή). Κιμάς άπαχος με κανέλα+μοσχοκάρυδο. Μπεσαμέλ με γάλα 1,5%.", items: ["200g κιμάς μοσχάρι 5%", "250g μελιτζάνα ψητή", "50g μπεσαμέλ light", "ντομάτα, κανέλα"] },
 
   // ─── ΒΡΑΔΙΝΑ — EXTRA ΣΥΝΔΥΑΣΜΟΙ ───
-  { id: "cb_d1",  meal: "dinner", emoji: "🥗", name: "Σαλάτα κοτόπουλο με αβοκάντο & λάιμ",                   kcal_est: 430, p: 38, c: 10, f: 26, note: "Κοτόπουλο ψητό κομμένο, αβοκάντο, μαρούλι, ντομάτα, κόρν. Ντρέσινγκ: λάιμ+λάδι+κύμινο.", items: ["150g κοτόπουλο ψητό", "½ αβοκάντο", "60g μαρούλι", "60g ντομάτα", "30g κόρν", "λάιμ"] },
-  { id: "cb_d2",  meal: "dinner", emoji: "🍳", name: "Ομελέτα λαχανικών + φέτα + τοστ ολικής",                 kcal_est: 420, p: 26, c: 30, f: 22, note: "3 αυγά, πιπεριά+μανιτάρια+σπανάκι σοταρισμένα, φέτα. Σέρβιρε με 1 φέτα ψωμί ολικής.", items: ["3 αυγά", "100g λαχανικά μίξ", "30g φέτα", "1 φέτα ψωμί ολικής", "1 κγ ελαιόλαδο"] },
-  { id: "cb_d3",  meal: "dinner", emoji: "🐟", name: "Σολομός ψητός + σαλάτα + λεμόνι",                        kcal_est: 390, p: 38, c: 6,  f: 24, note: "Σολομός αλατοπιπερωμένος με ελαιόλαδο και λεμόνι. Φούρνος 200°C 12-14'. Σαλάτα απλή.", items: ["160g σολομός", "σαλάτα εποχής", "λεμόνι", "1 κγ ελαιόλαδο", "άνηθος"] },
-  { id: "cb_d4",  meal: "dinner", emoji: "🫙", name: "Tzatziki bowl: γιαούρτι, αγγούρι, μέντα, καρύδια",       kcal_est: 280, p: 14, c: 18, f: 16, note: "Χαλαρό βραδινό. Ελαφρύ και δροσιστικό. Ιδανικό τελευταίο γεύμα.", items: ["250g γιαούρτι στραγγιστό", "½ αγγούρι τριμμένο", "1 σκ. σκόρδο", "15g καρύδια", "μέντα φρέσκια"] },
-  { id: "cb_d5",  meal: "dinner", emoji: "🥚", name: "Shakshuka (αυγά σε σάλτσα ντομάτας)",                    kcal_est: 360, p: 22, c: 26, f: 18, note: "Σάλτσα: ντομάτα+πιπεριά+κρεμμύδι+κύμινο+πάπρικα. Σπάσε αυγά μέσα, σκέπασε 5-7'. Με ψωμί.", items: ["3 αυγά", "200g ντομάτα κονκασέ", "1 πιπεριά", "κρεμμύδι", "κύμινο, πάπρικα", "1 φέτα ψωμί"] },
-  { id: "cb_d6",  meal: "dinner", emoji: "🧀", name: "Cottage με ντομάτα, ελιές & τοστ ολικής",                 kcal_est: 340, p: 22, c: 28, f: 14, note: "Ελαφρύ βραδινό υψηλής πρωτεΐνης. Ρίγανη, ελαιόλαδο και βαλσάμικο κάνουν τη διαφορά.", items: ["200g cottage cheese", "150g ντομάτα", "8 ελιές", "1 φέτα ψωμί ολικής", "1 κγ ελαιόλαδο", "ρίγανη"] },
-  { id: "cb_d7",  meal: "dinner", emoji: "🥩", name: "Μπριζόλα μοσχάρι 200γρ + σαλάτα",                       kcal_est: 440, p: 48, c: 6,  f: 24, note: "Τηγάνι σε δυνατή φωτιά 3' ανά πλευρά. Ξεκούραση 5' πριν κόψεις. Λεμόνι+θυμάρι.", items: ["200g μπριζόλα μοσχάρι", "σαλάτα πράσινη", "λεμόνι, θυμάρι", "4 ψεκ. ελαιόλαδο"] },
-  { id: "cb_d8",  meal: "dinner", emoji: "🌯", name: "Wrap τόνου με αβοκάντο",                                  kcal_est: 420, p: 30, c: 38, f: 16, note: "Αναμείξε τόνο+αβοκάντο+λεμόνι+αλάτι. Τορτίγια, μαρούλι, ντοματίνια.", items: ["160g τόνος νερό", "½ αβοκάντο", "1 τορτίγια ολικής", "30g μαρούλι", "50g ντοματίνια"] },
-  { id: "cb_d9",  meal: "dinner", emoji: "🍲", name: "Σούπα κοτόπουλο με λαχανικά (avgolemono)",               kcal_est: 380, p: 36, c: 28, f: 10, note: "Βράσε κοτόπουλο, βγάλε+κόψε. Πρόσθεσε λαχανικά, ρύζι. Avgolemono: αυγό+λεμόνι χτυπημένο.", items: ["150g κοτόπουλο", "60g ρύζι μαγ.", "καρότο, σέλινο", "αυγό+λεμόνι", "ζωμός"] },
-  { id: "cb_d10", meal: "dinner", emoji: "🥗", name: "Σαλάτα σπανάκι, παντζάρι & κατσικίσιο τυρί",            kcal_est: 330, p: 14, c: 22, f: 20, note: "Σπανάκι μωρό, βρασμένο παντζάρι, κατσικίσιο τυρί τριμμένο. Ντρέσινγκ: μέλι+μουστάρδα+ξύδι.", items: ["80g σπανάκι μωρό", "100g παντζάρι βραστό", "40g κατσικίσιο τυρί", "15g καρύδια", "1 κγ μέλι+ξύδι"] },
-  { id: "cb_d11", meal: "dinner", emoji: "🐟", name: "Ψάρι φούρνου + πουρές & σαλάτα",                        kcal_est: 460, p: 40, c: 40, f: 14, note: "Τσιπούρα/λαβράκι 200γρ στον φούρνο με λεμόνι και ελαιόλαδο. Πουρές ελαφρύς με γάλα. Απλή πράσινη σαλάτα.", items: ["200g τσιπούρα ή λαβράκι", "150g πουρές", "σαλάτα πράσινη", "λεμόνι"] },
-  { id: "cb_d12", meal: "dinner", emoji: "🍳", name: "Κλαρκ αυγά (3τεμ) + μανιτάρια + γαλοπούλα",             kcal_est: 350, p: 30, c: 4,  f: 22, note: "Σόταρε μανιτάρια+γαλοπούλα. Σπάσε αυγά από πάνω, σκέπασε με καπάκι 4'. Πιπέρι+ρίγανη.", items: ["3 αυγά", "100g μανιτάρια", "80g γαλοπούλα", "1 κγ ελαιόλαδο", "πιπέρι, ρίγανη"] },
-  { id: "cb_d13", meal: "dinner", emoji: "🫙", name: "High-protein overnight pudding chia",                     kcal_est: 390, p: 28, c: 38, f: 14, note: "Βράδυ: ανάμειξε γιαούρτι+γάλα+chia+whey+μέλι. Ψυγείο overnight. Φρούτα από πάνω.", items: ["200g γιαούρτι 2%", "100ml γάλα", "20g chia seeds", "20g whey vanilla", "1 κγ μέλι", "φρούτα"] },
-  { id: "cb_d14", meal: "dinner", emoji: "🥩", name: "Χοιρινό φιλέτο + μήλο + σαλάτα",                        kcal_est: 410, p: 42, c: 20, f: 16, note: "Χοιρινό φιλέτο (άπαχο) με σάλτσα μήλου+σινάπι. Φούρνος 185°C 20'. Απλή πράσινη σαλάτα.", items: ["200g χοιρινό φιλέτο", "½ μήλο τριμμένο", "1 κγ μουστάρδα", "σαλάτα πράσινη"] },
-  { id: "cb_d15", meal: "dinner", emoji: "🌿", name: "Lentil soup βραδινό (φακές λαχανικά)",                   kcal_est: 320, p: 18, c: 50, f: 6,  note: "Ελαφρύ και χορταστικό. Φακές+καρότο+σέλινο+ντομάτα. Με λεμόνι στο τέλος.", items: ["200g φακές μαγ.", "καρότο, σέλινο, ντομάτα", "λεμόνι", "1 κγ ελαιόλαδο"] },
+  { id: "cb_d1",  meal: "dinner", emoji: "🥗", name: "Σαλάτα κοτόπουλο με αβοκάντο & λάιμ",                   nameI18n: { el: "Σαλάτα κοτόπουλο με αβοκάντο & λάιμ", en: "Chicken salad with avocado & lime", es: "Ensalada de pollo con aguacate & lima", fr: "Salade de poulet à l'avocat & citron vert" }, kcal_est: 430, p: 38, c: 10, f: 26, note: "Κοτόπουλο ψητό κομμένο, αβοκάντο, μαρούλι, ντομάτα, κόρν. Ντρέσινγκ: λάιμ+λάδι+κύμινο.", items: ["150g κοτόπουλο ψητό", "½ αβοκάντο", "60g μαρούλι", "60g ντομάτα", "30g κόρν", "λάιμ"] },
+  { id: "cb_d2",  meal: "dinner", emoji: "🍳", name: "Ομελέτα λαχανικών + φέτα + τοστ ολικής",                 nameI18n: { el: "Ομελέτα λαχανικών + φέτα + τοστ ολικής", en: "Vegetable omelette + feta + whole grain toast", es: "Tortilla de verduras + feta + tostada integral", fr: "Omelette aux légumes + feta + toast complet" }, kcal_est: 420, p: 26, c: 30, f: 22, note: "3 αυγά, πιπεριά+μανιτάρια+σπανάκι σοταρισμένα, φέτα. Σέρβιρε με 1 φέτα ψωμί ολικής.", items: ["3 αυγά", "100g λαχανικά μίξ", "30g φέτα", "1 φέτα ψωμί ολικής", "1 κγ ελαιόλαδο"] },
+  { id: "cb_d3",  meal: "dinner", emoji: "🐟", name: "Σολομός ψητός + σαλάτα + λεμόνι",                        nameI18n: { el: "Σολομός ψητός + σαλάτα + λεμόνι", en: "Grilled salmon + salad + lemon", es: "Salmón a la plancha + ensalada + limón", fr: "Saumon grillé + salade + citron" }, kcal_est: 390, p: 38, c: 6,  f: 24, note: "Σολομός αλατοπιπερωμένος με ελαιόλαδο και λεμόνι. Φούρνος 200°C 12-14'. Σαλάτα απλή.", items: ["160g σολομός", "σαλάτα εποχής", "λεμόνι", "1 κγ ελαιόλαδο", "άνηθος"] },
+  { id: "cb_d4",  meal: "dinner", emoji: "🫙", name: "Tzatziki bowl: γιαούρτι, αγγούρι, μέντα, καρύδια",       nameI18n: { el: "Tzatziki bowl: γιαούρτι, αγγούρι, μέντα, καρύδια", en: "Tzatziki bowl: yogurt, cucumber, mint, walnuts", es: "Bol de tzatziki: yogur, pepino, menta, nueces", fr: "Bol tzatziki: yaourt, concombre, menthe, noix" }, kcal_est: 280, p: 14, c: 18, f: 16, note: "Χαλαρό βραδινό. Ελαφρύ και δροσιστικό. Ιδανικό τελευταίο γεύμα.", items: ["250g γιαούρτι στραγγιστό", "½ αγγούρι τριμμένο", "1 σκ. σκόρδο", "15g καρύδια", "μέντα φρέσκια"] },
+  { id: "cb_d5",  meal: "dinner", emoji: "🥚", name: "Shakshuka (αυγά σε σάλτσα ντομάτας)",                    nameI18n: { el: "Shakshuka (αυγά σε σάλτσα ντομάτας)", en: "Shakshuka (eggs in tomato sauce)", es: "Shakshuka (huevos en salsa de tomate)", fr: "Shakshuka (œufs en sauce tomate)" }, kcal_est: 360, p: 22, c: 26, f: 18, note: "Σάλτσα: ντομάτα+πιπεριά+κρεμμύδι+κύμινο+πάπρικα. Σπάσε αυγά μέσα, σκέπασε 5-7'. Με ψωμί.", items: ["3 αυγά", "200g ντομάτα κονκασέ", "1 πιπεριά", "κρεμμύδι", "κύμινο, πάπρικα", "1 φέτα ψωμί"] },
+  { id: "cb_d6",  meal: "dinner", emoji: "🧀", name: "Cottage με ντομάτα, ελιές & τοστ ολικής",                 nameI18n: { el: "Cottage με ντομάτα, ελιές & τοστ ολικής", en: "Cottage cheese with tomato, olives & whole grain toast", es: "Cottage con tomate, aceitunas & tostada integral", fr: "Cottage cheese avec tomate, olives & toast complet" }, kcal_est: 340, p: 22, c: 28, f: 14, note: "Ελαφρύ βραδινό υψηλής πρωτεΐνης. Ρίγανη, ελαιόλαδο και βαλσάμικο κάνουν τη διαφορά.", items: ["200g cottage cheese", "150g ντομάτα", "8 ελιές", "1 φέτα ψωμί ολικής", "1 κγ ελαιόλαδο", "ρίγανη"] },
+  { id: "cb_d7",  meal: "dinner", emoji: "🥩", name: "Μπριζόλα μοσχάρι 200γρ + σαλάτα",                       nameI18n: { el: "Μπριζόλα μοσχάρι 200γρ + σαλάτα", en: "Beef steak 200g + salad", es: "Bistec de ternera 200g + ensalada", fr: "Steak de bœuf 200g + salade" }, kcal_est: 440, p: 48, c: 6,  f: 24, note: "Τηγάνι σε δυνατή φωτιά 3' ανά πλευρά. Ξεκούραση 5' πριν κόψεις. Λεμόνι+θυμάρι.", items: ["200g μπριζόλα μοσχάρι", "σαλάτα πράσινη", "λεμόνι, θυμάρι", "4 ψεκ. ελαιόλαδο"] },
+  { id: "cb_d8",  meal: "dinner", emoji: "🌯", name: "Wrap τόνου με αβοκάντο",                                  nameI18n: { el: "Wrap τόνου με αβοκάντο", en: "Tuna wrap with avocado", es: "Wrap de atún con aguacate", fr: "Wrap au thon avec avocat" }, kcal_est: 420, p: 30, c: 38, f: 16, note: "Αναμείξε τόνο+αβοκάντο+λεμόνι+αλάτι. Τορτίγια, μαρούλι, ντοματίνια.", items: ["160g τόνος νερό", "½ αβοκάντο", "1 τορτίγια ολικής", "30g μαρούλι", "50g ντοματίνια"] },
+  { id: "cb_d9",  meal: "dinner", emoji: "🍲", name: "Σούπα κοτόπουλο με λαχανικά (avgolemono)",               nameI18n: { el: "Σούπα κοτόπουλο με λαχανικά (avgolemono)", en: "Chicken vegetable soup (avgolemono)", es: "Sopa de pollo con verduras (avgolemono)", fr: "Soupe de poulet aux légumes (avgolemono)" }, kcal_est: 380, p: 36, c: 28, f: 10, note: "Βράσε κοτόπουλο, βγάλε+κόψε. Πρόσθεσε λαχανικά, ρύζι. Avgolemono: αυγό+λεμόνι χτυπημένο.", items: ["150g κοτόπουλο", "60g ρύζι μαγ.", "καρότο, σέλινο", "αυγό+λεμόνι", "ζωμός"] },
+  { id: "cb_d10", meal: "dinner", emoji: "🥗", name: "Σαλάτα σπανάκι, παντζάρι & κατσικίσιο τυρί",            nameI18n: { el: "Σαλάτα σπανάκι, παντζάρι & κατσικίσιο τυρί", en: "Spinach, beetroot & goat cheese salad", es: "Ensalada de espinacas, remolacha & queso de cabra", fr: "Salade épinards, betterave & fromage de chèvre" }, kcal_est: 330, p: 14, c: 22, f: 20, note: "Σπανάκι μωρό, βρασμένο παντζάρι, κατσικίσιο τυρί τριμμένο. Ντρέσινγκ: μέλι+μουστάρδα+ξύδι.", items: ["80g σπανάκι μωρό", "100g παντζάρι βραστό", "40g κατσικίσιο τυρί", "15g καρύδια", "1 κγ μέλι+ξύδι"] },
+  { id: "cb_d11", meal: "dinner", emoji: "🐟", name: "Ψάρι φούρνου + πουρές & σαλάτα",                        nameI18n: { el: "Ψάρι φούρνου + πουρές & σαλάτα", en: "Baked fish + mashed potato & salad", es: "Pescado al horno + puré & ensalada", fr: "Poisson au four + purée & salade" }, kcal_est: 460, p: 40, c: 40, f: 14, note: "Τσιπούρα/λαβράκι 200γρ στον φούρνο με λεμόνι και ελαιόλαδο. Πουρές ελαφρύς με γάλα. Απλή πράσινη σαλάτα.", items: ["200g τσιπούρα ή λαβράκι", "150g πουρές", "σαλάτα πράσινη", "λεμόνι"] },
+  { id: "cb_d12", meal: "dinner", emoji: "🍳", name: "Κλαρκ αυγά (3τεμ) + μανιτάρια + γαλοπούλα",             nameI18n: { el: "Κλαρκ αυγά (3τεμ) + μανιτάρια + γαλοπούλα", en: "Shirred eggs (3) + mushrooms + turkey", es: "Huevos al plato (3) + champiñones + pavo", fr: "Œufs cocotte (3) + champignons + dinde" }, kcal_est: 350, p: 30, c: 4,  f: 22, note: "Σόταρε μανιτάρια+γαλοπούλα. Σπάσε αυγά από πάνω, σκέπασε με καπάκι 4'. Πιπέρι+ρίγανη.", items: ["3 αυγά", "100g μανιτάρια", "80g γαλοπούλα", "1 κγ ελαιόλαδο", "πιπέρι, ρίγανη"] },
+  { id: "cb_d13", meal: "dinner", emoji: "🫙", name: "High-protein overnight pudding chia",                     nameI18n: { el: "High-protein overnight pudding chia", en: "High-protein overnight chia pudding", es: "Pudín de chía nocturno alto en proteínas", fr: "Pudding chia de nuit riche en protéines" }, kcal_est: 390, p: 28, c: 38, f: 14, note: "Βράδυ: ανάμειξε γιαούρτι+γάλα+chia+whey+μέλι. Ψυγείο overnight. Φρούτα από πάνω.", items: ["200g γιαούρτι 2%", "100ml γάλα", "20g chia seeds", "20g whey vanilla", "1 κγ μέλι", "φρούτα"] },
+  { id: "cb_d14", meal: "dinner", emoji: "🥩", name: "Χοιρινό φιλέτο + μήλο + σαλάτα",                        nameI18n: { el: "Χοιρινό φιλέτο + μήλο + σαλάτα", en: "Pork fillet + apple + salad", es: "Filete de cerdo + manzana + ensalada", fr: "Filet de porc + pomme + salade" }, kcal_est: 410, p: 42, c: 20, f: 16, note: "Χοιρινό φιλέτο (άπαχο) με σάλτσα μήλου+σινάπι. Φούρνος 185°C 20'. Απλή πράσινη σαλάτα.", items: ["200g χοιρινό φιλέτο", "½ μήλο τριμμένο", "1 κγ μουστάρδα", "σαλάτα πράσινη"] },
+  { id: "cb_d15", meal: "dinner", emoji: "🌿", name: "Lentil soup βραδινό (φακές λαχανικά)",                   nameI18n: { el: "Lentil soup βραδινό (φακές λαχανικά)", en: "Lentil soup dinner (lentils & vegetables)", es: "Sopa de lentejas cena (lentejas & verduras)", fr: "Soupe de lentilles dîner (lentilles & légumes)" }, kcal_est: 320, p: 18, c: 50, f: 6,  note: "Ελαφρύ και χορταστικό. Φακές+καρότο+σέλινο+ντομάτα. Με λεμόνι στο τέλος.", items: ["200g φακές μαγ.", "καρότο, σέλινο, ντομάτα", "λεμόνι", "1 κγ ελαιόλαδο"] },
 ];
 
 // ============================================================
@@ -1226,6 +1312,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'whey',
     name: 'Whey Protein 🥛',
+    nameI18n: { el: 'Whey Protein 🥛', en: 'Whey Protein 🥛', es: 'Proteína Whey 🥛', fr: 'Protéine Whey 🥛' },
     category: 'sport',
     qty: '1 σκούπ (25–30g)',
     qtyI18n: { el: '1 σκούπ (25–30g)', en: '1 scoop (25–30g)', es: '1 medida (25–30g)', fr: '1 mesure (25–30g)' },
@@ -1253,6 +1340,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'casein',
     name: 'Καζεΐνη 🌙',
+    nameI18n: { el: 'Καζεΐνη 🌙', en: 'Casein 🌙', es: 'Caseína 🌙', fr: 'Caséine 🌙' },
     category: 'sport',
     qty: '25–40g',
     qtyI18n: { el: '25–40g', en: '25–40g', es: '25–40g', fr: '25–40g' },
@@ -1280,6 +1368,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'creatine',
     name: 'Κρεατίνη 💪',
+    nameI18n: { el: 'Κρεατίνη 💪', en: 'Creatine 💪', es: 'Creatina 💪', fr: 'Créatine 💪' },
     category: 'sport',
     qty: '3–5g',
     qtyI18n: { el: '3–5g', en: '3–5g', es: '3–5g', fr: '3–5g' },
@@ -1307,6 +1396,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'eaa',
     name: 'EAA (Απαραίτητα Αμινοξέα) 🌿',
+    nameI18n: { el: 'EAA (Απαραίτητα Αμινοξέα) 🌿', en: 'EAA (Essential Amino Acids) 🌿', es: 'EAA (Aminoácidos Esenciales) 🌿', fr: 'EAA (Acides Aminés Essentiels) 🌿' },
     category: 'sport',
     qty: '10–15g',
     qtyI18n: { el: '10–15g', en: '10–15g', es: '10–15g', fr: '10–15g' },
@@ -1334,6 +1424,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'bcaa',
     name: 'BCAA ⚡',
+    nameI18n: { el: 'BCAA ⚡', en: 'BCAA ⚡', es: 'BCAA ⚡', fr: 'BCAA ⚡' },
     category: 'sport',
     qty: '5–10g',
     qtyI18n: { el: '5–10g', en: '5–10g', es: '5–10g', fr: '5–10g' },
@@ -1361,6 +1452,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'caffeine',
     name: 'Καφεΐνη ☕',
+    nameI18n: { el: 'Καφεΐνη ☕', en: 'Caffeine ☕', es: 'Cafeína ☕', fr: 'Caféine ☕' },
     category: 'sport',
     qty: '100–300mg',
     qtyI18n: { el: '100–300mg', en: '100–300mg', es: '100–300mg', fr: '100–300mg' },
@@ -1388,6 +1480,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'citrulline',
     name: 'Citrulline Malate 🚀',
+    nameI18n: { el: 'Citrulline Malate 🚀', en: 'Citrulline Malate 🚀', es: 'Citruline Malato 🚀', fr: 'Citrulline Malate 🚀' },
     category: 'sport',
     qty: '6–8g',
     qtyI18n: { el: '6–8g', en: '6–8g', es: '6–8g', fr: '6–8g' },
@@ -1415,6 +1508,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'beta_alanine',
     name: 'Βήτα-Αλανίνη 🔥',
+    nameI18n: { el: 'Βήτα-Αλανίνη 🔥', en: 'Beta-Alanine 🔥', es: 'Beta-Alanina 🔥', fr: 'Bêta-Alanine 🔥' },
     category: 'sport',
     qty: '3.2–6.4g',
     qtyI18n: { el: '3.2–6.4g', en: '3.2–6.4g', es: '3.2–6.4g', fr: '3.2–6.4g' },
@@ -1442,6 +1536,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'electrolytes',
     name: 'Ηλεκτρολύτες 💧',
+    nameI18n: { el: 'Ηλεκτρολύτες 💧', en: 'Electrolytes 💧', es: 'Electrolitos 💧', fr: 'Électrolytes 💧' },
     category: 'sport',
     qty: 'Κατά οδηγίες συσκευασίας',
     qtyI18n: { el: 'Κατά οδηγίες συσκευασίας', en: 'As per package instructions', es: 'Según las instrucciones del envase', fr: 'Selon les instructions de l\'emballage' },
@@ -1470,6 +1565,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'vitd3',
     name: 'Βιταμίνη D3 ☀️',
+    nameI18n: { el: 'Βιταμίνη D3 ☀️', en: 'Vitamin D3 ☀️', es: 'Vitamina D3 ☀️', fr: 'Vitamine D3 ☀️' },
     category: 'health',
     qty: '1000–4000 IU',
     qtyI18n: { el: '1000–4000 IU', en: '1000–4000 IU', es: '1000–4000 UI', fr: '1000–4000 UI' },
@@ -1497,6 +1593,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'vitk2',
     name: 'Βιταμίνη K2 🟢',
+    nameI18n: { el: 'Βιταμίνη K2 🟢', en: 'Vitamin K2 🟢', es: 'Vitamina K2 🟢', fr: 'Vitamine K2 🟢' },
     category: 'health',
     qty: '90–180mcg',
     qtyI18n: { el: '90–180mcg', en: '90–180mcg', es: '90–180mcg', fr: '90–180mcg' },
@@ -1524,6 +1621,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'magnesium',
     name: 'Μαγνήσιο 🧲',
+    nameI18n: { el: 'Μαγνήσιο 🧲', en: 'Magnesium 🧲', es: 'Magnesio 🧲', fr: 'Magnésium 🧲' },
     category: 'health',
     qty: '300–400mg',
     qtyI18n: { el: '300–400mg', en: '300–400mg', es: '300–400mg', fr: '300–400mg' },
@@ -1551,6 +1649,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'zinc',
     name: 'Ψευδάργυρος ⚡',
+    nameI18n: { el: 'Ψευδάργυρος ⚡', en: 'Zinc ⚡', es: 'Zinc ⚡', fr: 'Zinc ⚡' },
     category: 'health',
     qty: '15–25mg',
     qtyI18n: { el: '15–25mg', en: '15–25mg', es: '15–25mg', fr: '15–25mg' },
@@ -1578,6 +1677,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'omega3',
     name: 'Ω-3 Λιπαρά 🐟',
+    nameI18n: { el: 'Ω-3 Λιπαρά 🐟', en: 'Omega-3 Fatty Acids 🐟', es: 'Ácidos Grasos Omega-3 🐟', fr: 'Acides Gras Oméga-3 🐟' },
     category: 'health',
     qty: '1–3g EPA+DHA',
     qtyI18n: { el: '1–3g EPA+DHA', en: '1–3g EPA+DHA', es: '1–3g EPA+DHA', fr: '1–3g EPA+DHA' },
@@ -1605,6 +1705,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'vitc',
     name: 'Βιταμίνη C 🍊',
+    nameI18n: { el: 'Βιταμίνη C 🍊', en: 'Vitamin C 🍊', es: 'Vitamina C 🍊', fr: 'Vitamine C 🍊' },
     category: 'health',
     qty: '500–1000mg',
     qtyI18n: { el: '500–1000mg', en: '500–1000mg', es: '500–1000mg', fr: '500–1000mg' },
@@ -1632,6 +1733,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'iron',
     name: 'Σίδηρος 🩸',
+    nameI18n: { el: 'Σίδηρος 🩸', en: 'Iron 🩸', es: 'Hierro 🩸', fr: 'Fer 🩸' },
     category: 'health',
     qty: 'Κατά συνταγή',
     qtyI18n: { el: 'Κατά συνταγή', en: 'As prescribed', es: 'Según prescripción', fr: 'Sur ordonnance' },
@@ -1659,6 +1761,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'calcium',
     name: 'Ασβέστιο 🦴',
+    nameI18n: { el: 'Ασβέστιο 🦴', en: 'Calcium 🦴', es: 'Calcio 🦴', fr: 'Calcium 🦴' },
     category: 'health',
     qty: '500–1000mg',
     qtyI18n: { el: '500–1000mg', en: '500–1000mg', es: '500–1000mg', fr: '500–1000mg' },
@@ -1686,6 +1789,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'b12',
     name: 'Βιταμίνη Β12 🔋',
+    nameI18n: { el: 'Βιταμίνη Β12 🔋', en: 'Vitamin B12 🔋', es: 'Vitamina B12 🔋', fr: 'Vitamine B12 🔋' },
     category: 'health',
     qty: '500–1000mcg',
     qtyI18n: { el: '500–1000mcg', en: '500–1000mcg', es: '500–1000mcg', fr: '500–1000mcg' },
@@ -1713,6 +1817,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'vitb_complex',
     name: 'Βιταμίνες Β (Σύμπλεγμα) 💛',
+    nameI18n: { el: 'Βιταμίνες Β (Σύμπλεγμα) 💛', en: 'Vitamin B Complex 💛', es: 'Complejo Vitamínico B 💛', fr: 'Complexe Vitamine B 💛' },
     category: 'health',
     qty: 'Κατά οδηγίες συσκευασίας',
     qtyI18n: { el: 'Κατά οδηγίες συσκευασίας', en: 'As per package instructions', es: 'Según las instrucciones del envase', fr: 'Selon les instructions de l\'emballage' },
@@ -1740,6 +1845,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'coq10',
     name: 'CoQ10 ❤️',
+    nameI18n: { el: 'CoQ10 ❤️', en: 'CoQ10 ❤️', es: 'CoQ10 ❤️', fr: 'CoQ10 ❤️' },
     category: 'health',
     qty: '100–200mg',
     qtyI18n: { el: '100–200mg', en: '100–200mg', es: '100–200mg', fr: '100–200mg' },
@@ -1767,6 +1873,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'probiotics',
     name: 'Προβιοτικά 🦠',
+    nameI18n: { el: 'Προβιοτικά 🦠', en: 'Probiotics 🦠', es: 'Probióticos 🦠', fr: 'Probiotiques 🦠' },
     category: 'health',
     qty: '1–10 δισεκ. CFU',
     qtyI18n: { el: '1–10 δισεκ. CFU', en: '1–10 billion CFU', es: '1–10 mil millones de UFC', fr: '1–10 milliards UFC' },
@@ -1795,6 +1902,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'ashwagandha',
     name: 'Ashwagandha 🌿',
+    nameI18n: { el: 'Ashwagandha 🌿', en: 'Ashwagandha 🌿', es: 'Ashwagandha 🌿', fr: 'Ashwagandha 🌿' },
     category: 'wellness',
     qty: '300–600mg',
     qtyI18n: { el: '300–600mg', en: '300–600mg', es: '300–600mg', fr: '300–600mg' },
@@ -1822,6 +1930,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'melatonin',
     name: 'Μελατονίνη 🌙',
+    nameI18n: { el: 'Μελατονίνη 🌙', en: 'Melatonin 🌙', es: 'Melatonina 🌙', fr: 'Mélatonine 🌙' },
     category: 'wellness',
     qty: '0.5–3mg',
     qtyI18n: { el: '0.5–3mg', en: '0.5–3mg', es: '0.5–3mg', fr: '0.5–3mg' },
@@ -1849,6 +1958,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'collagen',
     name: 'Κολλαγόνο 🦴',
+    nameI18n: { el: 'Κολλαγόνο 🦴', en: 'Collagen 🦴', es: 'Colágeno 🦴', fr: 'Collagène 🦴' },
     category: 'wellness',
     qty: '10–15g',
     qtyI18n: { el: '10–15g', en: '10–15g', es: '10–15g', fr: '10–15g' },
@@ -1876,6 +1986,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'curcumin',
     name: 'Κουρκουμίνη 🌼',
+    nameI18n: { el: 'Κουρκουμίνη 🌼', en: 'Curcumin 🌼', es: 'Curcumina 🌼', fr: 'Curcumine 🌼' },
     category: 'wellness',
     qty: '500–1000mg',
     qtyI18n: { el: '500–1000mg', en: '500–1000mg', es: '500–1000mg', fr: '500–1000mg' },
@@ -1903,6 +2014,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'psyllium',
     name: 'Psyllium (Φυτικές Ίνες) 🌾',
+    nameI18n: { el: 'Psyllium (Φυτικές Ίνες) 🌾', en: 'Psyllium (Dietary Fibre) 🌾', es: 'Psyllium (Fibra Dietética) 🌾', fr: 'Psyllium (Fibres Alimentaires) 🌾' },
     category: 'wellness',
     qty: '5–10g',
     qtyI18n: { el: '5–10g', en: '5–10g', es: '5–10g', fr: '5–10g' },
@@ -1930,6 +2042,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'glucosamine_chondroitin',
     name: 'Γλυκοζαμίνη + Χονδροϊτίνη 🦵',
+    nameI18n: { el: 'Γλυκοζαμίνη + Χονδροϊτίνη 🦵', en: 'Glucosamine + Chondroitin 🦵', es: 'Glucosamina + Condroitina 🦵', fr: 'Glucosamine + Chondroïtine 🦵' },
     category: 'wellness',
     qty: '1500mg + 1200mg',
     qtyI18n: { el: '1500mg + 1200mg', en: '1500mg + 1200mg', es: '1500mg + 1200mg', fr: '1500mg + 1200mg' },
@@ -1958,6 +2071,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'l_carnitine',
     name: 'L-Καρνιτίνη 🚴',
+    nameI18n: { el: 'L-Καρνιτίνη 🚴', en: 'L-Carnitine 🚴', es: 'L-Carnitina 🚴', fr: 'L-Carnitine 🚴' },
     category: 'fatburn',
     qty: '1–2g',
     qtyI18n: { el: '1–2g', en: '1–2g', es: '1–2g', fr: '1–2g' },
@@ -1985,6 +2099,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'lipodrene',
     name: 'Lipodrene (Λιποδιαλύτης) 🔥',
+    nameI18n: { el: 'Lipodrene (Λιποδιαλύτης) 🔥', en: 'Lipodrene (Fat Burner) 🔥', es: 'Lipodrene (Quemador de grasa) 🔥', fr: 'Lipodrene (Brûleur de graisses) 🔥' },
     category: 'fatburn',
     qty: 'Κατά οδηγίες',
     qtyI18n: { el: 'Κατά οδηγίες', en: 'As instructed', es: 'Según instrucciones', fr: 'Selon les instructions' },
@@ -2013,6 +2128,7 @@ const SUPPLEMENTS_LIBRARY = [
   {
     id: 'benetdea',
     name: 'Benetdea Vitta 💊',
+    nameI18n: { el: 'Benetdea Vitta 💊', en: 'Benetdea Vitta 💊', es: 'Benetdea Vitta 💊', fr: 'Benetdea Vitta 💊' },
     category: 'personal',
     qty: 'Κατά οδηγίες',
     qtyI18n: { el: 'Κατά οδηγίες', en: 'As instructed', es: 'Según instrucciones', fr: 'Selon les instructions' },

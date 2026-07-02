@@ -1817,7 +1817,7 @@ function _renderWizardStep() {
 
     wizardMeals.forEach(r => {
       const ex = isRowExcluded(r);
-      const displayName = r.wizardName || r.name;
+      const displayName = r.wizardName ? (tName(r, 'wizardName') || r.wizardName) : tName(r);
       const kcalStr = r.kcal_est ? `${r.kcal_est} kcal` : (r.fixedMacros ? `${r.fixedMacros.kcal} kcal` : '');
       const siblings = r.foodGroup ? JSON.stringify(groupToIds[r.foodGroup] || [r.id]) : JSON.stringify([r.id]);
       const siblingsAttr = siblings.replace(/"/g, '&quot;');
@@ -1860,7 +1860,7 @@ function _renderWizardStep() {
       const siblings = r.foodGroup ? allForMeal.filter(x=>x.foodGroup===r.foodGroup).map(x=>x.id) : [r.id];
       return siblings.every(id => excSet.has(id));
     });
-    const excNames = excRows.map(r => r.wizardName || r.name);
+    const excNames = excRows.map(r => r.wizardName ? (tName(r, 'wizardName') || r.wizardName) : tName(r));
     html += `<div class="wizard-confirm-meal">
       <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label}
         <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length})</span>
@@ -2434,7 +2434,7 @@ function renderToday() {
     if (meal.done) runningKcal += m.kcal;
 
     const emoji = isStandard ? sm.emoji : recipe.emoji;
-    const name  = isStandard ? sm.name  : recipe.name;
+    const name  = isStandard ? (tName(sm) || sm.name) : tName(recipe);
 
     let bodyHtml = '';
     if (isStandard) {
@@ -2444,14 +2444,14 @@ function renderToday() {
       </div>
       <div class="meal-macros">
         <div class="macro-chip"><div class="macro-chip-val" style="color:#22c55e">~${m.kcal}</div><div class="macro-chip-lbl">kcal</div></div>
-        <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${m.p > 0 ? m.p + 'g' : '—'}</div><div class="macro-chip-lbl">πρωτ.</div></div>
-        <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${m.c > 0 ? m.c + 'g' : '—'}</div><div class="macro-chip-lbl">υδατ.</div></div>
-        <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f > 0 ? m.f + 'g' : '—'}</div><div class="macro-chip-lbl">λίπος</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${m.p > 0 ? m.p + 'g' : '—'}</div><div class="macro-chip-lbl">${t('chip_prot')}</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${m.c > 0 ? m.c + 'g' : '—'}</div><div class="macro-chip-lbl">${t('chip_carb')}</div></div>
+        <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f > 0 ? m.f + 'g' : '—'}</div><div class="macro-chip-lbl">${t('chip_fat')}</div></div>
       </div>
-      ${sf !== 1 ? `<div style="font-size:0.7rem;color:var(--text3);margin:4px 0">📏 Μερίδα ×${sf}</div>` : ''}
+      ${sf !== 1 ? `<div style="font-size:0.7rem;color:var(--text3);margin:4px 0">📏 ${t('chip_portion')} ×${sf}</div>` : ''}
       ${sm.note ? `
       <button class="recipe-expand-btn" onclick="toggleRecipeExpand(this)" aria-expanded="false">
-        📋 Πρόταση Σερβιρίσματος <span class="recipe-expand-arrow">▼</span>
+        ${t('meal_serving_btn')} <span class="recipe-expand-arrow">▼</span>
       </button>
       <div class="recipe-expand-body">
         <div>
@@ -2470,24 +2470,24 @@ function renderToday() {
         else qty = Math.round(qty);
         // Whey πάντα 30g
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
-        return `<div class="ingredient-row"><span class="ingredient-name">${esc(food.name)}</span><span class="ingredient-qty">${qty}${food.unit}</span></div>`;
+        return `<div class="ingredient-row"><span class="ingredient-name">${esc(tName(food))}</span><span class="ingredient-qty">${qty}${food.unit}</span></div>`;
       }).join('');
       bodyHtml = `
         <div class="meal-macros">
           <div class="macro-chip"><div class="macro-chip-val" style="color:#22c55e">${m.kcal}</div><div class="macro-chip-lbl">kcal</div></div>
-          <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${m.p}g</div><div class="macro-chip-lbl">πρωτ.</div></div>
-          <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${m.c}g</div><div class="macro-chip-lbl">υδατ.</div></div>
-          <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f}g</div><div class="macro-chip-lbl">λίπος</div></div>
+          <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${m.p}g</div><div class="macro-chip-lbl">${t('chip_prot')}</div></div>
+          <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${m.c}g</div><div class="macro-chip-lbl">${t('chip_carb')}</div></div>
+          <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${m.f}g</div><div class="macro-chip-lbl">${t('chip_fat')}</div></div>
         </div>
         <div class="meal-ingredients">${ingHtml}</div>
         ${(recipe.instructions || recipe.serving) ? `
         <button class="recipe-expand-btn" onclick="toggleRecipeExpand(this)" aria-expanded="false">
-          📋 Συνταγή &amp; Σερβίρισμα <span class="recipe-expand-arrow">▼</span>
+          ${t('meal_recipe_btn')} <span class="recipe-expand-arrow">▼</span>
         </button>
         <div class="recipe-expand-body">
           <div>
-            ${recipe.instructions ? `<div class="recipe-instructions">${recipe.instructions.replace(/\n/g,'<br>')}</div>` : ''}
-            ${recipe.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${recipe.serving}</div>` : ''}
+            ${recipe.instructions ? `<div class="recipe-instructions">${(tName(recipe,'instructions')||recipe.instructions).replace(/\n/g,'<br>')}</div>` : ''}
+            ${recipe.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${tName(recipe,'serving')||recipe.serving}</div>` : ''}
           </div>
         </div>` : ''}`;
     }
@@ -2511,8 +2511,8 @@ function renderToday() {
         ${meal.waterNote ? `<div class="water-note">💧 ${meal.waterNote}</div>` : ''}
         <div class="running-kcal">${t('today_running_total')}: <strong>${runningKcal} kcal</strong></div>
         <div class="meal-actions">
-          <button class="btn btn-ghost btn-sm" onclick="openSwapMeal(${mi})">🔄 Αλλαγή</button>
-          <button class="btn btn-ghost btn-sm" onclick="openScaleModal(${mi})">⚖️ Ποσότητα</button>
+          <button class="btn btn-ghost btn-sm" onclick="openSwapMeal(${mi})">${t('meal_swap_btn')}</button>
+          <button class="btn btn-ghost btn-sm" onclick="openScaleModal(${mi})">${t('meal_scale_btn')}</button>
         </div>
       </div>`;
   });
@@ -2653,7 +2653,7 @@ function renderToday() {
         const prevExtra = prevDayIdx >= 0 ? (state.week[prevDayIdx].extraKcal || 0) : 0;
         const reminderHtml = prevExtra > 0
           ? `<div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:0.82rem">
-              ⚠️ <strong>Χθες έφαγες +${prevExtra} kcal</strong> παραπάνω. Προσαρμόσου σήμερα!
+              ${tFmt('today_yesterday_extra', {n: prevExtra})}
               <button onclick="clearPrevExtra(${prevDayIdx})" style="border:none;background:none;cursor:pointer;color:var(--text3);float:right;font-size:0.75rem">✕</button>
             </div>`
           : '';
@@ -2692,7 +2692,7 @@ function renderToday() {
               <button class="supp-check ${isDone?'checked':''}" onclick="toggleSupp('${s.id}')">${isDone?'✓':''}</button>
               <div class="supp-info" style="flex:1;min-width:0">
                 <div style="display:flex;align-items:center;gap:6px">
-                  <span class="supp-name">${s.name}</span>
+                  <span class="supp-name">${tName(s)}</span>
                   <span style="font-size:0.68rem;color:var(--text3);font-weight:600">${tName(s,'timing')}</span>
                 </div>
                 <div class="supp-note">${tName(s,'intake')} · ${tName(s,'qty')}</div>
@@ -2841,13 +2841,13 @@ function renderWeek() {
         if (me.standardId) {
           const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
           if (!sm) return '';
-          name = sm.name; emoji = sm.emoji;
+          name = tName(sm) || sm.name; emoji = sm.emoji;
           kcal = Math.round(sm.kcal_est * (me.scaleFactor||1));
         } else {
           const r = allR.find(x => x.id === me.recipeId);
           if (!r) return '';
           const mac = calcRecipeMacros(r, me.scaleFactor||1);
-          name = r.name; emoji = r.emoji; kcal = mac.kcal;
+          name = tName(r); emoji = r.emoji; kcal = mac.kcal;
         }
         return `<div style="margin-bottom:7px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
@@ -2867,7 +2867,7 @@ function renderWeek() {
     }).join('');
 
     return `<div class="week-day-card" style="border-top:${borderTop}">
-      <div class="week-day-card-header" onclick="goToDay(${di})" title="Μετάβαση στην ημέρα">
+      <div class="week-day-card-header" onclick="goToDay(${di})" title="${t('week_go_to_day')}">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${getDayTitle(di)}</div>
           <span style="font-size:0.6rem;color:var(--text3)">→</span>
@@ -2878,9 +2878,9 @@ function renderWeek() {
         </div>
       </div>
       <div class="week-day-card-body">
-        ${mealSections || '<div style="font-size:0.65rem;color:var(--text3);text-align:center;padding:12px 0">Κανένα γεύμα</div>'}
-        ${allDone ? `<div style="margin-top:6px;text-align:center"><span style="font-size:0.62rem;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 8px">✓ Ολοκληρώθηκε</span></div>` : ''}
-        ${extraKcal > 0 ? `<div style="margin-top:4px;font-size:0.62rem;color:#ef4444;font-weight:700;text-align:center">⚠️ +${extraKcal} kcal εκτός</div>` : ''}
+        ${mealSections || `<div style="font-size:0.65rem;color:var(--text3);text-align:center;padding:12px 0">${t('week_no_meal')}</div>`}
+        ${allDone ? `<div style="margin-top:6px;text-align:center"><span style="font-size:0.62rem;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 8px">${t('week_completed')}</span></div>` : ''}
+        ${extraKcal > 0 ? `<div style="margin-top:4px;font-size:0.62rem;color:#ef4444;font-weight:700;text-align:center">${tFmt('week_extra_kcal', {n: extraKcal})}</div>` : ''}
         ${(() => {
           const { deficit } = calcDayDeficit(di);
           const dc = deficit >= 0 ? '#22c55e' : '#ef4444';
@@ -2904,7 +2904,7 @@ function renderWeek() {
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">
           <div style="display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:10px;padding:4px 8px;border:1px solid var(--border)">
             <button onclick="shiftWeek(-1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">‹</button>
-            <button class="btn btn-ghost btn-sm" onclick="goToToday()">Σήμερα</button>
+            <button class="btn btn-ghost btn-sm" onclick="goToToday()">${t('week_today_btn')}</button>
             <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">›</button>
           </div>
           ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
@@ -2922,7 +2922,7 @@ function renderWeek() {
               <span class="week-btn-label">${t('week_reset')}</span>
             </button>
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()" title="PDF">🖨️ <span class="week-btn-label">PDF</span></button>
-            <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="Αντιγραφή">📋</button>
+            <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="${t('week_copy_btn')}">📋</button>
           </div>
         </div>
       </div>
@@ -3022,14 +3022,14 @@ function renderWeek() {
             const sign = actualDelta <= 0 ? '' : '+';
             actualWeightHtml = `
               <div style="background:#f8fafc;border-radius:10px;padding:12px 14px;border:1.5px solid #e2e8f0;margin-top:12px">
-                <div style="font-size:0.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">⚖️ Πραγματική Μεταβολή Βάρους</div>
+                <div style="font-size:0.68rem;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">${t('week_real_weight')}</div>
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
                   <div style="font-size:0.75rem;color:var(--text2)">
                     ${before.date}: <strong>${before.weight}kg</strong> → ${afterOrLatest.date}: <strong>${afterOrLatest.weight}kg</strong>
                   </div>
                   <div style="text-align:right">
                     <div style="font-size:1.2rem;font-weight:900;color:${actualColor}">${sign}${actualDelta.toFixed(1)} kg</div>
-                    <div style="font-size:0.62rem;color:var(--text3)">πραγματική αλλαγή</div>
+                    <div style="font-size:0.62rem;color:var(--text3)">${t('week_real_change')}</div>
                   </div>
                 </div>
               </div>`;
@@ -3038,19 +3038,19 @@ function renderWeek() {
 
         return `<div style="padding:0 16px;margin-bottom:10px">
           <div style="background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);border:1px solid var(--border)">
-            <div style="font-size:0.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">🏃 Εβδομαδιαία Δραστηριότητα & Έλλειμμα</div>
+            <div style="font-size:0.75rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">${t('week_activity_title')}</div>
             <div style="display:flex;gap:0;margin-bottom:14px">${barCells}</div>
             <div style="font-size:0.78rem;color:var(--text2)">
-              🔥 Συνολική καύση: <strong>${weeklyBurn.toLocaleString()} kcal</strong><br>
-              🍽️ Συνολική κατανάλωση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong>
+              ${t('week_total_burn')} <strong>${weeklyBurn.toLocaleString()} kcal</strong><br>
+              ${t('week_total_consumed')} <strong>${weeklyConsumed.toLocaleString()} kcal</strong>
             </div>
 
             <!-- Προβλέψεις απώλειας -->
             <div class="week-deficit-grid" style="margin-top:10px">
               <!-- Πρόβλεψη βάσει TDEE συντήρησης -->
               <div style="background:#f0fdf4;border-radius:8px;padding:8px 10px;border:1.5px solid #bbf7d0">
-                <div style="font-size:0.6rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">📐 Βάσει TDEE</div>
-                <div style="font-size:0.65rem;color:#166534;margin-bottom:3px">TDEE: <strong>${tdee.toLocaleString()}</strong> · Στόχος: <strong>${goalKcalPerDay.toLocaleString()} kcal</strong></div>
+                <div style="font-size:0.6rem;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${t('week_tdee_based')}</div>
+                <div style="font-size:0.65rem;color:#166534;margin-bottom:3px">${tFmt('week_tdee_goal', {tdee: tdee.toLocaleString(), goal: goalKcalPerDay.toLocaleString()})}</div>
                 <div style="display:flex;align-items:baseline;gap:6px">
                   <div style="font-size:1rem;font-weight:900;color:${tdeeColor}">${tdeeWeeklyDeficit >= 0 ? '−' : '+'}${Math.abs(tdeeWeeklyDeficit).toLocaleString()} kcal</div>
                   <div style="font-size:0.7rem;font-weight:700;color:${tdeeColor}">≈ ${parseFloat(tdeeKgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(tdeeKgEquiv))} kg</div>
@@ -3058,8 +3058,8 @@ function renderWeek() {
               </div>
               <!-- Πρόβλεψη βάσει πραγματικής καύσης -->
               <div style="background:#eff6ff;border-radius:8px;padding:8px 10px;border:1.5px solid #bfdbfe">
-                <div style="font-size:0.6rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">🏃 Πραγματική Καύση</div>
-                <div style="font-size:0.65rem;color:#1e3a8a;margin-bottom:3px">Καύση: <strong>${weeklyBurn.toLocaleString()}</strong> · Κατ/ση: <strong>${weeklyConsumed.toLocaleString()} kcal</strong></div>
+                <div style="font-size:0.6rem;font-weight:800;color:#1d4ed8;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">${t('week_real_burn')}</div>
+                <div style="font-size:0.65rem;color:#1e3a8a;margin-bottom:3px">${tFmt('week_real_burn_detail', {burn: weeklyBurn.toLocaleString(), consumed: weeklyConsumed.toLocaleString()})}</div>
                 <div style="display:flex;align-items:baseline;gap:6px">
                   <div style="font-size:1rem;font-weight:900;color:${deficitColor}">${weeklyDeficit >= 0 ? '−' : '+'}${Math.abs(weeklyDeficit).toLocaleString()} kcal</div>
                   <div style="font-size:0.7rem;font-weight:700;color:${kgColor}">≈ ${parseFloat(kgEquiv) >= 0 ? '-' : '+'}${Math.abs(parseFloat(kgEquiv))} kg</div>
@@ -3185,31 +3185,37 @@ function confirmResetWeekPlan() {
 function renderRecipes(filter = '') {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
-  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Δεκατιανό', lunch:'🥗 Μεσημεριανά', afternoon:'☕ Απογευματινό', dinner:'🌙 Βραδινά' };
+  const mealLabels = {
+    breakfast: '☀️ ' + t('meal_breakfasts'),
+    snack:     '🍎 ' + t('meal_snacks'),
+    lunch:     '🥗 ' + t('meal_lunches'),
+    afternoon: '☕ ' + t('meal_afternoons'),
+    dinner:    '🌙 ' + t('meal_dinners'),
+  };
 
   let html = `
     <div class="rc-card">
         <div class="rc-header">
-          <span class="rc-title">📖 Συνταγές</span>
-          <button class="rc-new-btn" onclick="openAddRecipeModal()">+ Νέα συνταγή</button>
+          <span class="rc-title">${t('recipes_title')}</span>
+          <button class="rc-new-btn" onclick="openAddRecipeModal()">${t('btn_new_recipe')}</button>
         </div>
         <div class="rc-search">
           <svg class="rc-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" placeholder="${t('search_recipe')}" value="${filter}" oninput="renderRecipes(this.value)">
         </div>
         <div class="recipe-filter-pills">
-          <button class="recipe-pill active" onclick="filterRecipeType('all',this)">Όλες</button>
-          <button class="recipe-pill" onclick="filterRecipeType('breakfast',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Πρωινά</button>
-          <button class="recipe-pill" onclick="filterRecipeType('snack',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 2c-1 2-1.5 4-1.5 6s.5 4 1.5 6"/><path d="M2 12h20"/></svg> Δεκατιανά</button>
-          <button class="recipe-pill" onclick="filterRecipeType('lunch',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Μεση/νό</button>
+          <button class="recipe-pill active" onclick="filterRecipeType('all',this)">${t('filter_all')}</button>
+          <button class="recipe-pill" onclick="filterRecipeType('breakfast',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> ${t('meal_breakfasts')}</button>
+          <button class="recipe-pill" onclick="filterRecipeType('snack',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 2c-1 2-1.5 4-1.5 6s.5 4 1.5 6"/><path d="M2 12h20"/></svg> ${t('meal_snacks')}</button>
+          <button class="recipe-pill" onclick="filterRecipeType('lunch',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> ${t('meal_lunches')}</button>
           <div class="recipe-filter-pills-break"></div>
-          <button class="recipe-pill" onclick="filterRecipeType('afternoon',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg> Απογευματινά</button>
-          <button class="recipe-pill" onclick="filterRecipeType('dinner',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Βραδινά</button>
+          <button class="recipe-pill" onclick="filterRecipeType('afternoon',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg> ${t('meal_afternoons')}</button>
+          <button class="recipe-pill" onclick="filterRecipeType('dinner',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> ${t('meal_dinners')}</button>
         </div>
       </div>`;
 
   mealTypes.forEach(type => {
-    const recipes = allRecipes.filter(r => r.meal === type && (!filter || r.name.toLowerCase().includes(filter.toLowerCase())));
+    const recipes = allRecipes.filter(r => r.meal === type && (!filter || tName(r).toLowerCase().includes(filter.toLowerCase())));
     if (!recipes.length) return;
     html += `<div class="section-title" data-type="${type}">${mealLabels[type]}</div>
       <div class="recipes-grid" data-type="${type}">
@@ -3218,9 +3224,9 @@ function renderRecipes(filter = '') {
           const isFav = state.favorites.includes(r.id);
           return `<div class="recipe-card ${isFav?'favorite':''}" onclick="openRecipeDetail('${r.id}')">
             <div class="recipe-card-emoji">${r.emoji}</div>
-            <div class="recipe-card-name">${esc(r.name)}</div>
+            <div class="recipe-card-name">${esc(tName(r))}</div>
             <div class="recipe-card-kcal">${m.kcal} kcal</div>
-            <div class="recipe-card-meal">Π:${m.p}g | Υ:${m.c}g | Λ:${m.f}g</div>
+            <div class="recipe-card-meal">${t('macro_p_abbr')}:${m.p}g | ${t('macro_c_abbr')}:${m.c}g | ${t('macro_f_abbr')}:${m.f}g</div>
             <button style="margin-top:6px;font-size:0.8rem;border:none;background:none;cursor:pointer" onclick="event.stopPropagation();toggleFavorite('${r.id}')">${isFav?'⭐':'☆'}</button>
           </div>`;
         }).join('')}
@@ -3255,8 +3261,8 @@ function renderFoods(filter = '') {
   let html = `
     <div class="foods-wrap">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <h2>🔬 Λεξικό Τροφών</h2>
-        <button class="btn btn-green btn-sm" onclick="openAddFoodModal()">➕ Νέα</button>
+        <h2>${t('foods_title')}</h2>
+        <button class="btn btn-green btn-sm" onclick="openAddFoodModal()">${t('foods_new_btn')}</button>
       </div>
       <div class="search-wrap"><span class="search-icon">🔍</span>
         <input type="text" placeholder="${t('search_food')}" value="${filter}" oninput="renderFoods(this.value)">
@@ -3272,7 +3278,7 @@ function renderFoods(filter = '') {
         return `<div class="food-row" onclick="openFoodDetail('${f.id}')">
           <div>
             <div class="food-row-name">${tName(f)}</div>
-            <div class="food-row-sub">Π:${f.per100.p}g · Υ:${f.per100.c}g · Λ:${f.per100.f}g ${per}</div>
+            <div class="food-row-sub">${t('macro_p_abbr')}:${f.per100.p}g · ${t('macro_c_abbr')}:${f.per100.c}g · ${t('macro_f_abbr')}:${f.per100.f}g ${per}</div>
           </div>
           <div class="food-row-kcal">${f.per100.kcal} kcal</div>
         </div>`;
@@ -3456,15 +3462,16 @@ function renderBuilderPage(typeFilter) {
 
   // ── LEFT: meal library ──
   const libSearch = (window._builderSearch || '').toLowerCase();
+  const _pAbbr = t('macro_p_abbr'), _cAbbr = t('macro_c_abbr'), _fAbbr = t('macro_f_abbr');
   let libHtml = '';
-  mealTypes.forEach(t => {
-    const meta = mealTypeMeta[t];
-    const standards = STANDARD_MEALS.filter(s => s.meal === t && (!libSearch || s.name.toLowerCase().includes(libSearch)));
-    const recipes   = allRecipes.filter(r => r.meal === t && (!libSearch || r.name.toLowerCase().includes(libSearch)));
+  mealTypes.forEach(mType => {
+    const meta = mealTypeMeta[mType];
+    const standards = STANDARD_MEALS.filter(s => s.meal === mType && (!libSearch || (tName(s)||s.name).toLowerCase().includes(libSearch)));
+    const recipes   = allRecipes.filter(r => r.meal === mType && (!libSearch || tName(r).toLowerCase().includes(libSearch)));
     if (!standards.length && !recipes.length) return;
 
     libHtml += `<div class="dplanner-lib-section-header">
-      <span class="dplanner-lib-section-icon ${t}">${meta.icon}</span>
+      <span class="dplanner-lib-section-icon ${mType}">${meta.icon}</span>
       <span class="dplanner-lib-section-label">${meta.label.toUpperCase()}</span>
     </div>`;
     libHtml += `<div class="dplanner-lib-grid">`;
@@ -3473,8 +3480,8 @@ function renderBuilderPage(typeFilter) {
       libHtml += `<div class="dplanner-meal-card ${sel ? 'selected-dp' : ''}" onclick="builderPageToggle('${s.id}',true)">
         <div class="dplanner-meal-emoji">${s.emoji}</div>
         <div class="dplanner-meal-info">
-          <div class="dplanner-meal-name">${s.name}</div>
-          <div class="dplanner-meal-meta">Π:${s.p||'?'}g · Υ:${s.c||'?'}g · Λ:${s.f||'?'}g</div>
+          <div class="dplanner-meal-name">${tName(s) || s.name}</div>
+          <div class="dplanner-meal-meta">${_pAbbr}:${s.p||'?'}g · ${_cAbbr}:${s.c||'?'}g · ${_fAbbr}:${s.f||'?'}g</div>
         </div>
         <div class="dplanner-meal-kcal">~${s.kcal_est} kcal</div>
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${s.id}',true)">${sel ? '✕' : '+'}</button>
@@ -3486,8 +3493,8 @@ function renderBuilderPage(typeFilter) {
       libHtml += `<div class="dplanner-meal-card ${sel ? 'selected-dp' : ''}" onclick="builderPageToggle('${r.id}',false)">
         <div class="dplanner-meal-emoji">${r.emoji}</div>
         <div class="dplanner-meal-info">
-          <div class="dplanner-meal-name">${esc(r.name)}</div>
-          <div class="dplanner-meal-meta">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div>
+          <div class="dplanner-meal-name">${esc(tName(r))}</div>
+          <div class="dplanner-meal-meta">${_pAbbr}:${m.p}g · ${_cAbbr}:${m.c}g · ${_fAbbr}:${m.f}g</div>
         </div>
         <div class="dplanner-meal-kcal">${m.kcal} kcal</div>
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${r.id}',false)">${sel ? '✕' : '+'}</button>
@@ -3495,7 +3502,7 @@ function renderBuilderPage(typeFilter) {
     });
     libHtml += `</div>`;
   });
-  if (!libHtml) libHtml = '<div class="empty-state"><div class="empty-icon">🍽️</div><p>Δεν βρέθηκαν γεύματα</p></div>';
+  if (!libHtml) libHtml = `<div class="empty-state"><div class="empty-icon">🍽️</div><p>${t('builder_empty_meals')}</p></div>`;
 
   // ── MIDDLE: day plan slots ──
   let middleHtml = '';
@@ -3518,11 +3525,13 @@ function renderBuilderPage(typeFilter) {
   });
 
   // Middle always shows all 5 meal slots regardless of filter
-  allMealTypes.forEach(t => {
-    const meta = mealTypeMeta[t];
+  const _addFoodBtn = t('builder_add_food_btn');
+  const _removeTitle = t('builder_remove_title');
+  allMealTypes.forEach(mType => {
+    const meta = mealTypeMeta[mType];
     const mealsOfType = builderMeals.filter(bm => {
-      if (bm.isStandard) { const sm = STANDARD_MEALS.find(s => s.id === bm.id); return sm && sm.meal === t; }
-      const r = allRecipes.find(x => x.id === bm.id); return r && r.meal === t;
+      if (bm.isStandard) { const sm = STANDARD_MEALS.find(s => s.id === bm.id); return sm && sm.meal === mType; }
+      const r = allRecipes.find(x => x.id === bm.id); return r && r.meal === mType;
     });
 
     let slotKcal = 0;
@@ -3531,17 +3540,17 @@ function renderBuilderPage(typeFilter) {
       let name, emoji, kcal;
       if (bm.isStandard) {
         const sm = STANDARD_MEALS.find(s => s.id === bm.id); if (!sm) return;
-        name = sm.name; emoji = sm.emoji; kcal = sm.kcal_est;
+        name = tName(sm) || sm.name; emoji = sm.emoji; kcal = sm.kcal_est;
       } else {
         const r = allRecipes.find(x => x.id === bm.id); if (!r) return;
-        const m = calcRecipeMacros(r); name = r.name; emoji = r.emoji; kcal = m.kcal;
+        const m = calcRecipeMacros(r); name = tName(r); emoji = r.emoji; kcal = m.kcal;
       }
       slotKcal += kcal;
       entriesHtml += `<div class="dplanner-entry">
         <span class="dplanner-entry-emoji">${emoji}</span>
         <span class="dplanner-entry-name">${name}</span>
         <span class="dplanner-entry-kcal">${kcal} kcal</span>
-        <button class="dplanner-entry-rm" onclick="builderPageToggle('${bm.id}',${bm.isStandard})" title="Αφαίρεση">×</button>
+        <button class="dplanner-entry-rm" onclick="builderPageToggle('${bm.id}',${bm.isStandard})" title="${_removeTitle}">×</button>
       </div>`;
     });
 
@@ -3557,11 +3566,11 @@ function renderBuilderPage(typeFilter) {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           ${slotKcal > 0 ? `<div class="dplanner-slot-kcal">${slotKcal} kcal</div>` : ''}
-          <button class="dplanner-slot-add-btn" onclick="dpHighlightType('${t}')" title="Προσθήκη τροφίμου">+</button>
+          <button class="dplanner-slot-add-btn" onclick="dpHighlightType('${mType}')" title="${_addFoodBtn}">+</button>
         </div>
       </div>
       ${entriesHtml ? `<div class="dplanner-slot-entries">${entriesHtml}</div>` : ''}
-      <button class="dplanner-add-slot-btn" onclick="dpHighlightType('${t}')">+ Προσθήκη τροφίμου</button>
+      <button class="dplanner-add-slot-btn" onclick="dpHighlightType('${mType}')">${_addFoodBtn}</button>
     </div>`;
   });
 
@@ -3610,7 +3619,7 @@ function renderBuilderPage(typeFilter) {
         return `<div class="dplanner-tpl-row">
           <div>
             <div class="dplanner-tpl-name">${tpl.name}</div>
-            <div class="dplanner-tpl-meta">${tpl.meals.length} γεύματα · ~${tKcal} kcal · ${tpl.savedAt}</div>
+            <div class="dplanner-tpl-meta">${tFmt('builder_tpl_meals', {n: tpl.meals.length})} · ~${tKcal} kcal · ${tpl.savedAt}</div>
           </div>
           <div style="display:flex;gap:5px">
             <button class="btn btn-ghost btn-sm" onclick="loadTemplate(${ti})">▶</button>
@@ -3618,7 +3627,7 @@ function renderBuilderPage(typeFilter) {
           </div>
         </div>`;
       }).join('')
-    : '<div style="font-size:0.8rem;color:var(--text3)">Δεν υπάρχουν αποθηκευμένα πρότυπα.</div>';
+    : `<div style="font-size:0.8rem;color:var(--text3)">${t('builder_tpl_empty')}</div>`;
 
   const dayLabel = state.planStartDate
     ? `${state.week[state.currentDay].label} · ${formatPlanDay(state.currentDay)}`
@@ -3641,8 +3650,8 @@ function renderBuilderPage(typeFilter) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <div style="flex:1">
-          <h2 class="dplanner-topcard-title">Σχεδιαστής</h2>
-          <p class="dplanner-topcard-sub">Σχεδίασε τα γεύματά σου για σήμερα</p>
+          <h2 class="dplanner-topcard-title">${t('builder_topcard_title')}</h2>
+          <p class="dplanner-topcard-sub">${t('builder_topcard_sub')}</p>
         </div>
         <button class="dplanner-topcard-icon-btn" onclick="exportPDF()" title="PDF">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
@@ -3656,26 +3665,26 @@ function renderBuilderPage(typeFilter) {
           </div>
           <div>
             <div class="dplanner-status-title">${totalKcal > 0 ? t('builder_plan_ready') : t('builder_quality_start')}</div>
-            <div class="dplanner-status-meta">${builderMeals.length} γεύματα &nbsp;·&nbsp; ${totalKcal} kcal</div>
+            <div class="dplanner-status-meta">${tFmt('builder_meals_count', {n: builderMeals.length})} &nbsp;·&nbsp; ${totalKcal} kcal</div>
           </div>
         </div>
         ${totalKcal > 0 ? `<button class="dplanner-preview-btn" onclick="dpHighlightType('all')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          Προεπισκόπηση
+          ${t('builder_preview_btn')}
         </button>` : ''}
       </div>
       <button class="dplanner-btn-clear" onclick="builderPageClear()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        Καθαρισμός επιλογής
+        ${t('builder_clear_btn')}
       </button>
     </div>
 
     <!-- WEEK PLAN CARD (mobile) -->
     <div class="dplanner-daycard">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800">Δημιουργία εβδομαδιαίου πλάνου</div>
+        <div class="dplanner-daycard-title" style="font-size:0.95rem;font-weight:800">${t('builder_week_plan_title')}</div>
       </div>
-      <div style="font-size:0.75rem;color:var(--text3);margin-bottom:14px">Επίλεξε γεύματα και αποθήκευσέ τα σε κάθε μέρα. Πάτα ξανά σε μια μέρα για αποεπιλογή.</div>
+      <div style="font-size:0.75rem;color:var(--text3);margin-bottom:14px">${t('builder_week_plan_desc')}</div>
       <div class="dplanner-week-grid">
         ${(() => {
           const saved = state._builderSavedDays || [];
@@ -3706,7 +3715,7 @@ function renderBuilderPage(typeFilter) {
       <!-- LEFT: Meal Library -->
       <div class="dplanner-col">
         <div class="dplanner-col-head">
-          <div class="dplanner-col-title"><h3>Βιβλιοθήκη τροφίμων</h3></div>
+          <div class="dplanner-col-title"><h3>${t('builder_lib_title')}</h3></div>
           <div class="dplanner-col-subhead">
             <div class="dplanner-search-wrap">
               <span class="dplanner-search-icon">🔍</span>
@@ -3726,7 +3735,7 @@ function renderBuilderPage(typeFilter) {
       <!-- MIDDLE: Day Plan -->
       <div class="dplanner-col">
         <div class="dplanner-col-head">
-          <div class="dplanner-col-title"><h3>Το πλάνο της ημέρας</h3></div>
+          <div class="dplanner-col-title"><h3>${t('builder_day_plan_title')}</h3></div>
           <div class="dplanner-col-subhead">
             <div class="dplanner-day-nav" style="margin-top:0">
               <button class="dplanner-nav-btn" onclick="state.currentDay=Math.max(0,state.currentDay-1);renderBuilderPage('${typeFilter}')">‹</button>
@@ -3736,14 +3745,14 @@ function renderBuilderPage(typeFilter) {
           </div>
         </div>
         <div class="dplanner-col-body">
-          ${middleHtml || '<div class="empty-state"><div class="empty-icon">🍽️</div><p>Επίλεξε γεύματα από αριστερά</p></div>'}
+          ${middleHtml || `<div class="empty-state"><div class="empty-icon">🍽️</div><p>${t('builder_empty_select')}</p></div>`}
         </div>
       </div>
 
       <!-- RIGHT: Summary -->
       <div class="dplanner-col">
         <div class="dplanner-col-head">
-          <div class="dplanner-col-title"><h3>Σύνοψη ημέρας</h3></div>
+          <div class="dplanner-col-title"><h3>${t('builder_summary_title')}</h3></div>
         </div>
         <div class="dplanner-col-body">
 
@@ -3758,37 +3767,37 @@ function renderBuilderPage(typeFilter) {
             </div>
             <div class="dplanner-legend">
               <div class="dplanner-legend-row">
-                <span><span class="dplanner-legend-dot" style="background:#22c55e"></span>Πρωτεΐνη</span>
+                <span><span class="dplanner-legend-dot" style="background:#22c55e"></span>${t('macro_protein')}</span>
                 <span style="font-weight:700">${totalP}g (${mp.p}%)</span>
               </div>
               <div class="dplanner-legend-row">
-                <span><span class="dplanner-legend-dot" style="background:#3b82f6"></span>Υδατάνθρακες</span>
+                <span><span class="dplanner-legend-dot" style="background:#3b82f6"></span>${t('macro_carbs')}</span>
                 <span style="font-weight:700">${totalC}g (${mp.c}%)</span>
               </div>
               <div class="dplanner-legend-row">
-                <span><span class="dplanner-legend-dot" style="background:#f59e0b"></span>Λίπη</span>
+                <span><span class="dplanner-legend-dot" style="background:#f59e0b"></span>${t('macro_fat')}</span>
                 <span style="font-weight:700">${totalF}g (${mp.f}%)</span>
               </div>
             </div>
             <div style="font-size:0.72rem;color:var(--text3)">
-              Στόχος: ${goals.kcal} kcal &nbsp;·&nbsp;
-              <span style="color:var(--green-d);font-weight:700">Υπόλοιπο: ${Math.max(0,goals.kcal-totalKcal)} kcal</span>
+              ${t('builder_goal_label')}: ${goals.kcal} kcal &nbsp;·&nbsp;
+              <span style="color:var(--green-d);font-weight:700">${t('builder_remaining_label')}: ${Math.max(0,goals.kcal-totalKcal)} kcal</span>
             </div>
           </div>
 
           <!-- Macro bars -->
           <div class="card card-sm" style="margin-bottom:12px">
-            <div class="section-title" style="margin-bottom:10px">Μακροθρεπτικά</div>
+            <div class="section-title" style="margin-bottom:10px">${t('builder_macros_title')}</div>
             <div class="dplanner-mbar">
-              <div class="dplanner-mbar-label"><span style="color:#22c55e">Πρωτεΐνη</span><span>${totalP}g / ${goals.protein}g &nbsp; ${pPct}%</span></div>
+              <div class="dplanner-mbar-label"><span style="color:#22c55e">${t('macro_protein')}</span><span>${totalP}g / ${goals.protein}g &nbsp; ${pPct}%</span></div>
               <div class="dplanner-mbar-track"><div class="dplanner-mbar-fill" style="width:${pPct}%;background:#22c55e"></div></div>
             </div>
             <div class="dplanner-mbar">
-              <div class="dplanner-mbar-label"><span style="color:#3b82f6">Υδατάνθρακες</span><span>${totalC}g / ${goals.carbs}g &nbsp; ${cPct}%</span></div>
+              <div class="dplanner-mbar-label"><span style="color:#3b82f6">${t('macro_carbs')}</span><span>${totalC}g / ${goals.carbs}g &nbsp; ${cPct}%</span></div>
               <div class="dplanner-mbar-track"><div class="dplanner-mbar-fill" style="width:${cPct}%;background:#3b82f6"></div></div>
             </div>
             <div class="dplanner-mbar">
-              <div class="dplanner-mbar-label"><span style="color:#f59e0b">Λίπη</span><span>${totalF}g / ${goals.fat}g &nbsp; ${fPct}%</span></div>
+              <div class="dplanner-mbar-label"><span style="color:#f59e0b">${t('macro_fat')}</span><span>${totalF}g / ${goals.fat}g &nbsp; ${fPct}%</span></div>
               <div class="dplanner-mbar-track"><div class="dplanner-mbar-fill" style="width:${fPct}%;background:#f59e0b"></div></div>
             </div>
           </div>
@@ -3804,20 +3813,20 @@ function renderBuilderPage(typeFilter) {
 
           <!-- Stats -->
           <div class="card card-sm" style="margin-bottom:12px">
-            <div class="section-title" style="margin-bottom:8px">Ενέργεια & Στόχοι</div>
+            <div class="section-title" style="margin-bottom:8px">${t('builder_energy_title')}</div>
             <div class="dplanner-stat">
-              <div class="dplanner-stat-row"><span>🔥 Συνολικές θερμίδες</span><strong>${totalKcal} / ${goals.kcal} kcal</strong></div>
+              <div class="dplanner-stat-row"><span>${t('builder_total_kcal')}</span><strong>${totalKcal} / ${goals.kcal} kcal</strong></div>
               <div class="dplanner-stat-row"><span>${t('builder_meals_selected')}</span><strong>${builderMeals.length}</strong></div>
-              <div class="dplanner-stat-row"><span>💧 Ενυδάτωση (στόχος 3L)</span><strong style="color:var(--blue)">— / 3L</strong></div>
-              <div class="dplanner-stat-row"><span>⭐ Βαθμολογία πλάνου</span><strong>${score.toFixed(1)} / 10</strong></div>
+              <div class="dplanner-stat-row"><span>${t('builder_hydration')}</span><strong style="color:var(--blue)">— / 3L</strong></div>
+              <div class="dplanner-stat-row"><span>${t('builder_score')}</span><strong>${score.toFixed(1)} / 10</strong></div>
             </div>
           </div>
 
           <!-- Templates -->
           <div class="card card-sm">
-            <div class="section-title" style="margin-bottom:8px">💾 Πρότυπα</div>
+            <div class="section-title" style="margin-bottom:8px">${t('builder_templates_title')}</div>
             <div style="display:flex;gap:6px;margin-bottom:10px">
-              <input type="text" id="builder-tpl-name" placeholder="Όνομα προτύπου..."
+              <input type="text" id="builder-tpl-name" placeholder="${t('builder_tpl_placeholder')}"
                 style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:0.82rem;background:var(--bg2)">
               <button class="btn btn-green btn-sm" onclick="saveDayAsTemplate()">💾</button>
             </div>
@@ -3876,7 +3885,7 @@ function _updateBuilderBubble() {
 }
 
 function builderPageApply() {
-  if (!builderMeals.length) { showToast('⚠️ Δεν επιλέχτηκαν γεύματα'); return; }
+  if (!builderMeals.length) { showToast(t('builder_no_meals_toast')); return; }
   const dayIdx = typeof state._builderApplyDay !== 'undefined'
     ? Math.max(0, Math.min(state.week.length - 1, state._builderApplyDay))
     : state.currentDay;
@@ -3968,19 +3977,25 @@ function builderPageClear() {
 function renderBuilderRecipeList(typeFilter) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
   const allStandard = STANDARD_MEALS;
-  const mealLabels = { breakfast:'☀️ Πρωινά', snack:'🍎 Δεκατιανό', lunch:'🥗 Μεσ/νά', afternoon:'☕ Απογ/νό', dinner:'🌙 Βραδινά' };
+  const _mealLabels = {
+    breakfast: '☀️ ' + t('meal_breakfasts'),
+    snack:     '🍎 ' + t('meal_snacks'),
+    lunch:     '🥗 ' + t('meal_lunches'),
+    afternoon: '☕ ' + t('meal_afternoons'),
+    dinner:    '🌙 ' + t('meal_dinners'),
+  };
   let html = '';
   const types = typeFilter === 'all' ? ['breakfast','snack','lunch','afternoon','dinner'] : [typeFilter];
-  types.forEach(t => {
-    const recipes = allRecipes.filter(r => r.meal === t);
-    const standards = allStandard.filter(s => s.meal === t);
+  types.forEach(mType => {
+    const recipes = allRecipes.filter(r => r.meal === mType);
+    const standards = allStandard.filter(s => s.meal === mType);
     if (!recipes.length && !standards.length) return;
-    html += `<div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin:8px 0 4px">${mealLabels[t]}</div>`;
+    html += `<div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin:8px 0 4px">${_mealLabels[mType]}</div>`;
     standards.forEach(s => {
       const inBuilder = builderMeals.find(x => x.id === s.id && x.isStandard);
       html += `<div class="swap-row ${inBuilder?'selected-builder':''}" onclick="builderToggle('${s.id}',true)">
         <div class="swap-row-left"><span class="swap-emoji">${s.emoji}</span>
-          <div><div class="swap-name">⭐ ${s.name}</div><div class="swap-items">${s.items.slice(0,2).join(' · ')}</div></div>
+          <div><div class="swap-name">⭐ ${tName(s) || s.name}</div><div class="swap-items">${s.items.slice(0,2).join(' · ')}</div></div>
         </div>
         <div class="swap-kcal">~${s.kcal_est}<span>kcal</span></div>
       </div>`;
@@ -3990,13 +4005,13 @@ function renderBuilderRecipeList(typeFilter) {
       const inBuilder = builderMeals.find(x => x.id === r.id && !x.isStandard);
       html += `<div class="swap-row ${inBuilder?'selected-builder':''}" onclick="builderToggle('${r.id}',false)">
         <div class="swap-row-left"><span class="swap-emoji">${r.emoji}</span>
-          <div><div class="swap-name">${esc(r.name)}</div><div class="swap-items">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div></div>
+          <div><div class="swap-name">${esc(tName(r))}</div><div class="swap-items">${t('macro_p_abbr')}:${m.p}g · ${t('macro_c_abbr')}:${m.c}g · ${t('macro_f_abbr')}:${m.f}g</div></div>
         </div>
         <div class="swap-kcal">${m.kcal}<span>kcal</span></div>
       </div>`;
     });
   });
-  return html || '<div style="padding:10px;color:var(--text3)">Δεν βρέθηκαν γεύματα</div>';
+  return html || `<div style="padding:10px;color:var(--text3)">${t('empty_meals')}</div>`;
 }
 
 function builderFilterType(type, btn) {
@@ -4023,7 +4038,7 @@ function updateBuilderUI() {
   if (!bar || !sel) return;
 
   if (!builderMeals.length) {
-    bar.innerHTML = '<span class="chip">Κανένα γεύμα</span>';
+    bar.innerHTML = `<span class="chip">${t('week_no_meal')}</span>`;
     sel.innerHTML = '';
     return;
   }
@@ -4292,7 +4307,7 @@ function openRecipeDetail(rid) {
   const ingredientsHtml = recipe.ingredients.map(ing => {
     const food = allFoods.find(f => f.id === ing.foodId);
     if (!food) return '';
-    return `<div class="ingredient-row"><span class="ingredient-name">${esc(food.name)}</span><span class="ingredient-qty">${ing.qty}${food.unit}</span></div>`;
+    return `<div class="ingredient-row"><span class="ingredient-name">${esc(tName(food))}</span><span class="ingredient-qty">${ing.qty}${food.unit}</span></div>`;
   }).join('');
 
   // Μετατροπή "\n" σε αριθμημένα βήματα
@@ -4303,30 +4318,30 @@ function openRecipeDetail(rid) {
       .join('');
   }
 
-  const cookingHtml = stepsHtml(recipe.instructions);
+  const cookingHtml = stepsHtml(tName(recipe,'instructions') || recipe.instructions);
   const servingHtml = recipe.serving
-    ? `<div class="section-title" style="margin-top:14px">🍽️ Σερβίρισμα</div>
-       <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px;font-size:0.85rem;color:var(--text2);line-height:1.5">${recipe.serving}</div>`
+    ? `<div class="section-title" style="margin-top:14px">🍽️ ${t('recipe_serving')}</div>
+       <div style="background:var(--green-bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px;font-size:0.85rem;color:var(--text2);line-height:1.5">${tName(recipe,'serving') || recipe.serving}</div>`
     : '';
 
   openModal(`
     <div class="modal-handle"></div>
     <div style="text-align:center;font-size:3rem;margin-bottom:8px">${recipe.emoji}</div>
-    <div class="modal-title" style="text-align:center">${esc(recipe.name)}</div>
+    <div class="modal-title" style="text-align:center">${esc(tName(recipe))}</div>
     <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px">
       <span class="chip chip-green">${m.kcal} kcal</span>
-      <span class="chip chip-blue">Π: ${m.p}g</span>
-      <span class="chip">Υ: ${m.c}g</span>
-      <span class="chip">Λ: ${m.f}g</span>
+      <span class="chip chip-blue">${t('macro_p_abbr')}: ${m.p}g</span>
+      <span class="chip">${t('macro_c_abbr')}: ${m.c}g</span>
+      <span class="chip">${t('macro_f_abbr')}: ${m.f}g</span>
     </div>
-    <div class="section-title">🧂 Υλικά</div>
+    <div class="section-title">🧂 ${t('recipe_ingred')}</div>
     ${ingredientsHtml}
-    <div class="section-title" style="margin-top:14px">👨‍🍳 Οδηγίες Μαγειρέματος</div>
+    <div class="section-title" style="margin-top:14px">👨‍🍳 ${t('recipe_instruct')}</div>
     <div style="margin-bottom:${recipe.serving ? '4px' : '16px'}">${cookingHtml}</div>
     ${servingHtml}
     <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-ghost btn-sm" onclick="toggleFavorite('${rid}');closeModal()">${isFav?'☆ Αφαίρεση':'⭐ Αγαπημένο'}</button>
-      <button class="btn btn-green" style="flex:1" onclick="addRecipeToDay('${rid}');closeModal()">➕ Προσθήκη στην Ημέρα</button>
+      <button class="btn btn-ghost btn-sm" onclick="toggleFavorite('${rid}');closeModal()">${isFav ? '☆ ' + t('btn_delete') : '⭐ ' + t('btn_add')}</button>
+      <button class="btn btn-green" style="flex:1" onclick="addRecipeToDay('${rid}');closeModal()">➕ ${t('add_to_day')}</button>
     </div>`);
 }
 
@@ -4338,14 +4353,14 @@ function openFoodDetail(fid) {
   openModal(`
     <div class="modal-handle"></div>
     <div class="modal-title">${tName(food)}</div>
-    <div class="section-title">Θρεπτικά Στοιχεία / ${per}</div>
+    <div class="section-title">${t('form_nutrients')} / ${per}</div>
     <div class="meal-macros" style="border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px">
       <div class="macro-chip"><div class="macro-chip-val" style="color:#22c55e">${food.per100.kcal}</div><div class="macro-chip-lbl">kcal</div></div>
-      <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${food.per100.p}g</div><div class="macro-chip-lbl">πρωτ.</div></div>
-      <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${food.per100.c}g</div><div class="macro-chip-lbl">υδατ.</div></div>
-      <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${food.per100.f}g</div><div class="macro-chip-lbl">λίπος</div></div>
+      <div class="macro-chip"><div class="macro-chip-val" style="color:#3b82f6">${food.per100.p}g</div><div class="macro-chip-lbl">${t('chip_prot')}</div></div>
+      <div class="macro-chip"><div class="macro-chip-val" style="color:#8b5cf6">${food.per100.c}g</div><div class="macro-chip-lbl">${t('chip_carb')}</div></div>
+      <div class="macro-chip"><div class="macro-chip-val" style="color:#f59e0b">${food.per100.f}g</div><div class="macro-chip-lbl">${t('chip_fat')}</div></div>
     </div>
-    <button class="btn btn-ghost btn-full" onclick="closeModal()">Κλείσιμο</button>`);
+    <button class="btn btn-ghost btn-full" onclick="closeModal()">${t('btn_close')}</button>`);
 }
 
 
@@ -4370,11 +4385,11 @@ function openSwapMeal(mi, dayIdx) {
 
   const standardItems = standards.map(s => ({
     key: 'std:' + s.id,
-    html: `<div class="swap-row${s.id === currentId ? ' swap-row-selected' : ''}" data-name="${s.name.toLowerCase()}" data-id="${s.id}" data-isstd="1" data-kcal="${s.kcal_est}" data-p="${s.p||0}" data-c="${s.c||0}" data-f="${s.f||0}" onclick="_swapRowClick(this)">
+    html: `<div class="swap-row${s.id === currentId ? ' swap-row-selected' : ''}" data-name="${(tName(s)||s.name).toLowerCase()}" data-id="${s.id}" data-isstd="1" data-kcal="${s.kcal_est}" data-p="${s.p||0}" data-c="${s.c||0}" data-f="${s.f||0}" onclick="_swapRowClick(this)">
       <div class="swap-row-left">
         <span class="swap-emoji">${s.emoji}</span>
         <div>
-          <div class="swap-name">${s.name}</div>
+          <div class="swap-name">${tName(s) || s.name}</div>
           <div class="swap-items">${s.items.join(' · ')}</div>
           ${s.note ? `<div class="swap-note">${s.note}</div>` : ''}
         </div>
@@ -4387,12 +4402,12 @@ function openSwapMeal(mi, dayIdx) {
     const m = calcRecipeMacros(r);
     return {
       key: 'rec:' + r.id,
-      html: `<div class="swap-row${r.id === currentId ? ' swap-row-selected' : ''}" data-name="${esc(r.name.toLowerCase())}" data-id="${r.id}" data-isstd="0" data-kcal="${m.kcal}" data-p="${m.p}" data-c="${m.c}" data-f="${m.f}" onclick="_swapRowClick(this)">
+      html: `<div class="swap-row${r.id === currentId ? ' swap-row-selected' : ''}" data-name="${esc(tName(r).toLowerCase())}" data-id="${r.id}" data-isstd="0" data-kcal="${m.kcal}" data-p="${m.p}" data-c="${m.c}" data-f="${m.f}" onclick="_swapRowClick(this)">
         <div class="swap-row-left">
           <span class="swap-emoji">${r.emoji}</span>
           <div>
-            <div class="swap-name">${esc(r.name)}</div>
-            <div class="swap-items">Π:${m.p}g · Υ:${m.c}g · Λ:${m.f}g</div>
+            <div class="swap-name">${esc(tName(r))}</div>
+            <div class="swap-items">${t('macro_p_abbr')}:${m.p}g · ${t('macro_c_abbr')}:${m.c}g · ${t('macro_f_abbr')}:${m.f}g</div>
           </div>
         </div>
         <div class="swap-kcal">${m.kcal}<br><span>kcal</span></div>
@@ -4405,14 +4420,14 @@ function openSwapMeal(mi, dayIdx) {
 
   openModal(`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div class="modal-title" style="margin:0">Επιλογή Γεύματος — ${mealTypeLabel}</div>
+      <div class="modal-title" style="margin:0">${t('swap_title')} — ${mealTypeLabel}</div>
       <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--text3);padding:4px;line-height:1">✕</button>
     </div>
     <div class="swap-search-wrap">
       <input class="swap-search" id="swap-search-input" type="text" placeholder="${t('search_meal')}" oninput="filterSwapList(this.value)" autocomplete="off">
     </div>
     <div class="swap-list" id="swap-list-inner">
-      ${listHTML || '<div class="empty-state"><p>Δεν βρέθηκαν γεύματα</p></div>'}
+      ${listHTML || `<div class="empty-state"><p>${t('empty_meals')}</p></div>`}
     </div>
     <div class="swap-scale-bar" id="swap-scale-bar">
       <div class="swap-scale-preview" id="swap-scale-preview"></div>
@@ -4423,7 +4438,7 @@ function openSwapMeal(mi, dayIdx) {
           oninput="_swapSfChange(this.value)">
         <span class="swap-scale-label">2½x</span>
       </div>
-      <button class="swap-apply-btn" onclick="_swapApply()">✓ Εφαρμογή</button>
+      <button class="swap-apply-btn" onclick="_swapApply()">${t('swap_apply')}</button>
     </div>`);
 
   setTimeout(() => {
@@ -4480,16 +4495,16 @@ function _swapUpdatePreview() {
   const p    = Math.round(baseP * sf);
   const c    = Math.round(baseC * sf);
   const f    = Math.round(baseF * sf);
-  const sfLabel = sf === 1 ? '1× (κανονική)' : sf < 1 ? `${sf.toFixed(2)}× (μικρότερη)` : `${sf.toFixed(2)}× (μεγαλύτερη)`;
+  const sfLabel = sf === 1 ? t('swap_sf_normal') : sf < 1 ? tFmt('swap_sf_smaller', { sf: sf.toFixed(2) }) : tFmt('swap_sf_larger', { sf: sf.toFixed(2) });
 
   prev.innerHTML = `
     <div class="swap-preview-row">
       <span class="swap-preview-sf">${sfLabel}</span>
       <div class="swap-preview-macros">
         <span style="color:#22c55e;font-weight:800">${kcal} kcal</span>
-        <span style="color:#3b82f6">Π ${p}g</span>
-        <span style="color:#8b5cf6">Υ ${c}g</span>
-        <span style="color:#f59e0b">Λ ${f}g</span>
+        <span style="color:#3b82f6">${t('macro_p_abbr')} ${p}g</span>
+        <span style="color:#8b5cf6">${t('macro_c_abbr')} ${c}g</span>
+        <span style="color:#f59e0b">${t('macro_f_abbr')} ${f}g</span>
       </div>
     </div>`;
 }
@@ -4508,7 +4523,7 @@ function _swapApply() {
   saveState();
   closeModal();
   _refreshAfterMealEdit(dayIdx);
-  showToast('✅ Γεύμα αποθηκεύτηκε');
+  showToast(t('swap_saved'));
 }
 
 window.filterSwapList = function(query) {
@@ -4579,24 +4594,24 @@ function openAddMealModal() {
   const mealLabels = { breakfast:tMeal('breakfast'), lunch:tMeal('lunch'), dinner:tMeal('dinner'), snack:tMeal('snack'), afternoon:tMeal('afternoon') };
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Προσθήκη Γεύματος</div>
+    <div class="modal-title">${t('add_meal_modal_title')}</div>
     <div class="form-group">
-      <label>Ώρα</label>
+      <label>${t('prof_first_meal')}</label>
       <input type="time" id="new-meal-time" value="12:00">
     </div>
     <div class="form-group">
-      <label>Τύπος</label>
+      <label>${t('form_meal_type')}</label>
       <select id="new-meal-type">
-        ${mealTypes.map(t => `<option value="${t}">${mealLabels[t]}</option>`).join('')}
+        ${mealTypes.map(mt => `<option value="${mt}">${mealLabels[mt]}</option>`).join('')}
       </select>
     </div>
     <div class="form-group">
-      <label>Συνταγή</label>
+      <label>${t('recipes_title').replace('📖 ','')}</label>
       <select id="new-meal-recipe">
-        ${allRecipes.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')}
+        ${allRecipes.map(r => `<option value="${r.id}">${esc(tName(r))}</option>`).join('')}
       </select>
     </div>
-    <button class="btn btn-green btn-full" onclick="addMealFromModal()">➕ Προσθήκη</button>`);
+    <button class="btn btn-green btn-full" onclick="addMealFromModal()">➕ ${t('btn_add')}</button>`);
 }
 
 function addMealFromModal() {
@@ -4615,7 +4630,7 @@ function addMealFromModal() {
   saveState();
   closeModal();
   _refreshAfterMealEdit(state.currentDay);
-  showToast('✅ Γεύμα προστέθηκε');
+  showToast(t('toast_added'));
 }
 
 function addRecipeToDay(rid) {
@@ -4633,14 +4648,14 @@ function addRecipeToDay(rid) {
   state.week[state.currentDay].meals.sort((a,b) => a.time.localeCompare(b.time));
   saveState();
   _refreshAfterMealEdit(state.currentDay);
-  showToast('✅ Γεύμα προστέθηκε στην ημέρα');
+  showToast(t('toast_added'));
 }
 
 function openAddRecipeModal() {
   const allFoods = [...FOODS_DB, ...state.customFoods];
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">➕ Νέα Συνταγή</div>
+    <div class="modal-title">➕ ${t('btn_new_recipe')}</div>
     <div class="form-group"><label>${t('form_name')}</label><input type="text" id="nr-name" placeholder="${t('form_recipe_placeholder')}"></div>
     <div class="form-group"><label>Emoji</label><input type="text" id="nr-emoji" value="🍽️" maxlength="2"></div>
     <div class="form-group"><label>${t('form_meal_type')}</label>
@@ -4663,13 +4678,13 @@ function openAddRecipeModal() {
       <div class="form-group"><label>${t('macro_carbs')} (g)</label><input type="number" id="nr-c" placeholder="0"></div>
       <div class="form-group"><label>${t('macro_fat')} (g)</label><input type="number" id="nr-f" placeholder="0"></div>
     </div>
-    <div class="section-title">Υλικά (1ο)</div>
+    <div class="section-title">${t('recipe_ingred')} (1)</div>
     <div style="display:flex;gap:8px">
-      <select id="nr-food1" style="flex:1">${allFoods.map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select>
+      <select id="nr-food1" style="flex:1">${allFoods.map(f=>`<option value="${f.id}">${esc(tName(f))}</option>`).join('')}</select>
       <input type="number" id="nr-qty1" placeholder="qty" style="width:70px" value="100">
     </div>
     <div style="margin-top:10px">
-      <button class="btn btn-green btn-full" onclick="saveNewRecipe()">💾 Αποθήκευση</button>
+      <button class="btn btn-green btn-full" onclick="saveNewRecipe()">💾 ${t('btn_save')}</button>
     </div>`);
 }
 
@@ -4765,33 +4780,33 @@ function renderBuilderModal() {
 
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">🏗️ Day Builder</div>
+    <div class="modal-title">🏗️ ${t('builder_title')}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
       <span class="chip chip-green">${m.kcal} kcal</span>
-      <span class="chip chip-blue">Π:${m.p}g</span>
-      <span class="chip">Υ:${m.c}g</span>
-      <span class="chip">Λ:${m.f}g</span>
+      <span class="chip chip-blue">${t('macro_p_abbr')}:${m.p}g</span>
+      <span class="chip">${t('macro_c_abbr')}:${m.c}g</span>
+      <span class="chip">${t('macro_f_abbr')}:${m.f}g</span>
     </div>
-    <div class="section-title">Επιλεγμένα (${builderMeals.length})</div>
+    <div class="section-title">${t('builder_meals_selected')} (${builderMeals.length})</div>
     ${builderMeals.map((rid,i) => {
       const r = allRecipes.find(x => x.id === rid);
       return r ? `<div class="food-row" style="cursor:default">
-        <span>${r.emoji} ${esc(r.name)}</span>
+        <span>${r.emoji} ${esc(tName(r))}</span>
         <button class="btn btn-ghost btn-sm" onclick="builderRemove(${i})">✕</button>
       </div>` : '';
-    }).join('') || '<p style="font-size:0.8rem;color:var(--text3);margin-bottom:8px">Δεν έχεις επιλέξει ακόμα.</p>'}
-    <div class="section-title" style="margin-top:12px">Προσθήκη Συνταγής</div>
+    }).join('') || `<p style="font-size:0.8rem;color:var(--text3);margin-bottom:8px">${t('builder_empty_select')}</p>`}
+    <div class="section-title" style="margin-top:12px">${t('recipes_title')}</div>
     <div class="recipes-grid">
       ${allRecipes.map(r => {
         const mac = calcRecipeMacros(r);
         return `<div class="recipe-card" onclick="builderAdd('${r.id}')">
           <div class="recipe-card-emoji">${r.emoji}</div>
-          <div class="recipe-card-name">${esc(r.name)}</div>
+          <div class="recipe-card-name">${esc(tName(r))}</div>
           <div class="recipe-card-kcal">${mac.kcal} kcal</div>
         </div>`;
       }).join('')}
     </div>
-    <button class="btn btn-green btn-full" style="margin-top:12px" onclick="applyBuilderToDay()">✅ Εφάρμοσε στην Ημέρα ${state.currentDay+1}</button>`);
+    <button class="btn btn-green btn-full" style="margin-top:12px" onclick="applyBuilderToDay()">✅ ${t('builder_apply_day')} ${state.currentDay+1}</button>`);
 }
 
 function builderAdd(rid) {
@@ -4828,10 +4843,10 @@ function updateBuilderSummary() {
   const el = document.getElementById('builder-summary');
   if (!el) return;
   if (!builderMeals.length) {
-    el.innerHTML = '<span class="chip">Κανένα γεύμα ακόμα</span>';
+    el.innerHTML = `<span class="chip">${t('week_no_meal')}</span>`;
     return;
   }
-  el.innerHTML = `<span class="chip chip-green">${builderMeals.length} γεύματα επιλεγμένα</span>`;
+  el.innerHTML = `<span class="chip chip-green">${tFmt('builder_meals_count', {n: builderMeals.length})}</span>`;
 }
 
 // ── RESET DAY ──
@@ -4911,11 +4926,11 @@ function exportDayPDF(dayIdx) {
         if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
         else qty = Math.round(qty);
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
-        return food.name + ' ' + qty + food.unit;
+        return tName(food) + ' ' + qty + food.unit;
       }).filter(Boolean).join(' · ');
       detailHtml = `<tr><td colspan="5" style="padding:1px 12px 4px;font-size:9px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${ingList}</td></tr>`;
       if (r.instructions) {
-        detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:8.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
+        detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:8.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${tName(r,'instructions')||r.instructions}</td></tr>`;
       }
     }
     const mealTypeLabel = tMeal(m.type) || m.type;
@@ -5036,11 +5051,11 @@ function exportPDF_today() {
         if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
         else qty = Math.round(qty);
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
-        return food.name + ' ' + qty + food.unit;
+        return tName(food) + ' ' + qty + food.unit;
       }).filter(Boolean).join(' · ');
       detailHtml = `<tr><td colspan="5" style="padding:1px 12px 4px;font-size:10px;color:#6b7280;line-height:1.5;white-space:normal;word-break:break-word">${ingList}</td></tr>`;
       if (r.instructions) {
-        detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:9.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${r.instructions}</td></tr>`;
+        detailHtml += `<tr><td colspan="5" style="padding:1px 12px 7px;font-size:9.5px;color:#9ca3af;font-style:italic;line-height:1.5;white-space:normal;word-break:break-word">${tName(r,'instructions')||r.instructions}</td></tr>`;
       }
     }
     const tl = mealTypeLabel[m.type] || m.type;
@@ -5396,13 +5411,13 @@ function exportPDF_week() {
         if (me.standardId) {
           const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
           if (!sm) return '';
-          name = sm.name; emoji = sm.emoji;
+          name = tName(sm) || sm.name; emoji = sm.emoji;
           kcal = Math.round(sm.kcal_est * (me.scaleFactor||1));
         } else {
           const r = allRecipes.find(x => x.id === me.recipeId);
           if (!r) return '';
           const mac = calcRecipeMacros(r, me.scaleFactor||1);
-          name = r.name; emoji = r.emoji; kcal = mac.kcal;
+          name = tName(r); emoji = r.emoji; kcal = mac.kcal;
         }
         return `<div style="margin-bottom:4px">
           <div style="font-size:7.5px;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px">${meta.label}</div>
@@ -5430,8 +5445,8 @@ function exportPDF_week() {
         </div>
       </div>
       <div style="padding:4px 5px 5px">
-        ${mealCards || '<div style="font-size:8px;color:#9ca3af;text-align:center;padding:8px 0">Κανένα γεύμα</div>'}
-        ${allDone ? `<div style="margin-top:3px;text-align:center"><span style="font-size:7.5px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:1px 6px">✓ Ολοκλ.</span></div>` : ''}
+        ${mealCards || `<div style="font-size:8px;color:#9ca3af;text-align:center;padding:8px 0">${t('week_no_meal_pdf')}</div>`}
+        ${allDone ? `<div style="margin-top:3px;text-align:center"><span style="font-size:7.5px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:1px 6px">${t('week_completed_short')}</span></div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -5563,8 +5578,8 @@ function renderIdeasPage() {
     <div class="fade-in ideas-page-wrap">
       <div class="ideas-tabs-bar">
         <div class="segment">
-          <button class="seg-btn active" id="ideas-tab-recipes" onclick="showIdeasTab('recipes')">📖 Συνταγές</button>
-          <button class="seg-btn" id="ideas-tab-foods" onclick="showIdeasTab('foods')">🥦 Τρόφιμα</button>
+          <button class="seg-btn active" id="ideas-tab-recipes" onclick="showIdeasTab('recipes')">📖 ${t('nav_ideas_recipes')}</button>
+          <button class="seg-btn" id="ideas-tab-foods" onclick="showIdeasTab('foods')">🥦 ${t('nav_ideas_foods')}</button>
         </div>
       </div>
       <div id="ideas-recipes-content"></div>
@@ -5823,11 +5838,11 @@ function renderSettingsSupplements() {
         ).join('')}
       </div>
       <div id="supp-list">
-      ${[...SUPPLEMENTS_LIBRARY].sort((a,b) => a.name.localeCompare(b.name, 'el')).map(s => {
+      ${[...SUPPLEMENTS_LIBRARY].sort((a,b) => (tName(a)||a.name).localeCompare(tName(b)||b.name)).map(s => {
         const isActive = activeIds.includes(s.id);
-        return `<div class="card card-sm supp-item" data-cat="${s.category||'personal'}" data-name="${s.name.toLowerCase()}" style="margin-bottom:8px;padding:10px 14px;display:grid;grid-template-columns:1fr 52px;align-items:center;gap:10px">
+        return `<div class="card card-sm supp-item" data-cat="${s.category||'personal'}" data-name="${(tName(s)||s.name).toLowerCase()}" style="margin-bottom:8px;padding:10px 14px;display:grid;grid-template-columns:1fr 52px;align-items:center;gap:10px">
           <div style="min-width:0">
-            <div style="font-size:0.88rem;font-weight:700">${s.name}</div>
+            <div style="font-size:0.88rem;font-weight:700">${tName(s)}</div>
             <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">${tName(s,'timing')} · ${tName(s,'qty')}</div>
             <div style="font-size:0.68rem;margin-top:3px">${tName(s,'ideal')}</div>
           </div>
@@ -5995,16 +6010,17 @@ async function sendFeedback() {
       } catch(e) {}
     }
 
-    // Send email notification via Supabase Edge Function
+    // Send email notification via Google Apps Script
     try {
-      await fetch(`${SUPABASE_URL}/functions/v1/send-feedback-email`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const GAS_URL = 'https://script.google.com/macros/s/AKfycbx6XHAAeJMIUVUBtHmjNqu6NGSKvFWgkWeUT4x6x_UMsmEaoPXFPMqlhXLKH5dJ0aGlag/exec';
+      const fd = new FormData();
+      fd.append('_to', 'moudiotis.meng@gmail.com');
+      fd.append('_key', 'MyPrivateAgencyKey_99');
+      fd.append('_hp', '');
+      fd.append('subject', `[VIVON Feedback] ${payload.type} from ${payload.user_email}`);
+      fd.append('message', `Type: ${payload.type}\nFrom: ${payload.user_email}\nLang: ${payload.lang}\nApp: ${payload.app}\nDate: ${payload.created_at}\n\n${payload.message}`);
+      fd.append('name', payload.user_email);
+      await fetch(GAS_URL, { method: 'POST', body: fd });
     } catch(e) {}
 
     showToast(t('feedback_sent'), 3000);
