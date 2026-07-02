@@ -90,6 +90,30 @@ const I18N = {
   donate_drawer:   { el: 'Υποστήριξε το VIVON', en: 'Support VIVON', es: 'Apoya VIVON', fr: 'Soutenez VIVON' },
   donate_sidebar:  { el: '❤️ Υποστήριξη', en: '❤️ Support', es: '❤️ Apoyo', fr: '❤️ Soutien' },
 
+  // ── Legal / Copyright ──
+  legal_footer_link:  { el: '© VIVON · Νομικές πληροφορίες', en: '© VIVON · Legal info', es: '© VIVON · Aviso legal', fr: '© VIVON · Mentions légales' },
+  legal_footer_text:  {
+    el: '© 2025 VIVON · από τον δημιουργό · Όλα τα δικαιώματα διατηρούνται · Απαγορεύεται η εμπορική χρήση · Τα δεδομένα σας παραμένουν αποκλειστικά δικά σας — δεν κοινοποιούνται σε τρίτους και δεν τροποποιούνται.',
+    en: '© 2025 VIVON · by the creator · All rights reserved · Commercial use is prohibited · Your data belongs solely to you — it is never shared with third parties or modified.',
+    es: '© 2025 VIVON · por el creador · Todos los derechos reservados · Se prohíbe el uso comercial · Tus datos son exclusivamente tuyos — no se comparten con terceros ni se modifican.',
+    fr: '© 2025 VIVON · par le créateur · Tous droits réservés · Toute utilisation commerciale est interdite · Vos données vous appartiennent exclusivement — elles ne sont jamais partagées ni modifiées.',
+  },
+  legal_modal_title:  { el: 'Πληροφορίες & Απόρρητο', en: 'Info & Privacy', es: 'Información y Privacidad', fr: 'Informations & Confidentialité' },
+  legal_modal_heading:{ el: '© 2025 VIVON — από τον δημιουργό', en: '© 2025 VIVON — by the creator', es: '© 2025 VIVON — por el creador', fr: '© 2025 VIVON — par le créateur' },
+  legal_modal_copy:   {
+    el: 'Όλα τα δικαιώματα διατηρούνται. Απαγορεύεται αυστηρά η αναπαραγωγή, η διανομή ή η εμπορική χρήση της εφαρμογής ή οποιουδήποτε τμήματός της χωρίς γραπτή άδεια του δημιουργού.',
+    en: 'All rights reserved. Reproduction, distribution or commercial use of the application or any part of it is strictly prohibited without the written permission of the creator.',
+    es: 'Todos los derechos reservados. Queda estrictamente prohibida la reproducción, distribución o uso comercial de la aplicación o cualquier parte de la misma sin el permiso escrito del creador.',
+    fr: 'Tous droits réservés. La reproduction, la distribution ou l\'utilisation commerciale de l\'application ou de toute partie de celle-ci est strictement interdite sans l\'autorisation écrite du créateur.',
+  },
+  legal_modal_privacy_title: { el: 'Απόρρητο δεδομένων', en: 'Data Privacy', es: 'Privacidad de datos', fr: 'Confidentialité des données' },
+  legal_modal_privacy_text:  {
+    el: 'Τα δεδομένα σας (διατροφικά στοιχεία, μετρήσεις, στόχοι) παραμένουν αποκλειστικά δικά σας. Δεν τα κοινοποιούμε σε τρίτους, δεν τα πουλάμε και δεν τα χρησιμοποιούμε για σκοπούς πέραν της λειτουργίας της εφαρμογής. Δεν κάνουμε καμία επεξεργασία ή τροποποίηση των δεδομένων σας χωρίς τη συγκατάθεσή σας.',
+    en: 'Your data (nutritional details, measurements, goals) belongs solely to you. We do not share it with third parties, sell it, or use it for any purpose beyond running the app. We make no processing or modification of your data without your consent.',
+    es: 'Tus datos (detalles nutricionales, medidas, objetivos) son exclusivamente tuyos. No los compartimos con terceros, no los vendemos ni los usamos para ningún propósito más allá del funcionamiento de la app. No realizamos ningún procesamiento o modificación de tus datos sin tu consentimiento.',
+    fr: 'Vos données (informations nutritionnelles, mesures, objectifs) vous appartiennent exclusivement. Nous ne les partageons pas avec des tiers, ne les vendons pas et ne les utilisons pas à d\'autres fins que le fonctionnement de l\'application. Nous ne traitons ni ne modifions vos données sans votre consentement.',
+  },
+
   // ── PDF hardcoded strings ──
   pdf_meal_col:       { el: 'ΓΕΥΜΑ',            en: 'MEAL',         es: 'COMIDA',        fr: 'REPAS' },
   pdf_recipe_col:     { el: 'ΣΥΝΤΑΓΗ / ΠΕΡΙΓΡΑΦΗ', en: 'RECIPE / DESCRIPTION', es: 'RECETA / DESCRIPCIÓN', fr: 'RECETTE / DESCRIPTION' },
@@ -453,6 +477,15 @@ const I18N = {
   supp_cat_wellness: { el: '🌿 Ευεξία',        en: '🌿 Wellness',   es: '🌿 Bienestar',  fr: '🌿 Bien-être' },
   supp_cat_fatburn:  { el: '🔥 Λιποδιάλυση',  en: '🔥 Fat Burn',   es: '🔥 Quemagrasas', fr: '🔥 Brûle-graisses' },
   supp_cat_personal: { el: '⭐ Προσωπικά',     en: '⭐ Personal',   es: '⭐ Personal',   fr: '⭐ Personnel' },
+  supp_custom_title:       { el: 'Τα δικά μου συμπληρώματα', en: 'My supplements',        es: 'Mis suplementos',       fr: 'Mes suppléments' },
+  supp_custom_add:         { el: '+ Προσθήκη συμπληρώματος', en: '+ Add supplement',       es: '+ Añadir suplemento',   fr: '+ Ajouter un supplément' },
+  supp_custom_save:        { el: 'Αποθήκευση',               en: 'Save',                   es: 'Guardar',               fr: 'Enregistrer' },
+  supp_custom_cancel:      { el: 'Ακύρωση',                  en: 'Cancel',                 es: 'Cancelar',              fr: 'Annuler' },
+  supp_custom_delete:      { el: 'Διαγραφή',                 en: 'Delete',                 es: 'Eliminar',              fr: 'Supprimer' },
+  supp_custom_name_ph:     { el: 'Όνομα συμπληρώματος…',     en: 'Supplement name…',       es: 'Nombre del suplemento…',fr: 'Nom du supplément…' },
+  supp_custom_qty_ph:      { el: 'Δοσολογία (π.χ. 1 κάψουλα)', en: 'Dosage (e.g. 1 capsule)', es: 'Dosis (ej. 1 cápsula)', fr: 'Dosage (ex. 1 gélule)' },
+  supp_custom_timing_ph:   { el: 'Χρονισμός (π.χ. Πρωί)',    en: 'Timing (e.g. Morning)',  es: 'Momento (ej. Mañana)',  fr: 'Moment (ex. Matin)' },
+  supp_custom_name_required: { el: 'Συμπλήρωσε το όνομα', en: 'Enter a name', es: 'Introduce un nombre', fr: 'Entrez un nom' },
 
   // ── Profile section headings ──
   prof_goals_title:      { el: '🎯 Ημερήσιοι Στόχοι',    en: '🎯 Daily Goals',        es: '🎯 Objetivos diarios',   fr: '🎯 Objectifs quotidiens' },
@@ -825,6 +858,20 @@ function updateUILanguage() {
   // Drawer donate label
   const drawerDonateLabel = document.querySelector('.drawer-item-donate .drawer-item-label');
   if (drawerDonateLabel) drawerDonateLabel.textContent = t('donate_drawer');
+
+  // Legal footer
+  const footerDesktop = document.querySelector('.app-footer-desktop');
+  if (footerDesktop) footerDesktop.textContent = t('legal_footer_text');
+  const footerMobile = document.querySelector('.app-footer-mobile');
+  if (footerMobile) footerMobile.textContent = t('legal_footer_link');
+  const legalModalTitle = document.querySelector('.legal-modal-title');
+  if (legalModalTitle) legalModalTitle.textContent = t('legal_modal_title');
+  const legalModalBody = document.querySelector('.legal-modal-body');
+  if (legalModalBody) legalModalBody.innerHTML =
+    `<p><strong>${t('legal_modal_heading')}</strong></p>` +
+    `<p>${t('legal_modal_copy')}</p>` +
+    `<p><strong>${t('legal_modal_privacy_title')}</strong></p>` +
+    `<p>${t('legal_modal_privacy_text')}</p>`;
 
   // Re-render whichever page is currently active
   const activePages = {

@@ -14,7 +14,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.js" crossorigin="anonymous"></script>
   <style>
     @media print {
-      .bottom-bar, .top-nav, .fab, .modal-overlay, .toast, .drawer, .drawer-overlay { display: none !important; }
+      .bottom-bar, .top-nav, .fab, .modal-overlay, .toast, .drawer, .drawer-overlay, .app-footer, .legal-modal-overlay { display: none !important; }
       .page { display: none !important; }
       .app-shell { display: block !important; }
       .sidebar { display: none !important; }
@@ -160,6 +160,14 @@
         <div id="page-optimize" class="page" style="display:none"></div>
       </main>
 
+      <!-- LEGAL FOOTER -->
+      <footer class="app-footer" id="app-footer">
+        <!-- Desktop: inline discreet text (populated by i18n) -->
+        <div class="app-footer-desktop"></div>
+        <!-- Mobile: link that opens modal (populated by i18n) -->
+        <button class="app-footer-mobile" onclick="openLegalModal()"></button>
+      </footer>
+
       <!-- PRINT VIEW (generated at print time) -->
       <div id="print-view"></div>
 
@@ -220,10 +228,20 @@
   <!-- AUTH SCREEN (shown before login, hidden after) -->
   <div id="auth-screen" class="auth-screen"></div>
 
-  <!-- LANGUAGE PICKER (shown when user clicks Register, before the form) -->
-  <div id="langpick-overlay" class="langpick-overlay" style="display:none"></div>
+  <!-- LEGAL MODAL (mobile) -->
+  <div id="legal-modal-overlay" class="legal-modal-overlay" onclick="if(event.target===this)closeLegalModal()">
+    <div class="legal-modal-sheet">
+      <div class="legal-modal-header">
+        <span class="legal-modal-title"></span>
+        <button class="legal-modal-close" onclick="closeLegalModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="legal-modal-body"></div>
+    </div>
+  </div>
 
-  <!-- ONBOARDING CAROUSEL (shown right after language is chosen, for new users) -->
+  <!-- ONBOARDING CAROUSEL (shown for new users after first sign-in) -->
   <div id="onboarding-overlay" class="onboarding-overlay" style="display:none"></div>
 
   <!-- SCRIPTS -->

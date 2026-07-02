@@ -22,6 +22,7 @@
 
   let _appInited = false;
   let _appInitedForUserId = null;
+  let _pendingOnboarding = false;
 
   async function bootAuth() {
     renderAuthScreen();
@@ -35,12 +36,15 @@
     _supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         hideAuthScreen();
-        // Re-init if this is a different user than the one the app was initialized for
         const newUserId = session.user.id;
         if (!_appInited || _appInitedForUserId !== newUserId) {
           _appInited = true;
           _appInitedForUserId = newUserId;
           await initApp();
+          if (_pendingOnboarding) {
+            _pendingOnboarding = false;
+            showOnboarding(function() {});
+          }
         }
       }
       if (event === 'SIGNED_OUT') {
@@ -118,6 +122,13 @@
         <!-- REGISTER -->
         <form id="auth-form-register" class="auth-form" style="display:none"
               onsubmit="authRegister(event)">
+          <div class="auth-lang-row" id="auth-lang-row">
+            ${Object.entries(LANGUAGES).map(([code, info]) =>
+              `<button type="button" class="auth-lang-chip${_currentLang === code ? ' active' : ''}"
+                       data-lang="${code}" onclick="authSetRegisterLang('${code}')"
+                       title="${info.label}">${info.flag} ${info.label}</button>`
+            ).join('')}
+          </div>
           <div class="auth-field">
             <label class="auth-label">${t('auth_name')}</label>
             <div class="auth-input-wrap">
@@ -329,12 +340,12 @@
     if (error) { showError('register', _friendly(error.message)); return; }
 
     if (!data.session) {
-      // Email confirmation required — show onboarding first
-      showOnboarding(function() {
-        showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
-      });
+      // Email confirmation required — set flag so onboarding shows after they confirm & log in
+      _pendingOnboarding = true;
+      showInfo('register', `${ICONS.shield} ${t('auth_check_email')}`);
     } else {
-      showOnboarding(function() {});
+      // Auto-confirmed session — onboarding fires via onAuthStateChange
+      _pendingOnboarding = true;
     }
   }
 
@@ -441,63 +452,22 @@
     await sbSignOut();
   };
 
-  // ── Language Picker ───────────────────────────────────────
+  // ── Language switcher inside register form ────────────────
 
   let _langPickSelectedLang = null;
+
+  window.authSetRegisterLang = function(lang) {
+    if (typeof setLang === 'function') setLang(lang);
+    _langPickSelectedLang = lang;
+    // Re-render the auth screen so all labels update in the new language
+    renderAuthScreen();
+    authShowTab('register');
+  };
 
   function _tLp(key, lang) {
     const entry = (typeof I18N !== 'undefined') ? I18N[key] : null;
     if (!entry) return key;
     return entry[lang] || entry['el'] || key;
-  }
-
-  function showLangPicker(onDone) {
-    const overlay = document.getElementById('langpick-overlay');
-    if (!overlay) { onDone && onDone(); return; }
-
-    const langs = [
-      { code: 'el', flag: '🇬🇷', label: 'Ελληνικά' },
-      { code: 'en', flag: '🇬🇧', label: 'English' },
-      { code: 'es', flag: '🇪🇸', label: 'Español' },
-      { code: 'fr', flag: '🇫🇷', label: 'Français' },
-    ];
-
-    let selected = _disclaimerLang();
-
-    function render() {
-      overlay.innerHTML = `<div class="langpick-card">
-        <div class="langpick-logo">VIVON</div>
-        <div class="langpick-title" id="lp-title">${_tLp('langpick_title', selected)}</div>
-        <div class="langpick-sub" id="lp-sub">${_tLp('langpick_sub', selected)}</div>
-        <div class="langpick-grid">
-          ${langs.map(l => `
-            <button class="langpick-btn${l.code === selected ? ' selected' : ''}"
-                    data-lang="${l.code}" onclick="window._lpSelect('${l.code}')">
-              <span class="lp-flag">${l.flag}</span>
-              <span>${l.label}</span>
-            </button>`).join('')}
-        </div>
-        <button class="langpick-continue" id="lp-continue"
-                onclick="window._lpContinue()">
-          ${_tLp('langpick_btn', selected)}
-        </button>
-      </div>`;
-    }
-
-    window._lpSelect = function(lang) {
-      selected = lang;
-      render();
-    };
-
-    window._lpContinue = function() {
-      if (typeof setLang === 'function') setLang(selected);
-      _langPickSelectedLang = selected;
-      overlay.style.display = 'none';
-      onDone && onDone();
-    };
-
-    render();
-    overlay.style.display = 'flex';
   }
 
   // ── Onboarding Carousel ────────────────────────────────────
@@ -579,19 +549,6 @@
     render();
     overlay.style.display = 'flex';
   }
-
-  // ── Hook: intercept "Register" tab click ──────────────────
-
-  const _origAuthShowTab = window.authShowTab;
-  window.authShowTab = function(tab) {
-    if (tab === 'register') {
-      showLangPicker(function() {
-        _origAuthShowTab('register');
-      });
-      return;
-    }
-    _origAuthShowTab(tab);
-  };
 
   // ── Entry point ───────────────────────────────────────────
 

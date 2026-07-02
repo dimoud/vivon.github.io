@@ -220,6 +220,7 @@ async function loadState() {
   }
   if (!state.supplements.done) state.supplements.done = {};
   if (!state.supplements.activeIds) state.supplements.activeIds = [];
+  if (!state.supplements.custom) state.supplements.custom = [];
 }
 
 function checkWeekReset() {
@@ -2688,6 +2689,12 @@ function renderToday() {
         </div>`;
         const done = supp.done || {};
         const active = SUPPLEMENTS_LIBRARY.filter(s => activeIds.includes(s.id));
+        const custom = (supp.custom || []).filter(s => activeIds.includes(s.id));
+        const allActive = [...active, ...custom];
+        if (allActive.length === 0) return `<div class="card fade-in" style="padding:14px 16px">
+          <div class="section-title" style="margin-bottom:6px">${t('suppl_section')}</div>
+          <div style="font-size:0.8rem;color:var(--text3)">${t('suppl_no_active')}</div>
+        </div>`;
         return `<div class="card fade-in">
           <div class="section-title" style="margin-bottom:10px">${t('suppl_section')}</div>
           ${active.map(s => {
@@ -2713,6 +2720,19 @@ function renderToday() {
               ${(tName(s,'gap') || s.gap) !== '—' ? `<div class="supp-guide-row"><span class="supp-guide-label">${t('suppl_guide_gap')}</span><span>${tName(s,'gap')}</span></div>` : ''}
               <div class="supp-guide-tip">${tName(s,'tip')}</div>
               <div style="margin-top:6px;font-size:0.65rem;color:var(--text3)">${t('suppl_evidence_label')}: <strong>${tName(s,'evidence')}</strong> · ${tName(s,'ideal')}</div>
+            </div>`;
+          }).join('')}
+          ${custom.map(s => {
+            const isDone = !!done[s.id];
+            return `<div class="supp-item">
+              <button class="supp-check ${isDone?'checked':''}" onclick="toggleSupp('${s.id}')">${isDone?'✓':''}</button>
+              <div class="supp-info" style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="supp-name">${esc(s.name)}</span>
+                  ${s.timing ? `<span style="font-size:0.68rem;color:var(--text3);font-weight:600">${esc(s.timing)}</span>` : ''}
+                </div>
+                ${s.qty ? `<div class="supp-note">${esc(s.qty)}</div>` : ''}
+              </div>
             </div>`;
           }).join('')}
         </div>`;
@@ -4257,6 +4277,46 @@ function filterSupplementsCat(cat) {
     btn.style.color = active ? 'var(--green-d)' : 'var(--text2)';
   });
   filterSupplements();
+}
+
+function showCustomSuppForm() {
+  document.getElementById('supp-custom-form').style.display = '';
+  document.getElementById('supp-custom-add-btn').style.display = 'none';
+  document.getElementById('supp-custom-name').focus();
+}
+
+function cancelCustomSupp() {
+  document.getElementById('supp-custom-form').style.display = 'none';
+  document.getElementById('supp-custom-add-btn').style.display = '';
+  ['supp-custom-name','supp-custom-qty','supp-custom-timing'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+function saveCustomSupp() {
+  const name = (document.getElementById('supp-custom-name')?.value || '').trim();
+  if (!name) { showToast('⚠️ ' + t('supp_custom_name_required')); return; }
+  const qty    = (document.getElementById('supp-custom-qty')?.value    || '').trim();
+  const timing = (document.getElementById('supp-custom-timing')?.value || '').trim();
+  const id = 'custom_' + Date.now();
+  if (!state.supplements.custom) state.supplements.custom = [];
+  state.supplements.custom.push({ id, name, qty, timing });
+  if (!state.supplements.activeIds) state.supplements.activeIds = [];
+  state.supplements.activeIds.push(id);
+  saveState();
+  autoSaveSettings();
+  renderSettingsSupplements();
+  renderToday();
+}
+
+function deleteCustomSupp(id) {
+  state.supplements.custom = (state.supplements.custom || []).filter(s => s.id !== id);
+  state.supplements.activeIds = (state.supplements.activeIds || []).filter(i => i !== id);
+  if (state.supplements.done) delete state.supplements.done[id];
+  saveState();
+  autoSaveSettings();
+  renderSettingsSupplements();
+  renderToday();
 }
 
 function toggleFavorite(rid) {
@@ -5937,7 +5997,56 @@ function renderSettingsSupplements() {
           </label>
         </div>`;
       }).join('')}
-      </div>` : ''}
+      </div>
+
+      <!-- Custom supplements -->
+      <div style="margin-top:18px;margin-bottom:6px">
+        <div style="font-size:0.78rem;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px">${t('supp_custom_title')}</div>
+        <div id="supp-custom-list">
+          ${(state.supplements.custom||[]).map(s => {
+            const isActive = activeIds.includes(s.id);
+            return `<div class="card card-sm" style="margin-bottom:8px;padding:10px 14px;display:grid;grid-template-columns:1fr auto 52px;align-items:center;gap:8px">
+              <div style="min-width:0">
+                <div style="font-size:0.88rem;font-weight:700">${esc(s.name)}</div>
+                <div style="font-size:0.7rem;color:var(--text3);margin-top:1px">${s.timing ? esc(s.timing) : ''}${s.timing && s.qty ? ' · ' : ''}${s.qty ? esc(s.qty) : ''}</div>
+              </div>
+              <button onclick="deleteCustomSupp('${s.id}')" title="${t('supp_custom_delete')}"
+                style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:0.9rem;padding:4px 6px;border-radius:6px;transition:color 0.15s"
+                onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">🗑️</button>
+              <label class="toggle-switch" style="justify-self:end;flex-shrink:0">
+                <input type="checkbox" ${isActive ? 'checked' : ''} onchange="toggleSuppActive('${s.id}')">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>`;
+          }).join('')}
+        </div>
+        <div id="supp-custom-form" style="display:none;margin-top:8px">
+          <div class="card card-sm" style="padding:14px;display:flex;flex-direction:column;gap:10px">
+            <input id="supp-custom-name" type="text" placeholder="${t('supp_custom_name_ph')}" maxlength="60"
+              style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.88rem;font-family:inherit;background:var(--bg2);color:var(--text);box-sizing:border-box;outline:none;transition:border-color 0.15s"
+              onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <input id="supp-custom-qty" type="text" placeholder="${t('supp_custom_qty_ph')}" maxlength="40"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:inherit;background:var(--bg2);color:var(--text);box-sizing:border-box;outline:none;transition:border-color 0.15s"
+                onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+              <input id="supp-custom-timing" type="text" placeholder="${t('supp_custom_timing_ph')}" maxlength="40"
+                style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:0.85rem;font-family:inherit;background:var(--bg2);color:var(--text);box-sizing:border-box;outline:none;transition:border-color 0.15s"
+                onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+            </div>
+            <div style="display:flex;gap:8px">
+              <button onclick="saveCustomSupp()" style="flex:1;padding:9px;border-radius:10px;background:var(--green);color:#fff;border:none;font-size:0.88rem;font-weight:700;cursor:pointer">${t('supp_custom_save')}</button>
+              <button onclick="cancelCustomSupp()" style="padding:9px 14px;border-radius:10px;background:var(--bg2);color:var(--text2);border:1.5px solid var(--border);font-size:0.88rem;font-weight:600;cursor:pointer">${t('supp_custom_cancel')}</button>
+            </div>
+          </div>
+        </div>
+        <button id="supp-custom-add-btn" onclick="showCustomSuppForm()"
+          style="width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1.5px dashed var(--border);background:transparent;color:var(--text2);font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px"
+          onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green-d)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ${t('supp_custom_add')}
+        </button>
+      </div>
+      ` : ''}
     </div>`;
 }
 
@@ -6306,4 +6415,12 @@ function updateDrawerUser() {
   }
   if (nameEl) nameEl.textContent = (p && p.name) || (user && user.email) || t('share_user');
   if (emailEl) emailEl.textContent = (user && user.email) || '';
+}
+
+/* ── LEGAL MODAL ── */
+function openLegalModal() {
+  document.getElementById('legal-modal-overlay').classList.add('open');
+}
+function closeLegalModal() {
+  document.getElementById('legal-modal-overlay').classList.remove('open');
 }
