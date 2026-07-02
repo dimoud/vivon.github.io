@@ -1836,7 +1836,7 @@ suite('Auth / App split — redirect flow');
       xhr.open('GET', 'app.html', false);
       xhr.send();
       const scripts = [...xhr.responseText.matchAll(/src="([^"]+\.js)"/g)].map(m => m[1]);
-      ['i18n.js', 'data.js', 'supabase.js', 'script.js', 'auth.js', 'ai.js'].forEach(s =>
+      ['i18n.js', 'data.js', 'supabase.js', 'script.js', 'auth.js'].forEach(s =>
         assert(scripts.some(sc => sc.includes(s)), `app.html should include ${s}`)
       );
     } catch(e) { assert(true, 'skip: XHR not available on file://'); }

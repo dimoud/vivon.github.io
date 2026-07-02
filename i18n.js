@@ -192,6 +192,7 @@ const I18N = {
   cat_protein: { el: '🥩 Πρωτεΐνες',       en: '🥩 Proteins',       es: '🥩 Proteínas',      fr: '🥩 Protéines' },
   cat_carbs:   { el: '🍚 Υδατάνθρακες',    en: '🍚 Carbohydrates',  es: '🍚 Carbohidratos',  fr: '🍚 Glucides' },
   cat_veggie:  { el: '🥦 Λαχανικά',        en: '🥦 Vegetables',     es: '🥦 Verduras',       fr: '🥦 Légumes' },
+  cat_salad:   { el: '🥗 Σαλάτες',         en: '🥗 Salads',         es: '🥗 Ensaladas',      fr: '🥗 Salades' },
   cat_fat:     { el: '🫒 Λιπαρά',          en: '🫒 Fats',           es: '🫒 Grasas',         fr: '🫒 Lipides' },
   cat_dairy:   { el: '🥛 Γαλακτοκομικά',   en: '🥛 Dairy',          es: '🥛 Lácteos',        fr: '🥛 Produits laitiers' },
   cat_fruit:   { el: '🍎 Φρούτα',          en: '🍎 Fruits',         es: '🍎 Frutas',         fr: '🍎 Fruits' },
@@ -673,7 +674,6 @@ const I18N = {
 
   // ── Builder page ──
   builder_meals_selected: { el: '🍽️ Γεύματα επιλεγμένα', en: '🍽️ Meals selected', es: '🍽️ Comidas seleccionadas', fr: '🍽️ Repas sélectionnés' },
-  builder_optimize_ai:  { el: '✨ Βελτιστοποίηση με AI', en: '✨ Optimize with AI', es: '✨ Optimizar con IA', fr: '✨ Optimiser avec IA' },
   builder_mode1_label:  { el: 'Max Πρωτεΐνη',        en: 'Max Protein',        es: 'Máx Proteína',       fr: 'Max Protéines' },
   builder_apply_days:   { el: 'Εφαρμογή στο πρόγραμμα ({n} ημέρες)', en: 'Apply to schedule ({n} days)', es: 'Aplicar al programa ({n} días)', fr: 'Appliquer au programme ({n} jours)' },
   builder_week_summary: { el: 'Συνοπτική εβδομαδιαία προβολή: ημέρες, γεύματα, θερμίδες, macros.', en: 'Weekly overview: days, meals, calories, macros.', es: 'Resumen semanal: días, comidas, calorías, macros.', fr: 'Vue hebdomadaire : jours, repas, calories, macros.' },
@@ -689,19 +689,6 @@ const I18N = {
   pdf_week_subtitle:    { el: '7 ημέρες · {kcal} kcal/ημέρα κατά μέσο όρο', en: '7 days · {kcal} kcal/day average', es: '7 días · {kcal} kcal/día de media', fr: '7 jours · {kcal} kcal/jour en moyenne' },
   pdf_week_total:       { el: 'Σύνολο εβδομάδας',    en: 'Weekly total',       es: 'Total semanal',      fr: 'Total hebdomadaire' },
   pdf_extra_kcal:       { el: '⚠️ Επιπλέον εκτός πλάνου: +{n} kcal', en: '⚠️ Extra outside plan: +{n} kcal', es: '⚠️ Extra fuera del plan: +{n} kcal', fr: '⚠️ Extra hors plan : +{n} kcal' },
-
-  // ── AI messages ──
-  ai_wait:              { el: 'Περίμενε {time} λεπτά πριν την επόμενη βελτιστοποίηση', en: 'Wait {time} before the next optimization', es: 'Espera {time} antes de la próxima optimización', fr: 'Attends {time} avant la prochaine optimisation' },
-  ai_limit:             { el: 'Το AI όριο χρήσης εξαντλήθηκε. Δοκίμασε αύριο ή αναβάθμισε το Gemini API plan.', en: 'AI usage limit reached. Try again tomorrow or upgrade your Gemini API plan.', es: 'Límite de uso de IA alcanzado. Intenta mañana o actualiza tu plan de API de Gemini.', fr: 'Limite d\'utilisation IA atteinte. Réessaie demain ou améliore ton plan API Gemini.' },
-  ai_json_error:        { el: 'Δεν βρέθηκε έγκυρο JSON στην απάντηση', en: 'No valid JSON found in response', es: 'No se encontró JSON válido en la respuesta', fr: 'Aucun JSON valide trouvé dans la réponse' },
-  ai_days_error:        { el: 'Αναμενόταν 7 ημέρες', en: 'Expected 7 days', es: 'Se esperaban 7 días', fr: '7 jours attendus' },
-  ai_estimate_ok:       { el: '✅ AI εκτίμηση θερμίδων!', en: '✅ AI calorie estimate!', es: '✅ ¡Estimación de calorías IA!', fr: '✅ Estimation calorique IA !' },
-  ai_optimize_ok:       { el: '✅ Το πλάνο βελτιστοποιήθηκε με AI!', en: '✅ Plan optimized with AI!', es: '✅ ¡Plan optimizado con IA!', fr: '✅ Plan optimisé avec IA !' },
-  ai_generate_ok:       { el: '✅ Το εβδομαδιαίο πλάνο δημιουργήθηκε επιτυχώς!', en: '✅ Weekly plan created successfully!', es: '✅ ¡Plan semanal creado con éxito!', fr: '✅ Plan hebdomadaire créé avec succès !' },
-  ai_optimizing:        { el: '⏳ Βελτιστοποίηση...', en: '⏳ Optimizing...', es: '⏳ Optimizando...', fr: '⏳ Optimisation...' },
-  ai_generating:        { el: '⏳ Δημιουργία...',     en: '⏳ Generating...', es: '⏳ Generando...', fr: '⏳ Génération...' },
-  ai_optimize_btn:      { el: '✨ Βελτιστοποίηση με AI', en: '✨ Optimize with AI', es: '✨ Optimizar con IA', fr: '✨ Optimiser avec IA' },
-  ai_generate_btn:      { el: '✨ Δημιουργία Πλάνου με AI', en: '✨ Create Plan with AI', es: '✨ Crear Plan con IA', fr: '✨ Créer le plan avec IA' },
 
   // ── Week day card ──
   week_no_meal_pdf:     { el: 'Κανένα γεύμα',    en: 'No meals',         es: 'Sin comidas',      fr: 'Aucun repas' },
@@ -804,10 +791,44 @@ const I18N = {
   swap_sf_smaller:  { el: '{sf}× (μικρότερη)', en: '{sf}× (smaller)',     es: '{sf}× (menor)',       fr: '{sf}× (plus petit)' },
   swap_sf_larger:   { el: '{sf}× (μεγαλύτερη)',en: '{sf}× (larger)',      es: '{sf}× (mayor)',       fr: '{sf}× (plus grand)' },
   swap_saved:       { el: '✅ Γεύμα αποθηκεύτηκε', en: '✅ Meal saved',   es: '✅ Comida guardada',  fr: '✅ Repas enregistré' },
+
+  // ── Meal Builder (compose a meal from Main/Side/Salad/Extra) ──
+  mb_page_title:        { el: 'Νέα καταχώρηση φαγητού', en: 'New Food Entry',      es: 'Nueva comida',           fr: 'Nouveau repas' },
+  mb_page_subtitle:     { el: 'Δημιουργήστε ένα νέο γεύμα επιλέγοντας βασικό φαγητό, γαρνιτούρα και σαλάτα', en: 'Create a new meal by choosing a main food, side dish and salad', es: 'Crea una comida eligiendo alimento principal, guarnición y ensalada', fr: 'Créez un repas en choisissant un aliment principal, un accompagnement et une salade' },
+  mb_slot_main:         { el: 'Βασικό φαγητό',   en: 'Main food',   es: 'Alimento principal', fr: 'Plat principal' },
+  mb_slot_side:         { el: 'Γαρνιτούρα',      en: 'Side dish',   es: 'Guarnición',         fr: 'Accompagnement' },
+  mb_slot_salad:        { el: 'Σαλάτα',          en: 'Salad',       es: 'Ensalada',           fr: 'Salade' },
+  mb_slot_extra:        { el: 'Έξτρα',           en: 'Extra',       es: 'Extra',              fr: 'Extra' },
+  mb_slot_main_sub:     { el: 'Επιλέξτε το βασικό φαγητό σας', en: 'Choose your main food', es: 'Elige tu alimento principal', fr: 'Choisissez votre plat principal' },
+  mb_slot_side_sub:     { el: 'Επιλέξτε γαρνιτούρα',   en: 'Choose a side dish', es: 'Elige una guarnición', fr: "Choisissez un accompagnement" },
+  mb_slot_salad_sub:    { el: 'Επιλέξτε σαλάτα',       en: 'Choose a salad',     es: 'Elige una ensalada',   fr: 'Choisissez une salade' },
+  mb_slot_extra_sub:    { el: 'π.χ. ελαιόλαδο, ψωμί, σάλτσα, φέτα', en: 'e.g. olive oil, bread, sauce, feta', es: 'ej. aceite de oliva, pan, salsa, feta', fr: "ex. huile d'olive, pain, sauce, feta" },
+  mb_slot_required_badge: { el: 'Υποχρεωτικό', en: 'Required', es: 'Obligatorio', fr: 'Obligatoire' },
+  mb_slot_optional_badge: { el: 'Προαιρετικό', en: 'Optional', es: 'Opcional',    fr: 'Optionnel' },
+  mb_none_option:       { el: '— καμία επιλογή —', en: '— none —', es: '— ninguno —', fr: '— aucun —' },
+  mb_summary_title:     { el: 'Σύνολο γεύματος', en: 'Meal total', es: 'Total de la comida', fr: 'Total du repas' },
+  mb_summary_note:      { el: 'Οι τιμές είναι υπολογισμένες με βάση τις επιλεγμένες ποσότητες.', en: 'Values are calculated based on the selected quantities.', es: 'Los valores se calculan según las cantidades seleccionadas.', fr: 'Les valeurs sont calculées selon les quantités sélectionnées.' },
+  mb_btn_save:          { el: '💾 Αποθήκευση φαγητού', en: '💾 Save meal', es: '💾 Guardar comida', fr: '💾 Enregistrer le repas' },
+  mb_btn_save_add_today: { el: '➕ Αποθήκευση & προσθήκη σήμερα', en: '➕ Save & add to today', es: '➕ Guardar y añadir a hoy', fr: "➕ Enregistrer et ajouter à aujourd'hui" },
+  mb_btn_save_schedule:  { el: '📅 Αποθήκευση & προγραμματισμός', en: '📅 Save & schedule', es: '📅 Guardar y programar', fr: '📅 Enregistrer et planifier' },
+  mb_name_label:         { el: 'Όνομα γεύματος (προαιρετικό)', en: 'Meal name (optional)', es: 'Nombre de la comida (opcional)', fr: 'Nom du repas (optionnel)' },
+  mb_name_sub:           { el: 'Δώστε ένα όνομα για να αποθηκεύσετε αυτό το γεύμα στους οδηγούς σας', en: 'Give it a name to save this meal to your library', es: 'Dale un nombre para guardar esta comida en tu biblioteca', fr: 'Donnez-lui un nom pour enregistrer ce repas dans votre bibliothèque' },
+  mb_name_placeholder:   { el: 'π.χ. Κοτόπουλο με ρύζι & χωριάτικη σαλάτα', en: 'e.g. Chicken with rice & Greek salad', es: 'ej. Pollo con arroz y ensalada griega', fr: 'ex. Poulet, riz et salade grecque' },
+  mb_meal_type_label:    { el: 'Πότε τρώγεται', en: 'When is it eaten', es: 'Cuándo se come', fr: 'Quand le manger' },
+  mb_pick_day_title:     { el: 'Επιλογή ημέρας', en: 'Choose a day', es: 'Elige un día', fr: 'Choisissez un jour' },
+  mb_toast_saved:        { el: '✅ Το γεύμα αποθηκεύτηκε!', en: '✅ Meal saved!', es: '✅ ¡Comida guardada!', fr: '✅ Repas enregistré !' },
+  mb_toast_updated:      { el: '✅ Το γεύμα ενημερώθηκε!', en: '✅ Meal updated!', es: '✅ ¡Comida actualizada!', fr: '✅ Repas mis à jour !' },
+  mb_toast_main_required:{ el: '⚠️ Επιλέξτε βασικό φαγητό', en: '⚠️ Select a main food', es: '⚠️ Selecciona un alimento principal', fr: '⚠️ Sélectionnez un plat principal' },
+  mb_edit_disabled_legacy:{ el: '⚠️ Αυτή η συνταγή δεν μπορεί να επεξεργαστεί εδώ', en: '⚠️ This recipe can\'t be edited here', es: '⚠️ Esta receta no se puede editar aquí', fr: "⚠️ Cette recette ne peut pas être modifiée ici" },
+  mb_edit_title:          { el: 'Επεξεργασία γεύματος', en: 'Edit meal', es: 'Editar comida', fr: 'Modifier le repas' },
+  mb_tab_new_short:       { el: 'Νέα', en: 'New', es: 'Nueva', fr: 'Nouveau' },
+  mb_tab_builder:         { el: 'Σύνθετο Γεύμα', en: 'Composite Meal', es: 'Comida compuesta', fr: 'Repas composé' },
+  mb_tab_simple:          { el: 'Απλή Καταχώρηση', en: 'Simple Entry', es: 'Entrada simple', fr: 'Saisie simple' },
+  mb_toast_macros_required: { el: '⚠️ Συμπλήρωσε τουλάχιστον τις θερμίδες', en: '⚠️ Fill in at least the calories', es: '⚠️ Completa al menos las calorías', fr: '⚠️ Renseigne au moins les calories' },
 };
 
-// ── Current language (default: Greek) ──
-let _currentLang = 'el';
+// ── Current language (default: English, until initLang() detects otherwise) ──
+let _currentLang = 'en';
 
 function getLang() {
   return _currentLang;
@@ -816,7 +837,7 @@ function getLang() {
 function t(key) {
   const entry = I18N[key];
   if (!entry) return key;
-  return entry[_currentLang] || entry['el'] || key;
+  return entry[_currentLang] || entry['en'] || key;
 }
 
 function setLang(lang) {
@@ -827,10 +848,16 @@ function setLang(lang) {
   updateUILanguage();
 }
 
+// Detects the browser's preferred language, if it's one we support.
+function _detectBrowserLang() {
+  const bl = ((navigator.language || navigator.userLanguage || '').split('-')[0] || '').toLowerCase();
+  return LANGUAGES[bl] ? bl : null;
+}
+
 function initLang() {
-  let saved = 'el';
-  try { saved = localStorage.getItem('vivon_lang') || 'el'; } catch(e) {}
-  if (!LANGUAGES[saved]) saved = 'el';
+  let saved = null;
+  try { saved = localStorage.getItem('vivon_lang'); } catch(e) {}
+  if (!saved || !LANGUAGES[saved]) saved = _detectBrowserLang() || 'en';
   _currentLang = saved;
   document.documentElement.lang = saved;
 }

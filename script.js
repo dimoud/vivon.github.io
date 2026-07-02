@@ -1672,6 +1672,18 @@ function setPlanStartDate(dateStr) {
   autoSaveSettings();
 }
 
+// Επιστρέφει τον δείκτη ημέρας (0-based) του προγράμματος που αντιστοιχεί στη σημερινή ημερομηνία, ή null αν δεν είναι εντός εύρους
+function getTodayPlanDayIndex() {
+  if (!state.planStartDate || !state.week?.length) return null;
+  const start = new Date(state.planStartDate);
+  start.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((today - start) / 86400000);
+  if (diffDays < 0 || diffDays >= state.week.length) return null;
+  return diffDays;
+}
+
 // ── GOURMET IDS — defined before wizard so _renderWizardStep can use it ──
 const GOURMET_IDS = new Set([
   'r48','r45','r40',
@@ -1705,6 +1717,7 @@ let _wizardExcluded = {};  // { mealKey: Set<mealId> }
 function _allMeals() {
   return [
     ...(typeof RECIPES_DB !== 'undefined' ? RECIPES_DB : []),
+    ...(typeof state !== 'undefined' && state.customRecipes ? state.customRecipes.filter(r => !r._generated) : []),
     ...(typeof STANDARD_MEALS !== 'undefined' ? STANDARD_MEALS : []),
   ];
 }
@@ -2005,12 +2018,85 @@ function getWaterNotes() {
 const WATER_NOTES = getWaterNotes();
 const SLOT_TIMES = ['07:00','10:00','13:00','16:00','19:30'];
 
+// ── COMPOSED MEALS (generator combines FOODS_DB items per slot) ──
+const MB_QTY_LADDER_G  = Array.from({ length: (300 - 50) / 10 + 1 }, (_, i) => 50 + i * 10); // 50,60,...,300
+const MB_QTY_LADDER_TEM = [0.5,1,1.5,2,3,4];
+const MB_QTY_LADDER_TSP = [1,2,3,4,6,8];
+const MB_QTY_LADDER_ML  = Array.from({ length: (300 - 50) / 10 + 1 }, (_, i) => 50 + i * 10); // 50,60,...,300
+function mbQtyLadder(unit) {
+  if (unit === 'τεμ') return MB_QTY_LADDER_TEM;
+  if (unit === 'κ.γ.' || unit === 'κ.σ.') return MB_QTY_LADDER_TSP;
+  if (unit === 'ml') return MB_QTY_LADDER_ML;
+  return MB_QTY_LADDER_G;
+}
+function mbSnapQty(qty, unit) {
+  const ladder = mbQtyLadder(unit);
+  let best = ladder[0], bestDiff = Infinity;
+  ladder.forEach(v => { const d = Math.abs(v - qty); if (d < bestDiff) { bestDiff = d; best = v; } });
+  return best;
+}
+// Compose a synthetic Main+Side+Salad+Extra meal from FOODS_DB, sized to approximate targetKcal.
+const MB_SLOT_CATS = {
+  main:  ['protein'],
+  side:  ['carbs'],
+  salad: ['salad', 'veggie'],
+  extra: ['fat','dairy','other'],
+};
+const MB_SLOT_SHARE = { main: 0.45, side: 0.30, salad: 0.10, extra: 0.15 };
+function composeMeal(slotType, targetKcal, style) {
+  const allFoods = [...FOODS_DB, ...(state?.customFoods || [])];
+  const roles = ['main','side','salad', ...(style === 'gourmet' || style === 'mixed' ? ['extra'] : [])];
+  const ingredients = [];
+  const nameParts = [];
+  const nameI18nParts = { el: [], en: [], es: [], fr: [] };
+  roles.forEach(role => {
+    const cats = MB_SLOT_CATS[role];
+    const candidates = allFoods.filter(f => cats.includes(f.category));
+    if (!candidates.length) return;
+    // salad/extra are optional — skip sometimes for variety
+    if ((role === 'salad' || role === 'extra') && Math.random() < 0.3) return;
+    const food = candidates[Math.floor(Math.random() * candidates.length)];
+    const roleKcal = targetKcal * MB_SLOT_SHARE[role];
+    const per = food.per100 && food.per100.kcal ? food.per100.kcal : 100;
+    let rawQty;
+    if (food.unit === 'κ.γ.' || food.unit === 'κ.σ.') {
+      const mlPerUnit = food.unit === 'κ.σ.' ? 10 : (food.sprayFactor || 5);
+      rawQty = roleKcal / (per * mlPerUnit / 100);
+    } else if (food.unit === 'τεμ') {
+      rawQty = roleKcal / per;
+    } else {
+      rawQty = roleKcal / (per / 100);
+    }
+    const qty = mbSnapQty(rawQty, food.unit);
+    if (qty <= 0) return;
+    ingredients.push({ foodId: food.id, qty });
+    nameParts.push(tName ? tName(food) : food.name);
+    ['el','en','es','fr'].forEach(lang => {
+      nameI18nParts[lang].push((food.nameI18n && food.nameI18n[lang]) || food.name);
+    });
+  });
+  if (!ingredients.length) return null;
+  const nameI18n = {};
+  ['el','en','es','fr'].forEach(lang => { nameI18n[lang] = nameI18nParts[lang].join(' + '); });
+  return {
+    id: 'gen_' + slotType + '_' + Date.now() + '_' + Math.floor(Math.random() * 1e4),
+    name: nameParts.join(' + '),
+    nameI18n,
+    meal: slotType,
+    emoji: '🍽️',
+    ingredients,
+    _generated: true,
+  };
+}
+
 /**
  * Generate a randomised 7-day week plan.
  * @param {string} style  'simple' | 'gourmet' | 'mixed'
  * @param {Object} excludedPerMeal  { breakfast: ['id',...], lunch: [...], ... }
  */
 function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
+  // Clear previous generation's composed meals so they don't accumulate
+  if (state?.customRecipes) state.customRecipes = state.customRecipes.filter(r => !r._generated);
   const pool = _allMeals();
 
   // Normalise excluded sets
@@ -2060,7 +2146,17 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
 
   function mealKey(r) { return r.foodGroup || r.id; }
 
+  const COMPOSE_RATIO = 0.35; // fraction of picks that should be freely composed from FOODS_DB vs whole-recipe
   function pickOne(slotType) {
+    if (Math.random() < COMPOSE_RATIO) {
+      const targetKcalForSlot = (state?.goals?.kcal || DEFAULT_GOALS.kcal) / MEAL_SLOT_TYPES.length;
+      const composed = composeMeal(slotType, targetKcalForSlot, style);
+      if (composed) {
+        state.customRecipes.push(composed);
+        pickCount[slotType]++;
+        return composed;
+      }
+    }
     const all = candidates(slotType);
     const simple  = all.filter(r => !GOURMET_IDS.has(r.id));
     const gourmet = all.filter(r =>  GOURMET_IDS.has(r.id));
@@ -2743,7 +2839,7 @@ function renderToday() {
             <span>${goals.kcal + 500}</span>
           </div>
         </div>
-        <div style="height:4px;border-radius:2px;background:var(--border);overflow:hidden">
+        <div style="height:4px;border-radius:2px;background:var(--border);overflow:hidden;pointer-events:none">
           <div style="height:100%;border-radius:2px;background:var(--green);width:${Math.min(100,Math.round(doneMacros.kcal/effectiveKcal*100))}%;transition:width 0.4s ease"></div>
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:3px;font-size:0.62rem;color:var(--text3)">
@@ -2959,7 +3055,7 @@ function renderWeek() {
         <span style="color:${highlight ? color : 'var(--text2)'};font-weight:${highlight ? '900' : '700'}">${label}</span>
         <span style="color:var(--text3);font-size:${valueSize}">${valueHtml}</span>
       </div>
-      <div style="height:${barHeight};background:#e5e7eb;border-radius:4px;overflow:hidden">
+      <div style="height:${barHeight};background:#e5e7eb;border-radius:4px;overflow:hidden;pointer-events:none">
         <div style="height:${barHeight};width:${barWidth}%;background:${color};border-radius:4px"></div>
       </div>
     </div>`;
@@ -3386,7 +3482,7 @@ function confirmResetWeekPlan() {
 
 // ── PAGE: RECIPES ──
 function renderRecipes(filter = '') {
-  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes.filter(r => !r._generated)];
   const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealLabels = {
     breakfast: '☀️ ' + t('meal_breakfasts'),
@@ -3400,7 +3496,7 @@ function renderRecipes(filter = '') {
     <div class="rc-card">
         <div class="rc-header">
           <span class="rc-title">${t('recipes_title')}</span>
-          <button class="rc-new-btn" onclick="openAddRecipeModal()">${t('btn_new_recipe')}</button>
+          <button class="rc-new-btn" onclick="openAddRecipeChooser()">+ ${t('mb_tab_new_short')}</button>
         </div>
         <div class="rc-search">
           <svg class="rc-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -3454,6 +3550,7 @@ function renderFoods(filter = '') {
     protein: '🥩 ' + tCategory('protein'),
     carbs:   '🍚 ' + tCategory('carbs'),
     veggie:  '🥦 ' + tCategory('veggie'),
+    salad:   '🥗 ' + tCategory('salad'),
     fat:     '🫒 ' + tCategory('fat'),
     dairy:   '🥛 ' + tCategory('dairy'),
     fruit:   '🍎 ' + tCategory('fruit'),
@@ -3525,17 +3622,6 @@ function renderOptimize() {
         <div style="margin-top:10px;font-size:0.72rem;color:var(--text3);text-align:center">
           Για αλλαγή στόχων πήγαινε στις <button class="btn btn-ghost btn-sm" style="font-size:0.72rem;padding:4px 10px" onclick="showSettingsTab('profile');document.querySelectorAll('[data-tab=settings]').forEach(b=>b.click())">⚙️ Ρυθμίσεις</button>
         </div>
-      </div>
-
-      <!-- AI Optimization -->
-      <div class="card card-lg fade-in" style="margin-bottom:14px">
-        <div class="section-title">✨ AI Βελτιστοποίηση Εβδομάδας</div>
-        <div style="font-size:0.8rem;color:var(--text2);margin-bottom:12px;line-height:1.5">
-          Αναλύει το τρέχον πλάνο και αναδιατάσσει τα γεύματα ώστε να αποφύγει επαναλήψεις (π.χ. γιαούρτι πρωί <em>και</em> βράδυ) και να μεγιστοποιήσει την ποικιλία.
-        </div>
-        <button id="ai-optimize-btn-settings" class="btn btn-green" style="width:100%;font-size:0.95rem;font-weight:800;padding:12px" onclick="optimizeWeekWithAI()">
-          ${t('builder_optimize_ai')}
-        </button>
       </div>
 
       <!-- Mode + Apply -->
@@ -4052,6 +4138,503 @@ function renderBuilderPage(typeFilter) {
     </div>
 
   </div>`;
+}
+
+// ── MEAL BUILDER (compose Main + Side + Salad + Extra) ────────
+const MB_SLOTS = [
+  { key: 'main',  required: true,  cats: ['protein'],          icon: '🍽️' },
+  { key: 'side',  required: false, cats: ['carbs'],             icon: '🍚' },
+  { key: 'salad', required: false, cats: ['salad', 'veggie'],   icon: '🥗' },
+  { key: 'extra', required: false, cats: ['fat','dairy','other'], icon: '➕' },
+];
+let _mbEditId = null;
+let _mbSelection = { main: null, side: null, salad: null, extra: null };
+
+function mbUnitLabel(unit, qty) {
+  if (unit === 'τεμ') return `${qty} τεμ.`;
+  if (unit === 'κ.γ.') return `${qty} κ.γ.`;
+  if (unit === 'κ.σ.') return `${qty} κ.σ.`;
+  if (unit === 'ml')   return `${qty} ml`;
+  return `${qty} γρ.`;
+}
+
+function _mbAllFoods() {
+  return [...FOODS_DB, ...(state.customFoods || [])];
+}
+
+// Strictly filtered to the slot's own category/categories — a Main dropdown
+// only shows protein foods, a Salad dropdown only shows salad/veggie foods, etc.
+// No "other categories" fallback, so the lists stay short and relevant.
+// Sorted alphabetically by the displayed (translated) name.
+function _mbFoodOptions(slot, selectedFoodId) {
+  const allFoods = _mbAllFoods();
+  const matching = allFoods
+    .filter(f => slot.cats.includes(f.category))
+    .sort((a, b) => tName(a).localeCompare(tName(b), _currentLang));
+  const opt = f => `<option value="${f.id}"${f.id === selectedFoodId ? ' selected' : ''}>${esc(tName(f))}</option>`;
+  return matching.map(opt).join('');
+}
+
+// _mbAfterSave: optional callback(newOrUpdatedId) invoked instead of the default
+// close-and-toast behaviour — used when the builder is opened from inside another
+// flow (e.g. the "Custom" tab of the add-meal modal) that wants to chain an action.
+let _mbAfterSave = null;
+let _mbDefaultMealType = null;
+let _mbChooserMode = null; // null = standalone builder-only; 'chooser' = tabbed Standard/Custom
+
+// Opens the overlay directly on the Meal Builder (no Standard/Custom tabs) —
+// used for editing an existing Meal-Builder-created recipe.
+function openMealBuilder(editId, afterSaveFn) {
+  _mbAfterSave = afterSaveFn || null;
+  _mbChooserMode = null;
+  const overlay = document.getElementById('mb-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const content = document.getElementById('mb-overlay-content');
+  if (content) content.innerHTML = '<div class="mb-page-wrap" id="mb-builder-target"></div>';
+  renderMealBuilder(editId, 'mb-builder-target');
+}
+
+// Opens the overlay with two tabs: "Σύνθετο Γεύμα" (full Main/Side/Salad/Extra
+// builder, shown first/default) and "Απλή Καταχώρηση" (name + macros only, no
+// ingredient picker). Used from Ideas "+ New" and from the Today "+ Add meal"
+// modal's "+ New" shortcut.
+function openMealChooser(opts) {
+  opts = opts || {};
+  _mbAfterSave = opts.afterSaveFn || null;
+  _mbDefaultMealType = opts.defaultMealType || null;
+  _mbChooserMode = 'chooser';
+  const overlay = document.getElementById('mb-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const content = document.getElementById('mb-overlay-content');
+  if (!content) return;
+  content.innerHTML = `
+    <div class="mb-page-wrap">
+      <div class="mb-page-header">
+        <div class="mb-title-row">
+          <div>
+            <h1 class="mb-page-title">${t('mb_tab_new_short')}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="segment mb-source-tabs" id="mb-source-tabs">
+        <button class="seg-btn active" id="mb-tab-builder" onclick="mbSwitchChooserTab('builder')">${t('mb_tab_builder')}</button>
+        <button class="seg-btn" id="mb-tab-simple" onclick="mbSwitchChooserTab('simple')">${t('mb_tab_simple')}</button>
+      </div>
+      <div class="mb-builder-pane" id="mb-builder-pane"></div>
+      <div class="mb-simple-pane" id="mb-simple-pane" style="display:none"></div>
+    </div>`;
+  renderMealBuilder(null, 'mb-builder-pane');
+  mbSwitchChooserTab('builder');
+}
+
+function openAddRecipeChooser() {
+  openMealChooser({});
+}
+
+function mbSwitchChooserTab(which) {
+  document.getElementById('mb-tab-builder')?.classList.toggle('active', which === 'builder');
+  document.getElementById('mb-tab-simple')?.classList.toggle('active', which === 'simple');
+  const builderPane = document.getElementById('mb-builder-pane');
+  const simplePane = document.getElementById('mb-simple-pane');
+  if (builderPane) builderPane.style.display = which === 'builder' ? '' : 'none';
+  if (simplePane) simplePane.style.display = which === 'simple' ? '' : 'none';
+  if (which === 'simple' && simplePane && !simplePane.dataset.rendered) {
+    simplePane.dataset.rendered = '1';
+    _mbRenderSimplePane();
+  }
+}
+
+// Renders the "Απλή Καταχώρηση" pane: name + emoji + meal type + macros only,
+// no ingredient/quantity picker — used for quickly logging a meal by its known
+// nutrition facts (e.g. from a package label) rather than composing it from foods.
+function _mbRenderSimplePane() {
+  const el = document.getElementById('mb-simple-pane');
+  if (!el) return;
+  const defaultType = _mbDefaultMealType || 'lunch';
+  const mtOpt = (val) => `<option value="${val}"${val === defaultType ? ' selected' : ''}>${tMeal(val)}</option>`;
+  el.innerHTML = `
+    <div class="form-group"><label>${t('form_name')}</label><input type="text" id="nr-name" placeholder="${t('form_recipe_placeholder')}"></div>
+    <div class="form-group"><label>Emoji</label><input type="text" id="nr-emoji" value="🍽️" maxlength="2"></div>
+    <div class="form-group"><label>${t('form_meal_type')}</label>
+      <select id="nr-meal">
+        ${mtOpt('breakfast')}
+        ${mtOpt('snack')}
+        ${mtOpt('afternoon')}
+        ${mtOpt('lunch')}
+        ${mtOpt('dinner')}
+      </select>
+    </div>
+    <div class="form-group"><label>${t('form_instructions')}</label><textarea id="nr-inst" placeholder="${t('form_instructions_placeholder')}"></textarea></div>
+    <div style="margin:10px 0 4px">
+      <span style="font-size:0.82rem;color:var(--text2)">${t('form_kcal_per_serving')}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="form-group"><label>${t('macro_kcal')}</label><input type="number" id="nr-kcal" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_protein')} (g)</label><input type="number" id="nr-p" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_carbs')} (g)</label><input type="number" id="nr-c" placeholder="0"></div>
+      <div class="form-group"><label>${t('macro_fat')} (g)</label><input type="number" id="nr-f" placeholder="0"></div>
+    </div>
+    <div style="margin-top:14px">
+      <button class="btn btn-green btn-full" onclick="saveNewRecipe()">💾 ${t('btn_save')}</button>
+    </div>`;
+}
+
+function closeMealBuilder() {
+  const overlay = document.getElementById('mb-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+  _mbAfterSave = null;
+  _mbDefaultMealType = null;
+  _mbChooserMode = null;
+}
+
+function editMealBuilderMeal(rid) {
+  openMealBuilder(rid);
+}
+
+function _editMealBuilderMealFromModal(rid) {
+  closeModal();
+  setTimeout(() => {
+    document.body.style.overflow = 'hidden';
+    editMealBuilderMeal(rid);
+  }, 240);
+}
+
+function renderMealBuilder(editId, targetElId) {
+  _mbEditId = editId || null;
+  _mbSelection = { main: null, side: null, salad: null, extra: null };
+
+  if (_mbEditId) {
+    const existing = state.customRecipes.find(r => r.id === _mbEditId);
+    if (!existing || !existing._mbSlots) {
+      showToast(t('mb_edit_disabled_legacy'));
+      _mbEditId = null;
+    } else {
+      MB_SLOTS.forEach(s => {
+        const slotData = existing._mbSlots[s.key];
+        if (slotData) _mbSelection[s.key] = { foodId: slotData.foodId, qty: slotData.qty };
+      });
+    }
+  }
+
+  const el = document.getElementById(targetElId || 'mb-builder-target');
+  if (!el) return;
+
+  const slotCardsHtml = MB_SLOTS.map(slot => _mbSlotCardHtml(slot)).join('');
+  const showHeader = !_mbChooserMode;
+
+  el.innerHTML = `
+    <div class="mb-builder-inner">
+      ${showHeader ? `<div class="mb-page-header">
+        <div class="mb-title-row">
+          <div>
+            <h1 class="mb-page-title">${_mbEditId ? t('mb_edit_title') : t('mb_page_title')}</h1>
+            <p class="mb-page-subtitle">${t('mb_page_subtitle')}</p>
+          </div>
+        </div>
+      </div>` : ''}
+
+      <div class="mb-layout">
+        <div class="mb-slots-col">
+          <div class="mb-slots-grid">${slotCardsHtml}</div>
+
+          <div class="mb-name-card">
+            <div class="form-group" style="margin-bottom:0">
+              <label>${t('mb_name_label')}</label>
+              <div style="font-size:0.76rem;color:var(--text3);margin-bottom:8px">${t('mb_name_sub')}</div>
+              <input type="text" id="mb-name" placeholder="${t('mb_name_placeholder')}" value="${_mbEditId ? esc(state.customRecipes.find(r=>r.id===_mbEditId)?.name || '') : ''}">
+            </div>
+            <div class="mb-name-row">
+              <div class="form-group">
+                <label>${t('mb_meal_type_label')}</label>
+                <select id="mb-meal-type">
+                  <option value="breakfast">${tMeal('breakfast')}</option>
+                  <option value="snack">${tMeal('snack')}</option>
+                  <option value="afternoon">${tMeal('afternoon')}</option>
+                  <option value="lunch" selected>${tMeal('lunch')}</option>
+                  <option value="dinner">${tMeal('dinner')}</option>
+                </select>
+              </div>
+              <div class="mb-name-actions">
+                <button class="btn btn-ghost" onclick="closeMealBuilder()">${t('btn_cancel')}</button>
+                ${(_mbEditId || _mbAfterSave) ? '' : `<button class="btn btn-ghost" onclick="mbSaveAndSchedule()">${t('mb_btn_save_schedule')}</button>
+                <button class="btn btn-blue" onclick="mbSaveAndAddToday()">${t('mb_btn_save_add_today')}</button>`}
+                <button class="btn btn-green" onclick="saveMealBuilderMeal()">${_mbEditId ? '💾 ' + t('btn_save') : t('mb_btn_save')}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-summary-col">
+          <div class="mb-summary-card">
+            <div class="mb-summary-title">${t('mb_summary_title')}</div>
+            <div class="mb-summary-kcal-label">${t('macro_kcal')}</div>
+            <div class="mb-summary-kcal" id="mb-total-kcal">0 <span class="mb-summary-kcal-unit">kcal</span></div>
+            <div class="mb-donut" id="mb-donut">
+              <div class="mb-donut-center" id="mb-donut-center">0%</div>
+            </div>
+            <div class="mb-summary-macros">
+              <div class="mb-macro-stat">
+                <span class="mb-macro-dot mb-p"></span>
+                <span class="mb-macro-value" id="mb-total-p">0 g</span>
+                <span class="mb-macro-pct">${t('macro_protein')}</span>
+              </div>
+              <div class="mb-macro-stat">
+                <span class="mb-macro-dot mb-c"></span>
+                <span class="mb-macro-value" id="mb-total-c">0 g</span>
+                <span class="mb-macro-pct">${t('macro_carbs')}</span>
+              </div>
+              <div class="mb-macro-stat">
+                <span class="mb-macro-dot mb-f"></span>
+                <span class="mb-macro-value" id="mb-total-f">0 g</span>
+                <span class="mb-macro-pct">${t('macro_fat')}</span>
+              </div>
+            </div>
+            <div class="mb-summary-note">ℹ️ ${t('mb_summary_note')}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  if (_mbEditId) {
+    const existing = state.customRecipes.find(r => r.id === _mbEditId);
+    if (existing) {
+      const mtSel = document.getElementById('mb-meal-type');
+      if (mtSel) mtSel.value = existing.meal || 'lunch';
+    }
+  } else if (_mbDefaultMealType) {
+    const mtSel = document.getElementById('mb-meal-type');
+    if (mtSel) mtSel.value = _mbDefaultMealType;
+  }
+
+  mbRecalc();
+}
+
+function _mbSlotCardHtml(slot) {
+  const sel = _mbSelection[slot.key] || {};
+  const allFoods = _mbAllFoods();
+  const selectedFood = sel.foodId ? allFoods.find(f => f.id === sel.foodId) : null;
+  const qty = sel.qty || (selectedFood ? mbQtyLadder(selectedFood.unit)[1] || mbQtyLadder(selectedFood.unit)[0] : 100);
+  const qtyLadder = selectedFood ? mbQtyLadder(selectedFood.unit) : mbQtyLadder('g');
+
+  return `
+    <div class="mb-slot-card${selectedFood ? ' mb-filled' : ''}${slot.required ? ' mb-required' : ''}" id="mb-card-${slot.key}">
+      <div class="mb-slot-header">
+        <div class="mb-slot-header-left">
+          <div class="mb-slot-icon">${slot.icon}</div>
+          <div class="mb-slot-titles">
+            <span class="mb-slot-title">${t('mb_slot_' + slot.key)}</span>
+            <span class="mb-slot-sub">${t('mb_slot_' + slot.key + '_sub')}</span>
+          </div>
+        </div>
+        <span class="mb-slot-badge${slot.required ? '' : ' mb-optional'}">${slot.required ? t('mb_slot_required_badge') : t('mb_slot_optional_badge')}</span>
+      </div>
+
+      <div class="mb-slot-row">
+        <select class="mb-food-select" id="mb-food-${slot.key}" onchange="mbOnFoodChange('${slot.key}')">
+          ${slot.required ? '' : `<option value="">${t('mb_none_option')}</option>`}
+          ${_mbFoodOptions(slot, sel.foodId)}
+        </select>
+        <select class="mb-qty-select" id="mb-qty-${slot.key}" onchange="mbOnQtyChange('${slot.key}')" ${selectedFood ? '' : 'disabled'}>
+          ${qtyLadder.map(v => `<option value="${v}"${v === qty ? ' selected' : ''}>${esc(mbUnitLabel(selectedFood ? selectedFood.unit : 'g', v))}</option>`).join('')}
+        </select>
+      </div>
+
+      <div class="mb-slot-nutrition" id="mb-sub-${slot.key}" style="${selectedFood ? '' : 'display:none'}">
+        <div class="mb-slot-nutrition-title">${t('form_kcal_per_serving') || t('macro_kcal')}</div>
+        <div class="mb-slot-nutrition-row"><span>${t('macro_kcal')}</span><span id="mb-sub-kcal-${slot.key}">0</span></div>
+        <div class="mb-slot-nutrition-row"><span>${t('macro_protein')}</span><span id="mb-sub-p-${slot.key}">0 g</span></div>
+        <div class="mb-slot-nutrition-row"><span>${t('macro_carbs')}</span><span id="mb-sub-c-${slot.key}">0 g</span></div>
+        <div class="mb-slot-nutrition-row"><span>${t('macro_fat')}</span><span id="mb-sub-f-${slot.key}">0 g</span></div>
+      </div>
+    </div>`;
+}
+
+function mbOnFoodChange(slotKey) {
+  const foodSel = document.getElementById(`mb-food-${slotKey}`);
+  const qtySel = document.getElementById(`mb-qty-${slotKey}`);
+  const foodId = foodSel.value;
+  if (!foodId) {
+    _mbSelection[slotKey] = null;
+    qtySel.disabled = true;
+    document.getElementById(`mb-card-${slotKey}`)?.classList.remove('mb-filled');
+    document.getElementById(`mb-sub-${slotKey}`).style.display = 'none';
+    mbRecalc();
+    return;
+  }
+  const food = _mbAllFoods().find(f => f.id === foodId);
+  const ladder = mbQtyLadder(food ? food.unit : 'g');
+  const defaultQty = ladder[1] || ladder[0];
+  qtySel.innerHTML = ladder.map(v => `<option value="${v}">${esc(mbUnitLabel(food.unit, v))}</option>`).join('');
+  qtySel.value = defaultQty;
+  qtySel.disabled = false;
+  _mbSelection[slotKey] = { foodId, qty: defaultQty };
+  document.getElementById(`mb-card-${slotKey}`)?.classList.add('mb-filled');
+  document.getElementById(`mb-sub-${slotKey}`).style.display = '';
+  mbRecalc();
+}
+
+function mbOnQtyChange(slotKey) {
+  const qtySel = document.getElementById(`mb-qty-${slotKey}`);
+  if (!_mbSelection[slotKey]) return;
+  _mbSelection[slotKey].qty = parseFloat(qtySel.value) || 0;
+  mbRecalc();
+}
+
+function _mbSlotMacros(slotKey) {
+  const sel = _mbSelection[slotKey];
+  if (!sel || !sel.foodId) return { kcal: 0, p: 0, c: 0, f: 0 };
+  return calcRecipeMacros({ ingredients: [{ foodId: sel.foodId, qty: sel.qty }] }, 1);
+}
+
+function mbRecalc() {
+  let totals = { kcal: 0, p: 0, c: 0, f: 0 };
+  MB_SLOTS.forEach(slot => {
+    const m = _mbSlotMacros(slot.key);
+    totals.kcal += m.kcal; totals.p += m.p; totals.c += m.c; totals.f += m.f;
+    const kcalEl = document.getElementById(`mb-sub-kcal-${slot.key}`);
+    if (kcalEl) {
+      kcalEl.textContent = `${m.kcal} kcal`;
+      document.getElementById(`mb-sub-p-${slot.key}`).textContent = `${m.p} g`;
+      document.getElementById(`mb-sub-c-${slot.key}`).textContent = `${m.c} g`;
+      document.getElementById(`mb-sub-f-${slot.key}`).textContent = `${m.f} g`;
+    }
+  });
+
+  const kcalEl = document.getElementById('mb-total-kcal');
+  if (kcalEl) {
+    kcalEl.innerHTML = `${totals.kcal} <span class="mb-summary-kcal-unit">kcal</span>`;
+    kcalEl.classList.remove('mb-pulse'); void kcalEl.offsetWidth; kcalEl.classList.add('mb-pulse');
+  }
+  ['p','c','f'].forEach(k => {
+    const valEl = document.getElementById('mb-total-' + k);
+    if (!valEl) return;
+    valEl.textContent = `${totals[k]} g`;
+    valEl.classList.remove('mb-pulse'); void valEl.offsetWidth; valEl.classList.add('mb-pulse');
+  });
+
+  // Donut: kcal share of each macro (protein/carbs 4kcal/g, fat 9kcal/g)
+  const pKcal = totals.p * 4, cKcal = totals.c * 4, fKcal = totals.f * 9;
+  const macroKcalSum = pKcal + cKcal + fKcal;
+  const pPct = macroKcalSum ? (pKcal / macroKcalSum) * 100 : 0;
+  const pcPct = macroKcalSum ? ((pKcal + cKcal) / macroKcalSum) * 100 : 0;
+  const donut = document.getElementById('mb-donut');
+  if (donut) {
+    donut.style.background = `conic-gradient(var(--blue) 0% ${pPct}%, var(--green) ${pPct}% ${pcPct}%, #f59e0b ${pcPct}% 100%)`;
+  }
+  const donutCenter = document.getElementById('mb-donut-center');
+  if (donutCenter) donutCenter.textContent = totals.kcal > 0 ? `${Math.round(pPct)}% P` : '0%';
+
+  return totals;
+}
+
+function _mbBuildIngredients() {
+  const ingredients = [];
+  const mbSlots = {};
+  MB_SLOTS.forEach(slot => {
+    const sel = _mbSelection[slot.key];
+    if (sel && sel.foodId) {
+      ingredients.push({ foodId: sel.foodId, qty: sel.qty });
+      mbSlots[slot.key] = { foodId: sel.foodId, qty: sel.qty };
+    } else {
+      mbSlots[slot.key] = null;
+    }
+  });
+  return { ingredients, mbSlots };
+}
+
+function saveMealBuilderMeal(afterSaveFn) {
+  if (!_mbSelection.main || !_mbSelection.main.foodId) {
+    showToast(t('mb_toast_main_required'));
+    return null;
+  }
+  const nameInput = document.getElementById('mb-name');
+  const mealType = document.getElementById('mb-meal-type')?.value || 'lunch';
+  const allFoods = _mbAllFoods();
+  const mainFood = allFoods.find(f => f.id === _mbSelection.main.foodId);
+  const name = (nameInput?.value || '').trim() || (mainFood ? tName(mainFood) : t('mb_page_title'));
+  const { ingredients, mbSlots } = _mbBuildIngredients();
+
+  const isEdit = !!_mbEditId;
+  const id = isEdit ? _mbEditId : ('cr_' + Date.now());
+  const mealObj = {
+    id,
+    name,
+    nameI18n: { el: name, en: name, es: name, fr: name },
+    emoji: '🍽️',
+    meal: mealType,
+    ingredients,
+    _mbSlots: mbSlots,
+    _mealBuilder: true,
+  };
+
+  if (isEdit) {
+    const idx = state.customRecipes.findIndex(r => r.id === id);
+    if (idx >= 0) state.customRecipes[idx] = mealObj;
+    else state.customRecipes.push(mealObj);
+  } else {
+    state.customRecipes.push(mealObj);
+  }
+  saveState();
+  showToast(isEdit ? t('mb_toast_updated') : t('mb_toast_saved'));
+
+  const cb = afterSaveFn || _mbAfterSave;
+  if (cb) {
+    cb(id);
+  } else {
+    closeMealBuilder();
+    navigateTo('ideas');
+  }
+  return id;
+}
+
+function mbSaveAndAddToday() {
+  saveMealBuilderMeal((id) => { closeMealBuilder(); addRecipeToDay(id); navigateTo('today'); });
+}
+
+function mbSaveAndSchedule() {
+  const id = saveMealBuilderMeal(() => {});
+  if (id) { closeMealBuilder(); _mbOpenDayPicker(id); }
+}
+
+function _mbOpenDayPicker(rid) {
+  openModal(`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📅 ${t('mb_pick_day_title')}</div>
+    <div class="recipes-grid">
+      ${state.week.map((d,i) => `
+        <div class="recipe-card" onclick="addRecipeToSpecificDay('${rid}', ${i})">
+          <div class="recipe-card-emoji">📅</div>
+          <div class="recipe-card-name">${esc(d.label)}</div>
+        </div>`).join('')}
+    </div>`);
+}
+
+function addRecipeToSpecificDay(rid, dayIdx) {
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  const recipe = allRecipes.find(r => r.id === rid);
+  if (!recipe) return;
+  const typeTime = getMealTimes();
+  const day = state.week[dayIdx];
+  if (!day) return;
+  day.meals.push({
+    time: typeTime[recipe.meal] || '12:00',
+    type: recipe.meal,
+    recipeId: rid,
+    done: false,
+    scaleFactor: 1
+  });
+  day.meals.sort((a,b) => a.time.localeCompare(b.time));
+  saveState();
+  closeModal();
+  if (dayIdx === state.currentDay) _refreshAfterMealEdit(dayIdx);
+  showToast(t('toast_added'));
 }
 
 function dpHighlightType(t) {
@@ -4608,6 +5191,7 @@ function openRecipeDetail(rid) {
     ${servingHtml}
     <div style="display:flex;gap:8px;margin-top:4px">
       <button class="btn btn-ghost btn-sm" onclick="toggleFavorite('${rid}');closeModal()">${isFav ? '☆ ' + t('btn_delete') : '⭐ ' + t('btn_add')}</button>
+      ${recipe._mbSlots ? `<button class="btn btn-ghost btn-sm" onclick="_editMealBuilderMealFromModal('${rid}')">✏️ ${t('btn_edit')}</button>` : ''}
       <button class="btn btn-green" style="flex:1" onclick="addRecipeToDay('${rid}');closeModal()">➕ ${t('add_to_day')}</button>
     </div>`);
 }
@@ -4688,9 +5272,9 @@ function openSwapMeal(mi, dayIdx) {
   openModal(`
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-right:32px">
       <div class="modal-title" style="margin:0">${t('swap_title')} — ${mealTypeLabel}</div>
-      <button onclick="_openAddRecipeFromSwap()" title="${t('btn_new_recipe')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
+      <button onclick="_openAddRecipeFromSwap()" title="${t('mb_tab_new_short')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Νέα
+        ${t('mb_tab_new_short')}
       </button>
     </div>
     <div class="swap-search-wrap">
@@ -4724,10 +5308,18 @@ function openSwapMeal(mi, dayIdx) {
 }
 
 function _openAddRecipeFromSwap() {
-  const { mi, dayIdx } = _swapPending;
-  openAddRecipeModal(function() {
-    openSwapMeal(mi, dayIdx);
-  });
+  const { mi, dayIdx, type } = _swapPending;
+  closeModal();
+  setTimeout(() => {
+    document.body.style.overflow = 'hidden';
+    openMealChooser({
+      defaultMealType: type,
+      afterSaveFn: () => {
+        closeMealBuilder();
+        openSwapMeal(mi, dayIdx);
+      }
+    });
+  }, 240);
 }
 
 function _swapRowClick(el) {
@@ -4867,7 +5459,7 @@ function applyScale(mi, sf, dayIdx) {
 }
 
 function openAddMealModal() {
-  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+  const allRecipes = [...RECIPES_DB, ...state.customRecipes.filter(r => !r._generated)];
   const mealTypes = ['breakfast','snack','lunch','afternoon','dinner'];
   const mealLabels = { breakfast:tMeal('breakfast'), lunch:tMeal('lunch'), dinner:tMeal('dinner'), snack:tMeal('snack'), afternoon:tMeal('afternoon') };
   openModal(`
@@ -4884,12 +5476,40 @@ function openAddMealModal() {
       </select>
     </div>
     <div class="form-group">
-      <label>${t('recipes_title').replace('📖 ','')}</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+        <label style="margin:0">${t('recipes_title').replace('📖 ','')}</label>
+        <button onclick="_openMealChooserFromAddMeal()" title="${t('mb_tab_new_short')}" style="display:flex;align-items:center;gap:4px;background:var(--green-bg);border:1.5px solid var(--green-d);border-radius:8px;cursor:pointer;font-size:0.78rem;font-weight:700;color:var(--green-d);padding:4px 10px;line-height:1">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ${t('mb_tab_new_short')}
+        </button>
+      </div>
       <select id="new-meal-recipe">
         ${allRecipes.map(r => `<option value="${r.id}">${esc(tName(r))}</option>`).join('')}
       </select>
     </div>
     <button class="btn btn-green btn-full" onclick="addMealFromModal()">➕ ${t('btn_add')}</button>`);
+}
+
+function _openMealChooserFromAddMeal() {
+  const time = document.getElementById('new-meal-time')?.value || '12:00';
+  const type = document.getElementById('new-meal-type')?.value || 'lunch';
+  closeModal();
+  setTimeout(() => {
+    document.body.style.overflow = 'hidden';
+    openMealChooser({
+      defaultMealType: type,
+      afterSaveFn: (id) => {
+        const day = state.week[state.currentDay];
+        if (!day) return;
+        day.meals.push({ time, type, recipeId: id, done: false, scaleFactor: 1 });
+        day.meals.sort((a,b) => a.time.localeCompare(b.time));
+        saveState();
+        closeMealBuilder();
+        _refreshAfterMealEdit(state.currentDay);
+        showToast(t('toast_added'));
+      }
+    });
+  }, 240);
 }
 
 function addMealFromModal() {
@@ -4949,9 +5569,8 @@ function openAddRecipeModal(afterSaveFn) {
       </select>
     </div>
     <div class="form-group"><label>${t('form_instructions')}</label><textarea id="nr-inst" placeholder="${t('form_instructions_placeholder')}"></textarea></div>
-    <div style="display:flex;align-items:center;gap:8px;margin:10px 0 4px">
+    <div style="margin:10px 0 4px">
       <span style="font-size:0.82rem;color:var(--text2)">${t('form_kcal_per_serving')}</span>
-      <button id="ai-estimate-recipe-btn" class="btn btn-ghost btn-sm" onclick="estimateRecipeCaloriesWithAI(document.getElementById('nr-name').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
       <div class="form-group"><label>${t('macro_kcal')}</label><input type="number" id="nr-kcal" placeholder="0"></div>
@@ -4976,19 +5595,33 @@ function saveNewRecipe() {
   const p    = _parseDecimal(document.getElementById('nr-p').value)    || 0;
   const c    = _parseDecimal(document.getElementById('nr-c').value)    || 0;
   const f    = _parseDecimal(document.getElementById('nr-f').value)    || 0;
+  // nr-food1/nr-qty1 only exist on the legacy single-ingredient form (openAddRecipeModal);
+  // the "Απλή Καταχώρηση" pane has no ingredient picker and relies on fixedMacros only.
+  const foodSel = document.getElementById('nr-food1');
+  if (!foodSel && !(kcal || p || c || f)) { showToast(t('mb_toast_macros_required')); return; }
   const newRecipe = {
     id: 'cr_' + Date.now(),
     name,
     emoji: document.getElementById('nr-emoji').value || '🍽️',
     meal: document.getElementById('nr-meal').value,
     instructions: document.getElementById('nr-inst').value,
-    ingredients: [{ foodId: document.getElementById('nr-food1').value, qty: Math.round(_parseDecimal(document.getElementById('nr-qty1').value)) || 100 }],
+    ...(foodSel ? { ingredients: [{ foodId: foodSel.value, qty: Math.round(_parseDecimal(document.getElementById('nr-qty1').value)) || 100 }] } : { ingredients: [] }),
     ...(kcal || p || c || f ? { fixedMacros: { kcal, p, c, f } } : {}),
   };
   state.customRecipes.push(newRecipe);
   saveState();
-  closeModal();
   showToast(t('toast_recipe_saved'));
+
+  const insideChooser = document.getElementById('mb-overlay')?.classList.contains('open');
+  if (insideChooser) {
+    const cb = _mbAfterSave;
+    _mbAfterSave = null;
+    closeMealBuilder();
+    if (cb) cb(newRecipe.id);
+    return;
+  }
+
+  closeModal();
   if (_addRecipeAfterSave) {
     const cb = _addRecipeAfterSave;
     _addRecipeAfterSave = null;
@@ -5006,16 +5639,15 @@ function openAddFoodModal() {
     <div class="form-group"><label>${t('form_category')}</label>
       <select id="nf-cat">
         <option value="protein">${tCategory('protein')}</option><option value="carbs">${tCategory('carbs')}</option>
-        <option value="veggie">${tCategory('veggie')}</option><option value="fat">${tCategory('fat')}</option>
+        <option value="veggie">${tCategory('veggie')}</option><option value="salad">${tCategory('salad')}</option><option value="fat">${tCategory('fat')}</option>
         <option value="dairy">${tCategory('dairy')}</option><option value="fruit">${tCategory('fruit')}</option><option value="other">${tCategory('other')}</option>
       </select>
     </div>
     <div class="form-group"><label>${t('form_unit')}</label>
       <select id="nf-unit"><option value="g">${t('unit_grams')}</option><option value="ml">ml</option><option value="τεμ">${t('unit_piece_pl')}</option></select>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div style="margin-bottom:6px">
       <span style="font-size:0.82rem;color:var(--text2)">${t('form_nutrients')}</span>
-      <button id="ai-estimate-food-btn" class="btn btn-ghost btn-sm" onclick="estimateFoodCaloriesWithAI(document.getElementById('nf-name').value, document.getElementById('nf-unit').value)" style="font-size:0.75rem;padding:3px 10px">✨ AI</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-group"><label>${t('macro_kcal')}</label><input type="number" id="nf-kcal" placeholder="0"></div>
@@ -5897,7 +6529,11 @@ function navigateTo(tab) {
   document.querySelectorAll('.tab-item, .sidebar-item, .drawer-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b => b.classList.add('active'));
 
-  if (tab === 'today')    renderToday();
+  if (tab === 'today') {
+    const todayIdx = getTodayPlanDayIndex();
+    if (todayIdx !== null) state.currentDay = todayIdx;
+    renderToday();
+  }
   if (tab === 'week')     renderWeek();
   if (tab === 'ideas')    renderIdeasPage();
   if (tab === 'builder')  { state._builderFilter = 'breakfast'; state._builderSavedDays = []; state._builderWeek = null; builderMeals = []; renderBuilderPage('breakfast'); }

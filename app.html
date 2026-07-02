@@ -31,7 +31,7 @@
 
     <!-- SIDEBAR (desktop) -->
     <nav class="sidebar" id="sidebar">
-      <div class="sidebar-logo">
+      <div class="sidebar-logo" onclick="goToDay(0)" style="cursor:pointer" title="Ημέρα 1">
         <img src="logo.png" alt="VIVON" class="sidebar-logo-img" onerror="this.style.display='none'">
         <div class="sidebar-brand-title">VIVON</div>
       </div>
@@ -85,7 +85,7 @@
       <!-- TOP BAR (mobile only) -->
       <nav class="top-nav" id="top-nav">
         <div class="top-nav-inner">
-          <div class="app-title" id="top-app-title">
+          <div class="app-title" id="top-app-title" onclick="goToDay(0)" style="cursor:pointer" title="Ημέρα 1">
             <img src="logo.png" alt="VIVON" class="topnav-logo" onerror="this.style.display='none'">
             <span id="hero-title">VIVON</span>
           </div>
@@ -217,6 +217,14 @@
     </div>
   </div>
 
+  <!-- MEAL BUILDER OVERLAY -->
+  <div id="mb-overlay" class="mb-overlay">
+    <div class="mb-modal">
+      <button class="mb-overlay-close" onclick="closeMealBuilder()" aria-label="Κλείσιμο">✕</button>
+      <div id="mb-overlay-content"></div>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div id="modal-overlay" class="modal-overlay">
     <div class="modal-sheet">
@@ -250,6 +258,5 @@
   <script src="supabase.js"></script>
   <script src="script.js"></script>
   <script src="auth.js"></script>
-  <script src="ai.js"></script>
 </body>
 </html>

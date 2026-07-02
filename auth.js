@@ -57,6 +57,7 @@
       });
     } else {
       // ── index.html: show auth UI; redirect to app on sign-in ─
+      initLang();
       renderAuthScreen();
       const { data: { session } } = await _supabase.auth.getSession();
       if (session) { window.location.replace('app.html'); return; }
@@ -287,15 +288,7 @@
   };
 
   function _disclaimerLang() {
-    // Use saved language if available, otherwise browser locale, otherwise Greek
-    let lang = 'el';
-    try { lang = localStorage.getItem('vivon_lang') || 'el'; } catch(e) {}
-    const supported = ['el', 'en', 'es', 'fr'];
-    if (!supported.includes(lang)) {
-      const bl = (navigator.language || '').split('-')[0].toLowerCase();
-      lang = supported.includes(bl) ? bl : 'el';
-    }
-    return lang;
+    return getLang();
   }
 
   function _renderDisclaimer() {
