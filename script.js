@@ -1227,16 +1227,6 @@ function _renderProfileInto(target) {
           </div>
         </div>
 
-        <div style="display:flex;justify-content:flex-end;margin-top:6px">
-          <button onclick="applyTDEEGoal()" title="Επαναφορά από TDEE"
-            style="background:none;border:none;padding:4px 2px;cursor:pointer;opacity:0.35;transition:opacity 0.15s;line-height:1"
-            onmouseenter="this.style.opacity='0.8'" onmouseleave="this.style.opacity='0.35'">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-              <path d="M3 3v5h5"/>
-            </svg>
-          </button>
-        </div>
       </div>
 
       <!-- ΩΡΕΣ ΓΕΥΜΑΤΩΝ -->
@@ -2331,9 +2321,12 @@ function swapToHighProteinMeals() {
     });
   });
 
-  // Re-optimise after swapping
+  // Re-optimise after swapping, then clear shortfall flags — user has been informed, don't nag
   const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
-  state.week.forEach(day => { if (day.meals && day.meals.length > 0) _optimiseDayMacros(day, targets); });
+  state.week.forEach(day => {
+    if (day.meals && day.meals.length > 0) _optimiseDayMacros(day, targets);
+    day._proteinShortfall = false;
+  });
   saveState();
   renderWeek();
   showToast('🔄 Αντικαταστάθηκαν γεύματα με υψηλότερη πρωτεΐνη');
@@ -2940,19 +2933,23 @@ function renderWeek() {
     </svg>`;
   }
 
-  function macroRow(label, val, goal, color, highlight = false) {
+  function macroRow(label, val, goal, color, highlight = false, showGoal = true) {
     const pct = Math.min(100, Math.round((val / goal) * 100));
     const labelSize  = highlight ? '0.88rem' : '0.72rem';
     const valueSize  = highlight ? '0.88rem' : '0.72rem';
     const barHeight  = highlight ? '11px' : '8px';
     const fontWeight = highlight ? '800' : '700';
+    const valueHtml = showGoal
+      ? `${val}g / ${goal}g &nbsp; <span style="color:${color};font-weight:800">${pct}%</span>`
+      : `<span style="color:${color};font-weight:800">${val}g</span>`;
+    const barWidth = showGoal ? pct : Math.min(100, Math.round((val / (goal * 1.5)) * 100));
     return `<div style="margin-bottom:${highlight ? '14px' : '10px'}">
       <div style="display:flex;justify-content:space-between;font-size:${labelSize};font-weight:${fontWeight};margin-bottom:4px">
         <span style="color:${highlight ? color : 'var(--text2)'};font-weight:${highlight ? '900' : '700'}">${label}</span>
-        <span style="color:var(--text3);font-size:${valueSize}">${val}g / ${goal}g &nbsp; <span style="color:${color};font-weight:800">${pct}%</span></span>
+        <span style="color:var(--text3);font-size:${valueSize}">${valueHtml}</span>
       </div>
       <div style="height:${barHeight};background:#e5e7eb;border-radius:4px;overflow:hidden">
-        <div style="height:${barHeight};width:${pct}%;background:${color};border-radius:4px"></div>
+        <div style="height:${barHeight};width:${barWidth}%;background:${color};border-radius:4px"></div>
       </div>
     </div>`;
   }
@@ -3090,12 +3087,6 @@ function renderWeek() {
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
               <span class="week-btn-label">${t('week_regen')}</span>
             </button>
-            <button onclick="resetWeekPlan()" title="${t('week_reset')}"
-              style="display:flex;align-items:center;gap:5px;background:none;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:0.78rem;font-weight:700;color:var(--text3);cursor:pointer;transition:all .15s;white-space:nowrap"
-              onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text3)'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
-              <span class="week-btn-label">${t('week_reset')}</span>
-            </button>
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()" title="PDF">🖨️ <span class="week-btn-label">PDF</span></button>
             <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="${t('week_copy_btn')}">📋</button>
           </div>
@@ -3115,18 +3106,23 @@ function renderWeek() {
           <!-- Macros -->
           <div style="flex:1;min-width:200px">
             <div style="font-size:0.75rem;font-weight:800;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.05em">${t('week_macros_avg')}</div>
-            ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#22c55e', true)}
-            ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6', true)}
-            ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b', true)}
+            ${macroRow(t('macro_protein'), avgP, state.goals.protein || 160, '#22c55e', true, true)}
+            ${macroRow(t('macro_carbs'),   avgC, state.goals.carbs || 200,   '#8b5cf6', true, false)}
+            ${macroRow(t('macro_fat'),     avgF, state.goals.fat || 60,     '#f59e0b', true, false)}
             ${(() => {
+              const protGoal = state.goals.protein || 160;
+              if (avgP > protGoal * 1.05) {
+                return `<div style="margin-top:8px;font-size:0.68rem;color:#f59e0b;font-weight:600">${t('week_prot_surplus')}</div>`;
+              }
               const shortDays = state.week.filter(d => d._proteinShortfall).length;
               if (!shortDays) return '';
-              return `<div style="margin-top:10px;padding:10px 14px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-                <div style="flex:1;min-width:140px">
-                  <div style="font-size:0.75rem;font-weight:800;color:#dc2626;margin-bottom:2px">⚠️ Αδύνατο να επιτευχθεί ο στόχος πρωτεΐνης</div>
-                  <div style="font-size:0.68rem;color:#991b1b">${shortDays} μέρ${shortDays===1?'α':'ες'} δεν έχουν αρκετή πρωτεΐνη. Άλλαξε γεύματα ή πάτα αντικατάσταση.</div>
-                </div>
-                <button onclick="swapToHighProteinMeals()" style="flex-shrink:0;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:7px 12px;font-size:0.75rem;font-weight:800;cursor:pointer;white-space:nowrap">🔄 Αντικατάσταση</button>
+              const plural = shortDays === 1 ? '' : 's';
+              const pluralEl = shortDays === 1 ? 'α' : 'ες';
+              const raw = t('week_prot_shortfall');
+              const msg = raw.replace('{n}', shortDays).replace('{s}', raw.includes('μέρ') ? pluralEl : plural);
+              return `<div id="prot-shortfall-banner" style="margin-top:8px;padding:6px 10px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;display:flex;align-items:center;gap:8px">
+                <span style="font-size:0.68rem;color:#dc2626;flex:1">⚠️ ${msg}</span>
+                <button onclick="swapToHighProteinMeals()" style="flex-shrink:0;background:#dc2626;color:#fff;border:none;border-radius:6px;padding:4px 9px;font-size:0.68rem;font-weight:700;cursor:pointer;white-space:nowrap">${t('week_prot_swap_btn')}</button>
               </div>`;
             })()}
           </div>
@@ -3162,21 +3158,6 @@ function renderWeek() {
           ${cols}
         </div>
       </div>
-
-      <!-- Protein shortfall warning -->
-      ${(() => {
-        const shortDays = state.week.filter(d => d._proteinShortfall).length;
-        if (!shortDays) return '';
-        return `<div style="margin:0 16px 12px;padding:12px 16px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <div style="flex:1;min-width:180px">
-            <div style="font-size:0.8rem;font-weight:800;color:#dc2626;margin-bottom:2px">⚠️ Αδύνατο να επιτευχθεί ο στόχος πρωτεΐνης</div>
-            <div style="font-size:0.72rem;color:#991b1b">Τα γεύματα σε ${shortDays} μέρ${shortDays===1?'α':'ες'} δεν έχουν αρκετή πρωτεΐνη ακόμα και στη μέγιστη ποσότητα. Άλλαξε σε γεύματα πλούσια σε πρωτεΐνη (κοτόπουλο, ψάρι, whey, αυγά).</div>
-          </div>
-          <button onclick="swapToHighProteinMeals()" style="flex-shrink:0;background:#dc2626;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:0.78rem;font-weight:800;cursor:pointer">
-            🔄 Αυτόματη Αντικατάσταση
-          </button>
-        </div>`;
-      })()}
 
       <!-- Weekly Deficit Summary -->
       ${(() => {
@@ -3854,6 +3835,11 @@ function renderBuilderPage(typeFilter) {
   document.getElementById('page-builder').innerHTML = `
   <div class="dplanner-wrap">
 
+    <!-- Donate -->
+    <div style="display:flex;justify-content:flex-end;padding:10px 0 2px">
+      <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
+    </div>
+
     <!-- TOP CARD (mobile-first) -->
     <div class="dplanner-topcard">
       <div class="dplanner-topcard-header">
@@ -3868,7 +3854,6 @@ function renderBuilderPage(typeFilter) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
           <span style="font-size:0.65rem;font-weight:700;display:block;margin-top:1px">PDF</span>
         </button>
-        <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
       </div>
       <div class="dplanner-status-row ${totalKcal > 0 ? '' : 'dplanner-status-empty'}">
         <div class="dplanner-status-left">
@@ -6092,7 +6077,7 @@ function renderStatsPage() {
 function renderBodyPage() {
   const el = document.getElementById('page-body');
   if (!el) return;
-  el.innerHTML = `<div class="container fade-in" style="padding-top:14px"><div id="body-page-content"></div></div>`;
+  el.innerHTML = `<div class="container fade-in" style="padding-top:14px"><div style="display:flex;justify-content:flex-end;padding-bottom:2px"><a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a></div><div id="body-page-content"></div></div>`;
   document.getElementById('body-page-content').innerHTML = renderBodyMeasurementsCard();
 }
 

@@ -74,7 +74,8 @@
       </div>
       <div class="sidebar-footer">
         <button id="sidebar-pdf-btn" class="btn btn-ghost btn-sm" onclick="exportPDF()" style="width:100%;margin-bottom:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> PDF</button>
-        <button class="btn btn-ghost btn-sm" onclick="handleSignOut()" style="width:100%;color:var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Αποσύνδεση</button>
+        <button id="sidebar-logout-btn" class="btn btn-ghost btn-sm" onclick="handleSignOut()" style="width:100%;color:var(--red)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Αποσύνδεση</button>
+        <button id="sidebar-help-btn" class="btn btn-ghost btn-sm sidebar-help-btn" onclick="window._openHelp && window._openHelp()" style="width:100%;margin-top:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:5px"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg>Βοήθεια</button>
       </div>
     </nav>
 
@@ -242,8 +243,6 @@
   <!-- ONBOARDING CAROUSEL (shown for new users after first sign-in) -->
   <div id="onboarding-overlay" class="onboarding-overlay" style="display:none"></div>
 
-  <!-- HELP BUTTON -->
-  <button id="help-fab" class="help-fab" onclick="window._openHelp && window._openHelp()" aria-label="Βοήθεια">?</button>
 
   <!-- SCRIPTS -->
   <script src="i18n.js"></script>

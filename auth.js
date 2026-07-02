@@ -504,25 +504,83 @@
 
   const _OB_CARDS = [
     {
-      titleKey: 'ob1_title',
-      features: [
-        { iconKey: 'ob1_a_icon', headKey: 'ob1_a_head', descKey: 'ob1_a_desc' },
-        { iconKey: 'ob1_b_icon', headKey: 'ob1_b_head', descKey: 'ob1_b_desc' },
-      ],
+      titleKey: 'ob1_title', descKey: 'ob1_desc',
+      accent: '#FF6B35',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="80" r="60" fill="#FF6B35" opacity=".12"/>
+        <circle cx="100" cy="80" r="42" fill="#FF6B35" opacity=".18"/>
+        <text x="100" y="100" text-anchor="middle" font-size="56">🔥</text>
+        <rect x="30" y="130" width="140" height="8" rx="4" fill="#FF6B35" opacity=".15"/>
+        <rect x="50" y="142" width="100" height="5" rx="2.5" fill="#FF6B35" opacity=".1"/>
+      </svg>`
     },
     {
-      titleKey: 'ob2_title',
-      features: [
-        { iconKey: 'ob2_a_icon', headKey: 'ob2_a_head', descKey: 'ob2_a_desc' },
-        { iconKey: 'ob2_b_icon', headKey: 'ob2_b_head', descKey: 'ob2_b_desc' },
-      ],
+      titleKey: 'ob2_title', descKey: 'ob2_desc',
+      accent: '#6C63FF',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="80" r="60" fill="#6C63FF" opacity=".12"/>
+        <circle cx="100" cy="80" r="42" fill="#6C63FF" opacity=".18"/>
+        <text x="100" y="100" text-anchor="middle" font-size="56">🎯</text>
+        <circle cx="100" cy="80" r="60" stroke="#6C63FF" stroke-width="2" stroke-dasharray="8 6" opacity=".3"/>
+      </svg>`
     },
     {
-      titleKey: 'ob3_title',
-      features: [
-        { iconKey: 'ob3_a_icon', headKey: 'ob3_a_head', descKey: 'ob3_a_desc' },
-        { iconKey: 'ob3_b_icon', headKey: 'ob3_b_head', descKey: 'ob3_b_desc' },
-      ],
+      titleKey: 'ob3_title', descKey: 'ob3_desc',
+      accent: '#2ECC71',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="85" rx="60" ry="50" fill="#2ECC71" opacity=".12"/>
+        <ellipse cx="100" cy="85" rx="42" ry="35" fill="#2ECC71" opacity=".18"/>
+        <text x="100" y="105" text-anchor="middle" font-size="56">🥗</text>
+        <ellipse cx="100" cy="130" rx="50" ry="8" fill="#2ECC71" opacity=".12"/>
+      </svg>`
+    },
+    {
+      titleKey: 'ob4_title', descKey: 'ob4_desc',
+      accent: '#F39C12',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="55" y="30" width="90" height="110" rx="12" fill="#F39C12" opacity=".13"/>
+        <rect x="63" y="38" width="74" height="94" rx="8" fill="#F39C12" opacity=".1"/>
+        <text x="100" y="98" text-anchor="middle" font-size="52">📋</text>
+        <rect x="72" y="108" width="56" height="5" rx="2.5" fill="#F39C12" opacity=".3"/>
+        <rect x="80" y="117" width="40" height="4" rx="2" fill="#F39C12" opacity=".2"/>
+      </svg>`
+    },
+    {
+      titleKey: 'ob5_title', descKey: 'ob5_desc',
+      accent: '#E74C3C',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="80" r="55" fill="#E74C3C" opacity=".1"/>
+        <text x="100" y="100" text-anchor="middle" font-size="52">✏️</text>
+        <line x1="45" y1="130" x2="155" y2="130" stroke="#E74C3C" stroke-width="3" stroke-linecap="round" opacity=".25"/>
+        <circle cx="68" cy="50" r="8" fill="#E74C3C" opacity=".15"/>
+        <circle cx="140" cy="118" r="6" fill="#E74C3C" opacity=".15"/>
+      </svg>`
+    },
+    {
+      titleKey: 'ob6_title', descKey: 'ob6_desc',
+      accent: '#3498DB',
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="110" width="24" height="30" rx="4" fill="#3498DB" opacity=".35"/>
+        <rect x="62" y="88" width="24" height="52" rx="4" fill="#3498DB" opacity=".45"/>
+        <rect x="94" y="66" width="24" height="74" rx="4" fill="#3498DB" opacity=".55"/>
+        <rect x="126" y="44" width="24" height="96" rx="4" fill="#3498DB" opacity=".65"/>
+        <text x="158" y="60" text-anchor="middle" font-size="30">📊</text>
+        <polyline points="30,108 62,86 94,64 126,42" stroke="#3498DB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/>
+      </svg>`
+    },
+    {
+      titleKey: 'ob7_title', descKey: 'ob7_desc',
+      accent: '#9B59B6', isLast: true,
+      svg: `<svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="75" r="55" fill="#9B59B6" opacity=".12"/>
+        <text x="100" y="96" text-anchor="middle" font-size="60">🎉</text>
+        <circle cx="48" cy="38" r="5" fill="#F39C12" opacity=".6"/>
+        <circle cx="152" cy="42" r="4" fill="#2ECC71" opacity=".6"/>
+        <circle cx="38" cy="110" r="3" fill="#E74C3C" opacity=".5"/>
+        <circle cx="162" cy="108" r="5" fill="#3498DB" opacity=".5"/>
+        <circle cx="75" cy="25" r="3" fill="#9B59B6" opacity=".5"/>
+        <circle cx="130" cy="22" r="4" fill="#FF6B35" opacity=".5"/>
+      </svg>`
     },
   ];
 
@@ -536,20 +594,14 @@
     let autoTimer = null;
 
     function buildSlides() {
-      return _OB_CARDS.map((card, i) => {
-        const features = card.features.map(f => `
-          <div class="onboarding-feature">
-            <div class="onboarding-feature-icon">${_tLp(f.iconKey, lang)}</div>
-            <div class="onboarding-feature-text">
-              <div class="onboarding-feature-head">${_tLp(f.headKey, lang)}</div>
-              <div class="onboarding-feature-desc">${_tLp(f.descKey, lang)}</div>
-            </div>
-          </div>`).join('');
-        return `<div class="ob-slide">
-          <div class="onboarding-card-title">${_tLp(card.titleKey, lang)}</div>
-          <div class="onboarding-features">${features}</div>
-        </div>`;
-      }).join('');
+      return _OB_CARDS.map(card => `
+        <div class="ob-slide" style="--ob-accent:${card.accent}">
+          <div class="ob-slide-art">${card.svg}</div>
+          <div class="ob-slide-body">
+            <div class="ob-slide-title">${_tLp(card.titleKey, lang)}</div>
+            <div class="ob-slide-desc">${_tLp(card.descKey, lang)}</div>
+          </div>
+        </div>`).join('');
     }
 
     overlay.innerHTML = `<div class="onboarding-card">
@@ -575,7 +627,7 @@
     const ctaBtn = overlay.querySelector('#ob-cta-btn');
     const arrowLeft = overlay.querySelector('.ob-arrow-left');
 
-    function goTo(idx, dir) {
+    function goTo(idx) {
       if (idx < 0 || idx >= total) return;
       current = idx;
       track.style.transform = `translateX(-${current * 100}%)`;
@@ -583,6 +635,9 @@
       const isLast = current === total - 1;
       ctaBtn.textContent = isLast ? _tLp('ob_start', lang) : _tLp('ob_next', lang);
       arrowLeft.style.visibility = current === 0 ? 'hidden' : 'visible';
+      const accent = _OB_CARDS[current].accent;
+      overlay.querySelector('.onboarding-card').style.setProperty('--ob-accent', accent);
+      ctaBtn.style.background = accent;
       resetAuto();
     }
 

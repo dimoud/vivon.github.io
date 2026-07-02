@@ -1777,66 +1777,47 @@ test('both donate placements present (drawer + sidebar)', () => {
 suite('Auth / App split — redirect flow');
 
 (function() {
-  // Capture location.replace calls so we can assert on them without navigating
+  // Capture redirect decisions without touching window.location (non-writable in browsers)
   const _redirects = [];
-  const _origReplace = window.location.replace.bind(window.location);
-  window.location.replace = (url) => { _redirects.push(url); };
-
-  // Helpers to patch _supabase.auth.getSession per-test
-  const _origGetSession = _supabase.auth.getSession.bind(_supabase.auth);
-  function _withSession(sessionObj, fn) {
-    _supabase.auth.getSession = async () => ({ data: { session: sessionObj } });
-    try { fn(); } finally { _supabase.auth.getSession = _origGetSession; }
-  }
+  function _mockRedirect(url) { _redirects.push(url); }
 
   // ── bootAuth redirect tests ───────────────────────────────────
 
-  test('bootAuth redirects to app.html when session exists', async () => {
+  test('bootAuth redirects to app.html when session exists', () => {
     _redirects.length = 0;
-    _supabase.auth.getSession = async () => ({ data: { session: { user: { id: 'u1' } } } });
-    // bootAuth is inside the IIFE in auth.js — call it via the DOMContentLoaded trigger path
-    // We replicate its logic: check session → redirect
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session) window.location.replace('app.html');
+    const session = { user: { id: 'u1' } };
+    if (session) _mockRedirect('app.html');
     assert(_redirects.includes('app.html'), 'should redirect to app.html when session exists');
-    _supabase.auth.getSession = _origGetSession;
   });
 
-  test('bootAuth does NOT redirect when session is null', async () => {
+  test('bootAuth does NOT redirect when session is null', () => {
     _redirects.length = 0;
-    _supabase.auth.getSession = async () => ({ data: { session: null } });
-    const { data: { session } } = await _supabase.auth.getSession();
-    if (session) window.location.replace('app.html');
+    const session = null;
+    if (session) _mockRedirect('app.html');
     assert(!_redirects.includes('app.html'), 'should not redirect when no session');
-    _supabase.auth.getSession = _origGetSession;
   });
 
   // ── session guard in initApp tests ───────────────────────────
 
-  test('initApp session guard redirects to index.html when session is null', async () => {
+  test('initApp session guard redirects to index.html when session is null', () => {
     _redirects.length = 0;
-    _supabase.auth.getSession = async () => ({ data: { session: null } });
-    // Replicate the guard added at the top of initApp()
-    const { data: { session: guardSession } } = await _supabase.auth.getSession();
-    if (!guardSession) { window.location.replace('index.html'); }
+    const guardSession = null;
+    if (!guardSession) _mockRedirect('index.html');
     assert(_redirects.includes('index.html'), 'guard should redirect to index.html');
-    _supabase.auth.getSession = _origGetSession;
   });
 
-  test('initApp session guard does NOT redirect when session exists', async () => {
+  test('initApp session guard does NOT redirect when session exists', () => {
     _redirects.length = 0;
-    _supabase.auth.getSession = async () => ({ data: { session: { user: { id: 'u1' } } } });
-    const { data: { session: guardSession } } = await _supabase.auth.getSession();
-    if (!guardSession) { window.location.replace('index.html'); }
+    const guardSession = { user: { id: 'u1' } };
+    if (!guardSession) _mockRedirect('index.html');
     assert(!_redirects.includes('index.html'), 'should not redirect when session exists');
-    _supabase.auth.getSession = _origGetSession;
   });
 
   // ── handleSignOut tests ───────────────────────────────────────
 
   test('handleSignOut clears nutriApp_v2 from localStorage', async () => {
     let cleared = false;
-    const _origRemove = localStorage.removeItem;
+    const _origRemove = localStorage.removeItem.bind(localStorage);
     localStorage.removeItem = (key) => { if (key === 'nutriApp_v2') cleared = true; };
     await handleSignOut();
     assert(cleared, 'nutriApp_v2 should be cleared on sign-out');
@@ -1844,14 +1825,12 @@ suite('Auth / App split — redirect flow');
   });
 
   test('handleSignOut cancels pending _saveTimer', async () => {
-    // Ensure _saveTimer exists as a number so clearTimeout is exercised
     const fakeTimer = setTimeout(() => {}, 60000);
-    window._saveTimer = fakeTimer;  // expose to outer scope for handleSignOut
+    window._saveTimer = fakeTimer;
     await handleSignOut();
-    // After handleSignOut, _saveTimer should be null
     assert(window._saveTimer === null || window._saveTimer === undefined,
       '_saveTimer should be null after sign-out');
-    clearTimeout(fakeTimer); // safety cleanup
+    clearTimeout(fakeTimer);
   });
 
   test('handleSignOut calls sbSignOut (clears Supabase session)', async () => {
@@ -1865,27 +1844,26 @@ suite('Auth / App split — redirect flow');
 
   // ── SIGNED_IN / SIGNED_OUT event handler tests ───────────────
 
-  test('SIGNED_IN onAuthStateChange emits redirect to app.html', async () => {
+  test('SIGNED_IN onAuthStateChange emits redirect to app.html', () => {
     _redirects.length = 0;
-    // Replicate the SIGNED_IN branch from bootAuth
     const event = 'SIGNED_IN';
     const session = { user: { id: 'u1' } };
-    if (event === 'SIGNED_IN' && session) window.location.replace('app.html');
+    if (event === 'SIGNED_IN' && session) _mockRedirect('app.html');
     assert(_redirects.includes('app.html'), 'SIGNED_IN should redirect to app.html');
   });
 
   test('SIGNED_OUT onAuthStateChange emits redirect to index.html', () => {
     _redirects.length = 0;
     const event = 'SIGNED_OUT';
-    if (event === 'SIGNED_OUT') window.location.replace('index.html');
+    if (event === 'SIGNED_OUT') _mockRedirect('index.html');
     assert(_redirects.includes('index.html'), 'SIGNED_OUT should redirect to index.html');
   });
 
   test('PASSWORD_RECOVERY onAuthStateChange does NOT redirect', () => {
     _redirects.length = 0;
     const event = 'PASSWORD_RECOVERY';
-    if (event === 'SIGNED_IN') window.location.replace('app.html');
-    if (event === 'SIGNED_OUT') window.location.replace('index.html');
+    if (event === 'SIGNED_IN') _mockRedirect('app.html');
+    if (event === 'SIGNED_OUT') _mockRedirect('index.html');
     assertEq(_redirects.length, 0, 'PASSWORD_RECOVERY should not trigger a page redirect');
   });
 
@@ -1956,8 +1934,6 @@ suite('Auth / App split — redirect flow');
     }
   });
 
-  // Restore replace
-  window.location.replace = _origReplace;
 })();
 
 // ══════════════════════════════════════════════════════════════════

@@ -636,6 +636,9 @@ const I18N = {
   week_avg_kcal_day:    { el: 'Μέσ. {kcal} kcal/ημέρα', en: 'Avg. {kcal} kcal/day', es: 'Prom. {kcal} kcal/día', fr: 'Moy. {kcal} kcal/jour' },
   week_macros_avg:      { el: 'ΜΑΚΡΟΘΡΕΠΤΙΚΑ (ΜΕΣΟΣ ΟΡΟΣ)', en: 'MACROS (AVERAGE)', es: 'MACROS (PROMEDIO)', fr: 'MACROS (MOYENNE)' },
   week_balance_title:   { el: 'ΙΣΟΡΡΟΠΙΑ ΕΒΔΟΜΑΔΑΣ',  en: 'WEEKLY BALANCE',     es: 'BALANCE SEMANAL',    fr: 'BILAN HEBDOMADAIRE' },
+  week_prot_shortfall:  { el: '{n} μέρ{s} κάτω από στόχο πρωτεΐνης', en: '{n} day{s} below protein target', es: '{n} día{s} bajo objetivo proteína', fr: '{n} jour{s} sous objectif protéines' },
+  week_prot_surplus:    { el: '↑ Πρωτεΐνη πάνω από τον στόχο', en: '↑ Protein above target', es: '↑ Proteína por encima del objetivo', fr: '↑ Protéines au-dessus de l\'objectif' },
+  week_prot_swap_btn:   { el: '🔄 Αντικατάσταση', en: '🔄 Swap meals', es: '🔄 Reemplazar', fr: '🔄 Remplacer' },
 
   // ── Regen / Reset modals ──
   week_regen_title:     { el: '🔄 Δημιούργησε Ξανά',  en: '🔄 Regenerate Plan', es: '🔄 Regenerar Plan',  fr: '🔄 Regénérer le plan' },
@@ -751,33 +754,36 @@ const I18N = {
   langpick_btn:     { el: 'Συνέχεια →',          en: 'Continue →',           es: 'Continuar →',          fr: 'Continuer →' },
 
   // ── Onboarding cards ──
-  ob_skip:          { el: 'Παράλειψη',           en: 'Skip',                 es: 'Omitir',               fr: 'Ignorer' },
-  ob_next:          { el: 'Επόμενο',             en: 'Next',                 es: 'Siguiente',             fr: 'Suivant' },
-  ob_start:         { el: 'Ξεκινάμε!',           en: 'Let\'s go!',           es: '¡Vamos!',              fr: 'C\'est parti !' },
-  // Card 1: Calculate kcal + Set profile & goals
-  ob1_title:        { el: 'Γνώρισε το VIVON',    en: 'Meet VIVON',           es: 'Conoce VIVON',         fr: 'Découvrez VIVON' },
-  ob1_a_icon:       { el: '🔥',                  en: '🔥',                   es: '🔥',                   fr: '🔥' },
-  ob1_a_head:       { el: 'Υπολόγισε kcal',      en: 'Calculate kcal',       es: 'Calcula kcal',         fr: 'Calcule tes kcal' },
-  ob1_a_desc:       { el: 'Δες πόσες θερμίδες χρειάζεσαι κάθε μέρα βάσει σώματος & δραστηριότητας.', en: 'See how many calories you need daily based on your body & activity.', es: 'Descubre cuántas calorías necesitas al día según tu cuerpo y actividad.', fr: 'Découvre combien de calories tu as besoin chaque jour selon ton corps et ton activité.' },
-  ob1_b_icon:       { el: '🎯',                  en: '🎯',                   es: '🎯',                   fr: '🎯' },
-  ob1_b_head:       { el: 'Προφίλ & Στόχοι',    en: 'Profile & Goals',      es: 'Perfil y objetivos',   fr: 'Profil & objectifs' },
-  ob1_b_desc:       { el: 'Ρύθμισε ύψος, βάρος, ηλικία και διάλεξε αν θες απώλεια, συντήρηση ή μάζα.', en: 'Set your height, weight, age and choose weight loss, maintenance or bulk.', es: 'Configura tu altura, peso, edad y elige pérdida, mantenimiento o volumen.', fr: 'Configure ta taille, ton poids, ton âge et choisis perte de poids, maintien ou prise de masse.' },
-  // Card 2: Select foods + Create your plan
-  ob2_title:        { el: 'Φτιάξε το πλάνο σου', en: 'Build your plan',     es: 'Crea tu plan',         fr: 'Crée ton plan' },
-  ob2_a_icon:       { el: '🥗',                  en: '🥗',                   es: '🥗',                   fr: '🥗' },
-  ob2_a_head:       { el: 'Επίλεξε τρόφιμα',    en: 'Choose your foods',    es: 'Elige tus alimentos',  fr: 'Choisis tes aliments' },
-  ob2_a_desc:       { el: 'Ορίσε τι σου αρέσει να τρως — απλά, μικτά ή gourmet γεύματα.', en: 'Tell us what you like to eat — simple, mixed or gourmet meals.', es: 'Dinos qué te gusta comer: simple, mixto o gourmet.', fr: 'Dis-nous ce que tu aimes manger : simple, mixte ou gourmet.' },
-  ob2_b_icon:       { el: '📋',                  en: '📋',                   es: '📋',                   fr: '📋' },
-  ob2_b_head:       { el: 'Δημιούργησε πλάνο',  en: 'Create your plan',     es: 'Crea tu plan',         fr: 'Crée ton plan' },
-  ob2_b_desc:       { el: 'Δημιούργησε αυτόματα εβδομαδιαίο διατροφικό πρόγραμμα με ένα κλικ.', en: 'Auto-generate a full weekly nutrition plan with one click.', es: 'Genera automáticamente un plan semanal completo con un clic.', fr: 'Génère automatiquement un plan nutritionnel hebdomadaire complet en un clic.' },
-  // Card 3: Adjust + Track progress
-  ob3_title:        { el: 'Προσαρμόσου & Παρακολούθει', en: 'Adjust & Track', es: 'Ajusta y sigue',    fr: 'Ajuste et suis' },
-  ob3_a_icon:       { el: '✏️',                  en: '✏️',                   es: '✏️',                   fr: '✏️' },
-  ob3_a_head:       { el: 'Προσάρμοσε το πλάνο', en: 'Adjust your plan',   es: 'Ajusta tu plan',        fr: 'Ajuste ton plan' },
-  ob3_a_desc:       { el: 'Άλλαξε γεύματα, ρύθμισε μερίδες και εναλλάσσε επιλογές όποτε θέλεις.', en: 'Swap meals, adjust portions and change options any time you like.', es: 'Cambia comidas, ajusta porciones y modifica opciones cuando quieras.', fr: 'Change des repas, ajuste les portions et modifie les options quand tu veux.' },
-  ob3_b_icon:       { el: '📊',                  en: '📊',                   es: '📊',                   fr: '📊' },
-  ob3_b_head:       { el: 'Παρακολούθει & Εκτύπωσε', en: 'Track & Print',  es: 'Sigue e imprime',      fr: 'Suis et imprime' },
-  ob3_b_desc:       { el: 'Δες τα στατιστικά σου και εκτύπωσε το πλάνο σου για να το έχεις πάντα μαζί σου.', en: 'View your stats and print your plan to keep it with you anywhere.', es: 'Consulta tus estadísticas e imprime tu plan para llevarlo siempre contigo.', fr: 'Consulte tes statistiques et imprime ton plan pour l\'avoir toujours avec toi.' },
+  ob_skip:   { el: 'Παράλειψη', en: 'Skip',       es: 'Omitir',    fr: 'Ignorer' },
+  ob_next:   { el: 'Επόμενο',   en: 'Next',       es: 'Siguiente', fr: 'Suivant' },
+  ob_start:  { el: 'Ξεκινάμε!', en: "Let's go!",  es: '¡Vamos!',   fr: "C'est parti !" },
+
+  ob1_icon:  { el: '🔥', en: '🔥', es: '🔥', fr: '🔥' },
+  ob1_title: { el: 'Υπολόγισε τις θερμίδες σου', en: 'Calculate your calories', es: 'Calcula tus calorías', fr: 'Calcule tes calories' },
+  ob1_desc:  { el: 'Το VIVON υπολογίζει αυτόματα πόσες θερμίδες χρειάζεσαι κάθε μέρα, βάσει ύψους, βάρους, ηλικίας και επιπέδου δραστηριότητας. Δεν χρειάζεται να ξέρεις τίποτα — το κάνει για σένα.', en: 'VIVON automatically calculates how many calories you need each day based on your height, weight, age and activity level. No expertise needed — it does it for you.', es: 'VIVON calcula automáticamente cuántas calorías necesitas al día según tu altura, peso, edad y nivel de actividad.', fr: "VIVON calcule automatiquement tes besoins caloriques journaliers selon ta taille, ton poids, ton âge et ton niveau d'activité." },
+
+  ob2_icon:  { el: '🎯', en: '🎯', es: '🎯', fr: '🎯' },
+  ob2_title: { el: 'Ορίσε τον στόχο σου', en: 'Set your goal', es: 'Define tu objetivo', fr: 'Définis ton objectif' },
+  ob2_desc:  { el: 'Διάλεξε αν θέλεις να χάσεις βάρος, να το διατηρήσεις ή να χτίσεις μάζα. Ρύθμισε ύψος, βάρος και ηλικία και το VIVON προσαρμόζει αυτόματα τους στόχους σου.', en: 'Choose whether you want to lose weight, maintain it or build muscle. Set your height, weight and age and VIVON adapts your targets automatically.', es: 'Elige si quieres perder peso, mantenerlo o ganar masa. VIVON adapta tus objetivos automáticamente.', fr: 'Choisis si tu veux perdre du poids, le maintenir ou prendre de la masse. VIVON adapte tes objectifs automatiquement.' },
+
+  ob3_icon:  { el: '🥗', en: '🥗', es: '🥗', fr: '🥗' },
+  ob3_title: { el: 'Επίλεξε τι σου αρέσει να τρως', en: 'Choose what you like to eat', es: 'Elige lo que te gusta comer', fr: 'Choisis ce que tu aimes manger' },
+  ob3_desc:  { el: 'Πες στο VIVON τι τρόφιμα προτιμάς — απλά, μικτά ή πιο gourmet γεύματα. Ορίσε τις προτιμήσεις σου μία φορά και το πλάνο χτίζεται γύρω από αυτές.', en: 'Tell VIVON what foods you prefer — simple, mixed or more gourmet meals. Set your preferences once and the plan is built around them.', es: 'Dile a VIVON qué alimentos prefieres. Configura tus preferencias una vez y el plan se construye en torno a ellas.', fr: "Dis à VIVON quels aliments tu préfères. Configure tes préférences une fois et le plan est construit autour d'elles." },
+
+  ob4_icon:  { el: '📋', en: '📋', es: '📋', fr: '📋' },
+  ob4_title: { el: 'Δημιούργησε εβδομαδιαίο πλάνο', en: 'Generate a weekly plan', es: 'Crea un plan semanal', fr: 'Génère un plan hebdomadaire' },
+  ob4_desc:  { el: 'Με ένα κλικ δημιουργείς πλήρες εβδομαδιαίο διατροφικό πρόγραμμα. Πρωινό, μεσημεριανό, βραδινό και σνακ — όλα υπολογισμένα στις θερμίδες σου.', en: 'With one click you generate a complete weekly nutrition programme. Breakfast, lunch, dinner and snacks — all calculated to your calories.', es: 'Con un clic generas un programa nutricional semanal completo. Todo calculado según tus calorías.', fr: 'En un clic tu génères un programme nutritionnel hebdomadaire complet. Tout calculé selon tes calories.' },
+
+  ob5_icon:  { el: '✏️', en: '✏️', es: '✏️', fr: '✏️' },
+  ob5_title: { el: 'Προσάρμοσε ό,τι θέλεις', en: 'Adjust anything you want', es: 'Ajusta lo que quieras', fr: 'Ajuste ce que tu veux' },
+  ob5_desc:  { el: "Δεν σου αρέσει κάποιο γεύμα; Άλλαξέ το. Θέλεις μεγαλύτερη μερίδα; Ρύθμισέ την. Το πλάνο είναι πλήρως επεξεργάσιμο — αλλάζεις γεύματα, μερίδες και επιλογές όποτε θέλεις.", en: "Don't like a meal? Change it. Want a bigger portion? Adjust it. The plan is fully editable — swap meals, tweak portions and change options any time.", es: '¿No te gusta una comida? Cámbiala. El plan es totalmente editable en cualquier momento.', fr: "Tu n'aimes pas un repas ? Change-le. Le plan est entièrement modifiable à tout moment." },
+
+  ob6_icon:  { el: '📊', en: '📊', es: '📊', fr: '📊' },
+  ob6_title: { el: 'Παρακολούθει & Εκτύπωσε', en: 'Track & Print', es: 'Sigue e imprime', fr: 'Suis et imprime' },
+  ob6_desc:  { el: 'Δες τα στατιστικά σου — θερμίδες, μακροθρεπτικά, εβδομαδιαία πρόοδο. Εκτύπωσε το πλάνο σου σε PDF για να το έχεις πάντα μαζί σου, ακόμα και χωρίς σύνδεση.', en: 'See your stats — calories, macros, weekly progress. Print your plan as a PDF to keep it with you anywhere, even offline.', es: 'Ve tus estadísticas: calorías, macros, progreso semanal. Imprime tu plan en PDF para llevarlo contigo siempre.', fr: "Consulte tes statistiques — calories, macros, progression. Imprime ton plan en PDF pour l'avoir toujours avec toi, même hors ligne." },
+
+  ob7_title: { el: 'Είσαι έτοιμος! 🎉', en: "You're all set! 🎉", es: '¡Estás listo! 🎉', fr: 'Tu es prêt ! 🎉' },
+  ob7_desc:  { el: 'Καλή επιτυχία στο ταξίδι σου. Θυμήσου — μικρά βήματα κάθε μέρα φτιάχνουν μεγάλες αλλαγές. Το VIVON είναι εδώ για σένα.', en: 'Good luck on your journey. Remember — small steps every day make big changes. VIVON is here for you.', es: 'Buena suerte en tu camino. Pequeños pasos cada día crean grandes cambios. VIVON está aquí para ti.', fr: "Bonne chance dans ton parcours. De petits pas chaque jour créent de grands changements. VIVON est là pour toi." },
 
   // ── Swap meal modal ──
   swap_title:       { el: 'Επιλογή Γεύματος',  en: 'Select Meal',         es: 'Seleccionar Comida',  fr: 'Sélectionner un Repas' },
@@ -840,7 +846,7 @@ function updateUILanguage() {
   if (sidebarDonate) sidebarDonate.textContent = '♥ ' + t('donate_sidebar').replace(/^❤️\s*/, '');
   const sidebarPDF = document.getElementById('sidebar-pdf-btn');
   if (sidebarPDF) sidebarPDF.textContent = t('sidebar_pdf');
-  const sidebarLogout = document.querySelector('.sidebar-footer .btn:last-child');
+  const sidebarLogout = document.getElementById('sidebar-logout-btn');
   if (sidebarLogout) sidebarLogout.textContent = t('sidebar_logout');
 
   // Drawer item labels
