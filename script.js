@@ -2018,7 +2018,7 @@ function getWaterNotes() {
 const WATER_NOTES = getWaterNotes();
 const SLOT_TIMES = ['07:00','10:00','13:00','16:00','19:30'];
 
-// ── COMPOSED MEALS (generator combines FOODS_DB items per slot) ──
+// ── Quantity ladders used by the manual meal builder (Main/Side/Salad/Extra) ──
 const MB_QTY_LADDER_G  = Array.from({ length: (300 - 50) / 10 + 1 }, (_, i) => 50 + i * 10); // 50,60,...,300
 const MB_QTY_LADDER_TEM = [0.5,1,1.5,2,3,4];
 const MB_QTY_LADDER_TSP = [1,2,3,4,6,8];
@@ -2035,65 +2035,40 @@ function mbSnapQty(qty, unit) {
   ladder.forEach(v => { const d = Math.abs(v - qty); if (d < bestDiff) { bestDiff = d; best = v; } });
   return best;
 }
-// Compose a synthetic Main+Side+Salad+Extra meal from FOODS_DB, sized to approximate targetKcal.
-const MB_SLOT_CATS = {
-  main:  ['protein'],
-  side:  ['carbs'],
-  salad: ['salad', 'veggie'],
-  extra: ['fat','dairy','other'],
-};
-const MB_SLOT_SHARE = { main: 0.45, side: 0.30, salad: 0.10, extra: 0.15 };
-function composeMeal(slotType, targetKcal, style) {
-  const allFoods = [...FOODS_DB, ...(state?.customFoods || [])];
-  const roles = ['main','side','salad', ...(style === 'gourmet' || style === 'mixed' ? ['extra'] : [])];
-  const ingredients = [];
-  const nameParts = [];
-  const nameI18nParts = { el: [], en: [], es: [], fr: [] };
-  roles.forEach(role => {
-    const cats = MB_SLOT_CATS[role];
-    const candidates = allFoods.filter(f => cats.includes(f.category));
-    if (!candidates.length) return;
-    // salad/extra are optional — skip sometimes for variety
-    if ((role === 'salad' || role === 'extra') && Math.random() < 0.3) return;
-    const food = candidates[Math.floor(Math.random() * candidates.length)];
-    const roleKcal = targetKcal * MB_SLOT_SHARE[role];
-    const per = food.per100 && food.per100.kcal ? food.per100.kcal : 100;
-    let rawQty;
-    if (food.unit === 'κ.γ.' || food.unit === 'κ.σ.') {
-      const mlPerUnit = food.unit === 'κ.σ.' ? 10 : (food.sprayFactor || 5);
-      rawQty = roleKcal / (per * mlPerUnit / 100);
-    } else if (food.unit === 'τεμ') {
-      rawQty = roleKcal / per;
-    } else {
-      rawQty = roleKcal / (per / 100);
-    }
-    const qty = mbSnapQty(rawQty, food.unit);
-    if (qty <= 0) return;
-    ingredients.push({ foodId: food.id, qty });
-    nameParts.push(tName ? tName(food) : food.name);
-    ['el','en','es','fr'].forEach(lang => {
-      nameI18nParts[lang].push((food.nameI18n && food.nameI18n[lang]) || food.name);
-    });
-  });
-  if (!ingredients.length) return null;
-  const nameI18n = {};
-  ['el','en','es','fr'].forEach(lang => { nameI18n[lang] = nameI18nParts[lang].join(' + '); });
-  return {
-    id: 'gen_' + slotType + '_' + Date.now() + '_' + Math.floor(Math.random() * 1e4),
-    name: nameParts.join(' + '),
-    nameI18n,
-    meal: slotType,
-    emoji: '🍽️',
-    ingredients,
-    _generated: true,
-  };
-}
-
 /**
  * Generate a randomised 7-day week plan.
  * @param {string} style  'simple' | 'gourmet' | 'mixed'
  * @param {Object} excludedPerMeal  { breakfast: ['id',...], lunch: [...], ... }
  */
+// One-time cleanup for plans generated before the auto-composed "Main + Side +
+// Salad + Extra" meals (built by the old composeMeal, e.g. "Μπιφτέκι μοσχαρίσιο
+// + Κους Κους + Σαλάτα σπανάκι + Ελαιόλαδο") were removed. Any day meal still
+// pointing at one of those leftover _generated custom recipes gets swapped for
+// a real recipe from RECIPES_DB matching the same slot type; the stale
+// _generated recipes are then purged from state.customRecipes.
+function purgeGeneratedComposedMeals() {
+  if (!state?.customRecipes) return;
+  const generatedIds = new Set(state.customRecipes.filter(r => r._generated).map(r => r.id));
+  if (!generatedIds.size || !state.week) {
+    if (generatedIds.size) state.customRecipes = state.customRecipes.filter(r => !r._generated);
+    return;
+  }
+  state.week.forEach(day => {
+    (day.meals || []).forEach(meal => {
+      if (!meal.recipeId || !generatedIds.has(meal.recipeId)) return;
+      const sameType = RECIPES_DB.filter(r => r.meal === meal.type && !r.side);
+      const replacement = sameType.length ? sameType[Math.floor(Math.random() * sameType.length)] : null;
+      if (replacement) {
+        meal.recipeId = replacement.id;
+        delete meal.standardId;
+        meal.scaleFactor = 1;
+      }
+    });
+  });
+  state.customRecipes = state.customRecipes.filter(r => !r._generated);
+  saveState();
+}
+
 function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
   // Clear previous generation's composed meals so they don't accumulate
   if (state?.customRecipes) state.customRecipes = state.customRecipes.filter(r => !r._generated);
@@ -2117,17 +2092,33 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
   const gourmetCount = {}; // slotType → gourmet picks
   MEAL_SLOT_TYPES.forEach(t => { pickCount[t] = 0; gourmetCount[t] = 0; });
 
+  // Single foods (STANDARD_MEALS, identified by kcal_est) are only allowed
+  // for lunch/dinner — breakfast/snack/afternoon must stay recipe-only.
+  // Even where allowed, they're a fallback: recipes are tried first, and a
+  // single food is only picked when no recipe can fill the slot (see
+  // candidatesWithFallback below).
+  const SINGLE_FOOD_SLOTS = new Set(['lunch', 'dinner']);
+
   // Base candidates: slot-type match + exclusion filter + no side dishes
   // afternoon slot accepts both meal:"afternoon" and meal:"snack" entries
-  function candidates(slotType) {
+  function candidates(slotType, { allowSingleFoods = false } = {}) {
     return pool.filter(r => {
       const matchesSlot = r.meal === slotType
         || (slotType === 'afternoon' && (r.meal === 'afternoon' || r.meal === 'snack'));
       if (!matchesSlot) return false;
       if (r.side) return false;
+      if (r.kcal_est && (!allowSingleFoods || !SINGLE_FOOD_SLOTS.has(slotType))) return false;
       if (excSets[slotType] && excSets[slotType].has(r.id)) return false;
       return true;
     });
+  }
+
+  // Recipes first; only fall back to single foods (STANDARD_MEALS) when no
+  // recipe can satisfy the slot at all.
+  function candidatesWithFallback(slotType) {
+    const recipesOnly = candidates(slotType, { allowSingleFoods: false });
+    if (recipesOnly.length) return recipesOnly;
+    return candidates(slotType, { allowSingleFoods: true });
   }
 
   function shuffle(arr) {
@@ -2139,25 +2130,15 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
     return a;
   }
 
-  // No-repeat-within-3-days: track by foodGroup (if set) or id
-  // so that different size variants of the same food are treated as one
-  const recentPickKeys = {}; // slotType → [last 3 group-or-id keys]
-  MEAL_SLOT_TYPES.forEach(t => { recentPickKeys[t] = []; });
+  // No-repeat-within-the-week: track every id/foodGroup already picked for
+  // this slot type so the same meal never appears twice in the same week.
+  const usedPickKeys = {}; // slotType → Set of group-or-id keys already used this week
+  MEAL_SLOT_TYPES.forEach(t => { usedPickKeys[t] = new Set(); });
 
   function mealKey(r) { return r.foodGroup || r.id; }
 
-  const COMPOSE_RATIO = 0.35; // fraction of picks that should be freely composed from FOODS_DB vs whole-recipe
   function pickOne(slotType) {
-    if (Math.random() < COMPOSE_RATIO) {
-      const targetKcalForSlot = (state?.goals?.kcal || DEFAULT_GOALS.kcal) / MEAL_SLOT_TYPES.length;
-      const composed = composeMeal(slotType, targetKcalForSlot, style);
-      if (composed) {
-        state.customRecipes.push(composed);
-        pickCount[slotType]++;
-        return composed;
-      }
-    }
-    const all = candidates(slotType);
+    const all = candidatesWithFallback(slotType);
     const simple  = all.filter(r => !GOURMET_IDS.has(r.id));
     const gourmet = all.filter(r =>  GOURMET_IDS.has(r.id));
 
@@ -2172,15 +2153,15 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
       : (simple.length  ? simple  : gourmet);
     if (!preferred.length) preferred = all;
 
-    // Filter out food groups seen in the last 3 days; relax if nothing left
-    const recent = recentPickKeys[slotType];
-    let pool2 = preferred.filter(r => !recent.includes(mealKey(r)));
+    // Filter out anything already used this week for this slot type; relax
+    // (allow repeats) only if that would otherwise leave nothing to pick.
+    const used = usedPickKeys[slotType];
+    let pool2 = preferred.filter(r => !used.has(mealKey(r)));
     if (!pool2.length) pool2 = preferred;
     if (!pool2.length) return null;
 
     const picked = shuffle(pool2)[0];
-    recent.push(mealKey(picked));
-    if (recent.length > 3) recent.shift();
+    used.add(mealKey(picked));
     pickCount[slotType]++;
     if (GOURMET_IDS.has(picked.id)) gourmetCount[slotType]++;
     return picked;
@@ -2851,6 +2832,28 @@ function renderToday() {
       <!-- Activity & Deficit -->
       <div class="act-section fade-in" id="act-section"></div>
 
+      <!-- Daily Targets -->
+      <div class="card card-sm fade-in" style="padding:10px 12px;margin-bottom:10px">
+        <div style="font-size:0.7rem;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px">🎯 ${t('today_targets_title')}</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:8px 6px;text-align:center">
+            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:2px">🔥 kcal</div>
+            <strong style="font-size:0.85rem;color:#22c55e">${effectiveKcal}</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:8px 6px;text-align:center">
+            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:2px">🥩</div>
+            <strong style="font-size:0.85rem;color:#3b82f6">${goals.protein}g</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:8px 6px;text-align:center">
+            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:2px">🍚</div>
+            <strong style="font-size:0.85rem;color:#8b5cf6">${goals.carbs}g</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:8px 6px;text-align:center">
+            <div style="font-size:0.6rem;color:var(--text3);margin-bottom:2px">🫒</div>
+            <strong style="font-size:0.85rem;color:#f59e0b">${goals.fat}g</strong>
+          </div>
+        </div>
+      </div>
 
       <!-- Meals header + reset -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
@@ -3098,20 +3101,17 @@ function renderWeek() {
       byType[me.type].push(me);
     });
 
+    // One fixed slot per meal type (always rendered, even when empty) so
+    // every day-column's breakfast/snack/lunch/afternoon/dinner section lands
+    // on the same grid row as the same section in every other day-column.
     const mealSections = mealOrder.map(type => {
       const meals = byType[type];
-      if (!meals || meals.length === 0) return '';
       const meta = mealMeta[type];
-      const typeKcal = meals.reduce((acc, me) => {
-        if (me.standardId) {
-          const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
-          return acc + (sm ? Math.round(sm.kcal_est * (me.scaleFactor||1)) : 0);
-        }
-        const r = allR.find(x => x.id === me.recipeId);
-        return acc + (r ? calcRecipeMacros(r, me.scaleFactor||1).kcal : 0);
-      }, 0);
+      if (!meals || meals.length === 0) {
+        return `<div class="week-day-card-meal-slot"></div>`;
+      }
 
-      return meals.map(me => {
+      const itemsHtml = meals.map(me => {
         const mi = day.meals.indexOf(me);
         let name = '', kcal = 0, emoji = '';
         if (me.standardId) {
@@ -3128,7 +3128,6 @@ function renderWeek() {
         return `<div style="margin-bottom:7px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
             <span style="font-size:0.6rem;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em">${meta.label}</span>
-            <span style="font-size:0.6rem;font-weight:700;color:${meta.color}">${typeKcal} kcal</span>
           </div>
           <div class="week-meal-chip" style="--chip-bg:${meta.bg};--chip-border:${meta.border};--chip-color:${meta.color}" onclick="openSwapMeal(${mi},${di})">
             <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px">
@@ -3140,7 +3139,18 @@ function renderWeek() {
           </div>
         </div>`;
       }).join('');
+      return `<div class="week-day-card-meal-slot">${itemsHtml}</div>`;
     }).join('');
+
+    const footerHtml = (() => {
+      const { deficit } = calcDayDeficit(di);
+      const dc = deficit >= 0 ? '#22c55e' : '#ef4444';
+      const sc = (day.stepsCount !== undefined && day.stepsCount !== null) ? day.stepsCount : 8000;
+      return `${allDone ? `<div style="margin-top:6px;text-align:center"><span style="font-size:0.62rem;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 8px">${t('week_completed')}</span></div>` : ''}
+        ${extraKcal > 0 ? `<div style="margin-top:4px;font-size:0.62rem;color:#ef4444;font-weight:700;text-align:center">${tFmt('week_extra_kcal', {n: extraKcal})}</div>` : ''}
+        <div style="margin-top:5px;font-size:0.6rem;text-align:center;color:${dc};font-weight:700">${deficit >= 0 ? '−' : '+'}${Math.abs(deficit)} kcal ${deficit >= 0 ? t('deficit_abbr') : t('surplus_abbr')}</div>
+        <div style="font-size:0.55rem;color:var(--text3);text-align:center">${day.stepsDone ? `👣${(sc/1000).toFixed(1)}k` : ''}${day.weightTraining?' 🏋️':''}</div>`;
+    })();
 
     return `<div class="week-day-card" style="border-top:${borderTop}">
       <div class="week-day-card-header" onclick="goToDay(${di})" title="${t('week_go_to_day')}">
@@ -3151,20 +3161,13 @@ function renderWeek() {
         ${dateStr}
         <div style="margin-top:6px">
           <div style="font-size:1rem;font-weight:900;color:${barColor}">${m.kcal > 0 ? m.kcal.toLocaleString() : '—'} kcal</div>
+          ${m.kcal > 0 ? `<div style="font-size:0.62rem;font-weight:600;color:var(--text3);margin-top:1px">🥩 ${m.p}g | 🍚 ${m.c}g | 🫒 ${m.f}g</div>` : ''}
         </div>
       </div>
       <div class="week-day-card-body">
-        ${mealSections || `<div style="font-size:0.65rem;color:var(--text3);text-align:center;padding:12px 0">${t('week_no_meal')}</div>`}
-        ${allDone ? `<div style="margin-top:6px;text-align:center"><span style="font-size:0.62rem;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:2px 8px">${t('week_completed')}</span></div>` : ''}
-        ${extraKcal > 0 ? `<div style="margin-top:4px;font-size:0.62rem;color:#ef4444;font-weight:700;text-align:center">${tFmt('week_extra_kcal', {n: extraKcal})}</div>` : ''}
-        ${(() => {
-          const { deficit } = calcDayDeficit(di);
-          const dc = deficit >= 0 ? '#22c55e' : '#ef4444';
-          const sc = (day.stepsCount !== undefined && day.stepsCount !== null) ? day.stepsCount : 8000;
-          return `<div style="margin-top:5px;font-size:0.6rem;text-align:center;color:${dc};font-weight:700">${deficit >= 0 ? '−' : '+'}${Math.abs(deficit)} kcal ${deficit >= 0 ? t('deficit_abbr') : t('surplus_abbr')}</div>
-          <div style="font-size:0.55rem;color:var(--text3);text-align:center">${day.stepsDone ? `👣${(sc/1000).toFixed(1)}k` : ''}${day.weightTraining?' 🏋️':''}</div>`;
-        })()}
+        ${mealSections}
       </div>
+      <div class="week-day-card-footer">${footerHtml}</div>
     </div>`;
   }).join('');
 
@@ -4175,6 +4178,23 @@ function _mbFoodOptions(slot, selectedFoodId) {
   return matching.map(opt).join('');
 }
 
+// Native <select> popups open upward when the browser doesn't see enough
+// viewport room below them — this bites the lower slots (salad/extra) inside
+// the tall, scrollable meal-builder overlay. Scrolling the slot near the top
+// of the scroll container on focus (before the popup opens) guarantees room
+// below, so the picker consistently opens downward.
+function _mbEnsureDropdownRoom(selectEl) {
+  const scrollParent = selectEl.closest('.mb-modal') || document.scrollingElement;
+  if (!scrollParent) return;
+  const card = selectEl.closest('.mb-slot-card') || selectEl;
+  const parentRect = scrollParent.getBoundingClientRect();
+  const cardRect = card.getBoundingClientRect();
+  const spaceBelow = parentRect.bottom - cardRect.bottom;
+  if (spaceBelow < 220) {
+    scrollParent.scrollBy({ top: cardRect.top - parentRect.top - 24, behavior: 'auto' });
+  }
+}
+
 // _mbAfterSave: optional callback(newOrUpdatedId) invoked instead of the default
 // close-and-toast behaviour — used when the builder is opened from inside another
 // flow (e.g. the "Custom" tab of the add-meal modal) that wants to chain an action.
@@ -4437,11 +4457,11 @@ function _mbSlotCardHtml(slot) {
       </div>
 
       <div class="mb-slot-row">
-        <select class="mb-food-select" id="mb-food-${slot.key}" onchange="mbOnFoodChange('${slot.key}')">
+        <select class="mb-food-select" id="mb-food-${slot.key}" onchange="mbOnFoodChange('${slot.key}')" onfocus="_mbEnsureDropdownRoom(this)">
           ${slot.required ? '' : `<option value="">${t('mb_none_option')}</option>`}
           ${_mbFoodOptions(slot, sel.foodId)}
         </select>
-        <select class="mb-qty-select" id="mb-qty-${slot.key}" onchange="mbOnQtyChange('${slot.key}')" ${selectedFood ? '' : 'disabled'}>
+        <select class="mb-qty-select" id="mb-qty-${slot.key}" onchange="mbOnQtyChange('${slot.key}')" onfocus="_mbEnsureDropdownRoom(this)" ${selectedFood ? '' : 'disabled'}>
           ${qtyLadder.map(v => `<option value="${v}"${v === qty ? ' selected' : ''}>${esc(mbUnitLabel(selectedFood ? selectedFood.unit : 'g', v))}</option>`).join('')}
         </select>
       </div>
@@ -4744,7 +4764,14 @@ function builderApplyWeekToSchedule(typeFilter) {
   state.programCreated = true;
   saveState();
   showToast('✅ Το πρόγραμμα ενημερώθηκε!');
-  renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
+
+  // On mobile, jump straight to the Weekly Plan instead of leaving the
+  // user on the generation (builder) screen.
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    navigateTo('week');
+  } else {
+    renderBuilderPage(typeFilter || state._builderFilter || 'breakfast');
+  }
 }
 
 function applyBuilderToDayIdx(dayIdx) {
@@ -5484,7 +5511,12 @@ function openAddMealModal() {
         </button>
       </div>
       <select id="new-meal-recipe">
-        ${allRecipes.map(r => `<option value="${r.id}">${esc(tName(r))}</option>`).join('')}
+        <optgroup label="${t('recipes_title').replace('📖 ','')}">
+          ${allRecipes.map(r => `<option value="r:${r.id}">${esc(tName(r))}</option>`).join('')}
+        </optgroup>
+        <optgroup label="${t('nav_ideas_foods')}">
+          ${STANDARD_MEALS.map(sm => `<option value="sm:${sm.id}">${esc(tName(sm) || sm.name)}</option>`).join('')}
+        </optgroup>
       </select>
     </div>
     <button class="btn btn-green btn-full" onclick="addMealFromModal()">➕ ${t('btn_add')}</button>`);
@@ -5513,17 +5545,25 @@ function _openMealChooserFromAddMeal() {
 }
 
 function addMealFromModal() {
-  const time     = (document.getElementById('new-meal-time')?.value   || '').trim();
-  const type     = (document.getElementById('new-meal-type')?.value   || '').trim();
-  const recipeId = (document.getElementById('new-meal-recipe')?.value || '').trim();
+  const time    = (document.getElementById('new-meal-time')?.value   || '').trim();
+  const type    = (document.getElementById('new-meal-type')?.value   || '').trim();
+  const selVal  = (document.getElementById('new-meal-recipe')?.value || '').trim();
   const VALID_TYPES = ['breakfast', 'snack', 'lunch', 'afternoon', 'dinner'];
-  if (!time || !type || !recipeId) { showToast('⚠️ Συμπλήρωσε όλα τα πεδία'); return; }
+  if (!time || !type || !selVal) { showToast('⚠️ Συμπλήρωσε όλα τα πεδία'); return; }
   if (!VALID_TYPES.includes(type)) { showToast('⚠️ Μη έγκυρος τύπος γεύματος'); return; }
-  const allRecipes = [...RECIPES_DB, ...state.customRecipes];
-  if (!allRecipes.some(r => r.id === recipeId)) { showToast('⚠️ Η συνταγή δεν βρέθηκε'); return; }
   const day = state.week[state.currentDay];
   if (!day) { showToast('⚠️ Μη έγκυρη ημέρα'); return; }
-  day.meals.push({ time, type, recipeId, done: false, scaleFactor: 1 });
+
+  const isStandard = selVal.startsWith('sm:');
+  const id = selVal.slice(selVal.indexOf(':') + 1);
+  if (isStandard) {
+    if (!STANDARD_MEALS.some(s => s.id === id)) { showToast('⚠️ Το τρόφιμο δεν βρέθηκε'); return; }
+    day.meals.push({ time, type, standardId: id, done: false, scaleFactor: 1 });
+  } else {
+    const allRecipes = [...RECIPES_DB, ...state.customRecipes];
+    if (!allRecipes.some(r => r.id === id)) { showToast('⚠️ Η συνταγή δεν βρέθηκε'); return; }
+    day.meals.push({ time, type, recipeId: id, done: false, scaleFactor: 1 });
+  }
   day.meals.sort((a,b) => a.time.localeCompare(b.time));
   saveState();
   closeModal();
@@ -7121,6 +7161,7 @@ async function initApp() {
   // Seed initial history state so popstate always has a tab to land on
   history.replaceState({ vivon: 'tab', tab: state.activeTab || 'today' }, '', location.pathname + location.search);
   checkWeekReset();
+  purgeGeneratedComposedMeals();
   updateSidebarAvatar();
   updateUILanguage();
 

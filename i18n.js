@@ -619,6 +619,7 @@ const I18N = {
   today_kcal_day:       { el: 'kcal μέρας',        en: 'kcal/day',           es: 'kcal/día',           fr: 'kcal/jour' },
   today_consumed:       { el: 'Καταναλώθηκαν',     en: 'Consumed',           es: 'Consumidas',         fr: 'Consommées' },
   today_kcal_day_goal:  { el: 'Kcal ημέρας',       en: 'Day calories',       es: 'Calorías del día',   fr: 'Calories du jour' },
+  today_targets_title:  { el: 'Ημερήσιοι Στόχοι',   en: 'Daily Targets',      es: 'Objetivos Diarios',  fr: 'Objectifs Quotidiens' },
   today_meals_header:   { el: 'Γεύματα',            en: 'Meals',              es: 'Comidas',            fr: 'Repas' },
   today_add_meal:       { el: '➕ Προσθήκη Γεύματος', en: '➕ Add Meal',       es: '➕ Añadir Comida',  fr: '➕ Ajouter un repas' },
   today_reset_checks:   { el: '↺ Reset',            en: '↺ Reset',            es: '↺ Reset',            fr: '↺ Reset' },
