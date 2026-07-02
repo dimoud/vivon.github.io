@@ -4872,24 +4872,39 @@ function resetDayMeals() {
 function copyDay() {
   openModal(`
     <div class="modal-handle"></div>
-    <div class="modal-title">📋 Αντιγραφή Ημέρας ${state.currentDay+1} σε...</div>
+    <div class="modal-title">📋 Αντιγραφή — Επέλεξε Πηγή</div>
+    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">Από ποια ημέρα θέλεις να αντιγράψεις;</div>
     <div class="recipes-grid">
-      ${state.week.filter((_,i)=>i!==state.currentDay).map(d => `
-        <div class="recipe-card" onclick="doCopyDay(${d.day-1})">
+      ${state.week.map(d => `
+        <div class="recipe-card" onclick="copyDayPickTarget(${d.day-1})">
           <div class="recipe-card-emoji">📅</div>
           <div class="recipe-card-name">${d.label}</div>
         </div>`).join('')}
     </div>`);
 }
 
-function doCopyDay(targetIdx) {
-  state.week[targetIdx].meals = JSON.parse(JSON.stringify(state.week[state.currentDay].meals));
+function copyDayPickTarget(originIdx) {
+  openModal(`
+    <div class="modal-handle"></div>
+    <div class="modal-title">📋 Αντιγραφή ${state.week[originIdx].label} σε...</div>
+    <div style="font-size:0.8rem;color:var(--text3);margin-bottom:10px;text-align:center">Σε ποια ημέρα θέλεις να επικολλήσεις;</div>
+    <div class="recipes-grid">
+      ${state.week.filter((_,i)=>i!==originIdx).map(d => `
+        <div class="recipe-card" onclick="doCopyDay(${originIdx},${d.day-1})">
+          <div class="recipe-card-emoji">📅</div>
+          <div class="recipe-card-name">${d.label}</div>
+        </div>`).join('')}
+    </div>`);
+}
+
+function doCopyDay(originIdx, targetIdx) {
+  state.week[targetIdx].meals = JSON.parse(JSON.stringify(state.week[originIdx].meals));
   state.week[targetIdx].meals.forEach(m => m.done = false);
   saveState();
   closeModal();
   const weekPage = document.getElementById('page-week');
   if (weekPage && weekPage.classList.contains('active')) renderWeek();
-  showToast(`✅ Αντιγράφηκε στην Ημέρα ${targetIdx+1}`);
+  showToast(`✅ Αντιγράφηκε στην ${state.week[targetIdx].label}`);
 }
 
 // ── PDF helper: person badge fixed at bottom-left ──
@@ -4977,7 +4992,7 @@ function exportDayPDF(dayIdx) {
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
           <div style="display:flex;align-items:center;gap:5px">
             <img src="logo.png" alt="" style="height:54px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
-            <span style="font-size:39px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-0.5px">VIVON</span>
+            <span style="font-size:39px;font-weight:900;color:#b8940a;letter-spacing:-0.5px">VIVON</span>
           </div>
           <div style="font-size:11px;font-weight:700;color:#3b82f6">${t('macro_protein')}: ${tot.p}g</div>
           <div style="font-size:11px;font-weight:700;color:#8b5cf6">${t('macro_carbs')}: ${tot.c}g</div>
@@ -5111,7 +5126,7 @@ function exportPDF_today() {
         <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <img src="logo.png" alt="" style="height:66px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
-            <span style="font-size:54px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+            <span style="font-size:54px;font-weight:900;color:#b8940a;letter-spacing:-1px">VIVON</span>
           </div>
           <div style="font-size:13px;font-weight:700;color:#3b82f6">${t('macro_protein')}: ${tot.p}g</div>
           <div style="font-size:13px;font-weight:700;color:#8b5cf6">${t('macro_carbs')}: ${tot.c}g</div>
@@ -5204,7 +5219,7 @@ function exportPDF_stats() {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <img src="logo.png" alt="" style="height:66px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
-          <span style="font-size:54px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+          <span style="font-size:54px;font-weight:900;color:#b8940a;letter-spacing:-1px">VIVON</span>
         </div>
       </div>
 
@@ -5300,7 +5315,7 @@ function exportPDF_body() {
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <img src="logo.png" alt="" style="height:66px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
-          <span style="font-size:54px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+          <span style="font-size:54px;font-weight:900;color:#b8940a;letter-spacing:-1px">VIVON</span>
         </div>
       </div>
 
@@ -5497,7 +5512,7 @@ function exportPDF_week() {
           ${weekRangePrint ? `<div style="font-size:8px;color:#6b7280">${weekRangePrint}</div>` : ''}
           <div style="display:flex;align-items:center;gap:5px">
             <img src="logo.png" alt="" style="height:48px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
-            <span style="font-size:45px;font-weight:900;background:linear-gradient(135deg,#f5c842 0%,#ffd700 40%,#b8860b 70%,#f5c842 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px">VIVON</span>
+            <span style="font-size:45px;font-weight:900;color:#b8940a;letter-spacing:-1px">VIVON</span>
           </div>
         </div>
       </div>
@@ -6125,6 +6140,8 @@ function showToast(msg, dur = 2200) {
 async function initApp() {
   initLang();
   await loadState();
+  // Seed initial history state so popstate always has a tab to land on
+  history.replaceState({ vivon: 'tab', tab: state.activeTab || 'today' }, '', location.pathname + location.search);
   checkWeekReset();
   updateSidebarAvatar();
   updateUILanguage();
@@ -6147,7 +6164,7 @@ async function initApp() {
   document.querySelectorAll('.tab-item, .sidebar-item').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.getAttribute('data-tab');
-      if (tab) navigateTo(tab);
+      if (tab) { navigateTo(tab); _historyPushTab(tab); }
     });
   });
   const overlay = document.getElementById('modal-overlay');
@@ -6188,6 +6205,27 @@ async function initApp() {
 // auth.js boots first, checks the session, then calls initApp().
 document.addEventListener('DOMContentLoaded', () => {});
 
+/* ── HISTORY API (back-button support) ── */
+function _historyPushTab(tab) {
+  history.pushState({ vivon: 'tab', tab }, '', location.pathname + location.search);
+}
+function _historyPushDrawer() {
+  history.pushState({ vivon: 'drawer' }, '', location.pathname + location.search);
+}
+function _isDrawerOpen() {
+  return document.getElementById('drawer')?.classList.contains('open');
+}
+window.addEventListener('popstate', (e) => {
+  if (_isDrawerOpen()) {
+    closeDrawer(true);
+    return;
+  }
+  const s = e.state;
+  if (s && s.vivon === 'tab' && s.tab) {
+    navigateTo(s.tab);
+  }
+});
+
 /* ── SIDE DRAWER ── */
 function openDrawer() {
   const drawer = document.getElementById('drawer');
@@ -6197,21 +6235,24 @@ function openDrawer() {
   drawer.classList.add('open');
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+  _historyPushDrawer();
 }
 
-function closeDrawer() {
+function closeDrawer(fromPopstate) {
   const drawer = document.getElementById('drawer');
   const overlay = document.getElementById('drawer-overlay');
   if (!drawer) return;
   drawer.classList.remove('open');
   overlay.classList.remove('open');
   document.body.style.overflow = '';
+  if (!fromPopstate) history.back();
 }
 
 function switchTabFromDrawer(tab) {
-  closeDrawer();
+  closeDrawer(true);
+  // Replace the drawer history entry with the new tab so back goes to the previous tab, not the drawer
+  history.replaceState({ vivon: 'tab', tab }, '', location.pathname + location.search);
   navigateTo(tab);
-  // Sync active state in drawer items
   document.querySelectorAll('.drawer-item[data-tab]').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-tab') === tab);
   });
