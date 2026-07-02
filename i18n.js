@@ -460,6 +460,12 @@ const I18N = {
   // ── Toast messages ──
   toast_new_week:             { el: 'Νέα εβδομάδα! Τα ημερήσια checkboxes έγιναν reset.', en: 'New week! Daily checkboxes were reset.', es: '¡Nueva semana! Las casillas diarias se reiniciaron.', fr: 'Nouvelle semaine ! Les cases quotidiennes ont été réinitialisées.' },
   toast_plan_style:           { el: 'Νέο πρόγραμμα ({style})!', en: 'New plan ({style})!', es: '¡Nuevo plan ({style})!', fr: 'Nouveau plan ({style}) !' },
+  toast_recipe_saved:         { el: '✅ Συνταγή αποθηκεύτηκε', en: '✅ Recipe saved', es: '✅ Receta guardada', fr: '✅ Recette enregistrée' },
+  toast_food_saved:           { el: '✅ Τρόφιμο αποθηκεύτηκε', en: '✅ Food saved', es: '✅ Alimento guardado', fr: '✅ Aliment enregistré' },
+  toast_name_required:        { el: '⚠️ Βάλε όνομα!', en: '⚠️ Enter a name!', es: '⚠️ ¡Introduce un nombre!', fr: '⚠️ Entrez un nom !' },
+  toast_weight_error:         { el: '⚠️ Βάλε ημερομηνία και έγκυρο βάρος (30–300 kg)', en: '⚠️ Enter a date and valid weight (30–300 kg)', es: '⚠️ Introduce una fecha y un peso válido (30–300 kg)', fr: '⚠️ Saisie une date et un poids valide (30–300 kg)' },
+  day_label:                  { el: 'Ημέρα {n}', en: 'Day {n}', es: 'Día {n}', fr: 'Jour {n}' },
+  avatar_fallback:            { el: 'Δ', en: 'U', es: 'U', fr: 'U' },
 
   // ── Builder ──
   builder_plan_ready:         { el: 'Το πλάνο είναι έτοιμο!',  en: 'Plan is ready!',         es: '¡El plan está listo!',    fr: 'Le plan est prêt !' },
@@ -823,7 +829,14 @@ function initLang() {
   document.documentElement.lang = saved;
 }
 
+function refreshDayLabels() {
+  if (typeof state !== 'undefined' && state.week) {
+    state.week.forEach((day, i) => { day.label = tFmt('day_label', { n: i + 1 }); });
+  }
+}
+
 function updateUILanguage() {
+  refreshDayLabels();
   // Bottom bar
   _setTextContent('[data-tab="today"] .tab-label-i18n',    t('nav_today'));
   _setTextContent('[data-tab="week"] .tab-label-i18n',     t('nav_week_short'));

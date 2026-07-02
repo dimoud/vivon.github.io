@@ -371,7 +371,7 @@ function addBodyMeasurement() {
   if (!dateEl || !weightEl) return;
   const date = dateEl.value;
   const weight = _parseDecimal(weightEl.value);
-  if (!date || isNaN(weight) || weight < 30 || weight > 300) { showToast('⚠️ Βάλε ημερομηνία και έγκυρο βάρος (30–300 kg)'); return; }
+  if (!date || isNaN(weight) || weight < 30 || weight > 300) { showToast(t('toast_weight_error')); return; }
   const fat = fatEl && fatEl.value !== '' ? _parseDecimal(fatEl.value) : null;
   const muscle = muscleEl && muscleEl.value !== '' ? _parseDecimal(muscleEl.value) : null;
   if (!state.bodyLog) state.bodyLog = [];
@@ -1348,7 +1348,7 @@ function updateSidebarAvatar() {
   if (_isSafeUrl(p.photoUrl)) {
     _setAvatarImg(avatarEl, p.photoUrl, 'photo');
   } else {
-    avatarEl.textContent = (p.name || 'Δ').charAt(0).toUpperCase();
+    avatarEl.textContent = (p.name || t('avatar_fallback')).charAt(0).toUpperCase();
     avatarEl.style.padding = '';
   }
   if (nameEl && p.name) nameEl.textContent = p.name;
@@ -1358,7 +1358,7 @@ function updateSidebarAvatar() {
     if (_isSafeUrl(p.photoUrl)) {
       _setAvatarImg(dAvatar, p.photoUrl, '');
     } else {
-      dAvatar.textContent = (p.name || 'Δ').charAt(0).toUpperCase();
+      dAvatar.textContent = (p.name || t('avatar_fallback')).charAt(0).toUpperCase();
     }
   }
   if (dName && p.name) dName.textContent = p.name;
@@ -2592,8 +2592,8 @@ function renderToday() {
       </button>
       <div class="recipe-expand-body">
         <div>
-          ${sm.instructions ? `<div class="recipe-instructions">${sm.instructions.replace(/\n/g,'<br>')}</div>` : (sm.note ? `<div class="recipe-instructions">${sm.note}</div>` : '')}
-          ${sm.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${sm.serving}</div>` : ''}
+          ${sm.instructions ? `<div class="recipe-instructions">${(tName(sm,'instructions')||sm.instructions).replace(/\n/g,'<br>')}</div>` : (sm.note ? `<div class="recipe-instructions">${sm.note}</div>` : '')}
+          ${sm.serving ? `<div class="recipe-serving"><span class="recipe-serving-icon">🍽️</span> ${tName(sm,'serving')||sm.serving}</div>` : ''}
         </div>
       </div>` : ''}`;
     } else {
@@ -4960,7 +4960,7 @@ function openAddRecipeModal(afterSaveFn) {
 
 function saveNewRecipe() {
   const name = document.getElementById('nr-name').value.trim();
-  if (!name) { showToast('⚠️ Βάλε όνομα!'); return; }
+  if (!name) { showToast(t('toast_name_required')); return; }
   const kcal = _parseDecimal(document.getElementById('nr-kcal').value) || 0;
   const p    = _parseDecimal(document.getElementById('nr-p').value)    || 0;
   const c    = _parseDecimal(document.getElementById('nr-c').value)    || 0;
@@ -4977,7 +4977,7 @@ function saveNewRecipe() {
   state.customRecipes.push(newRecipe);
   saveState();
   closeModal();
-  showToast('✅ Συνταγή αποθηκεύτηκε');
+  showToast(t('toast_recipe_saved'));
   if (_addRecipeAfterSave) {
     const cb = _addRecipeAfterSave;
     _addRecipeAfterSave = null;
@@ -5017,7 +5017,7 @@ function openAddFoodModal() {
 
 function saveNewFood() {
   const name = document.getElementById('nf-name').value.trim();
-  if (!name) { showToast('⚠️ Βάλε όνομα!'); return; }
+  if (!name) { showToast(t('toast_name_required')); return; }
   const newFood = {
     id: 'cf_' + Date.now(),
     name,
@@ -5034,7 +5034,7 @@ function saveNewFood() {
   saveState();
   closeModal();
   renderFoods();
-  showToast('✅ Τρόφιμο αποθηκεύτηκε');
+  showToast(t('toast_food_saved'));
 }
 
 // ── DAY BUILDER ──

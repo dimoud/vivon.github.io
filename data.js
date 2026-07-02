@@ -279,7 +279,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 2 },   { foodId: "c6", qty: 40 }
     ],
     instructions: "1. Στράγγισε και ξέπλυνε τα ρεβύθια (κονσέρβα) ή χρησιμοποίησε βρασμένα.\n2. Κόψε πιπεριά, ντοματίνια και αγγούρι σε κομμάτια.\n3. Σε μπολ ανακάτεψε όλα τα λαχανικά με τα ρεβύθια.\n4. Πρόσθεσε ελαιόλαδο, χυμό λεμονιού, κύμινο, αλατοπίπερο.\n5. Φτιάξε σος μουστάρδας: 1 κγ μουστάρδα + χυμός λεμονιού — ανακάτεψε καλά.",
-    serving: "Σέρβιρε σε βαθύ πιάτο με μια φέτα ψωμί ολικής δίπλα. Βάλε τη σος μουστάρδας χωριστά ή ρίξε από πάνω."
+    instructionsI18n: { el: "1. Στράγγισε και ξέπλυνε τα ρεβύθια (κονσέρβα) ή χρησιμοποίησε βρασμένα.\n2. Κόψε πιπεριά, ντοματίνια και αγγούρι σε κομμάτια.\n3. Σε μπολ ανακάτεψε όλα τα λαχανικά με τα ρεβύθια.\n4. Πρόσθεσε ελαιόλαδο, χυμό λεμονιού, κύμινο, αλατοπίπερο.\n5. Φτιάξε σος μουστάρδας: 1 κγ μουστάρδα + χυμός λεμονιού — ανακάτεψε καλά.", en: "1. Drain and rinse the chickpeas (canned) or use cooked ones.\n2. Cut the pepper, cherry tomatoes and cucumber into pieces.\n3. In a bowl, mix all the vegetables with the chickpeas.\n4. Add olive oil, lemon juice, cumin, salt and pepper.\n5. Make a mustard dressing: 1 tsp mustard + lemon juice — mix well.", es: "1. Escurre y enjuaga los garbanzos (de lata) o usa cocidos.\n2. Corta el pimiento, los tomatitos y el pepino en trozos.\n3. En un bol, mezcla todas las verduras con los garbanzos.\n4. Añade aceite de oliva, zumo de limón, comino, sal y pimienta.\n5. Haz un aliño de mostaza: 1 cdta de mostaza + zumo de limón — mezcla bien.", fr: "1. Égoutte et rince les pois chiches (en boîte) ou utilise des pois chiches cuits.\n2. Coupe le poivron, les tomates cerises et le concombre en morceaux.\n3. Dans un bol, mélange tous les légumes avec les pois chiches.\n4. Ajoute de l'huile d'olive, du jus de citron, du cumin, du sel et du poivre.\n5. Prépare une sauce moutarde : 1 c.à.c. de moutarde + jus de citron — mélange bien." },
+    serving: "Σέρβιρε σε βαθύ πιάτο με μια φέτα ψωμί ολικής δίπλα. Βάλε τη σος μουστάρδας χωριστά ή ρίξε από πάνω.",
+    servingI18n: { el: "Σέρβιρε σε βαθύ πιάτο με μια φέτα ψωμί ολικής δίπλα. Βάλε τη σος μουστάρδας χωριστά ή ρίξε από πάνω.", en: "Serve in a deep plate with a slice of wholemeal bread alongside. Add the mustard dressing separately or drizzle on top.", es: "Sirve en un plato hondo con una rebanada de pan integral al lado. Coloca el aliño de mostaza aparte o viértelo por encima.", fr: "Sers dans une assiette creuse avec une tranche de pain complet à côté. Mets la sauce moutarde à part ou verse-la par-dessus." }
   },
   {
     id: "r15", name: "Κοτόπουλο + Πατάτες Φούρνου", nameI18n: { el: "Κοτόπουλο + Πατάτες Φούρνου", en: "Chicken + Oven Potatoes", es: "Pollo + patatas al horno", fr: "Poulet + pommes de terre au four" }, meal: "lunch", emoji: "🥔",
@@ -289,7 +291,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 2 }
     ],
     instructions: "1. Προθέρμανε τον φούρνο στους 200°C.\n2. Κόψε τις πατάτες σε τέταρτα, βάλε σε ταψί με ελαιόλαδο, ρίγανη, αλάτι, πιπέρι και χυμό λεμονιού.\n3. Ψήσε για 40 λεπτά μέχρι να ροδίσουν.\n4. Παράλληλα ψήσε το κοτόπουλο στη σχάρα ή σε αντικολλητικό για 7-8 λεπτά ανά πλευρά.",
-    serving: "Σέρβιρε κοτόπουλο και πατάτες μαζί. Δίπλα βάλε σαλάτα με μαρούλι, ντοματίνια και ελαιόλαδο με λεμόνι."
+    instructionsI18n: { el: "1. Προθέρμανε τον φούρνο στους 200°C.\n2. Κόψε τις πατάτες σε τέταρτα, βάλε σε ταψί με ελαιόλαδο, ρίγανη, αλάτι, πιπέρι και χυμό λεμονιού.\n3. Ψήσε για 40 λεπτά μέχρι να ροδίσουν.\n4. Παράλληλα ψήσε το κοτόπουλο στη σχάρα ή σε αντικολλητικό για 7-8 λεπτά ανά πλευρά.", en: "1. Preheat the oven to 200°C.\n2. Cut the potatoes into quarters, place in a baking tray with olive oil, oregano, salt, pepper and lemon juice.\n3. Bake for 40 minutes until golden.\n4. Meanwhile, grill the chicken on a grill or non-stick pan for 7-8 minutes per side.", es: "1. Precalienta el horno a 200°C.\n2. Corta las patatas en cuartos, colócalas en una bandeja con aceite de oliva, orégano, sal, pimienta y zumo de limón.\n3. Hornea durante 40 minutos hasta que estén doradas.\n4. Mientras tanto, asa el pollo a la parrilla o en sartén antiadherente durante 7-8 minutos por lado.", fr: "1. Préchauffe le four à 200°C.\n2. Coupe les pommes de terre en quartiers, place-les dans un plat allant au four avec de l'huile d'olive, de l'origan, du sel, du poivre et du jus de citron.\n3. Fais cuire 40 minutes jusqu'à ce qu'elles soient dorées.\n4. Pendant ce temps, fais griller le poulet sur un gril ou une poêle antiadhésive 7-8 minutes de chaque côté." },
+    serving: "Σέρβιρε κοτόπουλο και πατάτες μαζί. Δίπλα βάλε σαλάτα με μαρούλι, ντοματίνια και ελαιόλαδο με λεμόνι.",
+    servingI18n: { el: "Σέρβιρε κοτόπουλο και πατάτες μαζί. Δίπλα βάλε σαλάτα με μαρούλι, ντοματίνια και ελαιόλαδο με λεμόνι.", en: "Serve the chicken and potatoes together. Alongside, add a salad of lettuce, cherry tomatoes with olive oil and lemon.", es: "Sirve el pollo y las patatas juntos. Al lado, coloca una ensalada de lechuga, tomatitos con aceite de oliva y limón.", fr: "Sers le poulet et les pommes de terre ensemble. À côté, ajoute une salade de laitue, tomates cerises avec de l'huile d'olive et du citron." }
   },
   {
     id: "r16", name: "Φακές + Λαχανικά", nameI18n: { el: "Φακές + Λαχανικά", en: "Lentils + Vegetables", es: "Lentejas + verduras", fr: "Lentilles + légumes" }, meal: "lunch", emoji: "🥗",
@@ -299,7 +303,9 @@ const RECIPES_DB = [
       { foodId: "c6", qty: 40 }
     ],
     instructions: "1. Χρησιμοποίησε έτοιμες βρασμένες φακές ή βράσε ξερές φακές για 20-25 λεπτά.\n2. Στράγγισε και άφησε να κρυώσουν λίγο.\n3. Κόψε καρότο σε ροδέλες ή τρίψε το, κόψε τα ντοματίνια στη μέση.\n4. Ανακάτεψε φακές + λαχανικά + ελαιόλαδο + χυμό λεμονιού + αλατοπίπερο.",
-    serving: "Σέρβιρε σε βαθύ πιάτο ή μπολ. Βάλε μια φέτα ψωμί ολικής δίπλα. Μπορείς να προσθέσεις λίγο ξύδι βαλσάμικο για επιπλέον γεύση."
+    instructionsI18n: { el: "1. Χρησιμοποίησε έτοιμες βρασμένες φακές ή βράσε ξερές φακές για 20-25 λεπτά.\n2. Στράγγισε και άφησε να κρυώσουν λίγο.\n3. Κόψε καρότο σε ροδέλες ή τρίψε το, κόψε τα ντοματίνια στη μέση.\n4. Ανακάτεψε φακές + λαχανικά + ελαιόλαδο + χυμό λεμονιού + αλατοπίπερο.", en: "1. Use ready cooked lentils or boil dry lentils for 20-25 minutes.\n2. Drain and allow to cool slightly.\n3. Cut the carrot into rounds or grate it, halve the cherry tomatoes.\n4. Mix lentils + vegetables + olive oil + lemon juice + salt and pepper.", es: "1. Usa lentejas cocidas listas o hierve lentejas secas durante 20-25 minutos.\n2. Escurre y deja enfriar un poco.\n3. Corta la zanahoria en rodajas o rállala, corta los tomatitos por la mitad.\n4. Mezcla lentejas + verduras + aceite de oliva + zumo de limón + sal y pimienta.", fr: "1. Utilise des lentilles cuites prêtes à l'emploi ou fais bouillir des lentilles sèches pendant 20-25 minutes.\n2. Égoutte et laisse refroidir un peu.\n3. Coupe la carotte en rondelles ou râpe-la, coupe les tomates cerises en deux.\n4. Mélange lentilles + légumes + huile d'olive + jus de citron + sel et poivre." },
+    serving: "Σέρβιρε σε βαθύ πιάτο ή μπολ. Βάλε μια φέτα ψωμί ολικής δίπλα. Μπορείς να προσθέσεις λίγο ξύδι βαλσάμικο για επιπλέον γεύση.",
+    servingI18n: { el: "Σέρβιρε σε βαθύ πιάτο ή μπολ. Βάλε μια φέτα ψωμί ολικής δίπλα. Μπορείς να προσθέσεις λίγο ξύδι βαλσάμικο για επιπλέον γεύση.", en: "Serve in a deep plate or bowl. Add a slice of wholemeal bread alongside. You can add a little balsamic vinegar for extra flavour.", es: "Sirve en un plato hondo o bol. Añade una rebanada de pan integral al lado. Puedes añadir un poco de vinagre balsámico para más sabor.", fr: "Sers dans une assiette creuse ou un bol. Ajoute une tranche de pain complet à côté. Tu peux ajouter un peu de vinaigre balsamique pour plus de saveur." }
   },
   {
     id: "r17", name: "Τόνος + Ρύζι & Σαλάτα", nameI18n: { el: "Τόνος + Ρύζι & Σαλάτα", en: "Tuna + Rice & Salad", es: "Atún + arroz y ensalada", fr: "Thon + riz et salade" }, meal: "lunch", emoji: "🐠",
@@ -309,7 +315,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 1.5 }
     ],
     instructions: "1. Βράσε το ρύζι σύμφωνα με τις οδηγίες.\n2. Στράγγισε τον τόνο καλά, πρόσθεσε χυμό λεμονιού και ρίγανη, ανακάτεψε.\n3. Κόψε το μαρούλι και τα ντοματίνια.",
-    serving: "Σέρβιρε το ρύζι σε πιάτο, από πάνω τον τόνο. Βάλε τη σαλάτα δίπλα με ελαιόλαδο και λεμόνι."
+    instructionsI18n: { el: "1. Βράσε το ρύζι σύμφωνα με τις οδηγίες.\n2. Στράγγισε τον τόνο καλά, πρόσθεσε χυμό λεμονιού και ρίγανη, ανακάτεψε.\n3. Κόψε το μαρούλι και τα ντοματίνια.", en: "1. Cook the rice according to the instructions.\n2. Drain the tuna well, add lemon juice and oregano, mix.\n3. Chop the lettuce and halve the cherry tomatoes.", es: "1. Cuece el arroz según las instrucciones.\n2. Escurre bien el atún, añade zumo de limón y orégano, mezcla.\n3. Corta la lechuga y los tomatitos por la mitad.", fr: "1. Cuis le riz selon les instructions.\n2. Égoutte bien le thon, ajoute du jus de citron et de l'origan, mélange.\n3. Coupe la laitue et coupe les tomates cerises en deux." },
+    serving: "Σέρβιρε το ρύζι σε πιάτο, από πάνω τον τόνο. Βάλε τη σαλάτα δίπλα με ελαιόλαδο και λεμόνι.",
+    servingI18n: { el: "Σέρβιρε το ρύζι σε πιάτο, από πάνω τον τόνο. Βάλε τη σαλάτα δίπλα με ελαιόλαδο και λεμόνι.", en: "Serve the rice on a plate, top with the tuna. Add the salad alongside with olive oil and lemon.", es: "Sirve el arroz en un plato, coloca el atún encima. Añade la ensalada al lado con aceite de oliva y limón.", fr: "Sers le riz dans une assiette, dispose le thon par-dessus. Ajoute la salade à côté avec de l'huile d'olive et du citron." }
   },
   {
     id: "r18", name: "Κοτόσουπα με Ρύζι", nameI18n: { el: "Κοτόσουπα με Ρύζι", en: "Chicken Soup with Rice", es: "Sopa de pollo con arroz", fr: "Soupe de poulet au riz" }, meal: "lunch", emoji: "🍲",
@@ -318,7 +326,9 @@ const RECIPES_DB = [
       { foodId: "v5", qty: 60 },  { foodId: "v6", qty: 60 }
     ],
     instructions: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει), καρότο και κολοκυθάκι.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.",
-    serving: "Σέρβιρε ζεστό σε βαθύ πιάτο. Στύψε χυμό λεμονιού από πάνω. Ιδανικό για κρύες μέρες ή μετά από άσκηση."
+    instructionsI18n: { el: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει), καρότο και κολοκυθάκι.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.", en: "1. Place the chicken whole or in pieces in a pot with water (to cover), carrot and courgette.\n2. Boil over medium heat for 40-45 minutes.\n3. Remove the chicken, cut into pieces and return to the pot.\n4. Add the rice and boil for another 15 minutes.\n5. Season with salt and pepper.", es: "1. Coloca el pollo entero o en trozos en una olla con agua (que lo cubra), zanahoria y calabacín.\n2. Hierve a fuego medio durante 40-45 minutos.\n3. Saca el pollo, córtalo en trozos y devuélvelo a la olla.\n4. Añade el arroz y hierve durante 15 minutos más.\n5. Sazona con sal y pimienta.", fr: "1. Place le poulet entier ou en morceaux dans une casserole avec de l'eau (pour couvrir), la carotte et la courgette.\n2. Fais bouillir à feu moyen pendant 40-45 minutes.\n3. Retire le poulet, coupe-le en morceaux et remets-le dans la casserole.\n4. Ajoute le riz et fais bouillir encore 15 minutes.\n5. Assaisonne avec du sel et du poivre." },
+    serving: "Σέρβιρε ζεστό σε βαθύ πιάτο. Στύψε χυμό λεμονιού από πάνω. Ιδανικό για κρύες μέρες ή μετά από άσκηση.",
+    servingI18n: { el: "Σέρβιρε ζεστό σε βαθύ πιάτο. Στύψε χυμό λεμονιού από πάνω. Ιδανικό για κρύες μέρες ή μετά από άσκηση.", en: "Serve hot in a deep plate. Squeeze lemon juice on top. Ideal for cold days or after exercise.", es: "Sirve caliente en un plato hondo. Exprime zumo de limón por encima. Ideal para días fríos o después del ejercicio.", fr: "Sers chaud dans une assiette creuse. Presse du jus de citron par-dessus. Idéal pour les jours froids ou après l'exercice." }
   },
   // ─── ΒΡΑΔΙΝΑ ───
   {
@@ -329,7 +339,9 @@ const RECIPES_DB = [
       { foodId: "v3", qty: 80 },  { foodId: "l1", qty: 1 }
     ],
     instructions: "1. Κόψε τα ντοματίνια στη μέση και το αγγούρι σε φέτες ή κύβους.\n2. Βάλε το γιαούρτι σε μπολ.\n3. Σπάσε τα παξιμάδια σε κομμάτια και βάλε από πάνω.\n4. Πρόσθεσε τα λαχανικά και τις ελιές.",
-    serving: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ, γρήγορο και χορταστικό βραδινό."
+    instructionsI18n: { el: "1. Κόψε τα ντοματίνια στη μέση και το αγγούρι σε φέτες ή κύβους.\n2. Βάλε το γιαούρτι σε μπολ.\n3. Σπάσε τα παξιμάδια σε κομμάτια και βάλε από πάνω.\n4. Πρόσθεσε τα λαχανικά και τις ελιές.", en: "1. Halve the cherry tomatoes and slice or cube the cucumber.\n2. Place the yogurt in a bowl.\n3. Break the rusks into pieces and place on top.\n4. Add the vegetables and olives.", es: "1. Corta los tomatitos por la mitad y el pepino en rodajas o cubos.\n2. Coloca el yogur en un bol.\n3. Rompe las galletas en trozos y colócalos encima.\n4. Añade las verduras y las aceitunas.", fr: "1. Coupe les tomates cerises en deux et le concombre en tranches ou en cubes.\n2. Place le yaourt dans un bol.\n3. Casse les biscottes en morceaux et dispose par-dessus.\n4. Ajoute les légumes et les olives." },
+    serving: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ, γρήγορο και χορταστικό βραδινό.",
+    servingI18n: { el: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ, γρήγορο και χορταστικό βραδινό.", en: "Drizzle olive oil and sprinkle with oregano. Light, quick and filling dinner.", es: "Chorrea aceite de oliva y espolvorea con orégano. Cena ligera, rápida y saciante.", fr: "Arrose d'huile d'olive et saupoudre d'origan. Dîner léger, rapide et rassasiant." }
   },
   {
     id: "r21", name: "Ομελέτα Πιπεριάς", nameI18n: { el: "Ομελέτα Πιπεριάς", en: "Bell Pepper Omelette", es: "Tortilla de pimiento", fr: "Omelette au poivron" }, meal: "dinner", emoji: "🍳",
@@ -338,7 +350,9 @@ const RECIPES_DB = [
       { foodId: "v2", qty: 80 },  { foodId: "c6", qty: 40 }
     ],
     instructions: "1. Χτύπησε τα 3 αυγά με αλατοπίπερο και ρίγανη.\n2. Ψιλοκόψε την κόκκινη πιπεριά, κόψε τα ντοματίνια στη μέση.\n3. Ζέστανε αντικολλητικό τηγάνι σε μέτρια φωτιά — χωρίς λάδι.\n4. Σοτάρισε την πιπεριά για 2 λεπτά.\n5. Ρίξε τα αυγά, σκέπασε με καπάκι και ψήσε για 3-4 λεπτά.",
-    serving: "Βγάλε σε πιάτο, βάλε τα ντοματίνια δίπλα και σέρβιρε με μια φέτα ψωμί ολικής."
+    instructionsI18n: { el: "1. Χτύπησε τα 3 αυγά με αλατοπίπερο και ρίγανη.\n2. Ψιλοκόψε την κόκκινη πιπεριά, κόψε τα ντοματίνια στη μέση.\n3. Ζέστανε αντικολλητικό τηγάνι σε μέτρια φωτιά — χωρίς λάδι.\n4. Σοτάρισε την πιπεριά για 2 λεπτά.\n5. Ρίξε τα αυγά, σκέπασε με καπάκι και ψήσε για 3-4 λεπτά.", en: "1. Beat 3 eggs with salt, pepper and oregano.\n2. Finely chop the red pepper, halve the cherry tomatoes.\n3. Heat a non-stick pan over medium heat — without oil.\n4. Sauté the pepper for 2 minutes.\n5. Pour in the eggs, cover with a lid and cook for 3-4 minutes.", es: "1. Bate 3 huevos con sal, pimienta y orégano.\n2. Pica finamente el pimiento rojo, corta los tomatitos por la mitad.\n3. Calienta una sartén antiadherente a fuego medio — sin aceite.\n4. Saltea el pimiento durante 2 minutos.\n5. Vierte los huevos, tapa con una tapa y cocina durante 3-4 minutos.", fr: "1. Bats 3 œufs avec du sel, du poivre et de l'origan.\n2. Hache finement le poivron rouge, coupe les tomates cerises en deux.\n3. Chauffe une poêle antiadhésive à feu moyen — sans huile.\n4. Fais revenir le poivron 2 minutes.\n5. Verse les œufs, couvre avec un couvercle et fais cuire 3-4 minutes." },
+    serving: "Βγάλε σε πιάτο, βάλε τα ντοματίνια δίπλα και σέρβιρε με μια φέτα ψωμί ολικής.",
+    servingI18n: { el: "Βγάλε σε πιάτο, βάλε τα ντοματίνια δίπλα και σέρβιρε με μια φέτα ψωμί ολικής.", en: "Transfer to a plate, add the cherry tomatoes alongside and serve with a slice of wholemeal bread.", es: "Pasa a un plato, coloca los tomatitos al lado y sirve con una rebanada de pan integral.", fr: "Transfère dans une assiette, ajoute les tomates cerises à côté et sers avec une tranche de pain complet." }
   },
   {
     id: "r22", name: "Τονοσαλάτα", nameI18n: { el: "Τονοσαλάτα", en: "Tuna Salad", es: "Ensalada de atún", fr: "Salade de thon" }, meal: "dinner", emoji: "🥗",
@@ -348,7 +362,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 2 }
     ],
     instructions: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Κόψε μαρούλι σε λωρίδες, ντοματίνια στη μέση, αγγούρι σε φέτες.\n3. Ανακάτεψε όλα σε μπολ.",
-    serving: "Πρόσθεσε ελαιόλαδο, χυμό λεμονιού και αλατοπίπερο. Σέρβιρε αμέσως — απλό και πολύ θρεπτικό βραδινό."
+    instructionsI18n: { el: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Κόψε μαρούλι σε λωρίδες, ντοματίνια στη μέση, αγγούρι σε φέτες.\n3. Ανακάτεψε όλα σε μπολ.", en: "1. Drain the tuna well from the packaging.\n2. Shred the lettuce, halve the cherry tomatoes, slice the cucumber.\n3. Mix everything in a bowl.", es: "1. Escurre bien el atún del envase.\n2. Corta la lechuga en tiras, los tomatitos por la mitad, el pepino en rodajas.\n3. Mezcla todo en un bol.", fr: "1. Égoutte bien le thon de son emballage.\n2. Coupe la laitue en lanières, les tomates cerises en deux, le concombre en tranches.\n3. Mélange tout dans un bol." },
+    serving: "Πρόσθεσε ελαιόλαδο, χυμό λεμονιού και αλατοπίπερο. Σέρβιρε αμέσως — απλό και πολύ θρεπτικό βραδινό.",
+    servingI18n: { el: "Πρόσθεσε ελαιόλαδο, χυμό λεμονιού και αλατοπίπερο. Σέρβιρε αμέσως — απλό και πολύ θρεπτικό βραδινό.", en: "Add olive oil, lemon juice and salt and pepper. Serve immediately — simple and very nutritious dinner.", es: "Añade aceite de oliva, zumo de limón y sal y pimienta. Sirve inmediatamente — cena sencilla y muy nutritiva.", fr: "Ajoute de l'huile d'olive, du jus de citron, du sel et du poivre. Sers immédiatement — dîner simple et très nutritif." }
   },
   {
     id: "r23", name: "Σαλάτα Κοτόπουλο", nameI18n: { el: "Σαλάτα Κοτόπουλο", en: "Chicken Salad", es: "Ensalada de pollo", fr: "Salade de poulet" }, meal: "dinner", emoji: "🥙",
@@ -358,7 +374,9 @@ const RECIPES_DB = [
       { foodId: "d1", qty: 80 },  { foodId: "o5", qty: 10 }
     ],
     instructions: "1. Ψήσε το κοτόπουλο σε σχάρα ή τηγάνι, αλατοπίπερο. Άφησε να κρυώσει λίγο και κόψε σε λωρίδες.\n2. Φτιάξε τη σος: ανακάτεψε γιαούρτι, μουστάρδα, χυμό λεμονιού και ρίγανη μέχρι να γίνει ομοιόμορφη.\n3. Κόψε μαρούλι, τρίψε καρότο, κόψε ντοματίνια.",
-    serving: "Στρώσε τη σαλάτα σε πιάτο, βάλε το κοτόπουλο από πάνω και ρίξε τη σος. Ιδανικό ελαφρύ βραδινό."
+    instructionsI18n: { el: "1. Ψήσε το κοτόπουλο σε σχάρα ή τηγάνι, αλατοπίπερο. Άφησε να κρυώσει λίγο και κόψε σε λωρίδες.\n2. Φτιάξε τη σος: ανακάτεψε γιαούρτι, μουστάρδα, χυμό λεμονιού και ρίγανη μέχρι να γίνει ομοιόμορφη.\n3. Κόψε μαρούλι, τρίψε καρότο, κόψε ντοματίνια.", en: "1. Grill the chicken on a grill or pan, season with salt and pepper. Allow to cool slightly and slice into strips.\n2. Make the dressing: mix yogurt, mustard, lemon juice and oregano until smooth.\n3. Shred the lettuce, grate the carrot, halve the cherry tomatoes.", es: "1. Asa el pollo en una parrilla o sartén con sal y pimienta. Deja enfriar un poco y córtalo en tiras.\n2. Haz el aliño: mezcla yogur, mostaza, zumo de limón y orégano hasta que quede homogéneo.\n3. Corta la lechuga, ralla la zanahoria, corta los tomatitos por la mitad.", fr: "1. Fais griller le poulet sur un gril ou une poêle avec sel et poivre. Laisse refroidir un peu et coupe en lanières.\n2. Prépare la sauce : mélange le yaourt, la moutarde, le jus de citron et l'origan jusqu'à obtenir une texture homogène.\n3. Coupe la laitue, râpe la carotte, coupe les tomates cerises en deux." },
+    serving: "Στρώσε τη σαλάτα σε πιάτο, βάλε το κοτόπουλο από πάνω και ρίξε τη σος. Ιδανικό ελαφρύ βραδινό.",
+    servingI18n: { el: "Στρώσε τη σαλάτα σε πιάτο, βάλε το κοτόπουλο από πάνω και ρίξε τη σος. Ιδανικό ελαφρύ βραδινό.", en: "Layer the salad on a plate, top with the chicken and drizzle the dressing over. Perfect light dinner.", es: "Extiende la ensalada en un plato, coloca el pollo encima y vierte el aliño. Cena ligera perfecta.", fr: "Dispose la salade dans une assiette, place le poulet par-dessus et verse la sauce. Dîner léger idéal." }
   },
   {
     id: "r24", name: "Αυγά Βραστά + Σαλάτα", nameI18n: { el: "Αυγά Βραστά + Σαλάτα", en: "Boiled Eggs + Salad", es: "Huevos cocidos + ensalada", fr: "Œufs durs + salade" }, meal: "dinner", emoji: "🥚",
@@ -368,7 +386,9 @@ const RECIPES_DB = [
       { foodId: "l5", qty: 5 },   { foodId: "l1", qty: 1.5 }
     ],
     instructions: "1. Βράσε 3 αυγά: σε κρύο νερό, μέτρησε 8 λεπτά από τη στιγμή που βράσει το νερό για σφιχτά.\n2. Κρύωσε σε κρύο νερό, ξεφλούδισε και κόψε στη μέση.\n3. Κόψε μαρούλι, ντοματίνια και αγγούρι.",
-    serving: "Στρώσε τη σαλάτα, βάλε τα αυγά και τις ελιές. Ρίξε ελαιόλαδο και βαλσάμικο. Απλό, γρήγορο και πλούσιο σε πρωτεΐνη."
+    instructionsI18n: { el: "1. Βράσε 3 αυγά: σε κρύο νερό, μέτρησε 8 λεπτά από τη στιγμή που βράσει το νερό για σφιχτά.\n2. Κρύωσε σε κρύο νερό, ξεφλούδισε και κόψε στη μέση.\n3. Κόψε μαρούλι, ντοματίνια και αγγούρι.", en: "1. Boil 3 eggs: in cold water, count 8 minutes from when the water starts boiling for hard-boiled.\n2. Cool in cold water, peel and halve.\n3. Chop the lettuce, cherry tomatoes and cucumber.", es: "1. Hierve 3 huevos: en agua fría, cuenta 8 minutos desde que el agua hierve para huevos duros.\n2. Enfría en agua fría, pela y córtalos por la mitad.\n3. Corta la lechuga, los tomatitos y el pepino.", fr: "1. Fais bouillir 3 œufs : dans de l'eau froide, compte 8 minutes à partir du moment où l'eau bout pour des œufs durs.\n2. Refroidis dans de l'eau froide, écale et coupe en deux.\n3. Coupe la laitue, les tomates cerises et le concombre." },
+    serving: "Στρώσε τη σαλάτα, βάλε τα αυγά και τις ελιές. Ρίξε ελαιόλαδο και βαλσάμικο. Απλό, γρήγορο και πλούσιο σε πρωτεΐνη.",
+    servingI18n: { el: "Στρώσε τη σαλάτα, βάλε τα αυγά και τις ελιές. Ρίξε ελαιόλαδο και βαλσάμικο. Απλό, γρήγορο και πλούσιο σε πρωτεΐνη.", en: "Layer the salad, add the eggs and olives. Drizzle with olive oil and balsamic. Simple, quick and protein-rich.", es: "Extiende la ensalada, coloca los huevos y las aceitunas. Chorrea aceite de oliva y balsámico. Sencillo, rápido y rico en proteínas.", fr: "Dispose la salade, ajoute les œufs et les olives. Arrose d'huile d'olive et de balsamique. Simple, rapide et riche en protéines." }
   },
   {
     id: "r25", name: "Cottage Μπολ Βραδινό", nameI18n: { el: "Cottage Μπολ Βραδινό", en: "Evening Cottage Bowl", es: "Bowl nocturno de cottage", fr: "Bowl cottage du soir" }, meal: "dinner", emoji: "🧀",
@@ -377,7 +397,9 @@ const RECIPES_DB = [
       { foodId: "v2", qty: 100 }, { foodId: "l1", qty: 2 }
     ],
     instructions: "1. Βάλε το cottage cheese σε μπολ.\n2. Κόψε τα ντοματίνια στη μέση.\n3. Σπάσε τα παξιμάδια δίπλα ή από πάνω.",
-    serving: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ βραδινό, πλούσιο σε πρωτεΐνη — ιδανικό πριν τον ύπνο."
+    instructionsI18n: { el: "1. Βάλε το cottage cheese σε μπολ.\n2. Κόψε τα ντοματίνια στη μέση.\n3. Σπάσε τα παξιμάδια δίπλα ή από πάνω.", en: "1. Place the cottage cheese in a bowl.\n2. Halve the cherry tomatoes.\n3. Break the rusks alongside or on top.", es: "1. Coloca el requesón en un bol.\n2. Corta los tomatitos por la mitad.\n3. Rompe las galletas al lado o por encima.", fr: "1. Place le cottage cheese dans un bol.\n2. Coupe les tomates cerises en deux.\n3. Casse les biscottes à côté ou par-dessus." },
+    serving: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ βραδινό, πλούσιο σε πρωτεΐνη — ιδανικό πριν τον ύπνο.",
+    servingI18n: { el: "Στάξε ελαιόλαδο, πασπάλισε με ρίγανη. Ελαφρύ βραδινό, πλούσιο σε πρωτεΐνη — ιδανικό πριν τον ύπνο.", en: "Drizzle olive oil and sprinkle with oregano. Light dinner, rich in protein — ideal before sleep.", es: "Chorrea aceite de oliva y espolvorea con orégano. Cena ligera, rica en proteínas — ideal antes de dormir.", fr: "Arrose d'huile d'olive et saupoudre d'origan. Dîner léger, riche en protéines — idéal avant de dormir." }
   },
   // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΜΕΣΗΜΕΡΙΑΝΩΝ ───
   {
@@ -392,7 +414,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 4 }     // 4 κ.γ. = 20ml
     ],
     instructions: "1. Κόψε τα καπάκια από πιπεριές και ντομάτες, άδειασε τη μέσα χωρίς να σπάσεις τα τοιχώματα.\n2. Σοτάρισε τον κιμά σε τηγάνι χωρίς λάδι, πρόσθεσε ρύζι (ωμό), αλάτι, πιπέρι, ρίγανη και λίγη τριμμένη ντομάτα.\n3. Γέμισε τα λαχανικά με τη γέμιση μέχρι τα ¾ — το ρύζι φουσκώνει κατά το ψήσιμο.\n4. Βάλε σε ταψί με λίγο νερό στον πάτο, ρίξε 2 κ.σ. ελαιόλαδο πάνω.\n5. Φούρνος 180°C για 50 λεπτά — τα πρώτα 30 με αλουμινόχαρτο, μετά χωρίς για να ροδίσουν.",
-    serving: "Σέρβιρε 1 γεμιστό (~250g) ανά μερίδα. Κλασική ελληνική συνταγή — ακόμα καλύτερη την επόμενη μέρα."
+    instructionsI18n: { el: "1. Κόψε τα καπάκια από πιπεριές και ντομάτες, άδειασε τη μέσα χωρίς να σπάσεις τα τοιχώματα.\n2. Σοτάρισε τον κιμά σε τηγάνι χωρίς λάδι, πρόσθεσε ρύζι (ωμό), αλάτι, πιπέρι, ρίγανη και λίγη τριμμένη ντομάτα.\n3. Γέμισε τα λαχανικά με τη γέμιση μέχρι τα ¾ — το ρύζι φουσκώνει κατά το ψήσιμο.\n4. Βάλε σε ταψί με λίγο νερό στον πάτο, ρίξε 2 κ.σ. ελαιόλαδο πάνω.\n5. Φούρνος 180°C για 50 λεπτά — τα πρώτα 30 με αλουμινόχαρτο, μετά χωρίς για να ροδίσουν.", en: "1. Cut the tops off the peppers and tomatoes, hollow out the insides without breaking the walls.\n2. Sauté the mince in a pan without oil, add raw rice, salt, pepper, oregano and a little grated tomato.\n3. Fill the vegetables with the stuffing up to ¾ — the rice expands while baking.\n4. Place in a baking dish with a little water at the bottom, drizzle 2 tbsp olive oil on top.\n5. Oven at 180°C for 50 minutes — first 30 with foil, then without to brown.", es: "1. Corta las tapas de los pimientos y los tomates, vacía el interior sin romper las paredes.\n2. Saltea la carne picada en una sartén sin aceite, añade arroz crudo, sal, pimienta, orégano y un poco de tomate rallado.\n3. Rellena las verduras con el relleno hasta ¾ — el arroz se expande durante el horneado.\n4. Coloca en una bandeja con un poco de agua en el fondo, vierte 2 cdas de aceite de oliva encima.\n5. Horno a 180°C durante 50 minutos — los primeros 30 con papel de aluminio, luego sin él para dorar.", fr: "1. Coupe les chapeaux des poivrons et des tomates, vide l'intérieur sans casser les parois.\n2. Fais revenir la viande hachée dans une poêle sans huile, ajoute le riz cru, du sel, du poivre, de l'origan et un peu de tomate râpée.\n3. Remplis les légumes avec la farce jusqu'aux ¾ — le riz gonfle pendant la cuisson.\n4. Place dans un plat allant au four avec un peu d'eau au fond, arrose de 2 c.à.s. d'huile d'olive.\n5. Four à 180°C pendant 50 minutes — les 30 premières minutes avec du papier aluminium, puis sans pour dorer." },
+    serving: "Σέρβιρε 1 γεμιστό (~250g) ανά μερίδα. Κλασική ελληνική συνταγή — ακόμα καλύτερη την επόμενη μέρα.",
+    servingI18n: { el: "Σέρβιρε 1 γεμιστό (~250g) ανά μερίδα. Κλασική ελληνική συνταγή — ακόμα καλύτερη την επόμενη μέρα.", en: "Serve 1 stuffed vegetable (~250g) per portion. Classic Greek recipe — even better the next day.", es: "Sirve 1 verdura rellena (~250g) por ración. Receta griega clásica — incluso mejor al día siguiente.", fr: "Sers 1 légume farci (~250g) par portion. Recette grecque classique — encore meilleure le lendemain." }
   },
   {
     id: "r41", name: "Ρεβύθια Σούπα", nameI18n: { el: "Ρεβύθια Σούπα", en: "Chickpea Soup", es: "Sopa de garbanzos", fr: "Soupe de pois chiches" }, meal: "lunch", emoji: "🫘",
@@ -402,7 +426,9 @@ const RECIPES_DB = [
       { foodId: "c6", qty: 30 }
     ],
     instructions: "1. Χρησιμοποίησε έτοιμα ρεβύθια κονσέρβας ή μούλιαξε ξερά βράδυ και βράσε 1 ώρα.\n2. Σε κατσαρόλα, σοτάρισε καρότο σε κύβους με λίγο ελαιόλαδο για 3 λεπτά.\n3. Πρόσθεσε τα ρεβύθια, ντοματίνια, ζωμό ή νερό (να σκεπάζει).\n4. Βράσε για 20 λεπτά. Πρόσθεσε χυμό λεμονιού στο τέλος.",
-    serving: "Σέρβιρε ζεστό σε βαθύ πιάτο. Βάλε μια φέτα ψωμί ολικής δίπλα. Ρίξε λίγο επιπλέον ελαιόλαδο για γεύση."
+    instructionsI18n: { el: "1. Χρησιμοποίησε έτοιμα ρεβύθια κονσέρβας ή μούλιαξε ξερά βράδυ και βράσε 1 ώρα.\n2. Σε κατσαρόλα, σοτάρισε καρότο σε κύβους με λίγο ελαιόλαδο για 3 λεπτά.\n3. Πρόσθεσε τα ρεβύθια, ντοματίνια, ζωμό ή νερό (να σκεπάζει).\n4. Βράσε για 20 λεπτά. Πρόσθεσε χυμό λεμονιού στο τέλος.", en: "1. Use canned ready chickpeas or soak dry ones overnight and boil for 1 hour.\n2. In a pot, sauté cubed carrot in a little olive oil for 3 minutes.\n3. Add the chickpeas, cherry tomatoes, stock or water (to cover).\n4. Boil for 20 minutes. Add lemon juice at the end.", es: "1. Usa garbanzos de lata listos o remoja los secos la noche anterior y hierve durante 1 hora.\n2. En una olla, saltea la zanahoria en cubos con un poco de aceite de oliva durante 3 minutos.\n3. Añade los garbanzos, los tomatitos, caldo o agua (que cubra).\n4. Hierve durante 20 minutos. Añade zumo de limón al final.", fr: "1. Utilise des pois chiches en boîte prêts à l'emploi ou fais tremper des pois chiches secs la nuit et fais-les bouillir 1 heure.\n2. Dans une casserole, fais revenir la carotte en cubes avec un peu d'huile d'olive pendant 3 minutes.\n3. Ajoute les pois chiches, les tomates cerises, du bouillon ou de l'eau (pour couvrir).\n4. Fais bouillir 20 minutes. Ajoute le jus de citron à la fin." },
+    serving: "Σέρβιρε ζεστό σε βαθύ πιάτο. Βάλε μια φέτα ψωμί ολικής δίπλα. Ρίξε λίγο επιπλέον ελαιόλαδο για γεύση.",
+    servingI18n: { el: "Σέρβιρε ζεστό σε βαθύ πιάτο. Βάλε μια φέτα ψωμί ολικής δίπλα. Ρίξε λίγο επιπλέον ελαιόλαδο για γεύση.", en: "Serve hot in a deep plate. Add a slice of wholemeal bread alongside. Drizzle a little extra olive oil for flavour.", es: "Sirve caliente en un plato hondo. Añade una rebanada de pan integral al lado. Vierte un poco más de aceite de oliva para más sabor.", fr: "Sers chaud dans une assiette creuse. Ajoute une tranche de pain complet à côté. Verse un peu d'huile d'olive supplémentaire pour la saveur." }
   },
   {
     id: "r44", name: "Ψάρι Πλακί (Μπακαλίαρος)", nameI18n: { el: "Ψάρι Πλακί (Μπακαλίαρος)", en: "Baked Fish (Cod)", es: "Pescado al horno (bacalao)", fr: "Poisson au four (cabillaud)" }, meal: "lunch", emoji: "🐟",
@@ -412,7 +438,9 @@ const RECIPES_DB = [
       { foodId: "c6", qty: 30 }
     ],
     instructions: "1. Προθέρμανε τον φούρνο στους 180°C.\n2. Σε ταψάκι στρώσε τομάτες κομμένες, πιπεριά, σκόρδο φέτες και ελαιόλαδο.\n3. Τοποθέτησε τον μπακαλίαρο από πάνω, αλατοπίπερο, ρίγανη.\n4. Ψήσε για 28-30 λεπτά μέχρι το ψάρι να ξεκολλά εύκολα.",
-    serving: "Σέρβιρε το ψάρι με τη σάλτσα λαχανικών από κάτω. Βάλε μια φέτα ψωμί δίπλα για να πιάνεις τη σάλτσα."
+    instructionsI18n: { el: "1. Προθέρμανε τον φούρνο στους 180°C.\n2. Σε ταψάκι στρώσε τομάτες κομμένες, πιπεριά, σκόρδο φέτες και ελαιόλαδο.\n3. Τοποθέτησε τον μπακαλίαρο από πάνω, αλατοπίπερο, ρίγανη.\n4. Ψήσε για 28-30 λεπτά μέχρι το ψάρι να ξεκολλά εύκολα.", en: "1. Preheat the oven to 180°C.\n2. In a small baking dish, layer sliced tomatoes, pepper, garlic slices and olive oil.\n3. Place the cod on top, season with salt, pepper and oregano.\n4. Bake for 28-30 minutes until the fish flakes easily.", es: "1. Precalienta el horno a 180°C.\n2. En una bandeja pequeña, coloca tomates cortados, pimiento, rodajas de ajo y aceite de oliva.\n3. Coloca el bacalao encima, sal, pimienta, orégano.\n4. Hornea durante 28-30 minutos hasta que el pescado se deshaga fácilmente.", fr: "1. Préchauffe le four à 180°C.\n2. Dans un petit plat allant au four, dispose des tomates coupées, du poivron, des tranches d'ail et de l'huile d'olive.\n3. Place le cabillaud par-dessus, assaisonne avec du sel, du poivre et de l'origan.\n4. Fais cuire 28-30 minutes jusqu'à ce que le poisson s'effeuillete facilement." },
+    serving: "Σέρβιρε το ψάρι με τη σάλτσα λαχανικών από κάτω. Βάλε μια φέτα ψωμί δίπλα για να πιάνεις τη σάλτσα.",
+    servingI18n: { el: "Σέρβιρε το ψάρι με τη σάλτσα λαχανικών από κάτω. Βάλε μια φέτα ψωμί δίπλα για να πιάνεις τη σάλτσα.", en: "Serve the fish with the vegetable sauce underneath. Add a slice of bread alongside to mop up the sauce.", es: "Sirve el pescado con la salsa de verduras por debajo. Añade una rebanada de pan al lado para absorber la salsa.", fr: "Sers le poisson avec la sauce aux légumes en dessous. Ajoute une tranche de pain à côté pour saucer." }
   },
   {
     id: "r45", name: "Κινόα Bowl Κοτόπουλο", nameI18n: { el: "Κινόα Bowl Κοτόπουλο", en: "Chicken Quinoa Bowl", es: "Bowl de quinoa y pollo", fr: "Bowl quinoa poulet" }, meal: "lunch", emoji: "🥣",
@@ -422,7 +450,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 1.5 }
     ],
     instructions: "1. Βράσε κινόα σε αναλογία 1:2 με νερό για 15 λεπτά — ανακάτεψε, σκέπασε και άφησε 5 λεπτά.\n2. Ψήσε το κοτόπουλο σε σχάρα με αλατοπίπερο, 7 λεπτά ανά πλευρά. Κόψε σε κομμάτια.\n3. Σοτάρισε σπανάκι με λίγο ελαιόλαδο για 1-2 λεπτά μέχρι να μαραθεί.",
-    serving: "Στρώσε κινόα σαν βάση στο μπολ. Πρόσθεσε σπανάκι, κοτόπουλο, ντοματίνια. Ρίξε ελαιόλαδο και χυμό λεμονιού."
+    instructionsI18n: { el: "1. Βράσε κινόα σε αναλογία 1:2 με νερό για 15 λεπτά — ανακάτεψε, σκέπασε και άφησε 5 λεπτά.\n2. Ψήσε το κοτόπουλο σε σχάρα με αλατοπίπερο, 7 λεπτά ανά πλευρά. Κόψε σε κομμάτια.\n3. Σοτάρισε σπανάκι με λίγο ελαιόλαδο για 1-2 λεπτά μέχρι να μαραθεί.", en: "1. Cook quinoa in a 1:2 ratio with water for 15 minutes — stir, cover and leave for 5 minutes.\n2. Grill the chicken with salt and pepper, 7 minutes per side. Cut into pieces.\n3. Sauté spinach with a little olive oil for 1-2 minutes until wilted.", es: "1. Cuece la quinoa en proporción 1:2 con agua durante 15 minutos — remueve, tapa y deja reposar 5 minutos.\n2. Asa el pollo con sal y pimienta, 7 minutos por lado. Córtalo en trozos.\n3. Saltea las espinacas con un poco de aceite de oliva durante 1-2 minutos hasta que se marchiten.", fr: "1. Cuis le quinoa dans un rapport 1:2 avec de l'eau pendant 15 minutes — remue, couvre et laisse reposer 5 minutes.\n2. Fais griller le poulet avec du sel et du poivre, 7 minutes de chaque côté. Coupe en morceaux.\n3. Fais revenir les épinards avec un peu d'huile d'olive pendant 1-2 minutes jusqu'à ce qu'ils soient flétris." },
+    serving: "Στρώσε κινόα σαν βάση στο μπολ. Πρόσθεσε σπανάκι, κοτόπουλο, ντοματίνια. Ρίξε ελαιόλαδο και χυμό λεμονιού.",
+    servingI18n: { el: "Στρώσε κινόα σαν βάση στο μπολ. Πρόσθεσε σπανάκι, κοτόπουλο, ντοματίνια. Ρίξε ελαιόλαδο και χυμό λεμονιού.", en: "Layer quinoa as the base in the bowl. Add spinach, chicken, cherry tomatoes. Drizzle with olive oil and lemon juice.", es: "Extiende la quinoa como base en el bol. Añade espinacas, pollo, tomatitos. Chorrea aceite de oliva y zumo de limón.", fr: "Dispose le quinoa comme base dans le bol. Ajoute les épinards, le poulet, les tomates cerises. Arrose d'huile d'olive et de jus de citron." }
   },
   {
     id: "r46", name: "Σπανακόρυζο", nameI18n: { el: "Σπανακόρυζο", en: "Spinach Rice", es: "Arroz con espinacas", fr: "Riz aux épinards" }, meal: "lunch", emoji: "🌿",
@@ -432,7 +462,9 @@ const RECIPES_DB = [
       { foodId: "v2", qty: 80 }
     ],
     instructions: "1. Σε κατσαρόλα ζέστανε ελαιόλαδο σε μέτρια φωτιά.\n2. Πρόσθεσε σπανάκι και ανακάτεψε μέχρι να μαραθεί (2-3 λεπτά).\n3. Πρόσθεσε ντομάτες κομμένες, ρύζι, άνηθο, αλατοπίπερο και νερό να σκεπάζει.\n4. Σιγόβρασε με καπάκι για 20 λεπτά μέχρι να μαλακώσει το ρύζι.",
-    serving: "Σέρβιρε ζεστό με φέτα τυρί τριμμένη από πάνω. Κλασικό ελληνικό πιάτο — νόστιμο και θρεπτικό."
+    instructionsI18n: { el: "1. Σε κατσαρόλα ζέστανε ελαιόλαδο σε μέτρια φωτιά.\n2. Πρόσθεσε σπανάκι και ανακάτεψε μέχρι να μαραθεί (2-3 λεπτά).\n3. Πρόσθεσε ντομάτες κομμένες, ρύζι, άνηθο, αλατοπίπερο και νερό να σκεπάζει.\n4. Σιγόβρασε με καπάκι για 20 λεπτά μέχρι να μαλακώσει το ρύζι.", en: "1. Heat olive oil in a pot over medium heat.\n2. Add spinach and stir until wilted (2-3 minutes).\n3. Add chopped tomatoes, rice, dill, salt and pepper and water to cover.\n4. Simmer covered for 20 minutes until the rice is soft.", es: "1. Calienta aceite de oliva en una olla a fuego medio.\n2. Añade las espinacas y remueve hasta que se marchiten (2-3 minutos).\n3. Añade tomates cortados, arroz, eneldo, sal y pimienta y agua hasta cubrir.\n4. Cocina a fuego lento tapado durante 20 minutos hasta que el arroz esté blando.", fr: "1. Chauffe de l'huile d'olive dans une casserole à feu moyen.\n2. Ajoute les épinards et remue jusqu'à ce qu'ils soient flétris (2-3 minutes).\n3. Ajoute les tomates coupées, le riz, l'aneth, du sel, du poivre et de l'eau pour couvrir.\n4. Laisse mijoter à couvert pendant 20 minutes jusqu'à ce que le riz soit tendre." },
+    serving: "Σέρβιρε ζεστό με φέτα τυρί τριμμένη από πάνω. Κλασικό ελληνικό πιάτο — νόστιμο και θρεπτικό.",
+    servingI18n: { el: "Σέρβιρε ζεστό με φέτα τυρί τριμμένη από πάνω. Κλασικό ελληνικό πιάτο — νόστιμο και θρεπτικό.", en: "Serve hot with crumbled feta cheese on top. Classic Greek dish — tasty and nutritious.", es: "Sirve caliente con queso feta desmenuzado por encima. Plato griego clásico — sabroso y nutritivo.", fr: "Sers chaud avec de la feta émiettée par-dessus. Plat grec classique — savoureux et nutritif." }
   },
   {
     id: "r48", name: "Κοτόπουλο Κάρυ + Ρύζι", nameI18n: { el: "Κοτόπουλο Κάρυ + Ρύζι", en: "Chicken Curry + Rice", es: "Pollo al curry + arroz", fr: "Poulet curry + riz" }, meal: "lunch", emoji: "🍛",
@@ -442,7 +474,9 @@ const RECIPES_DB = [
       { foodId: "l1", qty: 1 }
     ],
     instructions: "1. Κόψε κοτόπουλο και πιπεριά σε κομμάτια.\n2. Σοτάρισε σε ελαιόλαδο για 5 λεπτά.\n3. Πρόσθεσε κάρυ (1 κγ), κουρκουμά (½ κγ), αλατοπίπερο και ανακάτεψε.\n4. Ρίξε το γιαούρτι, χαμήλωσε τη φωτιά και σιγόβρασε για 8-10 λεπτά.\n5. Βράσε το ρύζι παράλληλα.",
-    serving: "Σέρβιρε το κάρυ πάνω στο ρύζι. Αρωματικό, εύκολο και νόστιμο — ιδανικό για να αλλάξεις ρουτίνα."
+    instructionsI18n: { el: "1. Κόψε κοτόπουλο και πιπεριά σε κομμάτια.\n2. Σοτάρισε σε ελαιόλαδο για 5 λεπτά.\n3. Πρόσθεσε κάρυ (1 κγ), κουρκουμά (½ κγ), αλατοπίπερο και ανακάτεψε.\n4. Ρίξε το γιαούρτι, χαμήλωσε τη φωτιά και σιγόβρασε για 8-10 λεπτά.\n5. Βράσε το ρύζι παράλληλα.", en: "1. Cut the chicken and pepper into pieces.\n2. Sauté in olive oil for 5 minutes.\n3. Add curry (1 tsp), turmeric (½ tsp), salt and pepper and stir.\n4. Pour in the yogurt, lower the heat and simmer for 8-10 minutes.\n5. Cook the rice in parallel.", es: "1. Corta el pollo y el pimiento en trozos.\n2. Saltea en aceite de oliva durante 5 minutos.\n3. Añade curry (1 cdta), cúrcuma (½ cdta), sal y pimienta y remueve.\n4. Vierte el yogur, baja el fuego y cocina a fuego lento durante 8-10 minutos.\n5. Cuece el arroz en paralelo.", fr: "1. Coupe le poulet et le poivron en morceaux.\n2. Fais revenir dans de l'huile d'olive pendant 5 minutes.\n3. Ajoute le curry (1 c.à.c.), le curcuma (½ c.à.c.), du sel et du poivre et mélange.\n4. Verse le yaourt, baisse le feu et laisse mijoter 8-10 minutes.\n5. Cuis le riz en parallèle." },
+    serving: "Σέρβιρε το κάρυ πάνω στο ρύζι. Αρωματικό, εύκολο και νόστιμο — ιδανικό για να αλλάξεις ρουτίνα.",
+    servingI18n: { el: "Σέρβιρε το κάρυ πάνω στο ρύζι. Αρωματικό, εύκολο και νόστιμο — ιδανικό για να αλλάξεις ρουτίνα.", en: "Serve the curry on top of the rice. Aromatic, easy and tasty — ideal to break the routine.", es: "Sirve el curry sobre el arroz. Aromático, fácil y sabroso — ideal para cambiar la rutina.", fr: "Sers le curry sur le riz. Aromatique, facile et savoureux — idéal pour changer la routine." }
   },
   // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΒΡΑΔΙΝΩΝ ───
   {
@@ -453,39 +487,51 @@ const RECIPES_DB = [
       { foodId: "d4", qty: 15 }
     ],
     instructions: "1. Σοτάρισε σπανάκι με λίγο ελαιόλαδο σε τηγάνι για 1-2 λεπτά μέχρι να μαραθεί. Βγάλε στο πλάι.\n2. Χτύπησε τα αυγά με αλατοπίπερο.\n3. Ρίξε στο ίδιο τηγάνι, ανακάτεψε αργά σε χαμηλή φωτιά.\n4. Λίγο πριν στεγνώσουν εντελώς, ρίξε το σπανάκι και τα ντοματίνια κομμένα.",
-    serving: "Βγάλε σε πιάτο και τρίψε λίγη φέτα από πάνω. Ελαφρύ, πρωτεϊνούχο βραδινό έτοιμο σε 10 λεπτά."
+    instructionsI18n: { el: "1. Σοτάρισε σπανάκι με λίγο ελαιόλαδο σε τηγάνι για 1-2 λεπτά μέχρι να μαραθεί. Βγάλε στο πλάι.\n2. Χτύπησε τα αυγά με αλατοπίπερο.\n3. Ρίξε στο ίδιο τηγάνι, ανακάτεψε αργά σε χαμηλή φωτιά.\n4. Λίγο πριν στεγνώσουν εντελώς, ρίξε το σπανάκι και τα ντοματίνια κομμένα.", en: "1. Sauté spinach with a little olive oil in a pan for 1-2 minutes until wilted. Set aside.\n2. Beat the eggs with salt and pepper.\n3. Pour into the same pan, stir slowly over low heat.\n4. Just before they set completely, add the spinach and halved cherry tomatoes.", es: "1. Saltea las espinacas con un poco de aceite de oliva en una sartén durante 1-2 minutos hasta que se marchiten. Reserva.\n2. Bate los huevos con sal y pimienta.\n3. Vierte en la misma sartén, remueve lentamente a fuego bajo.\n4. Justo antes de que cuajen del todo, añade las espinacas y los tomatitos cortados.", fr: "1. Fais revenir les épinards avec un peu d'huile d'olive dans une poêle pendant 1-2 minutes jusqu'à ce qu'ils soient flétris. Mets de côté.\n2. Bats les œufs avec du sel et du poivre.\n3. Verse dans la même poêle, remue lentement à feu doux.\n4. Juste avant qu'ils soient complètement pris, ajoute les épinards et les tomates cerises coupées." },
+    serving: "Βγάλε σε πιάτο και τρίψε λίγη φέτα από πάνω. Ελαφρύ, πρωτεϊνούχο βραδινό έτοιμο σε 10 λεπτά.",
+    servingI18n: { el: "Βγάλε σε πιάτο και τρίψε λίγη φέτα από πάνω. Ελαφρύ, πρωτεϊνούχο βραδινό έτοιμο σε 10 λεπτά.", en: "Transfer to a plate and crumble a little feta on top. Light, protein-rich dinner ready in 10 minutes.", es: "Pasa a un plato y desmenuza un poco de feta por encima. Cena ligera y proteica lista en 10 minutos.", fr: "Transfère dans une assiette et émiette un peu de feta par-dessus. Dîner léger et riche en protéines prêt en 10 minutes." }
   },
   // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΣΝΑΚ ───
   {
     id: "r50", name: "Cottage + Ριζογκοφρέτες", nameI18n: { el: "Cottage + Ριζογκοφρέτες", en: "Cottage + Rice Cakes", es: "Cottage + tortas de arroz", fr: "Cottage + galettes de riz" }, meal: "snack", emoji: "🧀",
     ingredients: [{ foodId: "c7", qty: 3 }, { foodId: "f8", qty: 100 }],
     instructions: "1. Βάλε το cottage cheese σε μικρό μπολ.\n2. Βάλε τις ριζογκοφρέτες δίπλα.",
-    serving: "Άπλωσε cottage στις ριζογκοφρέτες ή τρώγε χωριστά. Υψηλή πρωτεΐνη, χαμηλές θερμίδες — ιδανικό σνακ."
+    instructionsI18n: { el: "1. Βάλε το cottage cheese σε μικρό μπολ.\n2. Βάλε τις ριζογκοφρέτες δίπλα.", en: "1. Place the cottage cheese in a small bowl.\n2. Place the rice cakes alongside.", es: "1. Coloca el requesón en un bol pequeño.\n2. Coloca las tortas de arroz al lado.", fr: "1. Place le cottage cheese dans un petit bol.\n2. Dispose les galettes de riz à côté." },
+    serving: "Άπλωσε cottage στις ριζογκοφρέτες ή τρώγε χωριστά. Υψηλή πρωτεΐνη, χαμηλές θερμίδες — ιδανικό σνακ.",
+    servingI18n: { el: "Άπλωσε cottage στις ριζογκοφρέτες ή τρώγε χωριστά. Υψηλή πρωτεΐνη, χαμηλές θερμίδες — ιδανικό σνακ.", en: "Spread cottage cheese on the rice cakes or eat separately. High protein, low calories — ideal snack.", es: "Extiende el requesón sobre las tortas de arroz o come por separado. Alta proteína, pocas calorías — snack ideal.", fr: "Étale le cottage cheese sur les galettes de riz ou mange séparément. Riche en protéines, faible en calories — snack idéal." }
   },
   // ─── ΣΝΑΚ (original) ───
   {
     id: "r30", name: "Shaker Πρωτεΐνης + Φρούτο", nameI18n: { el: "Shaker Πρωτεΐνης + Φρούτο", en: "Protein Shaker + Fruit", es: "Batido de proteínas + fruta", fr: "Shaker protéiné + fruit" }, meal: "snack", emoji: "💪",
     ingredients: [{ foodId: "f9", qty: 30 }, { foodId: "fr2", qty: 150 }],
     instructions: "1. Ανακάτεψε 30g whey σε 250-300ml νερό ή γάλα με κουτάλι ή σέικερ.",
-    serving: "Πίνε αμέσως. Φάε το φρούτο δίπλα ή μέσα στο σέικ. Ιδανικό post-workout σνακ."
+    instructionsI18n: { el: "1. Ανακάτεψε 30g whey σε 250-300ml νερό ή γάλα με κουτάλι ή σέικερ.", en: "1. Mix 30g whey in 250-300ml water or milk with a spoon or shaker.", es: "1. Mezcla 30g de whey en 250-300ml de agua o leche con una cuchara o shaker.", fr: "1. Mélange 30g de whey dans 250-300ml d'eau ou de lait avec une cuillère ou un shaker." },
+    serving: "Πίνε αμέσως. Φάε το φρούτο δίπλα ή μέσα στο σέικ. Ιδανικό post-workout σνακ.",
+    servingI18n: { el: "Πίνε αμέσως. Φάε το φρούτο δίπλα ή μέσα στο σέικ. Ιδανικό post-workout σνακ.", en: "Drink immediately. Eat the fruit alongside or blend it into the shake. Ideal post-workout snack.", es: "Bebe inmediatamente. Come la fruta al lado o mézcla en el batido. Snack post-entrenamiento ideal.", fr: "Bois immédiatement. Mange le fruit à côté ou mélange-le dans le shake. Snack post-entraînement idéal." }
   },
   {
     id: "r31", name: "Μήλο + Αμύγδαλα", nameI18n: { el: "Μήλο + Αμύγδαλα", en: "Apple + Almonds", es: "Manzana + almendras", fr: "Pomme + amandes" }, meal: "snack", emoji: "🍎",
     ingredients: [{ foodId: "fr2", qty: 150 }, { foodId: "l2", qty: 20 }],
     instructions: "1. Κόψε το μήλο σε φέτες ή τρώγε ολόκληρο.",
-    serving: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, πρωτεΐνης και καλών λιπαρών. Γρήγορο και θρεπτικό."
+    instructionsI18n: { el: "1. Κόψε το μήλο σε φέτες ή τρώγε ολόκληρο.", en: "1. Slice the apple or eat it whole.", es: "1. Corta la manzana en rodajas o cómela entera.", fr: "1. Coupe la pomme en tranches ou mange-la entière." },
+    serving: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, πρωτεΐνης και καλών λιπαρών. Γρήγορο και θρεπτικό.",
+    servingI18n: { el: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, πρωτεΐνης και καλών λιπαρών. Γρήγορο και θρεπτικό.", en: "Eat the almonds together with the apple — a combination of fibre, protein and healthy fats. Quick and nutritious.", es: "Come las almendras junto con la manzana — combinación de fibra, proteínas y grasas saludables. Rápido y nutritivo.", fr: "Mange les amandes avec la pomme — une combinaison de fibres, de protéines et de bonnes graisses. Rapide et nutritif." }
   },
   {
     id: "r32", name: "Ριζογκοφρέτες + Πρωτεϊνούχο Σέικ", nameI18n: { el: "Ριζογκοφρέτες + Πρωτεϊνούχο Σέικ", en: "Rice Cakes + Protein Shake", es: "Tortas de arroz + batido proteico", fr: "Galettes de riz + shake protéiné" }, meal: "snack", emoji: "🌾",
     ingredients: [{ foodId: "c7", qty: 2 }, { foodId: "f9", qty: 30 }],
     instructions: "1. Ανακάτεψε 30g whey σε 250ml νερό με σέικερ ή κουτάλι.",
-    serving: "Πίνε το σέικ και φάε τις ριζογκοφρέτες δίπλα. Απλό και πρακτικό σνακ για κάθε ώρα."
+    instructionsI18n: { el: "1. Ανακάτεψε 30g whey σε 250ml νερό με σέικερ ή κουτάλι.", en: "1. Mix 30g whey in 250ml water with a shaker or spoon.", es: "1. Mezcla 30g de whey en 250ml de agua con un shaker o cuchara.", fr: "1. Mélange 30g de whey dans 250ml d'eau avec un shaker ou une cuillère." },
+    serving: "Πίνε το σέικ και φάε τις ριζογκοφρέτες δίπλα. Απλό και πρακτικό σνακ για κάθε ώρα.",
+    servingI18n: { el: "Πίνε το σέικ και φάε τις ριζογκοφρέτες δίπλα. Απλό και πρακτικό σνακ για κάθε ώρα.", en: "Drink the shake and eat the rice cakes alongside. Simple and practical snack for any time.", es: "Bebe el batido y come las tortas de arroz al lado. Snack sencillo y práctico para cualquier momento.", fr: "Bois le shake et mange les galettes de riz à côté. Snack simple et pratique à toute heure." }
   },
   {
     id: "r33", name: "Γιαούρτι + Καρύδια + Μέλι", nameI18n: { el: "Γιαούρτι + Καρύδια + Μέλι", en: "Yogurt + Walnuts + Honey", es: "Yogur + nueces + miel", fr: "Yaourt + noix + miel" }, meal: "snack", emoji: "🫙",
     ingredients: [{ foodId: "d1", qty: 200 }, { foodId: "l3", qty: 20 }, { foodId: "o1", qty: 10 }],
     instructions: "1. Βάλε το γιαούρτι σε μπολ.\n2. Πρόσθεσε καρύδια σπασμένα.",
-    serving: "Στάξε το μέλι από πάνω. Απλό, χορταστικό και πλούσιο σε omega-3 από τα καρύδια."
+    instructionsI18n: { el: "1. Βάλε το γιαούρτι σε μπολ.\n2. Πρόσθεσε καρύδια σπασμένα.", en: "1. Place the yogurt in a bowl.\n2. Add broken walnuts.", es: "1. Coloca el yogur en un bol.\n2. Añade las nueces partidas.", fr: "1. Place le yaourt dans un bol.\n2. Ajoute les noix concassées." },
+    serving: "Στάξε το μέλι από πάνω. Απλό, χορταστικό και πλούσιο σε omega-3 από τα καρύδια.",
+    servingI18n: { el: "Στάξε το μέλι από πάνω. Απλό, χορταστικό και πλούσιο σε omega-3 από τα καρύδια.", en: "Drizzle honey on top. Simple, filling and rich in omega-3 from the walnuts.", es: "Chorrea miel por encima. Sencillo, saciante y rico en omega-3 de las nueces.", fr: "Verse du miel par-dessus. Simple, rassasiant et riche en oméga-3 grâce aux noix." }
   },
   {
     id: "r51", name: "Ομελέτα + Παξιμάδι Χαρουπί", nameI18n: { el: "Ομελέτα + Παξιμάδι Χαρουπί", en: "Omelette + Carob Rusk", es: "Tortilla + galleta de algarroba", fr: "Omelette + biscotte carob" }, meal: "dinner", emoji: "🍳",
@@ -497,12 +543,14 @@ const RECIPES_DB = [
       { foodId: "c8", qty: 1   }
     ],
     instructions: "1. Χτύπησε τα αυγά με αλάτι, πιπέρι.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά.\n3. Διπλωσε την ομελέτα όταν είναι σχεδόν έτοιμη.",
-    serving: "Σέρβιρε με ντοματίνια κομμένα, το παξιμάδι χαρουπί και cottage cheese στο πλάι. Ελαφρύ βραδινό."
+    instructionsI18n: { el: "1. Χτύπησε τα αυγά με αλάτι, πιπέρι.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά.\n3. Διπλωσε την ομελέτα όταν είναι σχεδόν έτοιμη.", en: "1. Beat the eggs with salt and pepper.\n2. Cook in a non-stick pan with a little olive oil over medium heat.\n3. Fold the omelette when almost set.", es: "1. Bate los huevos con sal y pimienta.\n2. Cocina en una sartén antiadherente con un poco de aceite de oliva a fuego medio.\n3. Dobla la tortilla cuando esté casi cuajada.", fr: "1. Bats les œufs avec du sel et du poivre.\n2. Fais cuire dans une poêle antiadhésive avec un peu d'huile d'olive à feu moyen.\n3. Plie l'omelette quand elle est presque cuite." },
+    serving: "Σέρβιρε με ντοματίνια κομμένα, το παξιμάδι χαρουπί και cottage cheese στο πλάι. Ελαφρύ βραδινό.",
+    servingI18n: { el: "Σέρβιρε με ντοματίνια κομμένα, το παξιμάδι χαρουπί και cottage cheese στο πλάι. Ελαφρύ βραδινό.", en: "Serve with halved cherry tomatoes, the carob rusk and cottage cheese alongside. Light dinner.", es: "Sirve con tomatitos cortados, la galleta de algarroba y requesón al lado. Cena ligera.", fr: "Sers avec des tomates cerises coupées, la biscotte carob et le cottage cheese à côté. Dîner léger." }
   },
 ];
 
 // Άδεια εβδομάδα — χρησιμοποιείται ως αρχική κατάσταση πριν δημιουργηθεί πρόγραμμα
-const EMPTY_WEEK = [1,2,3,4,5,6,7].map(d => ({ day: d, label: `Ημέρα ${d}`, meals: [] }));
+const EMPTY_WEEK = [1,2,3,4,5,6,7].map(d => ({ day: d, label: `Day ${d}`, meals: [] }));
 
 // Πρότυπη εβδομάδα (7 ημέρες) — βελτιστοποιημένη για ~1700 kcal/ημέρα
 // Κανόνας: αν πρωί γιαούρτι → δεκατ ΟΧΙ γιαούρτι · ποικιλία ανά ημέρα
@@ -510,7 +558,7 @@ const DEFAULT_WEEK = [
   {
     // Ημ1: γιαούρτι+βρώμη / μήλο / κοτόσουπα / whey / ομελέτα+παξιμάδι ≈ 1680 kcal
     // Κανόνας: πρωί γιαούρτι → βραδινό ΟΧΙ γιαούρτι (r51 αντί r20)
-    day: 1, label: "Ημέρα 1",
+    day: 1, label: "Day 1",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
@@ -521,7 +569,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ2: smoothie / whey / μακαρόνια κιμά / μήλο / τονοσαλάτα ≈ 1673 kcal
-    day: 2, label: "Ημέρα 2",
+    day: 2, label: "Day 2",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r7",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
@@ -532,7 +580,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ3: power oat / cottage+ριζογκ / κινόα bowl / whey / αβγά σπανάκι ≈ 1756 kcal
-    day: 3, label: "Ημέρα 3",
+    day: 3, label: "Day 3",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r1",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r50", done: false, waterNoteIdx: 1 },
@@ -543,7 +591,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ4: τοστ αυγά / μήλο / ρεβύθια σούπα / whey / αβγά βραστά σαλάτα ≈ 1639 kcal
-    day: 4, label: "Ημέρα 4",
+    day: 4, label: "Day 4",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r4",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
@@ -554,7 +602,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ5: cottage bowl / whey / σολομός light / μήλο / ομελέτα πιπεριάς ≈ 1701 kcal
-    day: 5, label: "Ημέρα 5",
+    day: 5, label: "Day 5",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r6",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
@@ -565,7 +613,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ6: overnight oats / μήλο / φακές / cottage+ριζογκ / τονοσαλάτα ≈ 1608 kcal
-    day: 6, label: "Ημέρα 6",
+    day: 6, label: "Day 6",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r2",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r31", done: false, waterNoteIdx: 1 },
@@ -576,7 +624,7 @@ const DEFAULT_WEEK = [
   },
   {
     // Ημ7: γιαούρτι+παξιμάδι / whey / κοτόπουλο κάρυ / μήλο / cottage βραδ ≈ 1612 kcal
-    day: 7, label: "Ημέρα 7",
+    day: 7, label: "Day 7",
     meals: [
       { time: "07:00", type: "breakfast", recipeId: "r3",  done: false, waterNoteIdx: 0 },
       { time: "10:00", type: "snack",     recipeId: "r32", done: false, waterNoteIdx: 1 },
@@ -602,7 +650,9 @@ const STANDARD_MEALS = [
     kcal_est: 250, p: 8, c: 32, f: 10,
     note: "Κλασικό γρήγορο πρωινό",
     instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε το ταχίνι γενναιόδωρα από πάνω.",
+    instructionsI18n: { el: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε το ταχίνι γενναιόδωρα από πάνω.", en: "1. Toast the bread in the toaster.\n2. Spread the tahini generously on top.", es: "1. Tuesta el pan en la tostadora.\n2. Unta el tahini generosamente por encima.", fr: "1. Fais griller le pain dans le grille-pain.\n2. Étale le tahini généreusement par-dessus." },
     serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα για επιπλέον γεύση.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα για επιπλέον γεύση.", en: "Serve immediately. You can add a little honey or sliced banana for extra flavour.", es: "Sirve inmediatamente. Puedes añadir un poco de miel o plátano en rodajas para más sabor.", fr: "Sers immédiatement. Tu peux ajouter un peu de miel ou des rondelles de banane pour plus de saveur." },
     items: ["2 κγ ταχίνι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
   },
   {
@@ -612,7 +662,9 @@ const STANDARD_MEALS = [
     kcal_est: 136, p: 16, c: 8, f: 8,
     note: "Συχνά ως συμπλήρωμα πρωινού",
     instructions: "1. Βγάλε το γιαούρτι από το ψυγείο 5 λεπτά νωρίτερα για καλύτερη γεύση.",
+    instructionsI18n: { el: "1. Βγάλε το γιαούρτι από το ψυγείο 5 λεπτά νωρίτερα για καλύτερη γεύση.", en: "1. Take the yogurt out of the fridge 5 minutes early for better flavour.", es: "1. Saca el yogur del frigorífico 5 minutos antes para mejor sabor.", fr: "1. Sors le yaourt du réfrigérateur 5 minutes à l'avance pour une meilleure saveur." },
     serving: "Σέρβιρε σε μπολ. Μπορείς να συνδυάσεις με φρούτο ή λίγο μέλι.",
+    servingI18n: { el: "Σέρβιρε σε μπολ. Μπορείς να συνδυάσεις με φρούτο ή λίγο μέλι.", en: "Serve in a bowl. You can combine with fruit or a little honey.", es: "Sirve en un bol. Puedes combinar con fruta o un poco de miel.", fr: "Sers dans un bol. Tu peux combiner avec des fruits ou un peu de miel." },
     items: ["200g γιαούρτι 2%"]
   },
   {
@@ -622,7 +674,9 @@ const STANDARD_MEALS = [
     kcal_est: 200, p: 5, c: 40, f: 2,
     note: "Γλυκό εναλλακτικό πρωινό",
     instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Στάξε το μέλι από πάνω.",
+    instructionsI18n: { el: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Στάξε το μέλι από πάνω.", en: "1. Toast the bread in the toaster.\n2. Drizzle the honey on top.", es: "1. Tuesta el pan en la tostadora.\n2. Chorrea la miel por encima.", fr: "1. Fais griller le pain dans le grille-pain.\n2. Arrose de miel par-dessus." },
     serving: "Σέρβιρε αμέσως ζεστό. Τέλειο με λίγη κανέλα από πάνω.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Τέλειο με λίγη κανέλα από πάνω.", en: "Serve immediately while hot. Perfect with a little cinnamon on top.", es: "Sirve inmediatamente caliente. Perfecto con un poco de canela por encima.", fr: "Sers immédiatement chaud. Parfait avec un peu de cannelle par-dessus." },
     items: ["2 κγ μέλι (~30g)", "2 φέτες ψωμί τοστ (~60g)"]
   },
   {
@@ -632,7 +686,9 @@ const STANDARD_MEALS = [
     kcal_est: 350, p: 42, c: 30, f: 5,
     note: "Υψηλή πρωτεΐνη, χορταστικό",
     instructions: "1. Ανακάτεψε το whey με το γιαούρτι μέχρι να διαλυθεί πλήρως.\n2. Ρίξε τη βρώμη από πάνω — ωμή για τραγανή υφή.",
+    instructionsI18n: { el: "1. Ανακάτεψε το whey με το γιαούρτι μέχρι να διαλυθεί πλήρως.\n2. Ρίξε τη βρώμη από πάνω — ωμή για τραγανή υφή.", en: "1. Mix the whey with the yogurt until fully dissolved.\n2. Pour the oats on top — raw for a crunchy texture.", es: "1. Mezcla el whey con el yogur hasta que se disuelva completamente.\n2. Vierte la avena por encima — cruda para una textura crujiente.", fr: "1. Mélange le whey avec le yaourt jusqu'à dissolution complète.\n2. Verse l'avoine par-dessus — crue pour une texture croquante." },
     serving: "Σέρβιρε σε μπολ. Πρόσθεσε φρούτα εποχής ή λίγη μαύρη σοκολάτα τριμμένη.",
+    servingI18n: { el: "Σέρβιρε σε μπολ. Πρόσθεσε φρούτα εποχής ή λίγη μαύρη σοκολάτα τριμμένη.", en: "Serve in a bowl. Add seasonal fruit or a little grated dark chocolate.", es: "Sirve en un bol. Añade fruta de temporada o un poco de chocolate negro rallado.", fr: "Sers dans un bol. Ajoute des fruits de saison ou un peu de chocolat noir râpé." },
     items: ["200g γιαούρτι 2%", "30g whey isolate", "5 κ.σ. βρώμη (~50g)"]
   },
   {
@@ -642,7 +698,9 @@ const STANDARD_MEALS = [
     kcal_est: 240, p: 7, c: 28, f: 11,
     note: "Gluten-free εναλλακτικό",
     instructions: "1. Άλειψε το ταχίνι στις ριζογκοφρέτες.",
+    instructionsI18n: { el: "1. Άλειψε το ταχίνι στις ριζογκοφρέτες.", en: "1. Spread the tahini on the rice cakes.", es: "1. Unta el tahini en las tortas de arroz.", fr: "1. Étale le tahini sur les galettes de riz." },
     serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα σε φέτες.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις λίγο μέλι ή μπανάνα σε φέτες.", en: "Serve immediately. You can add a little honey or sliced banana.", es: "Sirve inmediatamente. Puedes añadir un poco de miel o plátano en rodajas.", fr: "Sers immédiatement. Tu peux ajouter un peu de miel ou des rondelles de banane." },
     items: ["2 κγ ταχίνι (~30g)", "4 ριζογκοφρέτες"]
   },
   {
@@ -652,7 +710,9 @@ const STANDARD_MEALS = [
     kcal_est: 220, p: 6, c: 24, f: 11,
     note: "Ενεργειακό & γρήγορο πρωινό",
     instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε ταχίνι, στάξε μέλι, πασπάλισε ξηρούς καρπούς.",
+    instructionsI18n: { el: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε ταχίνι, στάξε μέλι, πασπάλισε ξηρούς καρπούς.", en: "1. Toast the bread in the toaster.\n2. Spread tahini, drizzle honey, sprinkle nuts.", es: "1. Tuesta el pan en la tostadora.\n2. Unta tahini, chorrea miel, espolvorea frutos secos.", fr: "1. Fais griller le pain dans le grille-pain.\n2. Étale le tahini, arrose de miel, saupoudre de noix." },
     serving: "Σέρβιρε αμέσως ζεστό. Ιδανικό πριν την προπόνηση.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Ιδανικό πριν την προπόνηση.", en: "Serve immediately while hot. Ideal before a workout.", es: "Sirve inmediatamente caliente. Ideal antes del entrenamiento.", fr: "Sers immédiatement chaud. Idéal avant l'entraînement." },
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ ταχίνι (~15g)"]
   },
   {
@@ -662,7 +722,9 @@ const STANDARD_MEALS = [
     kcal_est: 225, p: 7, c: 24, f: 12,
     note: "Ενεργειακό με φυστικοβούτυρο",
     instructions: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε φυστικοβούτυρο, στάξε μέλι, πασπάλισε ξηρούς καρπούς.",
+    instructionsI18n: { el: "1. Ψήσε το ψωμί στον τοστιέρα.\n2. Άλειψε φυστικοβούτυρο, στάξε μέλι, πασπάλισε ξηρούς καρπούς.", en: "1. Toast the bread in the toaster.\n2. Spread peanut butter, drizzle honey, sprinkle nuts.", es: "1. Tuesta el pan en la tostadora.\n2. Unta mantequilla de cacahuete, chorrea miel, espolvorea frutos secos.", fr: "1. Fais griller le pain dans le grille-pain.\n2. Étale le beurre de cacahuètes, arrose de miel, saupoudre de noix." },
     serving: "Σέρβιρε αμέσως. Γεύμα με φυσική γλυκύτητα και καλά λιπαρά.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Γεύμα με φυσική γλυκύτητα και καλά λιπαρά.", en: "Serve immediately. A meal with natural sweetness and good fats.", es: "Sirve inmediatamente. Una comida con dulzura natural y grasas buenas.", fr: "Sers immédiatement. Un repas avec une douceur naturelle et de bons lipides." },
     items: ["1 φέτα ψωμί τοστ (~30g)", "10g ξηροί καρποί", "1 κγ μέλι (~15g)", "1 κγ φυστικοβούτυρο (~15g)"]
   },
   {
@@ -672,7 +734,9 @@ const STANDARD_MEALS = [
     kcal_est: 210, p: 24, c: 14, f: 6,
     note: "Υψηλή πρωτεΐνη, χαμηλά λίπη",
     instructions: "1. Βράσε 2 αυγά, χώρισε τα ασπράδια.\n2. Ψήσε το ψωμί στον τοστιέρα.\n3. Βάλε κασέρι, γαλοπούλα και ασπράδια από πάνω.",
+    instructionsI18n: { el: "1. Βράσε 2 αυγά, χώρισε τα ασπράδια.\n2. Ψήσε το ψωμί στον τοστιέρα.\n3. Βάλε κασέρι, γαλοπούλα και ασπράδια από πάνω.", en: "1. Boil 2 eggs, separate the egg whites.\n2. Toast the bread in the toaster.\n3. Place kasseri, turkey and egg whites on top.", es: "1. Cuece 2 huevos, separa las claras.\n2. Tuesta el pan en la tostadora.\n3. Coloca queso kaseri, pavo y claras de huevo encima.", fr: "1. Fais cuire 2 œufs durs, sépare les blancs.\n2. Fais griller le pain dans le grille-pain.\n3. Dépose le kasseri, la dinde et les blancs d'œufs par-dessus." },
     serving: "Σέρβιρε αμέσως. Γρήγορο, υψηλής πρωτεΐνης πρωινό για απαιτητικές μέρες.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Γρήγορο, υψηλής πρωτεΐνης πρωινό για απαιτητικές μέρες.", en: "Serve immediately. A quick, high-protein breakfast for demanding days.", es: "Sirve inmediatamente. Un desayuno rápido y alto en proteínas para días exigentes.", fr: "Sers immédiatement. Un petit-déjeuner rapide et riche en protéines pour les journées chargées." },
     items: ["1 φέτα ψωμί τοστ (~30g)", "1 φέτα κασέρι light (~20g)", "30g γαλοπούλα φέτα", "2 βραστά ασπράδια αυγού"]
   },
   {
@@ -682,7 +746,9 @@ const STANDARD_MEALS = [
     kcal_est: 250, p: 8, c: 28, f: 6,
     note: "Ελαφρύ & χορταστικό",
     instructions: "1. Βράσε το αυγό: 8 λεπτά από τη στιγμή που βράσει το νερό για σφιχτό.\n2. Κρύωσε σε κρύο νερό, ξεφλούδισε και κόψε στη μέση.",
+    instructionsI18n: { el: "1. Βράσε το αυγό: 8 λεπτά από τη στιγμή που βράσει το νερό για σφιχτό.\n2. Κρύωσε σε κρύο νερό, ξεφλούδισε και κόψε στη μέση.", en: "1. Boil the egg: 8 minutes from when the water boils for a hard-boiled egg.\n2. Cool in cold water, peel and cut in half.", es: "1. Cuece el huevo: 8 minutos desde que hierve el agua para que quede duro.\n2. Enfría en agua fría, pela y corta por la mitad.", fr: "1. Fais cuire l'œuf : 8 minutes à partir de l'ébullition pour un œuf dur.\n2. Refroidis dans l'eau froide, pèle et coupe en deux." },
     serving: "Σέρβιρε με ντοματίνια δίπλα και παξιμαδάκια. Αλατοπίπερο και λίγο ελαιόλαδο από πάνω.",
+    servingI18n: { el: "Σέρβιρε με ντοματίνια δίπλα και παξιμαδάκια. Αλατοπίπερο και λίγο ελαιόλαδο από πάνω.", en: "Serve with cherry tomatoes and rusks alongside. Salt, pepper and a little olive oil on top.", es: "Sirve con tomatitos y tostadas al lado. Sal, pimienta y un poco de aceite de oliva por encima.", fr: "Sers avec des tomates cerises et des biscottes à côté. Sel, poivre et un peu d'huile d'olive par-dessus." },
     items: ["1 αυγό βραστό", "4-5 ντοματίνια", "2 παξιμαδάκια χαρουπιού (~30g)"]
   },
   {
@@ -692,7 +758,9 @@ const STANDARD_MEALS = [
     kcal_est: 300, p: 10, c: 56, f: 4,
     note: "Γρήγορο & ενεργειακό",
     instructions: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.",
+    instructionsI18n: { el: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.", en: "1. Ready — no preparation needed.", es: "1. Listo — no necesita preparación.", fr: "1. Prêt — aucune préparation nécessaire." },
     serving: "Τρώγε σκέτο ή με λίγο τυρί και γαλοπούλα. Συνόδεψε με καφέ ή τσάι.",
+    servingI18n: { el: "Τρώγε σκέτο ή με λίγο τυρί και γαλοπούλα. Συνόδεψε με καφέ ή τσάι.", en: "Eat plain or with a little cheese and turkey. Pair with coffee or tea.", es: "Come solo o con un poco de queso y pavo. Acompaña con café o té.", fr: "Mange nature ou avec un peu de fromage et de dinde. Accompagne d'un café ou d'un thé." },
     items: ["1 κουλούρι Θεσσαλονίκης ολικής άλεσης"]
   },
   {
@@ -702,7 +770,9 @@ const STANDARD_MEALS = [
     kcal_est: 260, p: 12, c: 32, f: 7,
     note: "Πλήρες & ισορροπημένο πρωινό",
     instructions: "1. Ψήσε τις φέτες ψωμιού στον τοστιέρα.\n2. Άλειψε Philadelphia σε κάθε φέτα.\n3. Βάλε γαλοπούλα, μαρούλι και ντομάτα.",
+    instructionsI18n: { el: "1. Ψήσε τις φέτες ψωμιού στον τοστιέρα.\n2. Άλειψε Philadelphia σε κάθε φέτα.\n3. Βάλε γαλοπούλα, μαρούλι και ντομάτα.", en: "1. Toast the bread slices in the toaster.\n2. Spread Philadelphia on each slice.\n3. Add turkey, lettuce and tomato.", es: "1. Tuesta las rebanadas de pan en la tostadora.\n2. Unta Philadelphia en cada rebanada.\n3. Añade pavo, lechuga y tomate.", fr: "1. Grille les tranches de pain dans le grille-pain.\n2. Étale du Philadelphia sur chaque tranche.\n3. Ajoute la dinde, la laitue et la tomate." },
     serving: "Σέρβιρε αμέσως. Συνόδεψε με φρέσκο χυμό πορτοκαλιού.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Συνόδεψε με φρέσκο χυμό πορτοκαλιού.", en: "Serve immediately. Pair with fresh orange juice.", es: "Sirve inmediatamente. Acompaña con zumo de naranja fresco.", fr: "Sers immédiatement. Accompagne d'un jus d'orange frais." },
     items: ["2 φέτες ψωμί ολικής", "1 φέτα γαλοπούλα", "½ φέτα κίτρινο τυρί", "1 κγ Philadelphia Light", "μαρούλι & ντομάτα"]
   },
   {
@@ -712,7 +782,9 @@ const STANDARD_MEALS = [
     kcal_est: 290, p: 9, c: 46, f: 5,
     note: "Χορταστικό & ζεστό — με κανέλα",
     instructions: "1. Βράσε βρώμη με γάλα σε κατσαρολάκι σε χαμηλή φωτιά για 5 λεπτά, ανακατεύοντας.\n2. Αν θέλεις, πρόσθεσε κακάο και ανακάτεψε.\n3. Βγάλε από τη φωτιά, στάξε μέλι.",
+    instructionsI18n: { el: "1. Βράσε βρώμη με γάλα σε κατσαρολάκι σε χαμηλή φωτιά για 5 λεπτά, ανακατεύοντας.\n2. Αν θέλεις, πρόσθεσε κακάο και ανακάτεψε.\n3. Βγάλε από τη φωτιά, στάξε μέλι.", en: "1. Boil oats with milk in a small saucepan over low heat for 5 minutes, stirring.\n2. If you like, add cocoa and stir.\n3. Remove from heat, drizzle honey.", es: "1. Hierve la avena con la leche en un cazo a fuego lento durante 5 minutos, removiendo.\n2. Si quieres, añade cacao y mezcla.\n3. Retira del fuego, chorrea miel.", fr: "1. Fais bouillir l'avoine avec le lait dans une petite casserole à feu doux pendant 5 minutes, en remuant.\n2. Si tu veux, ajoute du cacao et mélange.\n3. Retire du feu, arrose de miel." },
     serving: "Σέρβιρε ζεστό σε μπολ. Πασπάλισε με κανέλα. Ιδανικό για χαλαρό πρωινό Σαββατοκύριακου.",
+    servingI18n: { el: "Σέρβιρε ζεστό σε μπολ. Πασπάλισε με κανέλα. Ιδανικό για χαλαρό πρωινό Σαββατοκύριακου.", en: "Serve hot in a bowl. Sprinkle with cinnamon. Ideal for a relaxed weekend morning.", es: "Sirve caliente en un bol. Espolvorea con canela. Ideal para una mañana de fin de semana relajada.", fr: "Sers chaud dans un bol. Saupoudre de cannelle. Idéal pour une matinée de week-end détendue." },
     items: ["250ml γάλα 1,5%", "30g βρώμη (3 κσ)", "1 κγ μέλι", "1 κγ κακάο άγλυκο (προαιρετικό)", "κανέλα"]
   },
 
@@ -724,7 +796,9 @@ const STANDARD_MEALS = [
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ πρωινό σνακ",
     instructions: "1. Κόψε το μήλο σε φέτες ή τρώγε ολόκληρο.",
+    instructionsI18n: { el: "1. Κόψε το μήλο σε φέτες ή τρώγε ολόκληρο.", en: "1. Cut the apple into slices or eat it whole.", es: "1. Corta la manzana en rodajas o cómela entera.", fr: "1. Coupe la pomme en tranches ou mange-la entière." },
     serving: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, βιταμινών και καλών λιπαρών.",
+    servingI18n: { el: "Φάε τα αμύγδαλα μαζί με το μήλο — συνδυασμός φυτικών ινών, βιταμινών και καλών λιπαρών.", en: "Eat the almonds together with the apple — a combination of fibre, vitamins and good fats.", es: "Come las almendras junto con la manzana — una combinación de fibra, vitaminas y grasas buenas.", fr: "Mange les amandes avec la pomme — une combinaison de fibres, vitamines et bons lipides." },
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -734,7 +808,9 @@ const STANDARD_MEALS = [
     kcal_est: 170, p: 4, c: 30, f: 5,
     note: "Ενέργεια pre-workout",
     instructions: "1. Ξεφλούδισε τη μπανάνα. Έτοιμο!",
+    instructionsI18n: { el: "1. Ξεφλούδισε τη μπανάνα. Έτοιμο!", en: "1. Peel the banana. Ready!", es: "1. Pela el plátano. ¡Listo!", fr: "1. Pèle la banane. Prêt !" },
     serving: "Φάε μπανάνα + αμύγδαλα 30-45 λεπτά πριν την προπόνηση για γρήγορη ενέργεια.",
+    servingI18n: { el: "Φάε μπανάνα + αμύγδαλα 30-45 λεπτά πριν την προπόνηση για γρήγορη ενέργεια.", en: "Eat banana + almonds 30-45 minutes before your workout for quick energy.", es: "Come plátano + almendras 30-45 minutos antes del entrenamiento para energía rápida.", fr: "Mange la banane + les amandes 30-45 minutes avant l'entraînement pour une énergie rapide." },
     items: ["1 μπανάνα (~120g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -744,7 +820,9 @@ const STANDARD_MEALS = [
     kcal_est: 250, p: 14, c: 28, f: 8,
     note: "Πρωτεΐνη + υδατάνθρακες",
     instructions: "1. Βάλε τα παξιμάδια σε πιατάκι.\n2. Τοποθέτησε κασέρι από πάνω ή δίπλα.",
+    instructionsI18n: { el: "1. Βάλε τα παξιμάδια σε πιατάκι.\n2. Τοποθέτησε κασέρι από πάνω ή δίπλα.", en: "1. Place the rusks on a small plate.\n2. Place kasseri on top or alongside.", es: "1. Coloca las tostadas en un platito.\n2. Coloca el queso kaseri encima o al lado.", fr: "1. Place les biscottes dans une petite assiette.\n2. Place le kasseri dessus ou à côté." },
     serving: "Σέρβιρε με λίγη ντομάτα ή αγγούρι δίπλα για extra φρεσκάδα.",
+    servingI18n: { el: "Σέρβιρε με λίγη ντομάτα ή αγγούρι δίπλα για extra φρεσκάδα.", en: "Serve with a little tomato or cucumber alongside for extra freshness.", es: "Sirve con un poco de tomate o pepino al lado para más frescura.", fr: "Sers avec un peu de tomate ou de concombre à côté pour plus de fraîcheur." },
     items: ["3 παξιμάδια (~90g)", "2 φέτες κασέρι light (~40g)"]
   },
   {
@@ -754,7 +832,9 @@ const STANDARD_MEALS = [
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Κλασικό δεκατιανό",
     instructions: "1. Βάλε γαλοπούλα και κασέρι ανάμεσα στις φέτες ψωμιού.\n2. Ψήσε στον τοστιέρα 3-4 λεπτά.",
+    instructionsI18n: { el: "1. Βάλε γαλοπούλα και κασέρι ανάμεσα στις φέτες ψωμιού.\n2. Ψήσε στον τοστιέρα 3-4 λεπτά.", en: "1. Place turkey and kasseri between the bread slices.\n2. Toast in the toaster for 3-4 minutes.", es: "1. Coloca pavo y queso kaseri entre las rebanadas de pan.\n2. Tuesta en la tostadora 3-4 minutos.", fr: "1. Place la dinde et le kasseri entre les tranches de pain.\n2. Grille dans le grille-pain pendant 3-4 minutes." },
     serving: "Σέρβιρε αμέσως ζεστό. Τέλειο με ντομάτα ή μαρούλι δίπλα.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Τέλειο με ντομάτα ή μαρούλι δίπλα.", en: "Serve immediately while hot. Perfect with tomato or lettuce alongside.", es: "Sirve inmediatamente caliente. Perfecto con tomate o lechuga al lado.", fr: "Sers immédiatement chaud. Parfait avec de la tomate ou de la laitue à côté." },
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g κασέρι"]
   },
   {
@@ -764,7 +844,9 @@ const STANDARD_MEALS = [
     kcal_est: 230, p: 13, c: 22, f: 9,
     note: "Τραγανό & χορταστικό",
     instructions: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.",
+    instructionsI18n: { el: "1. Έτοιμο — δεν χρειάζεται προετοιμασία.", en: "1. Ready — no preparation needed.", es: "1. Listo — no necesita preparación.", fr: "1. Prêt — aucune préparation nécessaire." },
     serving: "Βάλε κασέρι πάνω στα κριτσίνια ή φάε χωριστά. Απλό και γρήγορο.",
+    servingI18n: { el: "Βάλε κασέρι πάνω στα κριτσίνια ή φάε χωριστά. Απλό και γρήγορο.", en: "Place kasseri on the breadsticks or eat separately. Simple and quick.", es: "Coloca queso kaseri sobre los palitos o come por separado. Simple y rápido.", fr: "Place le kasseri sur les gressins ou mange séparément. Simple et rapide." },
     items: ["3 κριτσίνια (~30g)", "2 φέτες κασέρι light (~40g)"]
   },
   {
@@ -774,7 +856,9 @@ const STANDARD_MEALS = [
     kcal_est: 100, p: 2, c: 23, f: 0,
     note: "Ελαφρύ & χορταστικό",
     instructions: "1. Πλύνε και ξεφλούδισε τα καρότα. Κόψε σε μπαστουνάκια ή φάε ολόκληρα.",
+    instructionsI18n: { el: "1. Πλύνε και ξεφλούδισε τα καρότα. Κόψε σε μπαστουνάκια ή φάε ολόκληρα.", en: "1. Wash and peel the carrots. Cut into sticks or eat whole.", es: "1. Lava y pela las zanahorias. Corta en bastoncillos o come enteras.", fr: "1. Lave et pèle les carottes. Coupe en bâtonnets ou mange entières." },
     serving: "Συνόδεψε με λίγο χούμους ή cottage για επιπλέον πρωτεΐνη.",
+    servingI18n: { el: "Συνόδεψε με λίγο χούμους ή cottage για επιπλέον πρωτεΐνη.", en: "Pair with a little hummus or cottage cheese for extra protein.", es: "Acompaña con un poco de hummus o cottage para más proteína.", fr: "Accompagne d'un peu de houmous ou de cottage cheese pour plus de protéines." },
     items: ["5 μεσαία καρότα (~250g)"]
   },
   {
@@ -784,7 +868,9 @@ const STANDARD_MEALS = [
     kcal_est: 90, p: 2, c: 20, f: 1,
     note: "Βιταμίνη C + φυτικές ίνες",
     instructions: "1. Κόψε τα ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.",
+    instructionsI18n: { el: "1. Κόψε τα ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.", en: "1. Cut the kiwis in half and eat with a teaspoon, or peel and slice.", es: "1. Corta los kiwis por la mitad y come con una cucharita, o pela y corta en rodajas.", fr: "1. Coupe les kiwis en deux et mange avec une cuillère à café, ou pèle et coupe en tranches." },
     serving: "Τρώγε κρύα — βγάλε από το ψυγείο λίγο πριν. Πλούσια σε βιταμίνη C.",
+    servingI18n: { el: "Τρώγε κρύα — βγάλε από το ψυγείο λίγο πριν. Πλούσια σε βιταμίνη C.", en: "Eat cold — take out of the fridge a little before. Rich in vitamin C.", es: "Come fríos — sácalos del frigorífico un poco antes. Ricos en vitamina C.", fr: "Mange froids — sors-les du réfrigérateur un peu avant. Riches en vitamine C." },
     items: ["2 ακτινίδια (~140g)"]
   },
   {
@@ -794,7 +880,9 @@ const STANDARD_MEALS = [
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ή απόγευμα",
     instructions: "1. Ανακάτεψε 30g whey σε 300ml νερό με σέικερ ή κουτάλι.",
+    instructionsI18n: { el: "1. Ανακάτεψε 30g whey σε 300ml νερό με σέικερ ή κουτάλι.", en: "1. Mix 30g whey in 300ml water with a shaker or spoon.", es: "1. Mezcla 30g de whey en 300ml de agua con un shaker o cuchara.", fr: "1. Mélange 30g de whey dans 300ml d'eau avec un shaker ou une cuillère." },
     serving: "Πίνε αμέσως μετά την προπόνηση (εντός 30 λεπτών) για βέλτιστη απορρόφηση.",
+    servingI18n: { el: "Πίνε αμέσως μετά την προπόνηση (εντός 30 λεπτών) για βέλτιστη απορρόφηση.", en: "Drink immediately after your workout (within 30 minutes) for optimal absorption.", es: "Bebe inmediatamente después del entrenamiento (dentro de 30 minutos) para una absorción óptima.", fr: "Bois immédiatement après l'entraînement (dans les 30 minutes) pour une absorption optimale." },
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
   },
   {
@@ -804,7 +892,9 @@ const STANDARD_MEALS = [
     kcal_est: 90, p: 1, c: 20, f: 0,
     note: "Ελαφρύ γλυκό σνακ",
     instructions: "1. Έτοιμο — βγάλε από το ψυγείο.",
+    instructionsI18n: { el: "1. Έτοιμο — βγάλε από το ψυγείο.", en: "1. Ready — take out of the fridge.", es: "1. Listo — saca del frigorífico.", fr: "1. Prêt — sors du réfrigérateur." },
     serving: "Σέρβιρε κρύο. Ιδανικό για όταν θέλεις κάτι γλυκό με λίγες θερμίδες.",
+    servingI18n: { el: "Σέρβιρε κρύο. Ιδανικό για όταν θέλεις κάτι γλυκό με λίγες θερμίδες.", en: "Serve cold. Ideal when you want something sweet with few calories.", es: "Sirve frío. Ideal cuando quieres algo dulce con pocas calorías.", fr: "Sers froid. Idéal quand tu veux quelque chose de sucré avec peu de calories." },
     items: ["1 φρουί ζελέ (~90g)"]
   },
 
@@ -816,7 +906,9 @@ const STANDARD_MEALS = [
     kcal_est: 610, p: 50, c: 14, f: 18,
     note: "Μαρινάδα: λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι. Φούρνος/air fryer 190°C 16-18'. Ψήσε τα λαχανικά μαζί με σκόρδο και ρίγανη.",
     instructions: "1. Μαρίνα το κοτόπουλο με λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι για 20+ λεπτά.\n2. Κόψε κολοκύθι, πιπεριά, κρεμμύδι και μανιτάρια σε κομμάτια.\n3. Ψήσε στον φούρνο ή air fryer στους 190°C για 16-18 λεπτά — κοτόπουλο και λαχανικά μαζί.",
+    instructionsI18n: { el: "1. Μαρίνα το κοτόπουλο με λεμόνι, μουστάρδα, σκόρδο, πάπρικα, ρίγανη, θυμάρι για 20+ λεπτά.\n2. Κόψε κολοκύθι, πιπεριά, κρεμμύδι και μανιτάρια σε κομμάτια.\n3. Ψήσε στον φούρνο ή air fryer στους 190°C για 16-18 λεπτά — κοτόπουλο και λαχανικά μαζί.", en: "1. Marinate the chicken with lemon, mustard, garlic, paprika, oregano, thyme for 20+ minutes.\n2. Cut courgette, pepper, onion and mushrooms into pieces.\n3. Roast in the oven or air fryer at 190°C for 16-18 minutes — chicken and vegetables together.", es: "1. Marina el pollo con limón, mostaza, ajo, pimentón, orégano, tomillo durante 20+ minutos.\n2. Corta calabacín, pimiento, cebolla y champiñones en trozos.\n3. Asa en el horno o air fryer a 190°C durante 16-18 minutos — pollo y verduras juntos.", fr: "1. Marine le poulet avec du citron, de la moutarde, de l'ail, du paprika, de l'origan, du thym pendant 20+ minutes.\n2. Coupe la courgette, le poivron, l'oignon et les champignons en morceaux.\n3. Rôtis au four ou air fryer à 190°C pendant 16-18 minutes — poulet et légumes ensemble." },
     serving: "Σέρβιρε κοτόπουλο με τα ψητά λαχανικά. Δίπλα βάλε φρέσκια σαλάτα εποχής.",
+    servingI18n: { el: "Σέρβιρε κοτόπουλο με τα ψητά λαχανικά. Δίπλα βάλε φρέσκια σαλάτα εποχής.", en: "Serve chicken with the roasted vegetables. Add a fresh seasonal salad alongside.", es: "Sirve el pollo con las verduras asadas. Añade una ensalada fresca de temporada al lado.", fr: "Sers le poulet avec les légumes rôtis. Ajoute une salade fraîche de saison à côté." },
     items: ["200g φιλέτο κοτόπουλο", "150g κολοκύθι, πιπεριά, κρεμμύδι", "100g μανιτάρια", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -826,7 +918,9 @@ const STANDARD_MEALS = [
     kcal_est: 600, p: 38, c: 18, f: 38,
     note: "Σόταρε πρώτα τα λαχανικά, μετά τα αυγά. Ρίξε cottage πριν δέσει. Μπαχαρικά: κουρκουμάς, πάπρικα, ρίγανη, μαϊντανός.",
     instructions: "1. Σόταρε ντομάτα, πιπεριά και μανιτάρια σε αντικολλητικό με λίγο ελαιόλαδο για 3 λεπτά.\n2. Χτύπα 4 αυγά με κουρκουμά, πάπρικα, ρίγανη, αλατοπίπερο.\n3. Ρίξε αυγά πάνω στα λαχανικά, άπλωσε cottage πριν δέσουν πλήρως.\n4. Δίπλωσε και βγάλε από τη φωτιά.",
+    instructionsI18n: { el: "1. Σόταρε ντομάτα, πιπεριά και μανιτάρια σε αντικολλητικό με λίγο ελαιόλαδο για 3 λεπτά.\n2. Χτύπα 4 αυγά με κουρκουμά, πάπρικα, ρίγανη, αλατοπίπερο.\n3. Ρίξε αυγά πάνω στα λαχανικά, άπλωσε cottage πριν δέσουν πλήρως.\n4. Δίπλωσε και βγάλε από τη φωτιά.", en: "1. Sauté tomato, pepper and mushrooms in a non-stick pan with a little olive oil for 3 minutes.\n2. Beat 4 eggs with turmeric, paprika, oregano, salt and pepper.\n3. Pour eggs over the vegetables, spread cottage cheese before they fully set.\n4. Fold and remove from heat.", es: "1. Saltea tomate, pimiento y champiñones en una sartén antiadherente con un poco de aceite de oliva durante 3 minutos.\n2. Bate 4 huevos con cúrcuma, pimentón, orégano, sal y pimienta.\n3. Vierte los huevos sobre las verduras, extiende el cottage antes de que cuajen completamente.\n4. Dobla y retira del fuego.", fr: "1. Fais revenir la tomate, le poivron et les champignons dans une poêle antiadhésive avec un peu d'huile d'olive pendant 3 minutes.\n2. Bats 4 œufs avec le curcuma, le paprika, l'origan, sel et poivre.\n3. Verse les œufs sur les légumes, étale le cottage cheese avant qu'ils ne prennent complètement.\n4. Plie et retire du feu." },
     serving: "Σέρβιρε ζεστή με ψωμί ολικής και σαλάτα στο πλάι.",
+    servingI18n: { el: "Σέρβιρε ζεστή με ψωμί ολικής και σαλάτα στο πλάι.", en: "Serve hot with whole grain bread and a salad on the side.", es: "Sirve caliente con pan integral y ensalada al lado.", fr: "Sers chaud avec du pain complet et une salade à côté." },
     items: ["4 αυγά", "ντομάτα, πιπεριά, μανιτάρια", "40g cottage cheese", "30g ψωμί ολικής", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -836,7 +930,9 @@ const STANDARD_MEALS = [
     kcal_est: 662, p: 28, c: 72, f: 18,
     note: "Ψήσε με ντομάτα, κρεμμύδι, καρότο, πιπεριά. Μπαχαρικά: κύμινο, πάπρικα καπνιστή, κουρκουμάς, δάφνη. Πρόσθεσε cottage αφού βγουν.",
     instructions: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψί βάλε ρεβύθια, ντομάτα, κρεμμύδι, καρότο, πιπεριά, ελαιόλαδο.\n3. Πασπάλισε κύμινο, πάπρικα καπνιστή, κουρκουμά, δάφνη, αλατοπίπερο.\n4. Ψήσε για 25-30 λεπτά μέχρι να ροδίσουν.",
+    instructionsI18n: { el: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψί βάλε ρεβύθια, ντομάτα, κρεμμύδι, καρότο, πιπεριά, ελαιόλαδο.\n3. Πασπάλισε κύμινο, πάπρικα καπνιστή, κουρκουμά, δάφνη, αλατοπίπερο.\n4. Ψήσε για 25-30 λεπτά μέχρι να ροδίσουν.", en: "1. Preheat oven to 180°C.\n2. In a baking tray place chickpeas, tomato, onion, carrot, pepper, olive oil.\n3. Sprinkle cumin, smoked paprika, turmeric, bay leaf, salt and pepper.\n4. Roast for 25-30 minutes until golden.", es: "1. Precalienta el horno a 180°C.\n2. En una bandeja coloca garbanzos, tomate, cebolla, zanahoria, pimiento, aceite de oliva.\n3. Espolvorea comino, pimentón ahumado, cúrcuma, laurel, sal y pimienta.\n4. Asa durante 25-30 minutos hasta que estén dorados.", fr: "1. Préchauffer le four à 180°C.\n2. Dans un plat de cuisson, place les pois chiches, la tomate, l'oignon, la carotte, le poivron, l'huile d'olive.\n3. Saupoudre de cumin, paprika fumé, curcuma, laurier, sel et poivre.\n4. Rôtis pendant 25-30 minutes jusqu'à ce qu'ils soient dorés." },
     serving: "Βγάλε από τον φούρνο και πρόσθεσε cottage cheese από πάνω. Σέρβιρε με φρέσκια σαλάτα.",
+    servingI18n: { el: "Βγάλε από τον φούρνο και πρόσθεσε cottage cheese από πάνω. Σέρβιρε με φρέσκια σαλάτα.", en: "Remove from the oven and add cottage cheese on top. Serve with a fresh salad.", es: "Saca del horno y añade cottage cheese por encima. Sirve con ensalada fresca.", fr: "Sors du four et ajoute le cottage cheese par-dessus. Sers avec une salade fraîche." },
     items: ["250g ρεβύθια μαγειρεμένα (1½ φλ.)", "60g cottage cheese", "καρότο & πιπεριά", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -846,7 +942,9 @@ const STANDARD_MEALS = [
     kcal_est: 622, p: 18, c: 96, f: 16,
     note: "Σάλτσα με ντομάτα, σκόρδο, κρεμμύδι. Σόταρε μανιτάρια χωρίς πολύ λάδι. Μπαχαρικά: βασιλικός, ρίγανη, θυμάρι.",
     instructions: "1. Βράσε μακαρόνια σύμφωνα με οδηγίες (al dente).\n2. Σόταρε μανιτάρια σε αντικολλητικό χωρίς λάδι για 4-5 λεπτά μέχρι να χρυσίσουν.\n3. Σε κατσαρόλα σόταρε σκόρδο και κρεμμύδι, ρίξε ντομάτα, βασιλικό, ρίγανη, θυμάρι.\n4. Σιγόβρασε σάλτσα 10 λεπτά, ανακάτεψε μανιτάρια και μακαρόνια.",
+    instructionsI18n: { el: "1. Βράσε μακαρόνια σύμφωνα με οδηγίες (al dente).\n2. Σόταρε μανιτάρια σε αντικολλητικό χωρίς λάδι για 4-5 λεπτά μέχρι να χρυσίσουν.\n3. Σε κατσαρόλα σόταρε σκόρδο και κρεμμύδι, ρίξε ντομάτα, βασιλικό, ρίγανη, θυμάρι.\n4. Σιγόβρασε σάλτσα 10 λεπτά, ανακάτεψε μανιτάρια και μακαρόνια.", en: "1. Boil the pasta according to instructions (al dente).\n2. Sauté mushrooms in a non-stick pan without oil for 4-5 minutes until golden.\n3. In a saucepan sauté garlic and onion, add tomato, basil, oregano, thyme.\n4. Simmer the sauce 10 minutes, mix in mushrooms and pasta.", es: "1. Cuece la pasta según las instrucciones (al dente).\n2. Saltea los champiñones en una sartén antiadherente sin aceite durante 4-5 minutos hasta que estén dorados.\n3. En una cazuela saltea ajo y cebolla, añade tomate, albahaca, orégano, tomillo.\n4. Cuece la salsa a fuego lento 10 minutos, mezcla con champiñones y pasta.", fr: "1. Fais bouillir les pâtes selon les instructions (al dente).\n2. Fais revenir les champignons dans une poêle antiadhésive sans huile pendant 4-5 minutes jusqu'à ce qu'ils soient dorés.\n3. Dans une casserole, fais revenir l'ail et l'oignon, ajoute la tomate, le basilic, l'origan, le thym.\n4. Mijote la sauce 10 minutes, mélange avec les champignons et les pâtes." },
     serving: "Σέρβιρε με φρέσκια σαλάτα στο πλάι. Μπορείς να ρίξεις λίγη παρμεζάνα για γεύση.",
+    servingI18n: { el: "Σέρβιρε με φρέσκια σαλάτα στο πλάι. Μπορείς να ρίξεις λίγη παρμεζάνα για γεύση.", en: "Serve with a fresh salad on the side. You can add a little parmesan for flavour.", es: "Sirve con ensalada fresca al lado. Puedes añadir un poco de parmesano para sabor.", fr: "Sers avec une salade fraîche à côté. Tu peux ajouter un peu de parmesan pour plus de saveur." },
     items: ["300g βρασμένα μακαρόνια (2 φλ.)", "σάλτσα ντομάτας", "100g μανιτάρια", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -856,7 +954,9 @@ const STANDARD_MEALS = [
     kcal_est: 616, p: 20, c: 54, f: 28,
     note: "Ψήσε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι, ντομάτα. Μπαχαρικά: ρίγανη, θυμάρι, μαϊντανός. Cottage και φέτα στο σερβίρισμα.",
     instructions: "1. Κόψε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι και ντομάτα σε κύβους.\n2. Βάλε σε ταψί με ελαιόλαδο, ρίγανη, θυμάρι, μαϊντανό, αλατοπίπερο.\n3. Ψήσε στους 180°C για 45-50 λεπτά μέχρι να μαλακώσουν και να ροδίσουν.",
+    instructionsI18n: { el: "1. Κόψε κολοκύθι, μελιτζάνα, πατάτα, πιπεριά, κρεμμύδι και ντομάτα σε κύβους.\n2. Βάλε σε ταψί με ελαιόλαδο, ρίγανη, θυμάρι, μαϊντανό, αλατοπίπερο.\n3. Ψήσε στους 180°C για 45-50 λεπτά μέχρι να μαλακώσουν και να ροδίσουν.", en: "1. Cut courgette, aubergine, potato, pepper, onion and tomato into cubes.\n2. Place in a baking tray with olive oil, oregano, thyme, parsley, salt and pepper.\n3. Roast at 180°C for 45-50 minutes until softened and golden.", es: "1. Corta calabacín, berenjena, patata, pimiento, cebolla y tomate en cubos.\n2. Coloca en una bandeja con aceite de oliva, orégano, tomillo, perejil, sal y pimienta.\n3. Asa a 180°C durante 45-50 minutos hasta que estén tiernos y dorados.", fr: "1. Coupe la courgette, l'aubergine, la pomme de terre, le poivron, l'oignon et la tomate en cubes.\n2. Place dans un plat de cuisson avec de l'huile d'olive, de l'origan, du thym, du persil, sel et poivre.\n3. Rôtis à 180°C pendant 45-50 minutes jusqu'à ce qu'ils soient tendres et dorés." },
     serving: "Σέρβιρε μπριάμ με φέτα και cottage cheese από πάνω. Δίπλα βάλε ψωμί ολικής.",
+    servingI18n: { el: "Σέρβιρε μπριάμ με φέτα και cottage cheese από πάνω. Δίπλα βάλε ψωμί ολικής.", en: "Serve the roasted vegetables with feta and cottage cheese on top. Add whole grain bread alongside.", es: "Sirve las verduras asadas con feta y cottage cheese por encima. Añade pan integral al lado.", fr: "Sers les légumes rôtis avec du feta et du cottage cheese par-dessus. Ajoute du pain complet à côté." },
     items: ["300g μπριάμ (κολοκύθι, μελιτζάνα, πατάτα, ντομάτα)", "30g ψωμί ολικής", "60g cottage cheese", "30g φέτα"]
   },
   {
@@ -866,7 +966,9 @@ const STANDARD_MEALS = [
     kcal_est: 558, p: 52, c: 4, f: 28,
     note: "Τσιπούρα ή λαυράκι στον φούρνο με λεμόνι, σκόρδο και ελαιόλαδο, 180°C 25'. Μπαχαρικά: θυμάρι, ρίγανη, λευκό πιπέρι. Σερβίρισε με βραστά χόρτα.",
     instructions: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψάκι βάλε τσιπούρα ή λαυράκι, ρίξε χυμό λεμονιού, σκόρδο φέτες, ελαιόλαδο.\n3. Πασπάλισε θυμάρι, ρίγανη, λευκό πιπέρι, αλάτι.\n4. Ψήσε για 25 λεπτά μέχρι το ψάρι να ξεκολλά εύκολα.",
+    instructionsI18n: { el: "1. Προθέρμανε φούρνο στους 180°C.\n2. Σε ταψάκι βάλε τσιπούρα ή λαυράκι, ρίξε χυμό λεμονιού, σκόρδο φέτες, ελαιόλαδο.\n3. Πασπάλισε θυμάρι, ρίγανη, λευκό πιπέρι, αλάτι.\n4. Ψήσε για 25 λεπτά μέχρι το ψάρι να ξεκολλά εύκολα.", en: "1. Preheat oven to 180°C.\n2. In a small baking tray place sea bream or sea bass, add lemon juice, garlic slices, olive oil.\n3. Sprinkle thyme, oregano, white pepper, salt.\n4. Roast for 25 minutes until the fish flakes easily.", es: "1. Precalienta el horno a 180°C.\n2. En una pequeña bandeja coloca dorada o lubina, añade jugo de limón, láminas de ajo, aceite de oliva.\n3. Espolvorea tomillo, orégano, pimienta blanca, sal.\n4. Asa durante 25 minutos hasta que el pescado se desmigue fácilmente.", fr: "1. Préchauffer le four à 180°C.\n2. Dans un petit plat de cuisson, place la daurade ou le bar, ajoute du jus de citron, des tranches d'ail, de l'huile d'olive.\n3. Saupoudre de thym, d'origan, de poivre blanc, de sel.\n4. Rôtis pendant 25 minutes jusqu'à ce que le poisson s'émiette facilement." },
     serving: "Σέρβιρε με φρέσκια σαλάτα εποχής. Στύψε επιπλέον λεμόνι πάνω στο ψάρι.",
+    servingI18n: { el: "Σέρβιρε με φρέσκια σαλάτα εποχής. Στύψε επιπλέον λεμόνι πάνω στο ψάρι.", en: "Serve with a fresh seasonal salad. Squeeze extra lemon over the fish.", es: "Sirve con ensalada fresca de temporada. Exprima más limón sobre el pescado.", fr: "Sers avec une salade fraîche de saison. Presse du citron supplémentaire sur le poisson." },
     items: ["250g τσιπούρα ή λαυράκι (καθαρό βάρος)", "σαλάτα εποχής", "1 κγ ελαιόλαδο", "λεμόνι"]
   },
   {
@@ -876,7 +978,9 @@ const STANDARD_MEALS = [
     kcal_est: 615, p: 44, c: 28, f: 24,
     note: "Ψήσε σε δυνατή φωτιά 2-3 λεπτά ανά πλευρά. Λεμόνι μόνο μετά. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, σκόρδο σε σκόνη.",
     instructions: "1. Ζέστανε τηγάνι σε δυνατή φωτιά χωρίς λάδι.\n2. Αλατοπίπερο, πάπρικα, ρίγανη και σκόρδο σε σκόνη στο συκώτι.\n3. Ψήσε 2-3 λεπτά ανά πλευρά — μην παραψήσεις.\n4. Βράσε μπρόκολο, κουνουπίδι, καρότα παράλληλα.",
+    instructionsI18n: { el: "1. Ζέστανε τηγάνι σε δυνατή φωτιά χωρίς λάδι.\n2. Αλατοπίπερο, πάπρικα, ρίγανη και σκόρδο σε σκόνη στο συκώτι.\n3. Ψήσε 2-3 λεπτά ανά πλευρά — μην παραψήσεις.\n4. Βράσε μπρόκολο, κουνουπίδι, καρότα παράλληλα.", en: "1. Heat a pan over high heat without oil.\n2. Season the liver with salt, pepper, paprika, oregano and garlic powder.\n3. Cook 2-3 minutes per side — don't overcook.\n4. Boil broccoli, cauliflower, carrots in parallel.", es: "1. Calienta una sartén a fuego alto sin aceite.\n2. Sazona el hígado con sal, pimienta, pimentón, orégano y ajo en polvo.\n3. Cocina 2-3 minutos por lado — no cocines demasiado.\n4. Cuece brócoli, coliflor, zanahorias en paralelo.", fr: "1. Chauffe une poêle à feu vif sans huile.\n2. Assaisonne le foie avec sel, poivre, paprika, origan et ail en poudre.\n3. Fais cuire 2-3 minutes par côté — ne pas trop cuire.\n4. Fais bouillir brocoli, choufleur, carottes en parallèle." },
     serving: "Στύψε λεμόνι πάνω στο συκώτι μόνο αφού βγει από τη φωτιά. Σέρβιρε με βραστά λαχανικά και ψωμί ολικής.",
+    servingI18n: { el: "Στύψε λεμόνι πάνω στο συκώτι μόνο αφού βγει από τη φωτιά. Σέρβιρε με βραστά λαχανικά και ψωμί ολικής.", en: "Squeeze lemon over the liver only after removing from heat. Serve with steamed vegetables and whole grain bread.", es: "Exprime limón sobre el hígado solo después de sacarlo del fuego. Sirve con verduras al vapor y pan integral.", fr: "Presse du citron sur le foie seulement après l'avoir retiré du feu. Sers avec des légumes vapeur et du pain complet." },
     items: ["180g μοσχαρίσιο συκώτι", "βρασμένα λαχανικά (μπρόκολο, κουνουπίδι, καρότα)", "30g ψωμί ολικής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -886,7 +990,9 @@ const STANDARD_MEALS = [
     kcal_est: 580, p: 46, c: 36, f: 20,
     note: "Υψηλή συγκέντρωση σιδήρου και βιταμίνης Β12. Ψήσε σε δυνατή φωτιά με κρεμμύδι και λεμόνι. Μην παραψήσεις — μένει τρυφερό.",
     instructions: "1. Βράσε πατάτα (20-25 λεπτά) παράλληλα με το μαγείρεμα.\n2. Ζέστανε τηγάνι σε δυνατή φωτιά, σόταρε κρεμμύδι σε ροδέλες.\n3. Πρόσθεσε συκώτι, ψήσε 2-3 λεπτά ανά πλευρά. Μην παραψήσεις.",
+    instructionsI18n: { el: "1. Βράσε πατάτα (20-25 λεπτά) παράλληλα με το μαγείρεμα.\n2. Ζέστανε τηγάνι σε δυνατή φωτιά, σόταρε κρεμμύδι σε ροδέλες.\n3. Πρόσθεσε συκώτι, ψήσε 2-3 λεπτά ανά πλευρά. Μην παραψήσεις.", en: "1. Boil potato (20-25 minutes) in parallel with cooking.\n2. Heat pan over high heat, sauté onion in rings.\n3. Add liver, cook 2-3 minutes per side. Don't overcook.", es: "1. Cuece la patata (20-25 minutos) en paralelo con la cocción.\n2. Calienta la sartén a fuego alto, saltea la cebolla en aros.\n3. Añade el hígado, cocina 2-3 minutos por lado. No cocines demasiado.", fr: "1. Fais bouillir la pomme de terre (20-25 minutes) en parallèle avec la cuisson.\n2. Chauffe la poêle à feu vif, fais revenir l'oignon en rondelles.\n3. Ajoute le foie, fais cuire 2-3 minutes par côté. Ne pas trop cuire." },
     serving: "Στύψε λεμόνι πάνω μετά το μαγείρεμα. Σέρβιρε με βραστή πατάτα και σαλάτα εποχής. Πλούσιο σε σίδηρο και Β12.",
+    servingI18n: { el: "Στύψε λεμόνι πάνω μετά το μαγείρεμα. Σέρβιρε με βραστή πατάτα και σαλάτα εποχής. Πλούσιο σε σίδηρο και Β12.", en: "Squeeze lemon on top after cooking. Serve with boiled potato and a seasonal salad. Rich in iron and B12.", es: "Exprime limón por encima después de cocinar. Sirve con patata hervida y ensalada de temporada. Rico en hierro y B12.", fr: "Presse du citron par-dessus après la cuisson. Sers avec une pomme de terre bouillie et une salade de saison. Riche en fer et B12." },
     items: ["180g συκώτι βοδινό", "200g πατάτα βραστή", "σαλάτα εποχής", "1 κγ ελαιόλαδο"]
   },
   {
@@ -896,7 +1002,9 @@ const STANDARD_MEALS = [
     kcal_est: 640, p: 55, c: 62, f: 12,
     note: "Κλασικό μεσημεριανό με υψηλή πρωτεΐνη",
     instructions: "1. Μαρίνα το κοτόπουλο με λεμόνι, ρίγανη, αλατοπίπερο για 20 λεπτά.\n2. Ψήσε σε σχάρα ή αντικολλητικό 7 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι σύμφωνα με τις οδηγίες της συσκευασίας.",
+    instructionsI18n: { el: "1. Μαρίνα το κοτόπουλο με λεμόνι, ρίγανη, αλατοπίπερο για 20 λεπτά.\n2. Ψήσε σε σχάρα ή αντικολλητικό 7 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι σύμφωνα με τις οδηγίες της συσκευασίας.", en: "1. Marinate the chicken with lemon, oregano, salt and pepper for 20 minutes.\n2. Grill or pan-fry for 7 minutes per side.\n3. Boil the rice according to package instructions.", es: "1. Marina el pollo con limón, orégano, sal y pimienta durante 20 minutos.\n2. Asa a la plancha o en sartén 7 minutos por lado.\n3. Cuece el arroz según las instrucciones del paquete.", fr: "1. Marine le poulet avec du citron, de l'origan, sel et poivre pendant 20 minutes.\n2. Grille ou fais cuire à la poêle 7 minutes par côté.\n3. Fais bouillir le riz selon les instructions du paquet." },
     serving: "Σέρβιρε κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα ντομάτας με ελαιόλαδο και λεμόνι.",
+    servingI18n: { el: "Σέρβιρε κοτόπουλο πάνω στο ρύζι. Δίπλα βάλε σαλάτα ντομάτας με ελαιόλαδο και λεμόνι.", en: "Serve chicken on top of the rice. Add a tomato salad with olive oil and lemon alongside.", es: "Sirve el pollo encima del arroz. Añade ensalada de tomate con aceite de oliva y limón al lado.", fr: "Sers le poulet sur le riz. Ajoute une salade de tomates avec de l'huile d'olive et du citron à côté." },
     items: ["250g κοτόπουλο φιλέτο ψητό", "100g ρύζι μαγ.", "σαλάτα ντομάτα + 1 κγ ελαιόλαδο"]
   },
   {
@@ -906,7 +1014,9 @@ const STANDARD_MEALS = [
     kcal_est: 720, p: 52, c: 60, f: 22,
     note: "Πιο λιπαρό, πιο γευστικό",
     instructions: "1. Άλειψε μπούτια με ελαιόλαδο, σκόρδο, ρίγανη, αλατοπίπερο.\n2. Ψήσε σε φούρνο 190°C για 35-40 λεπτά ή σε σχάρα 10 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι παράλληλα.",
+    instructionsI18n: { el: "1. Άλειψε μπούτια με ελαιόλαδο, σκόρδο, ρίγανη, αλατοπίπερο.\n2. Ψήσε σε φούρνο 190°C για 35-40 λεπτά ή σε σχάρα 10 λεπτά ανά πλευρά.\n3. Βράσε το ρύζι παράλληλα.", en: "1. Rub thighs with olive oil, garlic, oregano, salt and pepper.\n2. Roast in oven at 190°C for 35-40 minutes or grill 10 minutes per side.\n3. Boil the rice in parallel.", es: "1. Unta los muslos con aceite de oliva, ajo, orégano, sal y pimienta.\n2. Asa en horno a 190°C durante 35-40 minutos o a la plancha 10 minutos por lado.\n3. Cuece el arroz en paralelo.", fr: "1. Badigeonne les cuisses avec de l'huile d'olive, de l'ail, de l'origan, sel et poivre.\n2. Rôtis au four à 190°C pendant 35-40 minutes ou grille 10 minutes par côté.\n3. Fais bouillir le riz en parallèle." },
     serving: "Σέρβιρε μπούτι πάνω στο ρύζι. Στύψε λεμόνι από πάνω και πρόσθεσε σαλάτα.",
+    servingI18n: { el: "Σέρβιρε μπούτι πάνω στο ρύζι. Στύψε λεμόνι από πάνω και πρόσθεσε σαλάτα.", en: "Serve thigh on top of the rice. Squeeze lemon over and add a salad.", es: "Sirve el muslo encima del arroz. Exprime limón por encima y añade ensalada.", fr: "Sers la cuisse sur le riz. Presse du citron par-dessus et ajoute une salade." },
     items: ["250g κοτόπουλο μπούτι ψητό", "100g ρύζι μαγ.", "λίγη σαλάτα"]
   },
   {
@@ -916,7 +1026,9 @@ const STANDARD_MEALS = [
     kcal_est: 300, p: 42, c: 8, f: 10,
     note: "Ελαφρύ & υψηλή πρωτεΐνη",
     instructions: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Ανακάτεψε με χυμό λεμονιού, ρίγανη και αλατοπίπερο.\n3. Ετοίμασε σαλάτα με λαχανικά εποχής.",
+    instructionsI18n: { el: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Ανακάτεψε με χυμό λεμονιού, ρίγανη και αλατοπίπερο.\n3. Ετοίμασε σαλάτα με λαχανικά εποχής.", en: "1. Drain the tuna well from the can.\n2. Mix with lemon juice, oregano and salt and pepper.\n3. Prepare a salad with seasonal vegetables.", es: "1. Escurre bien el atún de la lata.\n2. Mezcla con zumo de limón, orégano y sal y pimienta.\n3. Prepara una ensalada con verduras de temporada.", fr: "1. Égoutte bien le thon de la boîte.\n2. Mélange avec du jus de citron, de l'origan et sel et poivre.\n3. Prépare une salade avec des légumes de saison." },
     serving: "Σέρβιρε τόνο πάνω στη σαλάτα. Ρίξε ελαιόλαδο και λεμόνι. Γρήγορο και πλούσιο σε πρωτεΐνη.",
+    servingI18n: { el: "Σέρβιρε τόνο πάνω στη σαλάτα. Ρίξε ελαιόλαδο και λεμόνι. Γρήγορο και πλούσιο σε πρωτεΐνη.", en: "Serve tuna on top of the salad. Drizzle olive oil and lemon. Quick and high in protein.", es: "Sirve el atún encima de la ensalada. Añade aceite de oliva y limón. Rápido y rico en proteínas.", fr: "Sers le thon sur la salade. Arrose d'huile d'olive et de citron. Rapide et riche en protéines." },
     items: ["2 κουτάκια τόνος (~160g)", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
   },
   {
@@ -926,7 +1038,9 @@ const STANDARD_MEALS = [
     kcal_est: 350, p: 18, c: 12, f: 24,
     note: "Καλοκαιρινό γεύμα",
     instructions: "1. Βράσε 2 αυγά (8 λεπτά για σφιχτά), κρύωσε και ξεφλούδισε.\n2. Κόψε ντομάτα, αγγούρι σε κύβους, πρόσθεσε ελιές και φέτα.",
+    instructionsI18n: { el: "1. Βράσε 2 αυγά (8 λεπτά για σφιχτά), κρύωσε και ξεφλούδισε.\n2. Κόψε ντομάτα, αγγούρι σε κύβους, πρόσθεσε ελιές και φέτα.", en: "1. Boil 2 eggs (8 minutes for hard-boiled), cool and peel.\n2. Cut tomato, cucumber into cubes, add olives and feta.", es: "1. Cuece 2 huevos (8 minutos para que queden duros), enfría y pela.\n2. Corta tomate, pepino en cubos, añade aceitunas y feta.", fr: "1. Fais cuire 2 œufs (8 minutes pour qu'ils soient durs), refroidis et pèle.\n2. Coupe la tomate, le concombre en cubes, ajoute des olives et du feta." },
     serving: "Ρίξε ελαιόλαδο, ρίγανη και αλατοπίπερο. Βάλε αυγά κομμένα στα 4 από πάνω.",
+    servingI18n: { el: "Ρίξε ελαιόλαδο, ρίγανη και αλατοπίπερο. Βάλε αυγά κομμένα στα 4 από πάνω.", en: "Drizzle olive oil, oregano and salt and pepper. Place quartered eggs on top.", es: "Añade aceite de oliva, orégano y sal y pimienta. Coloca los huevos en cuartos encima.", fr: "Arrose d'huile d'olive, d'origan et de sel et poivre. Place les œufs coupés en quatre par-dessus." },
     items: ["200g ντομάτα+αγγούρι+ελιές+φέτα", "2 βραστά αυγά", "1 κσ ελαιόλαδο"]
   },
   {
@@ -936,7 +1050,9 @@ const STANDARD_MEALS = [
     kcal_est: 480, p: 22, c: 78, f: 10,
     note: "Πλήρης φυτική πρωτεΐνη",
     instructions: "1. Βράσε φακές 20 λεπτά σε νερό, στράγγισε.\n2. Σοτάρισε κρεμμύδι σε ελαιόλαδο μέχρι να καραμελώσει (10 λεπτά).\n3. Ανακάτεψε φακές + ρύζι μαγειρεμένο + κρεμμύδι.",
+    instructionsI18n: { el: "1. Βράσε φακές 20 λεπτά σε νερό, στράγγισε.\n2. Σοτάρισε κρεμμύδι σε ελαιόλαδο μέχρι να καραμελώσει (10 λεπτά).\n3. Ανακάτεψε φακές + ρύζι μαγειρεμένο + κρεμμύδι.", en: "1. Boil lentils 20 minutes in water, drain.\n2. Sauté onion in olive oil until caramelised (10 minutes).\n3. Mix lentils + cooked rice + onion.", es: "1. Cuece las lentejas 20 minutos en agua, escurre.\n2. Saltea la cebolla en aceite de oliva hasta que se caramelice (10 minutos).\n3. Mezcla lentejas + arroz cocido + cebolla.", fr: "1. Fais bouillir les lentilles 20 minutes dans l'eau, égoutte.\n2. Fais revenir l'oignon dans l'huile d'olive jusqu'à caramélisation (10 minutes).\n3. Mélange lentilles + riz cuit + oignon." },
     serving: "Σέρβιρε ζεστό με γιαούρτι στο πλάι και λίγο κύμινο από πάνω. Κλασική μεσογειακή συνταγή.",
+    servingI18n: { el: "Σέρβιρε ζεστό με γιαούρτι στο πλάι και λίγο κύμινο από πάνω. Κλασική μεσογειακή συνταγή.", en: "Serve hot with yogurt on the side and a little cumin on top. A classic Mediterranean recipe.", es: "Sirve caliente con yogur al lado y un poco de comino por encima. Una receta mediterránea clásica.", fr: "Sers chaud avec du yaourt à côté et un peu de cumin par-dessus. Une recette méditerranéenne classique." },
     items: ["200g φακές μαγ.", "80g ρύζι μαγ.", "1 κσ ελαιόλαδο", "κρεμμύδι"]
   },
 
@@ -948,7 +1064,9 @@ const STANDARD_MEALS = [
     kcal_est: 140, p: 3, c: 22, f: 5,
     note: "Ελαφρύ απογευματινό σνακ",
     instructions: "1. Πλύνε το μήλο καλά.\n2. Κόψε σε φέτες αν θέλεις ή φάε ολόκληρο.\n3. Μέτρησε 5 αμύγδαλα.",
+    instructionsI18n: { el: "1. Πλύνε το μήλο καλά.\n2. Κόψε σε φέτες αν θέλεις ή φάε ολόκληρο.\n3. Μέτρησε 5 αμύγδαλα.", en: "1. Wash the apple well.\n2. Cut into slices if you like or eat it whole.\n3. Count out 5 almonds.", es: "1. Lava bien la manzana.\n2. Corta en rodajas si quieres o cómela entera.\n3. Cuenta 5 almendras.", fr: "1. Lave bien la pomme.\n2. Coupe en tranches si tu veux ou mange-la entière.\n3. Compte 5 amandes." },
     serving: "Φάε μήλο και αμύγδαλα μαζί — ο συνδυασμός φυτικών ινών και καλών λιπαρών σε χορταίνει.",
+    servingI18n: { el: "Φάε μήλο και αμύγδαλα μαζί — ο συνδυασμός φυτικών ινών και καλών λιπαρών σε χορταίνει.", en: "Eat apple and almonds together — the combination of fibre and good fats will fill you up.", es: "Come manzana y almendras juntas — la combinación de fibra y grasas buenas te saciará.", fr: "Mange la pomme et les amandes ensemble — la combinaison de fibres et de bons lipides te rassasiera." },
     items: ["1 μήλο (~150g)", "5 αμύγδαλα (~10g)"]
   },
   {
@@ -958,7 +1076,9 @@ const STANDARD_MEALS = [
     kcal_est: 150, p: 27, c: 3, f: 1,
     note: "Post-workout ιδανικό",
     instructions: "1. Ρίξε 300ml κρύο νερό ή γάλα στο shaker.\n2. Πρόσθεσε 1 σκούπ whey (~30g).\n3. Κούνα δυνατά για 10-15 δευτερόλεπτα.",
+    instructionsI18n: { el: "1. Ρίξε 300ml κρύο νερό ή γάλα στο shaker.\n2. Πρόσθεσε 1 σκούπ whey (~30g).\n3. Κούνα δυνατά για 10-15 δευτερόλεπτα.", en: "1. Pour 300ml cold water or milk into the shaker.\n2. Add 1 scoop of whey (~30g).\n3. Shake vigorously for 10-15 seconds.", es: "1. Vierte 300ml de agua fría o leche en el shaker.\n2. Añade 1 medida de whey (~30g).\n3. Agita vigorosamente durante 10-15 segundos.", fr: "1. Verse 300ml d'eau froide ou de lait dans le shaker.\n2. Ajoute 1 dose de whey (~30g).\n3. Secoue vigoureusement pendant 10-15 secondes." },
     serving: "Πιες μέσα σε 30 λεπτά μετά την προπόνηση για μέγιστη αποκατάσταση μυών.",
+    servingI18n: { el: "Πιες μέσα σε 30 λεπτά μετά την προπόνηση για μέγιστη αποκατάσταση μυών.", en: "Drink within 30 minutes after your workout for maximum muscle recovery.", es: "Bebe dentro de los 30 minutos después del entrenamiento para la máxima recuperación muscular.", fr: "Bois dans les 30 minutes après l'entraînement pour une récupération musculaire maximale." },
     items: ["1 σκούπ whey isolate (~30g)", "300ml νερό"]
   },
   {
@@ -968,7 +1088,9 @@ const STANDARD_MEALS = [
     kcal_est: 196, p: 16, c: 20, f: 8,
     note: "Γλυκό & πρωτεϊνούχο",
     instructions: "1. Βγάλε γιαούρτι από το ψυγείο.\n2. Στάξε 1 κγ μέλι από πάνω.",
+    instructionsI18n: { el: "1. Βγάλε γιαούρτι από το ψυγείο.\n2. Στάξε 1 κγ μέλι από πάνω.", en: "1. Take yogurt out of the fridge.\n2. Drizzle 1 tsp honey on top.", es: "1. Saca el yogur del frigorífico.\n2. Chorrea 1 cdita de miel por encima.", fr: "1. Sors le yaourt du réfrigérateur.\n2. Arrose d'1 càc de miel par-dessus." },
     serving: "Σέρβιρε κρύο σε μπολ. Μπορείς να προσθέσεις λίγη κανέλα ή καρύδια.",
+    servingI18n: { el: "Σέρβιρε κρύο σε μπολ. Μπορείς να προσθέσεις λίγη κανέλα ή καρύδια.", en: "Serve cold in a bowl. You can add a little cinnamon or walnuts.", es: "Sirve frío en un bol. Puedes añadir un poco de canela o nueces.", fr: "Sers froid dans un bol. Tu peux ajouter un peu de cannelle ou des noix." },
     items: ["200g γιαούρτι 2%", "1 κγ μέλι (~15g)"]
   },
   {
@@ -978,7 +1100,9 @@ const STANDARD_MEALS = [
     kcal_est: 210, p: 6, c: 32, f: 8,
     note: "Ενέργεια & χορτασμός",
     instructions: "1. Ξεφλούδισε τη μπανάνα.\n2. Κόψε σε ροδέλες ή φάε ολόκληρη.\n3. Βγάλε 1 κγ φυστικοβούτυρο.",
+    instructionsI18n: { el: "1. Ξεφλούδισε τη μπανάνα.\n2. Κόψε σε ροδέλες ή φάε ολόκληρη.\n3. Βγάλε 1 κγ φυστικοβούτυρο.", en: "1. Peel the banana.\n2. Cut into rounds or eat it whole.\n3. Scoop out 1 tsp peanut butter.", es: "1. Pela el plátano.\n2. Corta en rodajas o cómelo entero.\n3. Saca 1 cdita de mantequilla de cacahuete.", fr: "1. Pèle la banane.\n2. Coupe en rondelles ou mange-la entière.\n3. Prends 1 càc de beurre de cacahuètes." },
     serving: "Βούτα κομμάτια μπανάνας στο φυστικοβούτυρο ή άλειψε. Τέλεια επιλογή 30-60 λεπτά πριν την προπόνηση.",
+    servingI18n: { el: "Βούτα κομμάτια μπανάνας στο φυστικοβούτυρο ή άλειψε. Τέλεια επιλογή 30-60 λεπτά πριν την προπόνηση.", en: "Dip banana pieces in the peanut butter or spread it. Perfect option 30-60 minutes before a workout.", es: "Moja trozos de plátano en la mantequilla de cacahuete o úntalos. Perfecto 30-60 minutos antes del entrenamiento.", fr: "Trempe des morceaux de banane dans le beurre de cacahuètes ou étale-le. Parfait 30-60 minutes avant l'entraînement." },
     items: ["1 μπανάνα (~120g)", "1 κγ φυστικοβούτυρο (~15g)"]
   },
   {
@@ -988,7 +1112,9 @@ const STANDARD_MEALS = [
     kcal_est: 150, p: 5, c: 18, f: 6,
     note: "Υγιεινό & χορταστικό",
     instructions: "1. Πλύνε και κόψε καρότο, αγγούρι, πιπεριά σε μπαστουνάκια.\n2. Βάλε χούμους σε μικρό μπολ για βούτηγμα.",
+    instructionsI18n: { el: "1. Πλύνε και κόψε καρότο, αγγούρι, πιπεριά σε μπαστουνάκια.\n2. Βάλε χούμους σε μικρό μπολ για βούτηγμα.", en: "1. Wash and cut carrot, cucumber, pepper into sticks.\n2. Place hummus in a small bowl for dipping.", es: "1. Lava y corta zanahoria, pepino, pimiento en bastoncillos.\n2. Coloca hummus en un pequeño bol para mojar.", fr: "1. Lave et coupe la carotte, le concombre, le poivron en bâtonnets.\n2. Place le houmous dans un petit bol pour tremper." },
     serving: "Σέρβιρε λαχανικά δίπλα στο μπολ με χούμους. Ιδανικό χαμηλοθερμιδικό σνακ.",
+    servingI18n: { el: "Σέρβιρε λαχανικά δίπλα στο μπολ με χούμους. Ιδανικό χαμηλοθερμιδικό σνακ.", en: "Serve vegetables alongside the bowl of hummus. Ideal low-calorie snack.", es: "Sirve las verduras junto al bol de hummus. Snack ideal bajo en calorías.", fr: "Sers les légumes à côté du bol de houmous. Collation idéale à faibles calories." },
     items: ["150g καρότο+αγγούρι+πιπεριά", "50g χούμους"]
   },
   {
@@ -998,7 +1124,9 @@ const STANDARD_MEALS = [
     kcal_est: 260, p: 18, c: 24, f: 9,
     note: "Πρωτεΐνη πριν την προπόνηση",
     instructions: "1. Βάλε 2 φέτες ψωμί στην τοστιέρα.\n2. Πρόσθεσε γαλοπούλα και τυρί light.\n3. Τόσταρε μέχρι το τυρί να λιώσει.",
+    instructionsI18n: { el: "1. Βάλε 2 φέτες ψωμί στην τοστιέρα.\n2. Πρόσθεσε γαλοπούλα και τυρί light.\n3. Τόσταρε μέχρι το τυρί να λιώσει.", en: "1. Place 2 bread slices in the toaster.\n2. Add turkey and light cheese.\n3. Toast until the cheese melts.", es: "1. Coloca 2 rebanadas de pan en la tostadora.\n2. Añade pavo y queso light.\n3. Tuesta hasta que el queso se derrita.", fr: "1. Place 2 tranches de pain dans le grille-pain.\n2. Ajoute la dinde et le fromage light.\n3. Grille jusqu'à ce que le fromage fonde." },
     serving: "Σέρβιρε ζεστό. Ιδανικό σνακ πριν γυμναστήριο — πρωτεΐνη + υδατάνθρακες για ενέργεια.",
+    servingI18n: { el: "Σέρβιρε ζεστό. Ιδανικό σνακ πριν γυμναστήριο — πρωτεΐνη + υδατάνθρακες για ενέργεια.", en: "Serve hot. Ideal pre-workout snack — protein + carbohydrates for energy.", es: "Sirve caliente. Snack ideal antes del gimnasio — proteína + carbohidratos para energía.", fr: "Sers chaud. Collation idéale avant la salle de sport — protéines + glucides pour l'énergie." },
     items: ["2 φέτες ψωμί τοστ", "60g γαλοπούλα", "30g τυρί light"]
   },
   {
@@ -1008,7 +1136,9 @@ const STANDARD_MEALS = [
     kcal_est: 180, p: 14, c: 24, f: 4,
     note: "Βιταμίνη C + πρωτεΐνη",
     instructions: "1. Κόψε ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.\n2. Βγάλε 100g cottage cheese.",
+    instructionsI18n: { el: "1. Κόψε ακτινίδια στη μέση και φάε με κουταλάκι, ή ξεφλούδισε και κόψε σε φέτες.\n2. Βγάλε 100g cottage cheese.", en: "1. Cut kiwis in half and eat with a teaspoon, or peel and slice.\n2. Take out 100g cottage cheese.", es: "1. Corta los kiwis por la mitad y come con una cucharita, o pela y corta en rodajas.\n2. Saca 100g de cottage cheese.", fr: "1. Coupe les kiwis en deux et mange avec une cuillère à café, ou pèle et coupe en tranches.\n2. Sors 100g de cottage cheese." },
     serving: "Σέρβιρε ακτινίδια δίπλα ή πάνω στο cottage cheese. Εξαιρετικός συνδυασμός Βιταμίνης C και πρωτεΐνης.",
+    servingI18n: { el: "Σέρβιρε ακτινίδια δίπλα ή πάνω στο cottage cheese. Εξαιρετικός συνδυασμός Βιταμίνης C και πρωτεΐνης.", en: "Serve kiwis alongside or on top of the cottage cheese. An excellent combination of Vitamin C and protein.", es: "Sirve los kiwis al lado o encima del cottage cheese. Una excelente combinación de Vitamina C y proteína.", fr: "Sers les kiwis à côté ou sur le cottage cheese. Une excellente combinaison de Vitamine C et de protéines." },
     items: ["2 ακτινίδια (~140g)", "100g cottage cheese"]
   },
   {
@@ -1018,7 +1148,9 @@ const STANDARD_MEALS = [
     kcal_est: 200, p: 6, c: 38, f: 2,
     note: "Γλυκό ανέσεως",
     instructions: "Έτοιμο.",
+    instructionsI18n: { el: "Έτοιμο.", en: "Ready.", es: "Listo.", fr: "Prêt." },
     serving: "Σέρβιρε κρύο ή σε θερμοκρασία δωματίου. Μπορείς να ρίξεις κανέλα από πάνω.",
+    servingI18n: { el: "Σέρβιρε κρύο ή σε θερμοκρασία δωματίου. Μπορείς να ρίξεις κανέλα από πάνω.", en: "Serve cold or at room temperature. You can sprinkle cinnamon on top.", es: "Sirve frío o a temperatura ambiente. Puedes echar canela por encima.", fr: "Sers froid ou à température ambiante. Tu peux saupoudrer de cannelle par-dessus." },
     items: ["1 ρυζόγαλο light (~200g)"]
   },
 
@@ -1030,7 +1162,9 @@ const STANDARD_MEALS = [
     kcal_est: 250, p: 24, c: 10, f: 12,
     note: "Ελαφρύ & πρωτεϊνούχο βραδινό",
     instructions: "1. Βγάλε το cottage cheese από το ψυγείο.\n2. Ετοίμασε σαλάτα με ντομάτα, αγγούρι, πιπεριά — ό,τι έχεις στο χέρι.\n3. Ρίξε λεμόνι και αλατοπίπερο στη σαλάτα.",
+    instructionsI18n: { el: "1. Βγάλε το cottage cheese από το ψυγείο.\n2. Ετοίμασε σαλάτα με ντομάτα, αγγούρι, πιπεριά — ό,τι έχεις στο χέρι.\n3. Ρίξε λεμόνι και αλατοπίπερο στη σαλάτα.", en: "1. Take the cottage cheese out of the fridge.\n2. Prepare a salad with tomato, cucumber, pepper — whatever you have on hand.\n3. Add lemon and salt and pepper to the salad.", es: "1. Saca el cottage cheese del frigorífico.\n2. Prepara una ensalada con tomate, pepino, pimiento — lo que tengas a mano.\n3. Añade limón y sal y pimienta a la ensalada.", fr: "1. Sors le cottage cheese du réfrigérateur.\n2. Prépare une salade avec de la tomate, du concombre, du poivron — ce que tu as sous la main.\n3. Ajoute du citron et sel et poivre à la salade." },
     serving: "Σέρβιρε cottage cheese δίπλα στη σαλάτα. Ρίξε λίγο ελαιόλαδο. Ιδανικό ελαφρύ βραδινό.",
+    servingI18n: { el: "Σέρβιρε cottage cheese δίπλα στη σαλάτα. Ρίξε λίγο ελαιόλαδο. Ιδανικό ελαφρύ βραδινό.", en: "Serve cottage cheese alongside the salad. Drizzle a little olive oil. Ideal light dinner.", es: "Sirve el cottage cheese al lado de la ensalada. Añade un poco de aceite de oliva. Cena ligera ideal.", fr: "Sers le cottage cheese à côté de la salade. Arrose d'un peu d'huile d'olive. Dîner léger idéal." },
     items: ["200g cottage cheese", "σαλάτα λαχανικών", "1 κγ ελαιόλαδο"]
   },
   {
@@ -1040,7 +1174,9 @@ const STANDARD_MEALS = [
     kcal_est: 320, p: 22, c: 8, f: 22,
     note: "Γρήγορο & χορταστικό",
     instructions: "1. Χτύπα 3 αυγά με αλατοπίπερο και λίγο γάλα.\n2. Ζέστανε αντικολλητικό τηγάνι με λίγο ελαιόλαδο.\n3. Ρίξε αυγά, ανακάτεψε απαλά και δίπλωσε ομελέτα στα 2 λεπτά.",
+    instructionsI18n: { el: "1. Χτύπα 3 αυγά με αλατοπίπερο και λίγο γάλα.\n2. Ζέστανε αντικολλητικό τηγάνι με λίγο ελαιόλαδο.\n3. Ρίξε αυγά, ανακάτεψε απαλά και δίπλωσε ομελέτα στα 2 λεπτά.", en: "1. Beat 3 eggs with salt, pepper and a little milk.\n2. Heat a non-stick pan with a little olive oil.\n3. Pour eggs, stir gently and fold the omelette at 2 minutes.", es: "1. Bate 3 huevos con sal, pimienta y un poco de leche.\n2. Calienta una sartén antiadherente con un poco de aceite de oliva.\n3. Vierte los huevos, remueve suavemente y dobla la tortilla a los 2 minutos.", fr: "1. Bats 3 œufs avec sel, poivre et un peu de lait.\n2. Chauffe une poêle antiadhésive avec un peu d'huile d'olive.\n3. Verse les œufs, remue doucement et plie l'omelette à 2 minutes." },
     serving: "Σέρβιρε αμέσως ζεστή με φρέσκια σαλάτα στο πλάι. Μπορείς να προσθέσεις τυρί ή λαχανικά μέσα.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστή με φρέσκια σαλάτα στο πλάι. Μπορείς να προσθέσεις τυρί ή λαχανικά μέσα.", en: "Serve immediately hot with a fresh salad on the side. You can add cheese or vegetables inside.", es: "Sirve inmediatamente caliente con ensalada fresca al lado. Puedes añadir queso o verduras dentro.", fr: "Sers immédiatement chaud avec une salade fraîche à côté. Tu peux ajouter du fromage ou des légumes à l'intérieur." },
     items: ["3 αυγά", "λίγο τυρί", "σαλάτα", "1 κγ ελαιόλαδο"]
   },
   {
@@ -1050,7 +1186,9 @@ const STANDARD_MEALS = [
     kcal_est: 380, p: 28, c: 32, f: 16,
     note: "Ωμέγα-3 + εύκολο",
     instructions: "1. Στράγγισε καλά τον σολομό.\n2. Ανακάτεψε με χυμό λεμονιού, άνηθο, αλατοπίπερο.\n3. Ψήσε ή τοστάρε το ψωμί ολικής.",
+    instructionsI18n: { el: "1. Στράγγισε καλά τον σολομό.\n2. Ανακάτεψε με χυμό λεμονιού, άνηθο, αλατοπίπερο.\n3. Ψήσε ή τοστάρε το ψωμί ολικής.", en: "1. Drain the salmon well.\n2. Mix with lemon juice, dill, salt and pepper.\n3. Toast the whole grain bread.", es: "1. Escurre bien el salmón.\n2. Mezcla con zumo de limón, eneldo, sal y pimienta.\n3. Tuesta el pan integral.", fr: "1. Égoutte bien le saumon.\n2. Mélange avec du jus de citron, de l'aneth, sel et poivre.\n3. Grille le pain complet." },
     serving: "Απλώστε σολομό πάνω στο ψωμί. Ιδανικό γρήγορο βραδινό με Ωμέγα-3.",
+    servingI18n: { el: "Απλώστε σολομό πάνω στο ψωμί. Ιδανικό γρήγορο βραδινό με Ωμέγα-3.", en: "Spread salmon on the bread. Ideal quick dinner with Omega-3.", es: "Extiende el salmón sobre el pan. Cena rápida ideal con Omega-3.", fr: "Étale le saumon sur le pain. Dîner rapide idéal avec des Oméga-3." },
     items: ["1 κονσέρβα σολομός (~125g)", "2 φέτες ψωμί ολικής"]
   },
   {
@@ -1060,7 +1198,9 @@ const STANDARD_MEALS = [
     kcal_est: 280, p: 10, c: 52, f: 4,
     note: "Ελαφρύ βραδινό",
     instructions: "1. Βγάλε γιαούρτι από το ψυγείο 5 λεπτά πριν.\n2. Ξεφλούδισε και κόψε μπανάνες σε ροδέλες.",
+    instructionsI18n: { el: "1. Βγάλε γιαούρτι από το ψυγείο 5 λεπτά πριν.\n2. Ξεφλούδισε και κόψε μπανάνες σε ροδέλες.", en: "1. Take yogurt out of the fridge 5 minutes early.\n2. Peel and cut bananas into rounds.", es: "1. Saca el yogur del frigorífico 5 minutos antes.\n2. Pela y corta los plátanos en rodajas.", fr: "1. Sors le yaourt du réfrigérateur 5 minutes à l'avance.\n2. Pèle et coupe les bananes en rondelles." },
     serving: "Σέρβιρε μπανάνες πάνω στο γιαούρτι. Μπορείς να προσθέσεις λίγη κανέλα ή μέλι.",
+    servingI18n: { el: "Σέρβιρε μπανάνες πάνω στο γιαούρτι. Μπορείς να προσθέσεις λίγη κανέλα ή μέλι.", en: "Serve bananas on top of the yogurt. You can add a little cinnamon or honey.", es: "Sirve los plátanos encima del yogur. Puedes añadir un poco de canela o miel.", fr: "Sers les bananes sur le yaourt. Tu peux ajouter un peu de cannelle ou de miel." },
     items: ["200g γιαούρτι 2%", "2 μπανάνες (~240g)"]
   },
   {
@@ -1070,7 +1210,9 @@ const STANDARD_MEALS = [
     kcal_est: 520, p: 36, c: 42, f: 14,
     note: "Σως: γιαούρτι 2%, μουστάρδα, μέλι. Κόψε κοτόπουλο σε λωρίδες, σπάσε τα παξιμαδάκια σε κομμάτια. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη, θυμάρι.",
     instructions: "1. Ψήσε κοτόπουλο σε αντικολλητικό με πιπέρι, πάπρικα, ρίγανη, θυμάρι. Κόψε σε λωρίδες.\n2. Ετοίμασε σως: ανακάτεψε γιαούρτι, μουστάρδα, μέλι.\n3. Κόψε ντομάτα και πιπεριά. Σπάσε παξιμαδάκια σε κομμάτια.",
+    instructionsI18n: { el: "1. Ψήσε κοτόπουλο σε αντικολλητικό με πιπέρι, πάπρικα, ρίγανη, θυμάρι. Κόψε σε λωρίδες.\n2. Ετοίμασε σως: ανακάτεψε γιαούρτι, μουστάρδα, μέλι.\n3. Κόψε ντομάτα και πιπεριά. Σπάσε παξιμαδάκια σε κομμάτια.", en: "1. Cook chicken in a non-stick pan with pepper, paprika, oregano, thyme. Cut into strips.\n2. Prepare dressing: mix yogurt, mustard, honey.\n3. Cut tomato and pepper. Break rusks into pieces.", es: "1. Cocina el pollo en una sartén antiadherente con pimienta, pimentón, orégano, tomillo. Corta en tiras.\n2. Prepara el aliño: mezcla yogur, mostaza, miel.\n3. Corta tomate y pimiento. Rompe las tostadas en trozos.", fr: "1. Fais cuire le poulet dans une poêle antiadhésive avec poivre, paprika, origan, thym. Coupe en lanières.\n2. Prépare la sauce : mélange yaourt, moutarde, miel.\n3. Coupe la tomate et le poivron. Casse les biscottes en morceaux." },
     serving: "Ανακάτεψε κοτόπουλο, λαχανικά και παξιμαδάκια. Περιέχυσε τη σως πριν σερβίρεις.",
+    servingI18n: { el: "Ανακάτεψε κοτόπουλο, λαχανικά και παξιμαδάκια. Περιέχυσε τη σως πριν σερβίρεις.", en: "Mix chicken, vegetables and rusks. Pour the dressing on just before serving.", es: "Mezcla pollo, verduras y tostadas. Vierte el aliño justo antes de servir.", fr: "Mélange le poulet, les légumes et les biscottes. Verse la sauce juste avant de servir." },
     items: ["100g ψητό φιλέτο κοτόπουλο", "120g ντομάτα", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού (2 τεμ.)", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
   },
   {
@@ -1080,7 +1222,9 @@ const STANDARD_MEALS = [
     kcal_est: 500, p: 30, c: 36, f: 22,
     note: "Στράγγισε καλά τον τόνο. Πρόσθεσε λεμόνι και κάπαρη. Μπαχαρικά: ρίγανη, πιπέρι, άνηθος.",
     instructions: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, κάπαρη, ρίγανη, πιπέρι, άνηθο.",
+    instructionsI18n: { el: "1. Στράγγισε καλά τον τόνο από τη συσκευασία.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, κάπαρη, ρίγανη, πιπέρι, άνηθο.", en: "1. Drain the tuna well from the can.\n2. Cut lettuce, tomato, cucumber, pepper.\n3. Mix tuna with lemon juice, capers, oregano, pepper, dill.", es: "1. Escurre bien el atún de la lata.\n2. Corta lechuga, tomate, pepino, pimiento.\n3. Mezcla el atún con zumo de limón, alcaparras, orégano, pimienta, eneldo.", fr: "1. Égoutte bien le thon de la boîte.\n2. Coupe la laitue, la tomate, le concombre, le poivron.\n3. Mélange le thon avec du jus de citron, des câpres, de l'origan, du poivre, de l'aneth." },
     serving: "Σέρβιρε σαλάτα με τόνο από πάνω. Σπάσε παξιμαδάκια δίπλα ή πάνω στη σαλάτα.",
+    servingI18n: { el: "Σέρβιρε σαλάτα με τόνο από πάνω. Σπάσε παξιμαδάκια δίπλα ή πάνω στη σαλάτα.", en: "Serve salad with tuna on top. Break rusks alongside or on top of the salad.", es: "Sirve la ensalada con atún encima. Rompe las tostadas al lado o encima de la ensalada.", fr: "Sers la salade avec le thon par-dessus. Casse les biscottes à côté ou sur la salade." },
     items: ["120g τόνος σε λάδι (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
   },
   {
@@ -1090,7 +1234,9 @@ const STANDARD_MEALS = [
     kcal_est: 490, p: 22, c: 44, f: 18,
     note: "Κόψε αυγά στα 4. Σως: γιαούρτι, μουστάρδα, μέλι — περιέχυσε λίγο πριν σερβίρεις. Μπαχαρικά: πάπρικα, πιπέρι, σχοινόπρασο.",
     instructions: "1. Βράσε 2 αυγά 8 λεπτά, κρύωσε και ξεφλούδισε. Κόψε στα 4.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι.\n3. Φτιάξε σως: γιαούρτι + μουστάρδα + μέλι, ανακάτεψε καλά.",
+    instructionsI18n: { el: "1. Βράσε 2 αυγά 8 λεπτά, κρύωσε και ξεφλούδισε. Κόψε στα 4.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι.\n3. Φτιάξε σως: γιαούρτι + μουστάρδα + μέλι, ανακάτεψε καλά.", en: "1. Boil 2 eggs 8 minutes, cool and peel. Cut into quarters.\n2. Cut lettuce, tomato, cucumber.\n3. Make dressing: yogurt + mustard + honey, mix well.", es: "1. Cuece 2 huevos 8 minutos, enfría y pela. Corta en cuartos.\n2. Corta lechuga, tomate, pepino.\n3. Prepara el aliño: yogur + mostaza + miel, mezcla bien.", fr: "1. Fais cuire 2 œufs 8 minutes, refroidis et pèle. Coupe en quartiers.\n2. Coupe la laitue, la tomate, le concombre.\n3. Prépare la sauce : yaourt + moutarde + miel, mélange bien." },
     serving: "Τοποθέτησε αυγά πάνω στη σαλάτα. Περιέχυσε τη σως και σπάσε παξιμαδάκια από πάνω.",
+    servingI18n: { el: "Τοποθέτησε αυγά πάνω στη σαλάτα. Περιέχυσε τη σως και σπάσε παξιμαδάκια από πάνω.", en: "Place eggs on top of the salad. Pour the dressing and break rusks on top.", es: "Coloca los huevos encima de la ensalada. Vierte el aliño y rompe las tostadas encima.", fr: "Place les œufs sur la salade. Verse la sauce et casse les biscottes par-dessus." },
     items: ["2 βραστά αυγά", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "40g παξιμαδάκια χαρουπιού", "40g γιαούρτι 2%", "1 κσ μουστάρδα", "1 κγ μέλι"]
   },
   {
@@ -1100,7 +1246,9 @@ const STANDARD_MEALS = [
     kcal_est: 470, p: 28, c: 36, f: 10,
     note: "Ιδανικό για ζεστές μέρες. Πρόσθεσε χυμό λεμονιού και λίγο ξίδι. Μπαχαρικά: ρίγανη, πιπέρι, βασιλικός.",
     instructions: "1. Στράγγισε τον τόνο καλά.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, λίγο ξίδι, ρίγανη, πιπέρι, βασιλικό.",
+    instructionsI18n: { el: "1. Στράγγισε τον τόνο καλά.\n2. Κόψε μαρούλι, ντομάτα, αγγούρι, πιπεριά.\n3. Ανακάτεψε τόνο με χυμό λεμονιού, λίγο ξίδι, ρίγανη, πιπέρι, βασιλικό.", en: "1. Drain the tuna well.\n2. Cut lettuce, tomato, cucumber, pepper.\n3. Mix tuna with lemon juice, a little vinegar, oregano, pepper, basil.", es: "1. Escurre bien el atún.\n2. Corta lechuga, tomate, pepino, pimiento.\n3. Mezcla el atún con zumo de limón, un poco de vinagre, orégano, pimienta, albahaca.", fr: "1. Égoutte bien le thon.\n2. Coupe la laitue, la tomate, le concombre, le poivron.\n3. Mélange le thon avec du jus de citron, un peu de vinaigre, de l'origan, du poivre, du basilic." },
     serving: "Σέρβιρε κρύο με παξιμαδάκια στο πλάι. Ιδανικό για ζεστές μέρες — ελαφρύ και φρέσκο.",
+    servingI18n: { el: "Σέρβιρε κρύο με παξιμαδάκια στο πλάι. Ιδανικό για ζεστές μέρες — ελαφρύ και φρέσκο.", en: "Serve cold with rusks on the side. Ideal for hot days — light and fresh.", es: "Sirve frío con tostadas al lado. Ideal para días calurosos — ligero y fresco.", fr: "Sers froid avec des biscottes à côté. Idéal pour les jours chauds — léger et frais." },
     items: ["120g τόνος σε νερό (στραγγισμένος)", "80g μαρούλι", "120g ντομάτα", "100g αγγούρι", "80g πιπεριά", "40g παξιμαδάκια χαρουπιού"]
   },
   {
@@ -1110,7 +1258,9 @@ const STANDARD_MEALS = [
     kcal_est: 535, p: 16, c: 58, f: 22,
     note: "Σέρβιρε παγωμένο. Ανακάτεψε βρώμη με γιαούρτι, φρούτα από πάνω. Προαιρετικά: κανέλα, βανίλια.",
     instructions: "1. Ανακάτεψε βρώμη με γιαούρτι σε μπολ.\n2. Από πάνω βάλε φρούτα του δάσους και σπασμένα καρύδια.\n3. Στάξε μέλι.",
+    instructionsI18n: { el: "1. Ανακάτεψε βρώμη με γιαούρτι σε μπολ.\n2. Από πάνω βάλε φρούτα του δάσους και σπασμένα καρύδια.\n3. Στάξε μέλι.", en: "1. Mix oats with yogurt in a bowl.\n2. Add berries and broken walnuts on top.\n3. Drizzle honey.", es: "1. Mezcla avena con yogur en un bol.\n2. Añade frutos del bosque y nueces rotas encima.\n3. Chorrea miel.", fr: "1. Mélange l'avoine avec le yaourt dans un bol.\n2. Ajoute des fruits des bois et des noix brisées par-dessus.\n3. Arrose de miel." },
     serving: "Σέρβιρε κρύο. Μπορείς να προσθέσεις κανέλα ή βανίλια για επιπλέον άρωμα.",
+    servingI18n: { el: "Σέρβιρε κρύο. Μπορείς να προσθέσεις κανέλα ή βανίλια για επιπλέον άρωμα.", en: "Serve cold. You can add cinnamon or vanilla for extra aroma.", es: "Sirve frío. Puedes añadir canela o vainilla para más aroma.", fr: "Sers froid. Tu peux ajouter de la cannelle ou de la vanille pour plus de parfum." },
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g καρύδια"]
   },
   {
@@ -1120,7 +1270,9 @@ const STANDARD_MEALS = [
     kcal_est: 501, p: 30, c: 38, f: 20,
     note: "Ζέστανε τορτίγια 30-60\". Άλειψε Philadelphia, βάλε υλικά, τύλιξε. Ψήσε 2' σε τοστιέρα. Μπαχαρικά: πιπέρι, πάπρικα, ρίγανη.",
     instructions: "1. Βράσε αυγό 8 λεπτά, κρύωσε και κόψε σε φέτες.\n2. Ζέστανε τορτίγια 30-60 δευτερόλεπτα σε τηγάνι.\n3. Άλειψε Philadelphia, πρόσθεσε γαλοπούλα, κασέρι, μαρούλι, ντομάτα, αυγό.\n4. Πασπάλισε πιπέρι, πάπρικα, ρίγανη. Τύλιξε και ψήσε 2 λεπτά σε τοστιέρα.",
+    instructionsI18n: { el: "1. Βράσε αυγό 8 λεπτά, κρύωσε και κόψε σε φέτες.\n2. Ζέστανε τορτίγια 30-60 δευτερόλεπτα σε τηγάνι.\n3. Άλειψε Philadelphia, πρόσθεσε γαλοπούλα, κασέρι, μαρούλι, ντομάτα, αυγό.\n4. Πασπάλισε πιπέρι, πάπρικα, ρίγανη. Τύλιξε και ψήσε 2 λεπτά σε τοστιέρα.", en: "1. Boil egg 8 minutes, cool and cut into slices.\n2. Heat tortilla 30-60 seconds in a pan.\n3. Spread Philadelphia, add turkey, kasseri, lettuce, tomato, egg.\n4. Sprinkle pepper, paprika, oregano. Roll and toast 2 minutes in a sandwich press.", es: "1. Cuece el huevo 8 minutos, enfría y corta en rodajas.\n2. Calienta la tortilla 30-60 segundos en una sartén.\n3. Unta Philadelphia, añade pavo, kaseri, lechuga, tomate, huevo.\n4. Espolvorea pimienta, pimentón, orégano. Enrolla y tuesta 2 minutos en la tostadora.", fr: "1. Fais cuire l'œuf 8 minutes, refroidis et coupe en tranches.\n2. Chauffe la tortilla 30-60 secondes dans une poêle.\n3. Étale du Philadelphia, ajoute la dinde, le kasseri, la laitue, la tomate, l'œuf.\n4. Saupoudre de poivre, paprika, origan. Enroule et grille 2 minutes dans un gaufrier." },
     serving: "Σέρβιρε αμέσως ζεστό. Τέλειο ελαφρύ βραδινό με υψηλή πρωτεΐνη.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Τέλειο ελαφρύ βραδινό με υψηλή πρωτεΐνη.", en: "Serve immediately hot. Perfect light dinner with high protein.", es: "Sirve inmediatamente caliente. Cena ligera perfecta con alta proteína.", fr: "Sers immédiatement chaud. Dîner léger parfait avec haute teneur en protéines." },
     items: ["60g τορτίγια ολικής", "15g Philadelphia Light", "60g γαλοπούλα βραστή", "40g άπαχο κασέρι", "40g μαρούλι", "80g ντομάτα", "1 βραστό αυγό"]
   },
   {
@@ -1130,7 +1282,9 @@ const STANDARD_MEALS = [
     kcal_est: 529, p: 16, c: 56, f: 20,
     note: "Overnight oats: ετοίμασε από το προηγούμενο βράδυ. Αμύγδαλα χοντροκομμένα. Προαιρετικά: κανέλα, βανίλια, ξύσμα λεμονιού.",
     instructions: "1. Βράδυ: ανακάτεψε βρώμη με γιαούρτι σε βαζάκι, σκέπασε και βάλε στο ψυγείο overnight.\n2. Πρωί/βράδυ: βάλε φρούτα του δάσους και χοντροκομμένα αμύγδαλα από πάνω.\n3. Στάξε μέλι.",
+    instructionsI18n: { el: "1. Βράδυ: ανακάτεψε βρώμη με γιαούρτι σε βαζάκι, σκέπασε και βάλε στο ψυγείο overnight.\n2. Πρωί/βράδυ: βάλε φρούτα του δάσους και χοντροκομμένα αμύγδαλα από πάνω.\n3. Στάξε μέλι.", en: "1. Evening: mix oats with yogurt in a jar, cover and refrigerate overnight.\n2. Morning/evening: add berries and coarsely chopped almonds on top.\n3. Drizzle honey.", es: "1. Noche: mezcla avena con yogur en un tarro, tapa y refrigera durante la noche.\n2. Mañana/noche: añade frutos del bosque y almendras picadas gruesas encima.\n3. Chorrea miel.", fr: "1. Le soir : mélange l'avoine avec le yaourt dans un pot, couvre et réfrigère toute la nuit.\n2. Matin/soir : ajoute des fruits des bois et des amandes grossièrement hachées par-dessus.\n3. Arrose de miel." },
     serving: "Σέρβιρε κρύο. Προαιρετικά κανέλα, βανίλια ή ξύσμα λεμονιού.",
+    servingI18n: { el: "Σέρβιρε κρύο. Προαιρετικά κανέλα, βανίλια ή ξύσμα λεμονιού.", en: "Serve cold. Optionally add cinnamon, vanilla or lemon zest.", es: "Sirve frío. Opcionalmente añade canela, vainilla o ralladura de limón.", fr: "Sers froid. Optionnellement ajoute de la cannelle, de la vanille ou du zeste de citron." },
     items: ["200g γιαούρτι 2%", "100g φρούτα του δάσους", "40g βρώμη", "1 κγ μέλι", "20g αμύγδαλα"]
   },
   {
@@ -1140,7 +1294,9 @@ const STANDARD_MEALS = [
     kcal_est: 447, p: 22, c: 52, f: 16,
     note: "Ετοιμάζεις 6 μπολάκια μαζί — διαρκούν 2 μέρες στο ψυγείο",
     instructions: "1. Ανακάτεψε όλα τα υλικά (βρώμη, chia, κακάο, φυστικοβούτυρο, γάλα, μέλι) σε μεγάλο μπολ.\n2. Μοίρασε ισόποσα σε 6 βαζάκια ή μπολάκια.\n3. Σκέπασε και βάλε στο ψυγείο τουλάχιστον 6-8 ώρες.",
+    instructionsI18n: { el: "1. Ανακάτεψε όλα τα υλικά (βρώμη, chia, κακάο, φυστικοβούτυρο, γάλα, μέλι) σε μεγάλο μπολ.\n2. Μοίρασε ισόποσα σε 6 βαζάκια ή μπολάκια.\n3. Σκέπασε και βάλε στο ψυγείο τουλάχιστον 6-8 ώρες.", en: "1. Mix all ingredients (oats, chia, cocoa, peanut butter, milk, honey) in a large bowl.\n2. Divide equally into 6 jars or bowls.\n3. Cover and refrigerate for at least 6-8 hours.", es: "1. Mezcla todos los ingredientes (avena, chia, cacao, mantequilla de cacahuete, leche, miel) en un bol grande.\n2. Divide equitativamente en 6 tarros o boles.\n3. Tapa y refrigera durante al menos 6-8 horas.", fr: "1. Mélange tous les ingrédients (avoine, chia, cacao, beurre de cacahuètes, lait, miel) dans un grand bol.\n2. Répartis équitablement dans 6 pots ou bols.\n3. Couvre et réfrigère pendant au moins 6-8 heures." },
     serving: "Πρωί: βγάλε 1 μπολάκι από το ψυγείο. Πρόσθεσε 30g στραγγιστό γιαούρτι από πάνω. Διαρκούν 2 μέρες στο ψυγείο.",
+    servingI18n: { el: "Πρωί: βγάλε 1 μπολάκι από το ψυγείο. Πρόσθεσε 30g στραγγιστό γιαούρτι από πάνω. Διαρκούν 2 μέρες στο ψυγείο.", en: "Morning: take 1 bowl out of the fridge. Add 30g strained yogurt on top. They keep for 2 days in the fridge.", es: "Mañana: saca 1 bol del frigorífico. Añade 30g de yogur colado encima. Se conservan 2 días en el frigorífico.", fr: "Matin : sors 1 bol du réfrigérateur. Ajoute 30g de yaourt égoutté par-dessus. Ils se conservent 2 jours au réfrigérateur." },
     items: ["300g βρώμη ÷6", "30g chia ÷6", "20g κακάο ÷6", "120g φυστικοβούτυρο ÷6", "600ml γάλα ÷6", "40g μέλι ÷6", "30g γιαούρτι στρ. garnish"]
   },
   {
@@ -1150,7 +1306,9 @@ const STANDARD_MEALS = [
     kcal_est: 302, p: 20, c: 30, f: 10,
     note: "Γρήγορο & πλούσιο σε πρωτεΐνη",
     instructions: "1. Άλειψε μαγιονέζα light στις φέτες ψωμιού.\n2. Πρόσθεσε γαλοπούλα και φέτες ντομάτας.\n3. Τοστάρε αν θέλεις ζεστό.",
+    instructionsI18n: { el: "1. Άλειψε μαγιονέζα light στις φέτες ψωμιού.\n2. Πρόσθεσε γαλοπούλα και φέτες ντομάτας.\n3. Τοστάρε αν θέλεις ζεστό.", en: "1. Spread light mayonnaise on the bread slices.\n2. Add turkey and tomato slices.\n3. Toast if you want it hot.", es: "1. Unta mayonesa light en las rebanadas de pan.\n2. Añade pavo y rodajas de tomate.\n3. Tuesta si lo quieres caliente.", fr: "1. Étale de la mayonnaise légère sur les tranches de pain.\n2. Ajoute de la dinde et des tranches de tomate.\n3. Grille si tu veux chaud." },
     serving: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις και λίγο μαρούλι ή αγγούρι.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Μπορείς να προσθέσεις και λίγο μαρούλι ή αγγούρι.", en: "Serve immediately. You can also add a little lettuce or cucumber.", es: "Sirve inmediatamente. También puedes añadir un poco de lechuga o pepino.", fr: "Sers immédiatement. Tu peux aussi ajouter un peu de laitue ou de concombre." },
     items: ["2 φέτες ψωμί τοστ (~60g)", "80g γαλοπούλα φέτα", "15g μαγιονέζα light", "80g ντομάτα"]
   },
   {
@@ -1160,7 +1318,9 @@ const STANDARD_MEALS = [
     kcal_est: 490, p: 34, c: 48, f: 14,
     note: "Ψήσε το κοτόπουλο με μπαχαρικά - τζατζίκι, ντομάτα, κρεμμύδι στην πίτα",
     instructions: "1. Κόψε κοτόπουλο σε λωρίδες, αλατοπίπερο, ρίγανη, πάπρικα.\n2. Ψήσε σε αντικολλητικό τηγάνι 4-5 λεπτά μέχρι να ροδίσει.\n3. Ζέστανε πίτα 30 δευτερόλεπτα στο τηγάνι.",
+    instructionsI18n: { el: "1. Κόψε κοτόπουλο σε λωρίδες, αλατοπίπερο, ρίγανη, πάπρικα.\n2. Ψήσε σε αντικολλητικό τηγάνι 4-5 λεπτά μέχρι να ροδίσει.\n3. Ζέστανε πίτα 30 δευτερόλεπτα στο τηγάνι.", en: "1. Cut chicken into strips, season with salt, pepper, oregano, paprika.\n2. Cook in a non-stick pan for 4-5 minutes until golden.\n3. Warm pita 30 seconds in the pan.", es: "1. Corta el pollo en tiras, sazona con sal, pimienta, orégano, pimentón.\n2. Cocina en una sartén antiadherente 4-5 minutos hasta que se dore.\n3. Calienta la pita 30 segundos en la sartén.", fr: "1. Coupe le poulet en lanières, assaisonne avec sel, poivre, origan, paprika.\n2. Fais cuire dans une poêle antiadhésive 4-5 minutes jusqu'à ce qu'il soit doré.\n3. Chauffe la pita 30 secondes dans la poêle." },
     serving: "Άπλωσε τζατζίκι στην πίτα, βάλε κοτόπουλο, ντομάτα κομμένη, κρεμμύδι. Τύλιξε και σέρβιρε αμέσως.",
+    servingI18n: { el: "Άπλωσε τζατζίκι στην πίτα, βάλε κοτόπουλο, ντομάτα κομμένη, κρεμμύδι. Τύλιξε και σέρβιρε αμέσως.", en: "Spread tzatziki on the pita, add chicken, sliced tomato, onion. Roll and serve immediately.", es: "Extiende tzatziki en la pita, añade pollo, tomate cortado, cebolla. Enrolla y sirve inmediatamente.", fr: "Étale du tzatziki sur la pita, ajoute le poulet, la tomate coupée, l'oignon. Roule et sers immédiatement." },
     items: ["150g κοτόπουλο στήθος ψητό", "1 πίτα (~70g)", "50g τζατζίκι", "50g ντομάτα", "20g κρεμμύδι"]
   },
   {
@@ -1170,7 +1330,9 @@ const STANDARD_MEALS = [
     kcal_est: 498, p: 40, c: 8, f: 32,
     note: "Χοιρινή χωρίς κόκκαλο - ψητή με λεμόνι, ρίγανη, σκόρδο",
     instructions: "1. Αλατοπίπερο, ρίγανη και σκόρδο σε σκόνη στη μπριζόλα.\n2. Ψήσε σε αντικολλητικό ή σχάρα 4-5 λεπτά ανά πλευρά σε μέτρια-υψηλή φωτιά.\n3. Βγάλε και άφησε να ξεκουραστεί 2 λεπτά.",
+    instructionsI18n: { el: "1. Αλατοπίπερο, ρίγανη και σκόρδο σε σκόνη στη μπριζόλα.\n2. Ψήσε σε αντικολλητικό ή σχάρα 4-5 λεπτά ανά πλευρά σε μέτρια-υψηλή φωτιά.\n3. Βγάλε και άφησε να ξεκουραστεί 2 λεπτά.", en: "1. Season the pork chop with salt, pepper, oregano and garlic powder.\n2. Cook in a non-stick pan or grill 4-5 minutes per side over medium-high heat.\n3. Remove and let rest 2 minutes.", es: "1. Sazona la chuleta con sal, pimienta, orégano y ajo en polvo.\n2. Cocina en una sartén antiadherente o plancha 4-5 minutos por lado a fuego medio-alto.\n3. Retira y deja reposar 2 minutos.", fr: "1. Assaisonne la côtelette avec sel, poivre, origan et ail en poudre.\n2. Fais cuire dans une poêle antiadhésive ou sur un gril 4-5 minutes par côté à feu moyen-vif.\n3. Retire et laisse reposer 2 minutes." },
     serving: "Στύψε φρέσκο λεμόνι πάνω. Σέρβιρε με σαλάτα εποχής.",
+    servingI18n: { el: "Στύψε φρέσκο λεμόνι πάνω. Σέρβιρε με σαλάτα εποχής.", en: "Squeeze fresh lemon on top. Serve with a seasonal salad.", es: "Exprime limón fresco por encima. Sirve con ensalada de temporada.", fr: "Presse du citron frais par-dessus. Sers avec une salade de saison." },
     items: ["200g μπριζόλα χοιρινή", "4 ψεκ. ελαιόλαδο", "λεμόνι, ρίγανη, σκόρδο, πιπέρι"]
   },
   {
@@ -1180,7 +1342,9 @@ const STANDARD_MEALS = [
     kcal_est: 516, p: 38, c: 22, f: 28,
     note: "Ελαφρύ αλλά χορταστικό βραδινό - υψηλή πρωτεΐνη",
     instructions: "1. Χτύπα 2 αυγά με αλατοπίπερο.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά 2-3 λεπτά, δίπλωσε.\n3. Κόψε ντοματίνια στη μέση.",
+    instructionsI18n: { el: "1. Χτύπα 2 αυγά με αλατοπίπερο.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά 2-3 λεπτά, δίπλωσε.\n3. Κόψε ντοματίνια στη μέση.", en: "1. Beat 2 eggs with salt and pepper.\n2. Cook in a non-stick pan with a little olive oil over medium heat for 2-3 minutes, fold.\n3. Cut cherry tomatoes in half.", es: "1. Bate 2 huevos con sal y pimienta.\n2. Cocina en una sartén antiadherente con un poco de aceite de oliva a fuego medio 2-3 minutos, dobla.\n3. Corta los tomatitos por la mitad.", fr: "1. Bats 2 œufs avec sel et poivre.\n2. Fais cuire dans une poêle antiadhésive avec un peu d'huile d'olive à feu moyen pendant 2-3 minutes, plie.\n3. Coupe les tomates cerises en deux." },
     serving: "Σέρβιρε ομελέτα με cottage cheese, ντοματίνια με βαλσαμικό και παξιμάδι χαρουπιού στο πλάι.",
+    servingI18n: { el: "Σέρβιρε ομελέτα με cottage cheese, ντοματίνια με βαλσαμικό και παξιμάδι χαρουπιού στο πλάι.", en: "Serve omelette with cottage cheese, cherry tomatoes with balsamic and carob rusk on the side.", es: "Sirve la tortilla con cottage cheese, tomatitos con balsámico y tostada de algarroba al lado.", fr: "Sers l'omelette avec du cottage cheese, des tomates cerises avec du balsamique et une biscotte de caroube à côté." },
     items: ["2 αυγά", "4 ψεκ. ελαιόλαδο", "200g cottage cheese", "100g ντοματίνια", "1.5 παξιμάδι χαρουπιού", "βαλσαμικό ξύδι, πιπέρι"]
   },
 
@@ -1192,7 +1356,9 @@ const STANDARD_MEALS = [
     kcal_est: 420, p: 28, c: 38, f: 17,
     note: "Ανακάτεψε γιαούρτι + βρώμη, πρόσθεσε φυστικοβούτυρο & σιρόπι zero",
     instructions: "1. Βάλε γιαούρτι στραγγιστό σε μπολ.\n2. Ρίξε βρώμη ωμή από πάνω.\n3. Πρόσθεσε φυστικοβούτυρο και σιρόπι zero.",
+    instructionsI18n: { el: "1. Βάλε γιαούρτι στραγγιστό σε μπολ.\n2. Ρίξε βρώμη ωμή από πάνω.\n3. Πρόσθεσε φυστικοβούτυρο και σιρόπι zero.", en: "1. Place strained yogurt in a bowl.\n2. Pour raw oats on top.\n3. Add peanut butter and zero syrup.", es: "1. Coloca yogur colado en un bol.\n2. Vierte avena cruda por encima.\n3. Añade mantequilla de cacahuete y sirope zero.", fr: "1. Place le yaourt égoutté dans un bol.\n2. Verse l'avoine crue par-dessus.\n3. Ajoute le beurre de cacahuètes et le sirop zéro." },
     serving: "Σέρβιρε αμέσως. Μπορείς να ανακατέψεις ή να αφήσεις σε στρώσεις για ωραίο εφέ.",
+    servingI18n: { el: "Σέρβιρε αμέσως. Μπορείς να ανακατέψεις ή να αφήσεις σε στρώσεις για ωραίο εφέ.", en: "Serve immediately. You can mix it or leave it in layers for a nice visual effect.", es: "Sirve inmediatamente. Puedes mezclarlo o dejarlo en capas para un bonito efecto visual.", fr: "Sers immédiatement. Tu peux mélanger ou laisser en couches pour un bel effet visuel." },
     items: ["300g γιαούρτι στραγγιστό 2%", "30g βρώμη", "20g φυστικοβούτυρο", "10–15g σιρόπι Zero"]
   },
   {
@@ -1202,7 +1368,9 @@ const STANDARD_MEALS = [
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Χτύπησε αυγά + ασπράδια, ψήσε σε αντικολλητικό, πρόσθεσε Philadelphia & καλαμπόκι",
     instructions: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.",
+    instructionsI18n: { el: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.", en: "1. Beat 3 eggs + 100g egg whites with salt, pepper, paprika or oregano.\n2. Cook in a non-stick pan without oil over low heat, stirring slowly.\n3. Just as they start to set, add Philadelphia and corn. Stir gently and remove from heat.", es: "1. Bate 3 huevos + 100g claras de huevo con sal, pimienta, pimentón u orégano.\n2. Cocina en sartén antiadherente sin aceite a fuego bajo, removiendo despacio.\n3. Justo cuando empiecen a cuajar, añade Philadelphia y maíz. Remueve suavemente y retira.", fr: "1. Bats 3 œufs + 100g de blancs d'œufs avec sel, poivre, paprika ou origan.\n2. Fais cuire dans une poêle antiadhésive sans huile à feu doux, en remuant lentement.\n3. Dès qu'ils commencent à prendre, ajoute le Philadelphia et le maïs. Remue doucement et retire du feu." },
     serving: "Σέρβιρε αμέσως ζεστό. Πλούσιο σε πρωτεΐνη πρωινό γεύμα.",
+    servingI18n: { el: "Σέρβιρε αμέσως ζεστό. Πλούσιο σε πρωτεΐνη πρωινό γεύμα.", en: "Serve immediately hot. A protein-rich breakfast meal.", es: "Sirve inmediatamente caliente. Una comida de desayuno rica en proteínas.", fr: "Sers immédiatement chaud. Un petit-déjeuner riche en protéines." },
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
   },
   {
@@ -1212,7 +1380,9 @@ const STANDARD_MEALS = [
     kcal_est: 410, p: 40, c: 17, f: 20,
     note: "Ίδια με πρωινό — σέρβιρε με σαλάτα ή λαχανικά",
     instructions: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.",
+    instructionsI18n: { el: "1. Χτύπα 3 αυγά + 100g ασπράδια με αλάτι, πιπέρι, πάπρικα ή ρίγανη.\n2. Ψήσε σε αντικολλητικό χωρίς λάδι σε χαμηλή φωτιά, ανακατεύοντας αργά.\n3. Μόλις αρχίσουν να πήζουν, ρίξε Philadelphia και καλαμπόκι. Ανακάτεψε απαλά και βγάλε.", en: "1. Beat 3 eggs + 100g egg whites with salt, pepper, paprika or oregano.\n2. Cook in a non-stick pan without oil over low heat, stirring slowly.\n3. Just as they start to set, add Philadelphia and corn. Stir gently and remove from heat.", es: "1. Bate 3 huevos + 100g claras de huevo con sal, pimienta, pimentón u orégano.\n2. Cocina en sartén antiadherente sin aceite a fuego bajo, removiendo despacio.\n3. Justo cuando empiecen a cuajar, añade Philadelphia y maíz. Remueve suavemente y retira.", fr: "1. Bats 3 œufs + 100g de blancs d'œufs avec sel, poivre, paprika ou origan.\n2. Fais cuire dans une poêle antiadhésive sans huile à feu doux, en remuant lentement.\n3. Dès qu'ils commencent à prendre, ajoute le Philadelphia et le maïs. Remue doucement et retire du feu." },
     serving: "Σέρβιρε με φρέσκια σαλάτα ή ψητά λαχανικά. Ελαφρύ αλλά χορταστικό βραδινό.",
+    servingI18n: { el: "Σέρβιρε με φρέσκια σαλάτα ή ψητά λαχανικά. Ελαφρύ αλλά χορταστικό βραδινό.", en: "Serve with a fresh salad or roasted vegetables. Light but filling dinner.", es: "Sirve con ensalada fresca o verduras asadas. Cena ligera pero saciante.", fr: "Sers avec une salade fraîche ou des légumes rôtis. Dîner léger mais rassasiant." },
     items: ["3 αυγά", "100g ασπράδια αυγού", "50g Philadelphia Extra Protein", "60g καλαμπόκι", "αλάτι, πιπέρι, πάπρικα ή ρίγανη"]
   },
   {
@@ -1222,7 +1392,9 @@ const STANDARD_MEALS = [
     kcal_est: 900, p: 62, c: 37, f: 54,
     note: "Άπλωσε κιμά στην τορτίγια, ψήσε από κιμά πρώτα 3-4', γύρισε, βάλε gouda. Σως: μαγιονέζα+κέτσαπ+μουστάρδα+χυμό πίκλας.",
     instructions: "1. Χωρίστε τον κιμά σε 4 μπαλάκια (~55g) και τοποθετήστε πάνω στην τορτίγια.\n2. Απλώστε τον κιμά με ένα κουτάλι μέχρι να καλύψει την τορτίγια.\n3. Ψήστε σε ζεστό αντικολλητικό κιμά-πάνω για 3-4 λεπτά. Γυρίστε. Βάλτε Gouda να λιώσει.\n4. Ανακατέψτε σως: μαγιονέζα, κέτσαπ, μουστάρδα, χυμό πίκλας.",
+    instructionsI18n: { el: "1. Χωρίστε τον κιμά σε 4 μπαλάκια (~55g) και τοποθετήστε πάνω στην τορτίγια.\n2. Απλώστε τον κιμά με ένα κουτάλι μέχρι να καλύψει την τορτίγια.\n3. Ψήστε σε ζεστό αντικολλητικό κιμά-πάνω για 3-4 λεπτά. Γυρίστε. Βάλτε Gouda να λιώσει.\n4. Ανακατέψτε σως: μαγιονέζα, κέτσαπ, μουστάρδα, χυμό πίκλας.", en: "1. Divide the mince into 4 balls (~55g) and place on the tortilla.\n2. Spread the mince with a spoon to cover the tortilla.\n3. Cook in a hot non-stick pan mince-side up for 3-4 minutes. Flip. Add Gouda to melt.\n4. Mix the sauce: mayonnaise, ketchup, mustard, pickle juice.", es: "1. Divide la carne picada en 4 bolitas (~55g) y colócalas sobre la tortilla.\n2. Extiende la carne con una cuchara hasta cubrir la tortilla.\n3. Cocina en sartén antiadherente caliente con la carne hacia arriba durante 3-4 minutos. Gira. Añade Gouda para derretir.\n4. Mezcla la salsa: mayonesa, ketchup, mostaza, jugo de pepinillos.", fr: "1. Divise la viande hachée en 4 boules (~55g) et place sur la tortilla.\n2. Étale la viande avec une cuillère pour couvrir la tortilla.\n3. Fais cuire dans une poêle antiadhésive chaude viande vers le haut pendant 3-4 minutes. Retourne. Ajoute le Gouda pour fondre.\n4. Mélange la sauce : mayonnaise, ketchup, moutarde, jus de cornichon." },
     serving: "Βάλτε μαρούλι, ντομάτα, κρεμμύδι και σως πάνω στον κιμά. Τυλίξτε και σερβίρετε αμέσως.",
+    servingI18n: { el: "Βάλτε μαρούλι, ντομάτα, κρεμμύδι και σως πάνω στον κιμά. Τυλίξτε και σερβίρετε αμέσως.", en: "Add lettuce, tomato, onion and sauce on top of the mince. Roll and serve immediately.", es: "Añade lechuga, tomate, cebolla y salsa encima de la carne. Enrolla y sirve inmediatamente.", fr: "Ajoute de la laitue, de la tomate, de l'oignon et de la sauce sur la viande. Roule et sers immédiatement." },
     items: ["1 τορτίγια ολικής (~60g)", "225g κιμάς μοσχαρίσιος 5-10%", "40g Gouda (2 φέτες)", "30g μαρούλι", "50g ντομάτα", "20g κρεμμύδι", "15g κέτσαπ", "15g μαγιονέζα", "8g μουστάρδα", "30-45ml χυμός πίκλας", "αλάτι, πιπέρι, σκόνη σκόρδου"]
   },
 
