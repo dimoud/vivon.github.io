@@ -526,6 +526,8 @@ const I18N = {
 
   // ── Profile/share ──
   prof_protein_hint:  { el: 'Συν. 1.9g/kg: {val}g', en: 'Rec. 1.9g/kg: {val}g', es: 'Rec. 1.9g/kg: {val}g', fr: 'Rec. 1.9g/kg : {val}g' },
+  goal_protein_max_toast:   { el: '⚠️ Μέγιστη ρεαλιστική πρωτεΐνη για τον στόχο θερμίδων: {max}g', en: '⚠️ Max realistic protein for your calorie goal: {max}g', es: '⚠️ Proteína máxima realista para tu objetivo calórico: {max}g', fr: '⚠️ Protéines maximales réalistes pour votre objectif calorique : {max}g' },
+  goal_protein_max_tooltip: { el: 'Μέγιστο {max}g — πάνω από αυτό η πρωτεΐνη θα ήταν πάνω από το 40% των θερμίδων, μη ρεαλιστικό', en: 'Max {max}g — above this, protein would be over 40% of calories, not realistic', es: 'Máx {max}g — por encima de esto, la proteína superaría el 40% de las calorías, no es realista', fr: 'Max {max}g — au-delà, les protéines dépasseraient 40% des calories, ce n\'est pas réaliste' },
   share_plan_title:   { el: 'Πλάνο', en: 'Plan', es: 'Plan', fr: 'Plan' },
   share_user:         { el: 'Χρήστης', en: 'User', es: 'Usuario', fr: 'Utilisateur' },
   modal_new_food:     { el: 'Νέο Τρόφιμο', en: 'New Food', es: 'Nuevo Alimento', fr: 'Nouvel Aliment' },
