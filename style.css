@@ -461,10 +461,12 @@ h3 { font-size: 0.95rem; }
   border-bottom: 1px solid var(--border);
   padding: 14px 16px 12px;
 }
+.week-btn-label-mobile { display: none; }
 @media (max-width: 600px) {
   .week-page-header { padding: 12px 14px; }
   .week-page-header h1 { font-size: 1.15rem !important; }
   .week-btn-label { display: none; }
+  .week-btn-label-mobile { display: inline; }
 }
 
 /* ── WEEK SUMMARY INNER ── */

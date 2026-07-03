@@ -26,6 +26,7 @@ let state = {
   bodyLog: [],
   wizardExcluded: {},
   wizardStyle: 'simple',
+  wizardRepeatMeals: false,
 };
 
 // ── MEAL TIME HELPER ──
@@ -95,6 +96,7 @@ async function syncToSupabase() {
         planStartDate:  snap.planStartDate,
         wizardExcluded: snap.wizardExcluded,
         wizardStyle:    snap.wizardStyle,
+        wizardRepeatMeals: snap.wizardRepeatMeals,
       }),
     ]);
     // After all awaits: verify the user hasn't changed during the async writes.
@@ -130,6 +132,7 @@ function _freshState() {
     bodyLog: [],
     wizardExcluded: {},
     wizardStyle: 'simple',
+    wizardRepeatMeals: false,
   };
 }
 
@@ -1588,6 +1591,12 @@ function updateWeekGoalSlider(key, val) {
   // Reoptimise all 7 days
   const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
   state.week.forEach(day => { if (day.meals && day.meals.length > 0) _optimiseDayMacros(day, targets); });
+  // Dragging the goal sliders only rescales portions — unlike plan
+  // generation, it never auto-swaps meals to close a protein gap. Mark this
+  // so the "Αντικατάσταση" banner can offer that swap here specifically,
+  // without also appearing right after an auto-generated plan (which
+  // already tried swapping internally, up to its iteration limit).
+  state._manualGoalEdit = true;
   saveState();
   autoSaveSettings();
   renderWeek();
@@ -1750,6 +1759,61 @@ function setPlanStartDate(dateStr) {
   autoSaveSettings();
 }
 
+// Opens a modal that lets the user drag the whole 7-day plan to a new start
+// date directly from the Weekly page header. The plan always spans exactly
+// 7 days, so only the start date is editable — the end date is derived.
+function openWeekDatePicker() {
+  const today = new Date().toISOString().split('T')[0];
+  const start = state.planStartDate || today;
+  openModal(`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${t('week_pick_dates_title')}</div>
+    <p style="font-size:0.83rem;color:var(--text2);margin-bottom:14px">${t('week_pick_dates_desc')}</p>
+    <label style="font-size:0.78rem;font-weight:700;color:var(--text3);display:block;margin-bottom:4px">${t('week_pick_dates_start_label')}</label>
+    <input type="date" id="weekdate-start" value="${start}" min="${today}"
+      onclick="this.showPicker && this.showPicker()"
+      oninput="_updateWeekDateEnd()"
+      style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;background:var(--bg2);margin-bottom:14px;box-sizing:border-box">
+    <div style="font-size:0.78rem;color:var(--text3);margin-bottom:18px">
+      ${t('week_pick_dates_end_label')}: <strong id="weekdate-end" style="color:var(--text2)"></strong>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button onclick="closeModal()" class="btn btn-ghost" style="flex:1">${t('btn_cancel')}</button>
+      <button onclick="_confirmWeekDatePicker()" class="btn btn-green" style="flex:1">${t('btn_next')}</button>
+    </div>
+  `, ['left', 'right']);
+  _updateWeekDateEnd();
+}
+
+function _weekDateEndLabel(startStr) {
+  const end = new Date(startStr);
+  end.setDate(end.getDate() + 6);
+  const months = tMonths();
+  return `${end.getDate()} ${months[end.getMonth()]} ${end.getFullYear()}`;
+}
+
+function _updateWeekDateEnd() {
+  const startEl = document.getElementById('weekdate-start');
+  const endEl = document.getElementById('weekdate-end');
+  if (!startEl || !endEl || !startEl.value) return;
+  endEl.textContent = _weekDateEndLabel(startEl.value);
+}
+
+function _confirmWeekDatePicker() {
+  const startEl = document.getElementById('weekdate-start');
+  const dateStr = startEl?.value;
+  if (!dateStr) return;
+  const today = new Date().toISOString().split('T')[0];
+  if (dateStr < today) {
+    showToast(t('week_pick_dates_past_error'));
+    return;
+  }
+  state.planStartDate = dateStr;
+  saveState();
+  closeModal();
+  renderWeek();
+}
+
 // Επιστρέφει τον δείκτη ημέρας (0-based) του προγράμματος που αντιστοιχεί στη σημερινή ημερομηνία, ή null αν δεν είναι εντός εύρους
 function getTodayPlanDayIndex() {
   if (!state.planStartDate || !state.week?.length) return null;
@@ -1785,9 +1849,10 @@ function getWizardMeals() {
   ];
 }
 const WIZARD_MEALS = getWizardMeals();
-// step 0 = style, steps 1..4 = meals, step 5 = confirm
+// step 0 = style, step 1 = repeat-meals option, steps 2..5 = meals, step 6 = confirm
 const WIZARD_STYLE_STEP   = 0;
-const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length + 1;
+const WIZARD_REPEAT_STEP  = 1;
+const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length + 2;
 
 let _wizardStep = 0;
 let _wizardExcluded = {};  // { mealKey: Set<mealId> }
@@ -1815,7 +1880,7 @@ function createPlan() {
       <button onclick="closeModal()" class="btn btn-ghost" style="flex:1">${t('btn_cancel')}</button>
       <button onclick="_confirmPlanStartDate()" class="btn btn-green" style="flex:1">${t('btn_next')}</button>
     </div>
-  `);
+  `, ['left', 'right']);
 }
 
 function _confirmPlanStartDate() {
@@ -1823,7 +1888,10 @@ function _confirmPlanStartDate() {
   const dateStr = dateEl?.value || new Date().toISOString().split('T')[0];
   state.planStartDate = dateStr;
   saveState();
-  closeModal();
+  // Close the modal without popping history (fromPopstate=true skips the
+  // history.back() call) — _openMealWizard() below replaces that history
+  // entry directly, so the two never race against each other.
+  closeModal(true);
   _openMealWizard();
 }
 
@@ -1839,17 +1907,29 @@ function _openMealWizard() {
   document.body.style.overflow = 'hidden';
   document.activeElement?.blur();
   if (modal) {
-    _wizardSwipeCleanup = _addSwipeDismiss(modal, () => {
+    // Swipe right: step back (or close if already on the first step) — a
+    // navigation gesture. Swipe left: always closes outright, regardless of
+    // step, so the wizard can be dismissed with a swipe from either side.
+    const cleanupRight = _addSwipeDismiss(modal, () => {
       if (_wizardStep > 0) wizardBack(); else _closeWizard();
     }, { directions: ['right'], threshold: 80 });
+    const cleanupLeft = _addSwipeDismiss(modal, () => _closeWizard(), { directions: ['left'], threshold: 80 });
+    _wizardSwipeCleanup = () => { cleanupRight(); cleanupLeft(); };
   }
-  history.pushState({ vivon: 'wizard' }, '', location.pathname + location.search);
+  history.replaceState({ vivon: 'wizard' }, '', location.pathname + location.search);
 }
 
 function wizardSetStyle(s) {
   state.wizardStyle = s;
   document.querySelectorAll('.wstyle-card').forEach(el => {
     el.classList.toggle('selected', el.dataset.style === s);
+  });
+}
+
+function wizardSetRepeatMeals(on) {
+  state.wizardRepeatMeals = on;
+  document.querySelectorAll('.wstyle-card[data-repeat]').forEach(el => {
+    el.classList.toggle('selected', (el.dataset.repeat === '1') === on);
   });
 }
 
@@ -1864,7 +1944,7 @@ function _renderWizardStep() {
   const btnBack = document.getElementById('wizard-btn-back');
   const btnNext = document.getElementById('wizard-btn-next');
   const _wizardMeals = getWizardMeals();
-  const total   = WIZARD_CONFIRM_STEP + 1; // style + 4 meals + confirm
+  const total   = WIZARD_CONFIRM_STEP + 1; // style + repeat + 4 meals + confirm
 
   dots.innerHTML = Array.from({ length: total }, (_, i) =>
     `<div class="wizard-step-dot ${i < _wizardStep ? 'done' : i === _wizardStep ? 'active' : ''}"></div>`
@@ -1874,10 +1954,10 @@ function _renderWizardStep() {
 
   // ── Step 0: Style selection ──
   if (_wizardStep === WIZARD_STYLE_STEP) {
-    titleEl.textContent = '🍽️ ' + t('wizard_style_title');
+    titleEl.textContent = t('wizard_style_title');
     labelEl.textContent = tFmt('wizard_step_label', { n: 1, total });
     subEl.textContent   = t('wizard_style_desc');
-    btnNext.textContent = t('btn_next') + ' →';
+    btnNext.textContent = t('btn_next');
     const cur = state.wizardStyle || 'simple';
     body.innerHTML = `
       <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
@@ -1909,14 +1989,43 @@ function _renderWizardStep() {
     return;
   }
 
-  // ── Steps 1-4: Meal exclusions ──
-  const mealIdx = _wizardStep - 1; // 0-based into WIZARD_MEALS
+  // ── Step 1: Repeat-meals option ──
+  if (_wizardStep === WIZARD_REPEAT_STEP) {
+    titleEl.textContent = t('wizard_repeat_title');
+    labelEl.textContent = tFmt('wizard_step_label', { n: 2, total });
+    subEl.textContent   = t('wizard_repeat_desc');
+    btnNext.textContent = t('btn_next');
+    const on = !!state.wizardRepeatMeals;
+    body.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
+        <div class="wstyle-card${!on?' selected':''}" data-repeat="0" onclick="wizardSetRepeatMeals(false)">
+          <div class="wstyle-icon">🔀</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">${t('wizard_repeat_off_title')}</div>
+            <div class="wstyle-sub">${t('wizard_repeat_off_sub')}</div>
+          </div>
+          <div class="wstyle-check">${!on?'✓':''}</div>
+        </div>
+        <div class="wstyle-card${on?' selected':''}" data-repeat="1" onclick="wizardSetRepeatMeals(true)">
+          <div class="wstyle-icon">🍳</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">${t('wizard_repeat_on_title')}</div>
+            <div class="wstyle-sub">${t('wizard_repeat_on_sub')}</div>
+          </div>
+          <div class="wstyle-check">${on?'✓':''}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // ── Steps 2-5: Meal exclusions ──
+  const mealIdx = _wizardStep - 2; // 0-based into WIZARD_MEALS
   if (mealIdx < _wizardMeals.length) {
     const meal = _wizardMeals[mealIdx];
     titleEl.textContent = `${meal.emoji} ${meal.label}`;
     labelEl.textContent = tFmt('wizard_step_label', { n: _wizardStep + 1, total });
     subEl.textContent   = meal.sublabel;
-    btnNext.textContent = mealIdx < _wizardMeals.length - 1 ? t('btn_next') + ' →' : t('btn_done') + ' →';
+    btnNext.textContent = mealIdx < _wizardMeals.length - 1 ? t('btn_next') : t('btn_done');
 
     const style    = state.wizardStyle || 'simple';
     const excluded = _wizardExcluded[meal.key];
@@ -1990,11 +2099,12 @@ function _renderWizardStep() {
     return;
   }
 
-  // ── Step 5: Confirm ──
-  titleEl.textContent = '✅ ' + t('wizard_confirm_title');
-  labelEl.textContent = `${t('wizard_style_title')}: ${{ simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[state.wizardStyle||'simple']}`;
+  // ── Step 6: Confirm ──
+  titleEl.textContent = t('wizard_confirm_title');
+  labelEl.textContent = `${t('wizard_style_title')}: ${{ simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[state.wizardStyle||'simple']}`
+    + (state.wizardRepeatMeals ? ` · ${t('wizard_repeat_on_title')}` : '');
   subEl.textContent   = t('wizard_confirm_sub');
-  btnNext.textContent = '📋 ' + t('btn_generate');
+  btnNext.textContent = t('btn_generate');
 
   let html = '<div class="wizard-confirm-list">';
   _wizardMeals.forEach(meal => {
@@ -2046,7 +2156,7 @@ function wizardToggleGroup(mealKey, ids, el) {
     if (checkEl) checkEl.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   }
   // Update the counter display
-  const meal = WIZARD_MEALS[_wizardStep - 1];
+  const meal = WIZARD_MEALS[_wizardStep - 2];
   if (meal) {
     const ctr = document.querySelector('.wizard-meal-list')?.previousElementSibling?.querySelector('span');
     if (ctr) {
@@ -2077,16 +2187,25 @@ function wizardNext() {
     _wizardStep++;
     _renderWizardStep();
   } else {
-    _closeWizard();
+    // Close without popping history (history.back() is async and would
+    // race with navigateTo('week') below, sometimes overwriting it with
+    // a stale tab). Instead replace the wizard's history entry directly
+    // with 'week' so the plan always lands there, from wherever it was opened.
+    _closeWizard(true);
+    history.replaceState({ vivon: 'tab', tab: 'week' }, '', location.pathname + location.search);
     state.planCreated = true;
     state.wizardExcluded = {};
     WIZARD_MEALS.forEach(m => { state.wizardExcluded[m.key] = [..._wizardExcluded[m.key]]; });
     // Run smart generator using wizard style + exclusions
     const style = state.wizardStyle || 'simple';
-    state.week = generateSmartWeek(style, state.wizardExcluded);
+    state.week = generateSmartWeek(style, state.wizardExcluded, !!state.wizardRepeatMeals);
     saveState();
     updatePlanCreatedUI();
-    showToast('✅ Το πλάνο δημιουργήθηκε βάσει των προτιμήσεών σου!');
+    if (state.week._goalsUnmet) {
+      showToast(t('week_goals_unmet'), 4500);
+    } else {
+      showToast('✅ Το πλάνο δημιουργήθηκε βάσει των προτιμήσεών σου!');
+    }
     navigateTo('week');
   }
 }
@@ -2172,7 +2291,12 @@ function purgeGeneratedComposedMeals() {
   saveState();
 }
 
-function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
+function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals = false) {
+  // A fresh auto-generated plan already ran its own swap-to-fit iterations
+  // below — any remaining shortfall shouldn't re-trigger the manual
+  // "Αντικατάσταση" banner (that's reserved for when the user drags the
+  // goal sliders themselves, see updateWeekGoalSlider).
+  if (state) state._manualGoalEdit = false;
   // Clear previous generation's composed meals so they don't accumulate
   if (state?.customRecipes) state.customRecipes = state.customRecipes.filter(r => !r._generated);
   const pool = _allMeals();
@@ -2311,8 +2435,16 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
   }
 
   const week = [];
+  // When repeatMeals is on, pair up consecutive days (1-2, 3-4, 5-6, 7 alone)
+  // and reuse the previous day's exact picks instead of picking fresh — same
+  // food for 2 days running, so you only cook once for both.
   for (let di = 0; di < 7; di++) {
+    const reuseFromPrevDay = repeatMeals && di % 2 === 1;
     const meals = MEAL_SLOT_TYPES.map((slotType, si) => {
+      if (reuseFromPrevDay) {
+        const prevMeal = week[di - 1].meals[si];
+        return { ...prevMeal, done: false };
+      }
       const picked = pickOne(slotType);
       return {
         time: SLOT_TIMES[si],
@@ -2345,13 +2477,50 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}) {
   // edge case) can't abort the loop and silently leave every later day
   // at raw/unscaled portion sizes, wildly over the kcal target.
   const targets = state?.goals || DEFAULT_GOALS;
-  week.forEach(day => {
-    try {
-      _optimiseDayMacros(day, targets);
-    } catch (e) {
-      console.error('generateSmartWeek: _optimiseDayMacros failed for day', day.day, e);
+  function optimiseAllDays() {
+    week.forEach(day => {
+      try {
+        _optimiseDayMacros(day, targets);
+      } catch (e) {
+        console.error('generateSmartWeek: _optimiseDayMacros failed for day', day.day, e);
+      }
+    });
+  }
+  optimiseAllDays();
+
+  // Portion scaling alone (_optimiseDayMacros) can't always hit the protein
+  // target — some slot combinations just don't have enough lean-protein
+  // headroom. When that happens, automatically swap in higher-protein meals
+  // and re-optimise, repeating until every day clears its shortfall or no
+  // more swaps are possible. This is what the manual "Αντικατάσταση" button
+  // does, run automatically so the user gets a goal-satisfying plan without
+  // having to notice and click it themselves.
+  const MAX_SWAP_ITERATIONS = 100;
+  for (let i = 0; i < MAX_SWAP_ITERATIONS; i++) {
+    const stillShort = week.some(d => d._proteinShortfall);
+    if (!stillShort) break;
+    const changed = _swapShortfallDaysToHighProtein(week);
+    optimiseAllDays();
+    if (!changed) break; // no more candidates to swap in — further looping won't help
+  }
+
+  // The shortfall-swap loop above operates day-by-day, which can break the
+  // "same food 2 days running" pairing if only one day of a pair had a
+  // shortfall. Re-sync each paired day back onto its partner's picks (both
+  // days share the same weekly targets, so re-optimising the pair together
+  // afterwards keeps portions consistent too).
+  if (repeatMeals) {
+    for (let di = 1; di < 7; di += 2) {
+      week[di].meals = week[di - 1].meals.map(m => ({ ...m, done: false }));
     }
-  });
+    optimiseAllDays();
+  }
+
+  // Surface to callers whether every day now meets its targets, so they can
+  // tell the user when even 100 rounds of swapping couldn't fully satisfy
+  // the requested goals (e.g. an unrealistic protein target for the chosen
+  // calorie budget, or exclusions that leave too few high-protein options).
+  week._goalsUnmet = week.some(d => d._proteinShortfall);
 
   return week;
 }
@@ -2691,11 +2860,18 @@ function _optimiseDayMacros(day, targets) {
 }
 // ─────────────────────────────────────────────────────────────
 
-function swapToHighProteinMeals() {
+// Pure single-pass meal swap: for every day flagged with a protein
+// shortfall, replaces non-lean meals with the highest-protein-density recipe
+// available for that slot. Operates on whatever week array is passed in (no
+// state/render/save side effects) so it can be reused both by the automatic
+// generator loop and by the user-triggered "swap" button. Returns true if it
+// actually changed anything (used to detect "no more candidates left" so
+// callers can stop iterating instead of looping uselessly).
+function _swapShortfallDaysToHighProtein(weekArr) {
   const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
   const LEAN_THRESHOLD = 0.07;
+  let changed = false;
 
-  // For each meal type, pre-sort recipes by protein density descending
   function bestForType(type) {
     return allR
       .filter(r => r.meal === type)
@@ -2713,11 +2889,11 @@ function swapToHighProteinMeals() {
   const usedAcrossWeek = {};
   MEAL_SLOT_TYPES.forEach(t => {
     usedAcrossWeek[t] = new Set(
-      state.week.flatMap(d => d.meals.filter(m => m.type === t && m.recipeId).map(m => m.recipeId))
+      weekArr.flatMap(d => d.meals.filter(m => m.type === t && m.recipeId).map(m => m.recipeId))
     );
   });
 
-  state.week.forEach(day => {
+  weekArr.forEach(day => {
     if (!day._proteinShortfall) return;
     day.meals.forEach(meal => {
       if (meal.standardId) return; // skip standard meals
@@ -2734,14 +2910,21 @@ function swapToHighProteinMeals() {
         const usedDay = new Set(day.meals.map(m => m.recipeId));
         candidate = getTop(meal.type).find(({ r: cr }) => !usedDay.has(cr.id));
       }
-      if (candidate) {
+      if (candidate && candidate.r.id !== meal.recipeId) {
         usedWeek.delete(meal.recipeId);
         meal.recipeId = candidate.r.id;
         meal.scaleFactor = 1;
         usedWeek.add(candidate.r.id);
+        changed = true;
       }
     });
   });
+
+  return changed;
+}
+
+function swapToHighProteinMeals() {
+  _swapShortfallDaysToHighProtein(state.week);
 
   // Re-optimise after swapping, then clear shortfall flags — user has been informed, don't nag
   const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
@@ -3520,15 +3703,16 @@ function renderWeek() {
           <a href="https://revolut.me/dimitrtxl" target="_blank" rel="noopener" title="Υποστήριξε το VIVON" style="display:flex;align-items:center;gap:4px;padding:5px 13px;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:#3b82f6;font-size:0.82rem;font-weight:700;text-decoration:none;white-space:nowrap;flex-shrink:0;transition:border-color 0.15s" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='var(--border)'">&#9829; Δωρεά</a>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">
-          <div style="display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:10px;padding:4px 8px;border:1px solid var(--border)">
-            <button onclick="shiftWeek(-1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">‹</button>
-            <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">›</button>
-          </div>
-          ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
+          ${weekRange ? `<button onclick="openWeekDatePicker()" title="${t('week_change_dates_title')}"
+            style="display:flex;align-items:center;gap:6px;background:var(--bg);border-radius:10px;padding:6px 10px;border:1px solid var(--border);font-size:0.78rem;font-weight:700;color:var(--text2);cursor:pointer">
+            📅 ${weekRange}
+          </button>` : ''}
           <div style="display:flex;gap:5px;margin-left:auto;align-items:center">
             <button id="week-create-plan-btn" onclick="createPlan()" title="${t('prof_create_plan_btn')}"
               style="display:flex;align-items:center;gap:5px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap">
-              <span class="week-btn-label">${t('prof_create_plan_btn')}</span>
+              📋
+              <span class="week-btn-label">${t('prof_create_plan_btn').replace(/^📋\s*/, '')}</span>
+              <span class="week-btn-label-mobile">${t('week_new_plan_btn_short')}</span>
             </button>
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()" title="PDF">🖨️ <span class="week-btn-label">PDF</span></button>
             <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="${t('week_copy_btn')}">📋</button>
@@ -3557,6 +3741,10 @@ function renderWeek() {
               if (avgP > protGoal * 1.05) {
                 return `<div style="margin-top:8px;font-size:0.68rem;color:#f59e0b;font-weight:600">${t('week_prot_surplus')}</div>`;
               }
+              // Only offer the manual swap banner when the shortfall came from
+              // the user dragging the goal sliders — a freshly auto-generated
+              // plan already tried swapping internally and shouldn't nag again.
+              if (!state._manualGoalEdit) return '';
               const shortDays = state.week.filter(d => d._proteinShortfall).length;
               if (!shortDays) return '';
               const plural = shortDays === 1 ? '' : 's';
@@ -3744,10 +3932,17 @@ function renderWeek() {
 function confirmRegenerateInline() {
   const style = state.wizardStyle || 'simple';
   const excPerMeal = state.wizardExcluded || {};
-  state.week = generateSmartWeek(style, excPerMeal);
+  // Regenerate never repeats meals — this shortcut only offers a style
+  // choice, not the repeat-meals option, so it must not silently inherit
+  // whatever was picked the last time the full wizard ran.
+  state.week = generateSmartWeek(style, excPerMeal, false);
   saveState();
   renderWeek();
-  showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
+  if (state.week._goalsUnmet) {
+    showToast(t('week_goals_unmet'), 4500);
+  } else {
+    showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
+  }
   // Flash button green
   const btn = document.getElementById('week-regen-btn');
   if (btn) {
@@ -3789,10 +3984,17 @@ function confirmRegenerate() {
   const style = window._tmpRgStyle || state.wizardStyle || 'simple';
   state.wizardStyle = style;
   const excPerMeal = state.wizardExcluded || {};
-  state.week = generateSmartWeek(style, excPerMeal);
+  // Regenerate never repeats meals — this modal only offers a style choice,
+  // not the repeat-meals option, so it must not silently inherit whatever
+  // was picked the last time the full wizard ran.
+  state.week = generateSmartWeek(style, excPerMeal, false);
   saveState();
   renderWeek();
-  showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
+  if (state.week._goalsUnmet) {
+    showToast(t('week_goals_unmet'), 4500);
+  } else {
+    showToast(`🎲 ${tFmt('toast_plan_style', { style: { simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[style] })}`);
+  }
 }
 
 function resetWeekPlan() {
@@ -5469,7 +5671,10 @@ function showConfirmModal(title, bodyHtml, onConfirm) {
 }
 
 let _modalSwipeCleanup = null;
-function openModal(html) {
+// extraSwipeDirections lets specific callers (e.g. the plan-dates picker)
+// opt into left/right swipe-to-dismiss on top of the default swipe-down,
+// without changing behavior for the many other modals sharing this function.
+function openModal(html, extraSwipeDirections = []) {
   if (_isModalOpen()) return;
   const overlay = document.getElementById('modal-overlay');
   const sheet = overlay.querySelector('.modal-sheet');
@@ -5486,7 +5691,11 @@ function openModal(html) {
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
   document.activeElement?.blur();
-  _modalSwipeCleanup = _addSwipeDismiss(sheet, () => closeModal(), { directions: ['down'], threshold: 60 });
+  const cleanups = [_addSwipeDismiss(sheet, () => closeModal(), { directions: ['down'], threshold: 60 })];
+  if (extraSwipeDirections.length) {
+    cleanups.push(_addSwipeDismiss(sheet, () => closeModal(), { directions: extraSwipeDirections, threshold: 80 }));
+  }
+  _modalSwipeCleanup = () => cleanups.forEach(fn => fn());
   history.pushState({ vivon: 'modal' }, '', location.pathname + location.search);
 }
 function closeModal(fromPopstate) {
