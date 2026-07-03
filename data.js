@@ -71,7 +71,7 @@ const FOODS_DB = [
   { id: "f5",  name: "Τόνος σε νερό",             nameI18n: { el: "Τόνος σε νερό",           en: "Tuna in Water",             es: "Atún en agua",             fr: "Thon à l'eau" },             unit: "g",  per100: { kcal: 116, p: 26, c: 0,  f: 1   }, category: "protein" },
   { id: "f6",  name: "Μπακαλίαρος",               nameI18n: { el: "Μπακαλίαρος",             en: "Cod",                       es: "Bacalao",                  fr: "Cabillaud" },                unit: "g",  per100: { kcal: 82,  p: 18, c: 0,  f: 0.7 }, category: "protein" },
   { id: "f7",  name: "Αυγό",                      nameI18n: { el: "Αυγό",                     en: "Egg",                       es: "Huevo",                    fr: "Œuf" },                      unit: "τεμ",per100: { kcal: 78,  p: 6,  c: 0.6,f: 5   }, category: "protein" },
-  { id: "f8",  name: "Cottage Cheese",            nameI18n: { el: "Cottage Cheese",           en: "Cottage Cheese",            es: "Requesón",                 fr: "Cottage cheese" },           unit: "g",  per100: { kcal: 98,  p: 11, c: 3.4,f: 4.3 }, category: "protein" },
+  { id: "f8",  name: "Cottage Cheese",            nameI18n: { el: "Cottage Cheese",           en: "Cottage Cheese",            es: "Requesón",                 fr: "Cottage cheese" },           unit: "g",  per100: { kcal: 98,  p: 11, c: 3.4,f: 4.3 }, category: "dairy" },
   { id: "f9",  name: "Whey Isolate",              nameI18n: { el: "Whey Isolate",             en: "Whey Isolate",              es: "Aislado de suero",         fr: "Isolat de whey" },           unit: "g",  per100: { kcal: 370, p: 90, c: 3,  f: 1   }, category: "protein" },
   { id: "f10", name: "Γαλοπούλα φέτα",            nameI18n: { el: "Γαλοπούλα φέτα",          en: "Turkey Slice",              es: "Lonchas de pavo",          fr: "Tranche de dinde" },         unit: "g",  per100: { kcal: 109, p: 17, c: 1,  f: 4   }, category: "protein" },
   { id: "f11", name: "Φακές μαγειρεμένες",        nameI18n: { el: "Φακές μαγειρεμένες",      en: "Cooked Lentils",            es: "Lentejas cocidas",         fr: "Lentilles cuites" },         unit: "g",  per100: { kcal: 116, p: 9,  c: 20, f: 0.4 }, category: "protein" },
@@ -144,12 +144,31 @@ const FOODS_DB = [
   { id: "fr3", name: "Ροδάκινο",                  nameI18n: { el: "Ροδάκινο",                en: "Peach",                     es: "Melocotón",                fr: "Pêche" },                    unit: "g",  per100: { kcal: 39,  p: 0.9,c: 10, f: 0.3 }, category: "fruit" },
   { id: "fr4", name: "Νεκταρίνι",                 nameI18n: { el: "Νεκταρίνι",               en: "Nectarine",                 es: "Nectarina",                fr: "Nectarine" },                unit: "g",  per100: { kcal: 44,  p: 1.1,c: 11, f: 0.3 }, category: "fruit" },
   { id: "fr5", name: "Ακτινίδιο",                 nameI18n: { el: "Ακτινίδιο",               en: "Kiwi",                      es: "Kiwi",                     fr: "Kiwi" },                     unit: "τεμ",per100: { kcal: 61,  p: 1.1,c: 15, f: 0.5 }, category: "fruit" },
+  { id: "fr6", name: "Πορτοκάλι",                 nameI18n: { el: "Πορτοκάλι",               en: "Orange",                    es: "Naranja",                  fr: "Orange" },                   unit: "g",  per100: { kcal: 47,  p: 0.9,c: 12, f: 0.1 }, category: "fruit" },
+  { id: "fr7", name: "Κεράσια",                   nameI18n: { el: "Κεράσια",                 en: "Cherries",                  es: "Cerezas",                  fr: "Cerises" },                  unit: "g",  per100: { kcal: 63,  p: 1.1,c: 16, f: 0.2 }, category: "fruit" },
+  { id: "fr8", name: "Φράουλες",                  nameI18n: { el: "Φράουλες",                en: "Strawberries",              es: "Fresas",                   fr: "Fraises" },                  unit: "g",  per100: { kcal: 32,  p: 0.7,c: 7.7,f: 0.3 }, category: "fruit" },
+  { id: "fr9", name: "Μύρτιλα",                   nameI18n: { el: "Μύρτιλα",                 en: "Blueberries",               es: "Arándanos",                fr: "Myrtilles" },                unit: "g",  per100: { kcal: 57,  p: 0.7,c: 14, f: 0.3 }, category: "fruit" },
+  { id: "fr10",name: "Καρπούζι",                  nameI18n: { el: "Καρπούζι",                en: "Watermelon",                es: "Sandía",                   fr: "Pastèque" },                 unit: "g",  per100: { kcal: 30,  p: 0.6,c: 8,  f: 0.2 }, category: "fruit" },
+  { id: "fr11",name: "Πεπόνι",                    nameI18n: { el: "Πεπόνι",                  en: "Melon",                     es: "Melón",                    fr: "Melon" },                    unit: "g",  per100: { kcal: 34,  p: 0.8,c: 8,  f: 0.2 }, category: "fruit" },
+  { id: "fr12",name: "Αχλάδι",                    nameI18n: { el: "Αχλάδι",                  en: "Pear",                      es: "Pera",                     fr: "Poire" },                    unit: "g",  per100: { kcal: 57,  p: 0.4,c: 15, f: 0.1 }, category: "fruit" },
   // ΑΛΛΑ
   { id: "o1",  name: "Μέλι",                      nameI18n: { el: "Μέλι",                     en: "Honey",                     es: "Miel",                     fr: "Miel" },                     unit: "g",  per100: { kcal: 304, p: 0.3,c: 82, f: 0   }, category: "other" },
   { id: "o2",  name: "Κακάο σκόνη",               nameI18n: { el: "Κακάο σκόνη",             en: "Cocoa Powder",              es: "Cacao en polvo",           fr: "Poudre de cacao" },          unit: "g",  per100: { kcal: 228, p: 20, c: 55, f: 14  }, category: "other" },
   { id: "o3",  name: "Μαύρη σοκολάτα 85%",        nameI18n: { el: "Μαύρη σοκολάτα 85%",     en: "Dark Chocolate 85%",        es: "Chocolate negro 85%",      fr: "Chocolat noir 85%" },        unit: "g",  per100: { kcal: 598, p: 8,  c: 46, f: 43  }, category: "other" },
   { id: "o4",  name: "Ξύδι βαλσάμικο",            nameI18n: { el: "Ξύδι βαλσάμικο",         en: "Balsamic Vinegar",          es: "Vinagre balsámico",        fr: "Vinaigre balsamique" },      unit: "ml", per100: { kcal: 88,  p: 0.5,c: 17, f: 0   }, category: "other" },
   { id: "o5",  name: "Μουστάρδα",                 nameI18n: { el: "Μουστάρδα",               en: "Mustard",                   es: "Mostaza",                  fr: "Moutarde" },                 unit: "g",  per100: { kcal: 66,  p: 4,  c: 6,  f: 4   }, category: "other" },
+  { id: "o6",  name: "Παγωτό βανίλια",            nameI18n: { el: "Παγωτό βανίλια",         en: "Vanilla Ice Cream",         es: "Helado de vainilla",       fr: "Glace vanille" },            unit: "μπάλα", per100: { kcal: 207, p: 3.5,c: 24, f: 11 }, category: "other" },
+  { id: "c19", name: "Κριτσίνια ολικής άλεσης",   nameI18n: { el: "Κριτσίνια ολικής άλεσης", en: "Wholegrain Breadsticks",    es: "Palitos integrales",       fr: "Gressins complets" },        unit: "g",  per100: { kcal: 408, p: 12, c: 68, f: 10  }, category: "carbs" },
+  { id: "c20", name: "Κριτσίνια χαρουπιού",       nameI18n: { el: "Κριτσίνια χαρουπιού",     en: "Carob Breadsticks",        es: "Palitos de algarroba",     fr: "Gressins à la caroube" },     unit: "g",  per100: { kcal: 390, p: 10, c: 72, f: 7   }, category: "carbs" },
+  { id: "c21", name: "Φαρίνα",                    nameI18n: { el: "Φαρίνα",                  en: "Wheat Flour",               es: "Harina de trigo",          fr: "Farine de blé" },             unit: "g",  per100: { kcal: 364, p: 10, c: 76, f: 1   }, category: "carbs" },
+  { id: "c22", name: "Ποπ κορν (αραβόσιτος)",     nameI18n: { el: "Ποπ κορν (αραβόσιτος)",   en: "Popcorn Kernels",           es: "Granos de maíz para palomitas", fr: "Grains de maïs à popcorn" }, unit: "g",  per100: { kcal: 375, p: 11, c: 74, f: 5   }, category: "carbs" },
+  { id: "f22", name: "Ζαμπόν",                    nameI18n: { el: "Ζαμπόν",                  en: "Ham",                       es: "Jamón cocido",             fr: "Jambon" },                    unit: "g",  per100: { kcal: 145, p: 18, c: 1.5,f: 7   }, category: "protein" },
+  { id: "l7",  name: "Ταχίνι",                    nameI18n: { el: "Ταχίνι",                  en: "Tahini",                    es: "Tahini",                   fr: "Tahini" },                    unit: "g",  per100: { kcal: 595, p: 17, c: 21, f: 54  }, category: "fat" },
+  { id: "l8",  name: "Φουντούκια",                nameI18n: { el: "Φουντούκια",              en: "Hazelnuts",                 es: "Avellanas",                fr: "Noisettes" },                 unit: "g",  per100: { kcal: 628, p: 15, c: 17, f: 61  }, category: "fat" },
+  { id: "l9",  name: "Βούτυρο",                   nameI18n: { el: "Βούτυρο",                 en: "Butter",                    es: "Mantequilla",              fr: "Beurre" },                    unit: "g",  per100: { kcal: 717, p: 0.9,c: 0.1,f: 81  }, category: "fat" },
+  { id: "o7",  name: "Μπέικιν πάουντερ",          nameI18n: { el: "Μπέικιν πάουντερ",       en: "Baking Powder",             es: "Levadura en polvo",        fr: "Levure chimique" },           unit: "g",  per100: { kcal: 53,  p: 0,  c: 28, f: 0   }, category: "other" },
+  { id: "o8",  name: "Άχνη ζάχαρη",                nameI18n: { el: "Άχνη ζάχαρη",             en: "Icing Sugar",               es: "Azúcar glas",              fr: "Sucre glace" },               unit: "g",  per100: { kcal: 389, p: 0,  c: 100,f: 0   }, category: "other" },
+  { id: "o9",  name: "Σιρόπι σφενδάμου",           nameI18n: { el: "Σιρόπι σφενδάμου",        en: "Maple Syrup",               es: "Sirope de arce",           fr: "Sirop d'érable" },            unit: "g",  per100: { kcal: 260, p: 0,  c: 67, f: 0.2 }, category: "other" },
 ];
 
 const RECIPES_DB = [
@@ -570,6 +589,86 @@ const RECIPES_DB = [
     instructionsI18n: { el: "1. Χτύπησε τα αυγά με αλάτι, πιπέρι.\n2. Ψήσε σε αντικολλητικό με λίγο ελαιόλαδο σε μέτρια φωτιά.\n3. Δίπλωσε την ομελέτα όταν είναι σχεδόν έτοιμη.", en: "1. Beat the eggs with salt and pepper.\n2. Cook in a non-stick pan with a little olive oil over medium heat.\n3. Fold the omelette when almost set.", es: "1. Bate los huevos con sal y pimienta.\n2. Cocina en una sartén antiadherente con un poco de aceite de oliva a fuego medio.\n3. Dobla la tortilla cuando esté casi cuajada.", fr: "1. Bats les œufs avec du sel et du poivre.\n2. Fais cuire dans une poêle antiadhésive avec un peu d'huile d'olive à feu moyen.\n3. Plie l'omelette quand elle est presque cuite." },
     serving: "Σέρβιρε με ντοματίνια κομμένα, το παξιμάδι χαρουπί και cottage cheese στο πλάι. Ελαφρύ βραδινό.",
     servingI18n: { el: "Σέρβιρε με ντοματίνια κομμένα, το παξιμάδι χαρουπί και cottage cheese στο πλάι. Ελαφρύ βραδινό.", en: "Serve with halved cherry tomatoes, the carob rusk and cottage cheese alongside. Light dinner.", es: "Sirve con tomatitos cortados, la galleta de algarroba y requesón al lado. Cena ligera.", fr: "Sers avec des tomates cerises coupées, la biscotte carob et le cottage cheese à côté. Dîner léger." }
+  },
+  {
+    id: "r52", name: "Πρωτεϊνούχο Porridge", nameI18n: { el: "Πρωτεϊνούχο Porridge", en: "Protein Porridge", es: "Porridge proteico", fr: "Porridge protéiné" }, meal: "breakfast", emoji: "🥣",
+    ingredients: [{ foodId: "c1", qty: 60 }, { foodId: "d2", qty: 200 }, { foodId: "f9", qty: 30 }],
+    instructions: "1. Ανακάτεψε βρώμη, γάλα και whey σε ένα μπολ κατάλληλο για φούρνο μικροκυμάτων.\n2. Ψήσε περίπου 90 δευτερόλεπτα.\n3. Ανακάτεψε ξανά καλά.",
+    instructionsI18n: { el: "1. Ανακάτεψε βρώμη, γάλα και whey σε ένα μπολ κατάλληλο για φούρνο μικροκυμάτων.\n2. Ψήσε περίπου 90 δευτερόλεπτα.\n3. Ανακάτεψε ξανά καλά.", en: "1. Mix oats, milk and whey in a microwave-safe bowl.\n2. Microwave for about 90 seconds.\n3. Stir well again.", es: "1. Mezcla la avena, la leche y el whey en un bol apto para microondas.\n2. Cocina en el microondas unos 90 segundos.\n3. Vuelve a remover bien.", fr: "1. Mélange les flocons d'avoine, le lait et le whey dans un bol adapté au micro-ondes.\n2. Fais chauffer environ 90 secondes.\n3. Remue de nouveau." },
+    serving: "Πρόσθεσε προαιρετικά φυστικοβούτυρο ή κομματάκια μαύρης σοκολάτας από πάνω. Καταναλώνεται ζεστό.",
+    servingI18n: { el: "Πρόσθεσε προαιρετικά φυστικοβούτυρο ή κομματάκια μαύρης σοκολάτας από πάνω. Καταναλώνεται ζεστό.", en: "Optionally add peanut butter or dark chocolate pieces on top. Serve warm.", es: "Añade opcionalmente mantequilla de cacahuete o trocitos de chocolate negro por encima. Se toma caliente.", fr: "Ajoute éventuellement du beurre de cacahuète ou des morceaux de chocolat noir par-dessus. À consommer chaud." }
+  },
+  {
+    id: "r53", name: "Γιαούρτι Protein Bowl με Μούρα", nameI18n: { el: "Γιαούρτι Protein Bowl με Μούρα", en: "Yogurt Protein Bowl with Berries", es: "Bowl proteico de yogur con bayas", fr: "Bowl protéiné au yaourt et fruits rouges" }, meal: "breakfast", emoji: "🫐",
+    ingredients: [{ foodId: "d1", qty: 200 }, { foodId: "fr9", qty: 80 }, { foodId: "o1", qty: 15 }, { foodId: "c1", qty: 20 }],
+    instructions: "1. Βάλε το γιαούρτι σε μπολ.\n2. Πρόσθεσε τα μύρτιλα και τη βρώμη από πάνω.",
+    instructionsI18n: { el: "1. Βάλε το γιαούρτι σε μπολ.\n2. Πρόσθεσε τα μύρτιλα και τη βρώμη από πάνω.", en: "1. Place the yogurt in a bowl.\n2. Add the blueberries and oats on top.", es: "1. Coloca el yogur en un bol.\n2. Añade los arándanos y la avena por encima.", fr: "1. Place le yaourt dans un bol.\n2. Ajoute les myrtilles et les flocons d'avoine par-dessus." },
+    serving: "Στάξε το μέλι από πάνω. Προαιρετικά πρόσθεσε μια κουταλιά φυστικοβούτυρο.",
+    servingI18n: { el: "Στάξε το μέλι από πάνω. Προαιρετικά πρόσθεσε μια κουταλιά φυστικοβούτυρο.", en: "Drizzle honey on top. Optionally add a spoonful of peanut butter.", es: "Chorrea miel por encima. Opcionalmente añade una cucharada de mantequilla de cacahuete.", fr: "Verse du miel par-dessus. Ajoute éventuellement une cuillère de beurre de cacahuète." }
+  },
+  {
+    id: "r54", name: "Γάλα με Granola", nameI18n: { el: "Γάλα με Granola", en: "Milk with Granola", es: "Leche con granola", fr: "Lait avec granola" }, meal: "breakfast", emoji: "🥛",
+    ingredients: [{ foodId: "d2", qty: 250 }, { foodId: "c1", qty: 50 }],
+    instructions: "1. Πρόσθεσε τη granola στο γάλα.",
+    instructionsI18n: { el: "1. Πρόσθεσε τη granola στο γάλα.", en: "1. Add the granola to the milk.", es: "1. Añade la granola a la leche.", fr: "1. Ajoute le granola au lait." },
+    serving: "Καταναλώνεται αμέσως, όσο η granola είναι ακόμα τραγανή.",
+    servingI18n: { el: "Καταναλώνεται αμέσως, όσο η granola είναι ακόμα τραγανή.", en: "Serve immediately, while the granola is still crunchy.", es: "Se toma inmediatamente, mientras la granola está aún crujiente.", fr: "À consommer immédiatement, tant que le granola est encore croustillant." }
+  },
+  {
+    id: "r55", name: "Protein Banana Cake", nameI18n: { el: "Protein Banana Cake", en: "Protein Banana Cake", es: "Pastel proteico de plátano", fr: "Gâteau protéiné à la banane" }, meal: "breakfast", emoji: "🍰",
+    ingredients: [{ foodId: "c21", qty: 60 }, { foodId: "fr1", qty: 120 }, { foodId: "f9", qty: 30 }, { foodId: "o3", qty: 15 }],
+    instructions: "1. Λιώσε καλά τη μπανάνα με ένα πιρούνι.\n2. Ανακάτεψε με φαρίνα και whey μέχρι να ομογενοποιηθούν.\n3. Πρόσθεσε τα κομματάκια σοκολάτας και ανακάτεψε απαλά.\n4. Ψήσε σε φούρνο στους 180°C για 20-25 λεπτά.",
+    instructionsI18n: { el: "1. Λιώσε καλά τη μπανάνα με ένα πιρούνι.\n2. Ανακάτεψε με φαρίνα και whey μέχρι να ομογενοποιηθούν.\n3. Πρόσθεσε τα κομματάκια σοκολάτας και ανακάτεψε απαλά.\n4. Ψήσε σε φούρνο στους 180°C για 20-25 λεπτά.", en: "1. Mash the banana well with a fork.\n2. Mix with flour and whey until combined.\n3. Add the chocolate pieces and fold in gently.\n4. Bake at 180°C for 20-25 minutes.", es: "1. Aplasta bien el plátano con un tenedor.\n2. Mezcla con la harina y el whey hasta combinar.\n3. Añade los trocitos de chocolate y mezcla suavemente.\n4. Hornea a 180°C durante 20-25 minutos.", fr: "1. Écrase bien la banane à la fourchette.\n2. Mélange avec la farine et le whey jusqu'à obtenir une pâte homogène.\n3. Ajoute les morceaux de chocolat et incorpore délicatement.\n4. Fais cuire au four à 180°C pendant 20-25 minutes." },
+    serving: "Προαιρετικά πρόσθεσε φυστικοβούτυρο από πάνω πριν σερβίρεις.",
+    servingI18n: { el: "Προαιρετικά πρόσθεσε φυστικοβούτυρο από πάνω πριν σερβίρεις.", en: "Optionally add peanut butter on top before serving.", es: "Opcionalmente añade mantequilla de cacahuete por encima antes de servir.", fr: "Ajoute éventuellement du beurre de cacahuète par-dessus avant de servir." }
+  },
+  {
+    id: "r56", name: "Τοστ Γαλοπούλα, Τυρί Light & Αυγό", nameI18n: { el: "Τοστ Γαλοπούλα, Τυρί Light & Αυγό", en: "Toast with Turkey, Light Cheese & Egg", es: "Tostada con pavo, queso light y huevo", fr: "Toast dinde, fromage light & œuf" }, meal: "breakfast", emoji: "🍞",
+    ingredients: [{ foodId: "c6", qty: 60 }, { foodId: "f10", qty: 60 }, { foodId: "d3", qty: 20 }, { foodId: "f7", qty: 1 }],
+    instructions: "1. Βράσε το αυγό 8-9 λεπτά, ξεφλούδισε.\n2. Ψήσε το ψωμί στον τοστιέρα.\n3. Βάλε τυρί, γαλοπούλα και το βραστό αυγό κομμένο σε φέτες από πάνω.",
+    instructionsI18n: { el: "1. Βράσε το αυγό 8-9 λεπτά, ξεφλούδισε.\n2. Ψήσε το ψωμί στον τοστιέρα.\n3. Βάλε τυρί, γαλοπούλα και το βραστό αυγό κομμένο σε φέτες από πάνω.", en: "1. Boil the egg for 8-9 minutes, peel it.\n2. Toast the bread.\n3. Add cheese, turkey and the sliced boiled egg on top.", es: "1. Cuece el huevo 8-9 minutos y pélalo.\n2. Tuesta el pan.\n3. Coloca el queso, el pavo y el huevo cocido en rodajas encima.", fr: "1. Fais cuire l'œuf 8-9 minutes, écale-le.\n2. Fais griller le pain.\n3. Ajoute le fromage, la dinde et l'œuf dur coupé en tranches par-dessus." },
+    serving: "Σέρβιρε ζεστό, αμέσως μετά το τοστάρισμα.",
+    servingI18n: { el: "Σέρβιρε ζεστό, αμέσως μετά το τοστάρισμα.", en: "Serve warm, right after toasting.", es: "Sirve caliente, justo después de tostar.", fr: "Sers chaud, juste après avoir grillé le pain." }
+  },
+  {
+    id: "r57", name: "Ρυζογκοφρέτες με Φυστικοβούτυρο & Μπανάνα", nameI18n: { el: "Ρυζογκοφρέτες με Φυστικοβούτυρο & Μπανάνα", en: "Rice Cakes with Peanut Butter & Banana", es: "Tortas de arroz con mantequilla de cacahuete y plátano", fr: "Galettes de riz au beurre de cacahuète et banane" }, meal: "snack", emoji: "🍌",
+    ingredients: [{ foodId: "c7", qty: 3 }, { foodId: "l4", qty: 25 }, { foodId: "fr1", qty: 100 }],
+    instructions: "1. Άπλωσε το φυστικοβούτυρο πάνω στις ριζογκοφρέτες.\n2. Κόψε τη μπανάνα σε ροδέλες και βάλε από πάνω.",
+    instructionsI18n: { el: "1. Άπλωσε το φυστικοβούτυρο πάνω στις ριζογκοφρέτες.\n2. Κόψε τη μπανάνα σε ροδέλες και βάλε από πάνω.", en: "1. Spread the peanut butter on the rice cakes.\n2. Slice the banana into rounds and place on top.", es: "1. Unta la mantequilla de cacahuete sobre las tortas de arroz.\n2. Corta el plátano en rodajas y colócalas encima.", fr: "1. Étale le beurre de cacahuète sur les galettes de riz.\n2. Coupe la banane en rondelles et dépose-les par-dessus." },
+    serving: "Σέρβιρε αμέσως ώστε οι ριζογκοφρέτες να μείνουν τραγανές.",
+    servingI18n: { el: "Σέρβιρε αμέσως ώστε οι ριζογκοφρέτες να μείνουν τραγανές.", en: "Serve immediately so the rice cakes stay crunchy.", es: "Sirve inmediatamente para que las tortas de arroz sigan crujientes.", fr: "Sers immédiatement pour que les galettes de riz restent croustillantes." }
+  },
+  {
+    id: "r58", name: "Cottage Cheese με Μέλι, Καρύδια & Κανέλα", nameI18n: { el: "Cottage Cheese με Μέλι, Καρύδια & Κανέλα", en: "Cottage Cheese with Honey, Walnuts & Cinnamon", es: "Requesón con miel, nueces y canela", fr: "Cottage cheese au miel, noix et cannelle" }, meal: "breakfast", emoji: "🍯",
+    ingredients: [{ foodId: "f8", qty: 200 }, { foodId: "o1", qty: 15 }, { foodId: "l3", qty: 20 }],
+    instructions: "1. Βάλε το cottage cheese σε μπολ.\n2. Πρόσθεσε τα καρύδια σπασμένα από πάνω.",
+    instructionsI18n: { el: "1. Βάλε το cottage cheese σε μπολ.\n2. Πρόσθεσε τα καρύδια σπασμένα από πάνω.", en: "1. Place the cottage cheese in a bowl.\n2. Add the broken walnuts on top.", es: "1. Coloca el requesón en un bol.\n2. Añade las nueces partidas por encima.", fr: "1. Place le cottage cheese dans un bol.\n2. Ajoute les noix concassées par-dessus." },
+    serving: "Στάξε το μέλι και πασπάλισε με κανέλα.",
+    servingI18n: { el: "Στάξε το μέλι και πασπάλισε με κανέλα.", en: "Drizzle the honey and sprinkle with cinnamon.", es: "Chorrea la miel y espolvorea con canela.", fr: "Verse le miel et saupoudre de cannelle." }
+  },
+  {
+    id: "r59", name: "Cottage Cheese με Φρούτο", nameI18n: { el: "Cottage Cheese με Φρούτο", en: "Cottage Cheese with Fruit", es: "Requesón con fruta", fr: "Cottage cheese aux fruits" }, meal: "snack", emoji: "🍑",
+    ingredients: [{ foodId: "f8", qty: 200 }, { foodId: "fr3", qty: 150 }],
+    instructions: "1. Βάλε το cottage cheese σε μπολ.\n2. Κόψε το φρούτο σε κομμάτια και πρόσθεσε από πάνω.",
+    instructionsI18n: { el: "1. Βάλε το cottage cheese σε μπολ.\n2. Κόψε το φρούτο σε κομμάτια και πρόσθεσε από πάνω.", en: "1. Place the cottage cheese in a bowl.\n2. Cut the fruit into pieces and add on top.", es: "1. Coloca el requesón en un bol.\n2. Corta la fruta en trozos y añádela por encima.", fr: "1. Place le cottage cheese dans un bol.\n2. Coupe le fruit en morceaux et ajoute-le par-dessus." },
+    serving: "Απλό, γρήγορο και υψηλής πρωτεΐνης σνακ.",
+    servingI18n: { el: "Απλό, γρήγορο και υψηλής πρωτεΐνης σνακ.", en: "Simple, quick and high-protein snack.", es: "Snack sencillo, rápido y rico en proteínas.", fr: "Snack simple, rapide et riche en protéines." }
+  },
+  {
+    id: "r60", name: "Shake Πρωτεΐνης με Γάλα & Μπανάνα", nameI18n: { el: "Shake Πρωτεΐνης με Γάλα & Μπανάνα", en: "Protein Shake with Milk & Banana", es: "Batido proteico con leche y plátano", fr: "Shake protéiné au lait et à la banane" }, meal: "snack", emoji: "🥤",
+    ingredients: [{ foodId: "d2", qty: 250 }, { foodId: "f9", qty: 30 }, { foodId: "fr1", qty: 100 }],
+    instructions: "1. Βάλε γάλα, whey και μπανάνα σε μπλέντερ.\n2. Χτύπησε μέχρι να ομογενοποιηθούν.",
+    instructionsI18n: { el: "1. Βάλε γάλα, whey και μπανάνα σε μπλέντερ.\n2. Χτύπησε μέχρι να ομογενοποιηθούν.", en: "1. Place milk, whey and banana in a blender.\n2. Blend until smooth.", es: "1. Pon la leche, el whey y el plátano en una batidora.\n2. Bate hasta que quede homogéneo.", fr: "1. Mets le lait, le whey et la banane dans un blender.\n2. Mixe jusqu'à obtenir un mélange homogène." },
+    serving: "Πίνε αμέσως, ιδανικό μετά την προπόνηση.",
+    servingI18n: { el: "Πίνε αμέσως, ιδανικό μετά την προπόνηση.", en: "Drink immediately, ideal after training.", es: "Bebe inmediatamente, ideal después del entrenamiento.", fr: "Bois immédiatement, idéal après l'entraînement." }
+  },
+  {
+    id: "r61", name: "Σαλάτα Τόνου με Καλαμπόκι & Γιαούρτι", nameI18n: { el: "Σαλάτα Τόνου με Καλαμπόκι & Γιαούρτι", en: "Tuna Salad with Corn & Yogurt", es: "Ensalada de atún con maíz y yogur", fr: "Salade de thon au maïs et yaourt" }, meal: "dinner", emoji: "🐟",
+    ingredients: [{ foodId: "f5", qty: 150 }, { foodId: "c16", qty: 80 }, { foodId: "d1", qty: 100 }, { foodId: "v1", qty: 60 }],
+    instructions: "1. Στράγγισε τον τόνο και βάλε τον σε μπολ με το μαρούλι και το καλαμπόκι.\n2. Ανακάτεψε το γιαούρτι με αλάτι, πιπέρι και λίγο λεμόνι για dressing.",
+    instructionsI18n: { el: "1. Στράγγισε τον τόνο και βάλε τον σε μπολ με το μαρούλι και το καλαμπόκι.\n2. Ανακάτεψε το γιαούρτι με αλάτι, πιπέρι και λίγο λεμόνι για dressing.", en: "1. Drain the tuna and place it in a bowl with the lettuce and corn.\n2. Mix the yogurt with salt, pepper and a little lemon for the dressing.", es: "1. Escurre el atún y colócalo en un bol con la lechuga y el maíz.\n2. Mezcla el yogur con sal, pimienta y un poco de limón para el aliño.", fr: "1. Égoutte le thon et place-le dans un bol avec la laitue et le maïs.\n2. Mélange le yaourt avec sel, poivre et un peu de citron pour la sauce." },
+    serving: "Ρίξε το dressing γιαουρτιού από πάνω αντί για μαγιονέζα και ανακάτεψε.",
+    servingI18n: { el: "Ρίξε το dressing γιαουρτιού από πάνω αντί για μαγιονέζα και ανακάτεψε.", en: "Pour the yogurt dressing on top instead of mayonnaise and toss.", es: "Vierte el aliño de yogur por encima en lugar de mayonesa y mezcla.", fr: "Verse la sauce au yaourt par-dessus à la place de la mayonnaise et mélange." }
   },
 ];
 
@@ -1569,7 +1668,7 @@ const STANDARD_MEALS = [
   { id: "cb_b2",  meal: "breakfast", emoji: "🧇", name: "Pancakes βρώμης 3τεμ + μέλι + μπανάνα",              nameI18n: { el: "Pancakes βρώμης 3τεμ + μέλι + μπανάνα", en: "Oat pancakes 3pcs + honey + banana", es: "Tortitas de avena 3 uds + miel + plátano", fr: "Pancakes à l'avoine 3 pcs + miel + banane" }, kcal_est: 430, p: 22, c: 62, f: 10, note: "Blender: βρώμη + αυγά + γάλα + μπέικιν. 2 λεπτά ανά πλευρά σε μέτρια φωτιά.", items: ["80g βρώμη", "2 αυγά", "100ml γάλα", "1 κγ μπέικιν", "1 μπανάνα", "1 κγ μέλι"] },
   { id: "cb_b3",  meal: "breakfast", emoji: "🫙", name: "Γιαούρτι στραγγιστό + granola + φράουλες",           nameI18n: { el: "Γιαούρτι στραγγιστό + granola + φράουλες", en: "Greek yogurt + granola + strawberries", es: "Yogur griego + granola + fresas", fr: "Yaourt grec + granola + fraises" }, kcal_est: 340, p: 18, c: 44, f: 8,  note: "Βάλε πρώτα γιαούρτι, ρίξε granola από πάνω τελευταία στιγμή για τραγανή υφή.", items: ["250g γιαούρτι στραγγιστό 2%", "30g granola", "100g φράουλες", "1 κγ μέλι"] },
   { id: "cb_b4",  meal: "breakfast", emoji: "🥑", name: "Αβοκάντο toast + 2 αυγά ποσέ + φέτα",                nameI18n: { el: "Αβοκάντο toast + 2 αυγά ποσέ + φέτα", en: "Avocado toast + 2 poached eggs + feta", es: "Tostada de aguacate + 2 huevos escalfados + feta", fr: "Toast à l'avocat + 2 œufs pochés + feta" }, kcal_est: 490, p: 22, c: 32, f: 30, note: "Λίγο ξύδι στο νερό για τέλεια ποσέ αυγά. Πατσατέ αβοκάντο με λεμόνι, αλάτι, νιφάδες πιπεριάς.", items: ["2 φέτες ψωμί ολικής", "½ αβοκάντο", "2 αυγά", "20g φέτα", "λεμόνι, πιπέρι"] },
-  { id: "cb_b5",  meal: "breakfast", emoji: "🥤", name: "Green smoothie: σπανάκι, μπανάνα, γάλα & whey",       nameI18n: { el: "Green smoothie: σπανάκι, μπανάνα, γάλα & whey", en: "Green smoothie: spinach, banana, milk & whey", es: "Smoothie verde: espinacas, plátano, leche & whey", fr: "Smoothie vert: épinards, banane, lait & whey" }, kcal_est: 380, p: 32, c: 44, f: 6,  note: "Βάλε πρώτα το υγρό, μετά σπανάκι, μετά μπανάνα και whey. Blender 60\". Κρύο γάλα = καλύτερη υφή.", items: ["50g σπανάκι φρέσκο", "1 μπανάνα κατεψυγμένη", "250ml γάλα 1,5%", "25g whey isolate"] },
+  { id: "cb_b5",  meal: "breakfast", emoji: "🥤", name: "Fruit smoothie: μπανάνα, ροδάκινο, γάλα & whey",       nameI18n: { el: "Fruit smoothie: μπανάνα, ροδάκινο, γάλα & whey", en: "Fruit smoothie: banana, peach, milk & whey", es: "Smoothie de frutas: plátano, melocotón, leche & whey", fr: "Smoothie de fruits: banane, pêche, lait & whey" }, kcal_est: 380, p: 32, c: 44, f: 6,  note: "Βάλε πρώτα το υγρό, μετά μπανάνα και ροδάκινο, μετά whey. Blender 60\". Κρύο γάλα = καλύτερη υφή.", items: ["1 μπανάνα κατεψυγμένη", "1 ροδάκινο", "250ml γάλα 1,5%", "25g whey isolate"] },
   { id: "cb_b6",  meal: "breakfast", emoji: "🍞", name: "French toast πρωτεΐνης + μέλι",                       nameI18n: { el: "French toast πρωτεΐνης + μέλι", en: "Protein French toast + honey", es: "French toast proteico + miel", fr: "French toast protéiné + miel" }, kcal_est: 410, p: 28, c: 46, f: 12, note: "Βούτηξε ψωμί σε μείγμα αυγών+γάλακτος+κανέλας. Ψήσε σε αντικολλητικό. Σέρβιρε με μέλι.", items: ["3 φέτες ψωμί ολικής", "2 αυγά", "80ml γάλα", "κανέλα", "15g μέλι", "4 ψεκ. ελαιόλαδο"] },
   { id: "cb_b7",  meal: "breakfast", emoji: "🌯", name: "Wrap αυγών & γαλοπούλας",                              nameI18n: { el: "Wrap αυγών & γαλοπούλας", en: "Egg & turkey wrap", es: "Wrap de huevos & pavo", fr: "Wrap aux œufs & dinde" }, kcal_est: 420, p: 32, c: 38, f: 14, note: "Κάνε scramble αυγά+ασπράδια. Ζέστανε τορτίγια, βάλε αυγά+γαλοπούλα+ντοματίνια+σπανάκι.", items: ["2 αυγά + 2 ασπράδια", "60g γαλοπούλα", "1 τορτίγια ολικής", "30g σπανάκι μωρό", "50g ντοματίνια"] },
   { id: "cb_b8",  meal: "breakfast", emoji: "🍌", name: "Banana protein muffin + καφές",                        nameI18n: { el: "Banana protein muffin + καφές", en: "Banana protein muffin + coffee", es: "Muffin proteico de plátano + café", fr: "Muffin protéiné à la banane + café" }, kcal_est: 290, p: 18, c: 36, f: 7,  note: "Χτύπησε μπανάνα+αυγά+βρώμη+whey+μπέικιν. Φούρνος 180°C 20'. Μπορείς να φτιάξεις παρτίδα 6 τεμ.", items: ["1 μπανάνα", "2 αυγά", "40g βρώμη", "20g whey", "½ κγ μπέικιν πάουντερ"] },
@@ -1620,6 +1719,85 @@ const STANDARD_MEALS = [
   { id: "cb_d12", meal: "dinner", emoji: "🍳", name: "Κλαρκ αυγά (3τεμ) + μανιτάρια + γαλοπούλα",             nameI18n: { el: "Κλαρκ αυγά (3τεμ) + μανιτάρια + γαλοπούλα", en: "Shirred eggs (3) + mushrooms + turkey", es: "Huevos al plato (3) + champiñones + pavo", fr: "Œufs cocotte (3) + champignons + dinde" }, kcal_est: 350, p: 30, c: 4,  f: 22, note: "Σόταρε μανιτάρια+γαλοπούλα. Σπάσε αυγά από πάνω, σκέπασε με καπάκι 4'. Πιπέρι+ρίγανη.", items: ["3 αυγά", "100g μανιτάρια", "80g γαλοπούλα", "1 κγ ελαιόλαδο", "πιπέρι, ρίγανη"] },
   { id: "cb_d13", meal: "dinner", emoji: "🫙", name: "High-protein overnight pudding chia",                     nameI18n: { el: "High-protein overnight pudding chia", en: "High-protein overnight chia pudding", es: "Pudín de chía nocturno alto en proteínas", fr: "Pudding chia de nuit riche en protéines" }, kcal_est: 390, p: 28, c: 38, f: 14, note: "Βράδυ: ανάμειξε γιαούρτι+γάλα+chia+whey+μέλι. Ψυγείο overnight. Φρούτα από πάνω.", items: ["200g γιαούρτι 2%", "100ml γάλα", "20g chia seeds", "20g whey vanilla", "1 κγ μέλι", "φρούτα"] },
   { id: "cb_d14", meal: "dinner", emoji: "🥩", name: "Χοιρινό φιλέτο + μήλο + σαλάτα",                        nameI18n: { el: "Χοιρινό φιλέτο + μήλο + σαλάτα", en: "Pork fillet + apple + salad", es: "Filete de cerdo + manzana + ensalada", fr: "Filet de porc + pomme + salade" }, kcal_est: 410, p: 42, c: 20, f: 16, note: "Χοιρινό φιλέτο (άπαχο) με σάλτσα μήλου+σινάπι. Φούρνος 185°C 20'. Απλή πράσινη σαλάτα.", items: ["200g χοιρινό φιλέτο", "½ μήλο τριμμένο", "1 κγ μουστάρδα", "σαλάτα πράσινη"] },
+
+  // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ — PROTEIN EXTRAS ───
+  { id: "sm74", meal: "breakfast", emoji: "☕",
+    name: "Freddo Espresso Protein",
+    nameI18n: { el: "Freddo Espresso Protein", en: "Protein Freddo Espresso", es: "Freddo espresso proteico", fr: "Freddo espresso protéiné" },
+    kcal_est: 70, p: 12, c: 2, f: 0.5,
+    note: "Πολύ λίγες θερμίδες, υψηλή πρωτεΐνη",
+    instructions: "1. Ετοίμασε διπλό espresso.\n2. Ρίξε τον σε ποτήρι με παγάκια.\n3. Πρόσθεσε μισό scoop whey βανίλια.\n4. Χτύπησε καλά (σέικερ ή μπλέντερ) μέχρι να αποκτήσει αφρώδη υφή σαν Freddo Cappuccino.",
+    instructionsI18n: { el: "1. Ετοίμασε διπλό espresso.\n2. Ρίξε τον σε ποτήρι με παγάκια.\n3. Πρόσθεσε μισό scoop whey βανίλια.\n4. Χτύπησε καλά (σέικερ ή μπλέντερ) μέχρι να αποκτήσει αφρώδη υφή σαν Freddo Cappuccino.", en: "1. Prepare a double espresso.\n2. Pour it over ice in a glass.\n3. Add half a scoop of vanilla whey.\n4. Shake or blend well until frothy, like a Freddo Cappuccino.", es: "1. Prepara un espresso doble.\n2. Viértelo sobre hielo en un vaso.\n3. Añade media medida de whey de vainilla.\n4. Agita o mezcla bien hasta conseguir una textura espumosa, como un Freddo Cappuccino.", fr: "1. Prépare un espresso double.\n2. Verse-le sur des glaçons dans un verre.\n3. Ajoute une demi-dose de whey vanille.\n4. Secoue ou mixe bien jusqu'à obtenir une texture mousseuse, comme un Freddo Cappuccino." },
+    serving: "Πιες κρύο, αμέσως μετά την παρασκευή.",
+    servingI18n: { el: "Πιες κρύο, αμέσως μετά την παρασκευή.", en: "Drink cold, right after preparing.", es: "Bebe frío, justo después de prepararlo.", fr: "Bois-le froid, juste après l'avoir préparé." },
+    items: ["Διπλός espresso", "Παγάκια", "½ scoop whey βανίλια (~15g)"]
+  },
+  { id: "sm75", meal: "snack", emoji: "🍫",
+    name: "Protein Pudding Σοκολάτα",
+    nameI18n: { el: "Protein Pudding Σοκολάτα", en: "Chocolate Protein Pudding", es: "Pudín proteico de chocolate", fr: "Pudding protéiné au chocolat" },
+    kcal_est: 220, p: 28, c: 16, f: 5,
+    note: "Σερβίρεται κρύο",
+    instructions: "1. Ανακάτεψε whey σοκολάτα με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.",
+    instructionsI18n: { el: "1. Ανακάτεψε whey σοκολάτα με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.", en: "1. Mix chocolate whey with milk until it thickens to a creamy texture.\n2. Refrigerate for at least 1 hour before serving.", es: "1. Mezcla el whey de chocolate con leche hasta que espese y quede cremoso.\n2. Refrigera al menos 1 hora antes de servir.", fr: "1. Mélange le whey chocolat avec du lait jusqu'à obtenir une texture crémeuse et épaisse.\n2. Réfrigère au moins 1 heure avant de servir." },
+    serving: "Σερβίρεται κρύο, απευθείας από το ψυγείο.",
+    servingI18n: { el: "Σερβίρεται κρύο, απευθείας από το ψυγείο.", en: "Serve cold, straight from the fridge.", es: "Se sirve frío, directo de la nevera.", fr: "Se sert froid, directement du réfrigérateur." },
+    items: ["30g whey σοκολάτα", "200ml γάλα 1,5%"]
+  },
+  { id: "sm76", meal: "snack", emoji: "🍦",
+    name: "Protein Pudding Βανίλια",
+    nameI18n: { el: "Protein Pudding Βανίλια", en: "Vanilla Protein Pudding", es: "Pudín proteico de vainilla", fr: "Pudding protéiné à la vanille" },
+    kcal_est: 220, p: 28, c: 16, f: 5,
+    note: "Σερβίρεται κρύο",
+    instructions: "1. Ανακάτεψε whey βανίλια με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.",
+    instructionsI18n: { el: "1. Ανακάτεψε whey βανίλια με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.", en: "1. Mix vanilla whey with milk until it thickens to a creamy texture.\n2. Refrigerate for at least 1 hour before serving.", es: "1. Mezcla el whey de vainilla con leche hasta que espese y quede cremoso.\n2. Refrigera al menos 1 hora antes de servir.", fr: "1. Mélange le whey vanille avec du lait jusqu'à obtenir une texture crémeuse et épaisse.\n2. Réfrigère au moins 1 heure avant de servir." },
+    serving: "Σερβίρεται κρύο, απευθείας από το ψυγείο.",
+    servingI18n: { el: "Σερβίρεται κρύο, απευθείας από το ψυγείο.", en: "Serve cold, straight from the fridge.", es: "Se sirve frío, directo de la nevera.", fr: "Se sert froid, directement du réfrigérateur." },
+    items: ["30g whey βανίλια", "200ml γάλα 1,5%"]
+  },
+  { id: "sm77", meal: "snack", emoji: "🍮",
+    name: "Protein Pudding Καραμέλα",
+    nameI18n: { el: "Protein Pudding Καραμέλα", en: "Caramel Protein Pudding", es: "Pudín proteico de caramelo", fr: "Pudding protéiné au caramel" },
+    kcal_est: 220, p: 28, c: 16, f: 5,
+    note: "Σερβίρεται κρύο",
+    instructions: "1. Ανακάτεψε whey καραμέλα με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.",
+    instructionsI18n: { el: "1. Ανακάτεψε whey καραμέλα με γάλα μέχρι να πήξει σε κρεμώδη υφή.\n2. Βάλε στο ψυγείο τουλάχιστον 1 ώρα πριν το σερβίρεις.", en: "1. Mix caramel whey with milk until it thickens to a creamy texture.\n2. Refrigerate for at least 1 hour before serving.", es: "1. Mezcla el whey de caramelo con leche hasta que espese y quede cremoso.\n2. Refrigera al menos 1 hora antes de servir.", fr: "1. Mélange le whey caramel avec du lait jusqu'à obtenir une texture crémeuse et épaisse.\n2. Réfrigère au moins 1 heure avant de servir." },
+    serving: "Σερβίρεται κρύο, απευθείας από το ψυγείο.",
+    servingI18n: { el: "Σερβίρεται κρύο, απευθείας από το ψυγείο.", en: "Serve cold, straight from the fridge.", es: "Se sirve frío, directo de la nevera.", fr: "Se sert froid, directement du réfrigérateur." },
+    items: ["30g whey καραμέλα", "200ml γάλα 1,5%"]
+  },
+  { id: "sm78", meal: "breakfast", emoji: "🍳",
+    name: "Ομελέτα Ασπραδιών με Αυγό & Ψωμί Ολικής",
+    nameI18n: { el: "Ομελέτα Ασπραδιών με Αυγό & Ψωμί Ολικής", en: "Egg White Omelette with Egg & Wholegrain Bread", es: "Tortilla de claras con huevo y pan integral", fr: "Omelette aux blancs d'œufs, œuf & pain complet" },
+    kcal_est: 320, p: 30, c: 30, f: 8,
+    note: "Υψηλή πρωτεΐνη, χαμηλά λιπαρά",
+    instructions: "1. Χτύπησε τα ασπράδια με το ολόκληρο αυγό, αλάτι και πιπέρι.\n2. Ψήσε σε αντικολλητικό τηγάνι χωρίς λάδι σε μέτρια φωτιά.\n3. Σέρβιρε με το ψωμί ολικής δίπλα.",
+    instructionsI18n: { el: "1. Χτύπησε τα ασπράδια με το ολόκληρο αυγό, αλάτι και πιπέρι.\n2. Ψήσε σε αντικολλητικό τηγάνι χωρίς λάδι σε μέτρια φωτιά.\n3. Σέρβιρε με το ψωμί ολικής δίπλα.", en: "1. Beat the egg whites with the whole egg, salt and pepper.\n2. Cook in a non-stick pan without oil over medium heat.\n3. Serve with the wholegrain bread alongside.", es: "1. Bate las claras con el huevo entero, sal y pimienta.\n2. Cocina en una sartén antiadherente sin aceite a fuego medio.\n3. Sirve con el pan integral al lado.", fr: "1. Bats les blancs d'œufs avec l'œuf entier, sel et poivre.\n2. Fais cuire dans une poêle antiadhésive sans huile à feu moyen.\n3. Sers avec le pain complet à côté." },
+    serving: "Σέρβιρε ζεστή, με το ψωμί δίπλα.",
+    servingI18n: { el: "Σέρβιρε ζεστή, με το ψωμί δίπλα.", en: "Serve warm, with the bread alongside.", es: "Sirve caliente, con el pan al lado.", fr: "Sers chaud, avec le pain à côté." },
+    items: ["100g ασπράδια αυγού", "1 ολόκληρο αυγό", "1 φέτα ψωμί ολικής (~30g)"]
+  },
+  { id: "sm79", meal: "dinner", emoji: "🥗",
+    name: "Ομελέτα Ασπραδιών με Σαλάτα",
+    nameI18n: { el: "Ομελέτα Ασπραδιών με Σαλάτα", en: "Egg White Omelette with Salad", es: "Tortilla de claras con ensalada", fr: "Omelette aux blancs d'œufs et salade" },
+    kcal_est: 280, p: 32, c: 10, f: 10,
+    note: "Ελαφρύ βραδινό, υψηλή πρωτεΐνη",
+    instructions: "1. Χτύπησε τα ασπράδια με αλάτι και πιπέρι.\n2. Ψήσε σε αντικολλητικό τηγάνι χωρίς λάδι σε μέτρια φωτιά.\n3. Σέρβιρε με πράσινη σαλάτα δίπλα.",
+    instructionsI18n: { el: "1. Χτύπησε τα ασπράδια με αλάτι και πιπέρι.\n2. Ψήσε σε αντικολλητικό τηγάνι χωρίς λάδι σε μέτρια φωτιά.\n3. Σέρβιρε με πράσινη σαλάτα δίπλα.", en: "1. Beat the egg whites with salt and pepper.\n2. Cook in a non-stick pan without oil over medium heat.\n3. Serve with green salad alongside.", es: "1. Bate las claras con sal y pimienta.\n2. Cocina en una sartén antiadherente sin aceite a fuego medio.\n3. Sirve con ensalada verde al lado.", fr: "1. Bats les blancs d'œufs avec sel et poivre.\n2. Fais cuire dans une poêle antiadhésive sans huile à feu moyen.\n3. Sers avec une salade verte à côté." },
+    serving: "Ρίξε λίγο ελαιόλαδο και λεμόνι στη σαλάτα.",
+    servingI18n: { el: "Ρίξε λίγο ελαιόλαδο και λεμόνι στη σαλάτα.", en: "Drizzle a little olive oil and lemon over the salad.", es: "Chorrea un poco de aceite de oliva y limón sobre la ensalada.", fr: "Verse un peu d'huile d'olive et de citron sur la salade." },
+    items: ["150g ασπράδια αυγού", "100g ανάμεικτη σαλάτα", "1 κγ ελαιόλαδο", "λεμόνι"]
+  },
+  { id: "sm80", meal: "snack", emoji: "🍫",
+    name: "Μπάρα Πρωτεΐνης με Φρούτο",
+    nameI18n: { el: "Μπάρα Πρωτεΐνης με Φρούτο", en: "Protein Bar with Fruit", es: "Barrita proteica con fruta", fr: "Barre protéinée avec un fruit" },
+    kcal_est: 260, p: 20, c: 26, f: 8,
+    note: "Γρήγορο σνακ, πρακτικό εκτός σπιτιού",
+    instructions: "1. Άνοιξε τη μπάρα πρωτεΐνης.\n2. Πλύνε και φάε το φρούτο δίπλα.",
+    instructionsI18n: { el: "1. Άνοιξε τη μπάρα πρωτεΐνης.\n2. Πλύνε και φάε το φρούτο δίπλα.", en: "1. Unwrap the protein bar.\n2. Wash and eat the fruit alongside.", es: "1. Desenvuelve la barrita proteica.\n2. Lava y come la fruta al lado.", fr: "1. Déballe la barre protéinée.\n2. Lave et mange le fruit à côté." },
+    serving: "Ιδανικό σνακ για ταξίδι ή γρήγορο διάλειμμα.",
+    servingI18n: { el: "Ιδανικό σνακ για ταξίδι ή γρήγορο διάλειμμα.", en: "Ideal snack for travel or a quick break.", es: "Snack ideal para viajar o para una pausa rápida.", fr: "Snack idéal en voyage ou pour une pause rapide." },
+    items: ["1 μπάρα πρωτεΐνης (~40g)", "1 μήλο ή μπανάνα (~120g)"]
+  },
 ];
 
 // ============================================================
@@ -2476,7 +2654,7 @@ const SUPPLEMENTS_LIBRARY = [
 
 // Default user supplement state
 const SUPPLEMENTS_STATE_DEFAULT = {
-  enabled: false,
+  enabled: true,
   activeIds: [],
   done: {},
 };

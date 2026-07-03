@@ -329,6 +329,17 @@ const I18N = {
   wizard_select_all:             { el: 'Επιλογή όλων', en: 'Select all', es: 'Seleccionar todo', fr: 'Tout sélectionner' },
   wizard_all_ok:                 { el: '✓ Όλα επιτρεπτά', en: '✓ All allowed', es: '✓ Todos permitidos', fr: '✓ Tous autorisés' },
   wizard_more:                   { el: '+{n} ακόμα', en: '+{n} more', es: '+{n} más', fr: '+{n} de plus' },
+  wizard_food_title:             { el: '🥗 Τρόφιμα', en: '🥗 Foods', es: '🥗 Alimentos', fr: '🥗 Aliments' },
+  wizard_food_desc:              { el: 'Αποεπίλεξε τρόφιμα που ΔΕΝ θέλεις — το πλάνο δεν θα περιλαμβάνει γεύματα που τα περιέχουν.', en: 'Deselect foods you do NOT want — the plan will exclude meals containing them.', es: 'Deselecciona alimentos que NO quieres — el plan excluirá las comidas que los contengan.', fr: 'Désélectionne les aliments que tu NE veux PAS — le plan exclura les repas qui les contiennent.' },
+  wizard_food_sublabel:          { el: 'Όλα ξεκινούν επιλεγμένα.', en: 'Everything starts selected.', es: 'Todo empieza seleccionado.', fr: 'Tout est sélectionné par défaut.' },
+  wizard_food_cat_protein:       { el: 'Πρωτεΐνες', en: 'Protein', es: 'Proteínas', fr: 'Protéines' },
+  wizard_food_cat_carbs:         { el: 'Υδατάνθρακες', en: 'Carbs', es: 'Carbohidratos', fr: 'Glucides' },
+  wizard_food_cat_veggie:        { el: 'Λαχανικά', en: 'Vegetables', es: 'Verduras', fr: 'Légumes' },
+  wizard_food_cat_salad:         { el: 'Σαλάτες', en: 'Salads', es: 'Ensaladas', fr: 'Salades' },
+  wizard_food_cat_fat:           { el: 'Λιπαρά & ξηροί καρποί', en: 'Fats & nuts', es: 'Grasas y frutos secos', fr: 'Matières grasses & fruits secs' },
+  wizard_food_cat_dairy:         { el: 'Γαλακτοκομικά', en: 'Dairy', es: 'Lácteos', fr: 'Produits laitiers' },
+  wizard_food_cat_fruit:         { el: 'Φρούτα', en: 'Fruit', es: 'Frutas', fr: 'Fruits' },
+  wizard_food_cat_other:         { el: 'Άλλα', en: 'Other', es: 'Otros', fr: 'Autres' },
 
   // ── Stats / Progress ──
   stats_title:      { el: '📊 Στατιστικά', en: '📊 Statistics', es: '📊 Estadísticas', fr: '📊 Statistiques' },
