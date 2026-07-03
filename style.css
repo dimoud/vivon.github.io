@@ -1712,6 +1712,17 @@ select { cursor: pointer; }
   opacity: 0.85;
   transition-duration: 0.08s;
 }
+.week-meal-chip-subtitle {
+  font-size: 0.68rem;
+  line-height: 1.15;
+  color: var(--text2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
 .week-meal-edit-icon {
   font-size: 0.72rem;
   color: var(--chip-color, var(--text3));

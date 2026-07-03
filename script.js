@@ -27,7 +27,9 @@ let state = {
   wizardExcluded: {},
   wizardStyle: 'mixed',
   wizardRepeatMeals: false,
-  excludedFoods: [],
+  excludedFoods: [], // legacy, superseded by wizardExcludedCategories — kept unused to avoid breaking old cloud snapshots
+  wizardExcludedCategories: [],
+  wizardMode: 'auto',
 };
 
 // ── MEAL TIME HELPER ──
@@ -99,6 +101,8 @@ async function syncToSupabase() {
         wizardStyle:    snap.wizardStyle,
         wizardRepeatMeals: snap.wizardRepeatMeals,
         excludedFoods: snap.excludedFoods,
+        wizardExcludedCategories: snap.wizardExcludedCategories,
+        wizardMode: snap.wizardMode,
       }),
     ]);
     // After all awaits: verify the user hasn't changed during the async writes.
@@ -135,7 +139,9 @@ function _freshState() {
     wizardExcluded: {},
     wizardStyle: 'mixed',
     wizardRepeatMeals: false,
-    excludedFoods: [],
+    excludedFoods: [], // legacy, superseded by wizardExcludedCategories — kept unused to avoid breaking old cloud snapshots
+    wizardExcludedCategories: [],
+    wizardMode: 'auto',
   };
 }
 
@@ -1854,26 +1860,28 @@ function getWizardMeals() {
   ];
 }
 const WIZARD_MEALS = getWizardMeals();
-// step 0 = foods (deselect what you don't want), step 1 = style, step 2 = repeat-meals option, steps 3..6 = meals, step 7 = confirm
-const WIZARD_FOODS_STEP   = 0;
-const WIZARD_STYLE_STEP   = 1;
-const WIZARD_REPEAT_STEP  = 2;
-const WIZARD_CONFIRM_STEP = WIZARD_MEALS.length + 3;
+// step 0 = food categories, step 1 = style, step 2 = repeat-meals option,
+// step 3 = automatic/manual mode choice, then (manual only) one step per meal,
+// then confirm. The tail of the sequence is variable-length (mode choice
+// decides whether the per-meal steps exist at all), so _wizardStepPlan()
+// computes it fresh on every render/navigation instead of fixed constants.
+const WIZARD_CATEGORIES_STEP = 0;
+const WIZARD_STYLE_STEP      = 1;
+const WIZARD_REPEAT_STEP     = 2;
+const WIZARD_MODE_STEP       = 3;
 
-// Foods that can appear in the wizard's food step: only FOODS_DB entries
-// actually used as an ingredient somewhere in RECIPES_DB — no point showing
-// (and letting the user deselect) an item that can never affect a recipe match.
-function _wizardSelectableFoods() {
-  const usedIds = new Set();
-  (typeof RECIPES_DB !== 'undefined' ? RECIPES_DB : []).forEach(r => {
-    (r.ingredients || []).forEach(ing => usedIds.add(ing.foodId));
-  });
-  return (typeof FOODS_DB !== 'undefined' ? FOODS_DB : []).filter(f => usedIds.has(f.id));
+function _wizardStepPlan() {
+  const plan = ['categories', 'style', 'repeat', 'mode'];
+  if (state.wizardMode === 'manual') {
+    WIZARD_MEALS.forEach(m => plan.push('meal:' + m.key));
+  }
+  plan.push('confirm');
+  return plan;
 }
 
 let _wizardStep = 0;
 let _wizardExcluded = {};  // { mealKey: Set<mealId> }
-let _wizardExcludedFoodsSet = new Set(); // Set<foodId> — foods the user deselected in step 0
+let _wizardExcludedCategoriesSet = new Set(); // Set<categoryId> — categories the user deselected in step 0
 
 function _allMeals() {
   return [
@@ -1883,37 +1891,16 @@ function _allMeals() {
   ];
 }
 
-// Does this recipe/meal contain a food in excludedFoodSet? Used both by the
+// Does this recipe/meal carry a tag in excludedCategorySet? Used both by the
 // plan generator (generateSmartWeek) and by the wizard's per-meal exclusion
-// step, so a food deselected in step 0 hides matching recipes everywhere.
-// For RECIPES_DB entries (structured ingredients[{foodId}]) this is an exact
-// id match. STANDARD_MEALS (flat sm*/cb_*/ex_* entries) have no ingredients
-// breakdown, only free-text name/items — so there the food's Greek name is
-// matched against that text instead. A food's name can be a substring of an
-// unrelated *other* food's name (e.g. "Φέτα" inside "Γαλοπούλα φέτα", where
-// "φέτα" just means "slice") — to avoid a false match, a hit only counts if
-// no *other* FOODS_DB name that also matches at that spot is longer (i.e.
-// more specific).
-function _recipeHasExcludedFood(r, excludedFoodSet) {
-  if (!excludedFoodSet || !excludedFoodSet.size) return false;
-  if (Array.isArray(r.ingredients)) {
-    return r.ingredients.some(ing => excludedFoodSet.has(ing.foodId));
-  }
-  const allFoodNames = (typeof FOODS_DB !== 'undefined' ? FOODS_DB : []).map(f => f.name.toLowerCase());
-  const excludedFoodNames = [...excludedFoodSet]
-    .map(id => (typeof FOODS_DB !== 'undefined' ? FOODS_DB : []).find(f => f.id === id)?.name)
-    .filter(Boolean)
-    .map(n => n.toLowerCase());
-  if (!excludedFoodNames.length) return false;
-  const text = [r.name, ...(Array.isArray(r.items) ? r.items : [])].join(' ').toLowerCase();
-  function textMentionsFood(name) {
-    const re = new RegExp('(^|[^a-zα-ω0-9])' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '($|[^a-zα-ω0-9])', 'i');
-    if (!re.test(text)) return false;
-    return !allFoodNames.some(other =>
-      other !== name && other.length > name.length && other.includes(name) && text.includes(other)
-    );
-  }
-  return excludedFoodNames.some(name => textMentionsFood(name));
+// step (manual mode), so a category deselected in step 0 hides matching
+// recipes everywhere. Every RECIPES_DB/STANDARD_MEALS-family entry has a
+// precomputed `tags` array (FOOD_CATEGORIES ids) — see data.js — so this is
+// a simple set-intersection check, no text matching needed at runtime.
+function _recipeHasExcludedCategory(r, excludedCategorySet) {
+  if (!excludedCategorySet || !excludedCategorySet.size) return false;
+  if (!Array.isArray(r.tags) || !r.tags.length) return false;
+  return r.tags.some(tag => excludedCategorySet.has(tag));
 }
 
 let _wizardSwipeCleanup = null;
@@ -1951,7 +1938,8 @@ function _openMealWizard() {
   WIZARD_MEALS.forEach(m => {
     _wizardExcluded[m.key] = new Set(state.wizardExcluded?.[m.key] || []);
   });
-  _wizardExcludedFoodsSet = new Set(state.excludedFoods || []);
+  _wizardExcludedCategoriesSet = new Set(state.wizardExcludedCategories || []);
+  if (!state.wizardMode) state.wizardMode = 'auto';
   _wizardStep = 0;
   _renderWizardStep();
   const modal = document.querySelector('#wizard-overlay .wizard-modal');
@@ -1985,6 +1973,15 @@ function wizardSetRepeatMeals(on) {
   });
 }
 
+function wizardSetMode(mode) {
+  if (state.wizardMode === mode) return;
+  state.wizardMode = mode;
+  // Switching mode changes how many steps remain (manual mode inserts the
+  // per-meal exclusion steps) — re-render so the progress dots/step label
+  // reflect the new total immediately, not just after the next Next click.
+  _renderWizardStep();
+}
+
 function _renderWizardStep() {
   if (!document.getElementById('wizard-overlay')) return;
 
@@ -1996,7 +1993,9 @@ function _renderWizardStep() {
   const btnBack = document.getElementById('wizard-btn-back');
   const btnNext = document.getElementById('wizard-btn-next');
   const _wizardMeals = getWizardMeals();
-  const total   = WIZARD_CONFIRM_STEP + 1; // foods + style + repeat + 4 meals + confirm
+  const plan  = _wizardStepPlan();
+  const total = plan.length;
+  const step  = plan[_wizardStep];
 
   dots.innerHTML = Array.from({ length: total }, (_, i) =>
     `<div class="wizard-step-dot ${i < _wizardStep ? 'done' : i === _wizardStep ? 'active' : ''}"></div>`
@@ -2004,34 +2003,34 @@ function _renderWizardStep() {
 
   btnBack.style.display = _wizardStep === 0 ? 'none' : '';
 
-  // ── Step 0: Foods (deselect what you don't want) ──
-  if (_wizardStep === WIZARD_FOODS_STEP) {
+  // ── Step 0: Food categories (deselect what you don't want) ──
+  if (step === 'categories') {
     titleEl.textContent = t('wizard_food_title');
     labelEl.textContent = tFmt('wizard_step_label', { n: 1, total });
     subEl.textContent   = t('wizard_food_sublabel');
     btnNext.textContent = t('btn_next');
 
-    const foods = _wizardSelectableFoods();
-    const cats = ['protein','carbs','veggie','salad','fat','dairy','fruit','other'];
-    const excCount = foods.filter(f => _wizardExcludedFoodsSet.has(f.id)).length;
-    const selCount = foods.length - excCount;
+    const cats = FOOD_CATEGORIES;
+    const groups = ['protein','legumes','carbs','veggies','fruit','nuts','dairy','other'];
+    const excCount = cats.filter(c => _wizardExcludedCategoriesSet.has(c.id)).length;
+    const selCount = cats.length - excCount;
     let html = `<p style="font-size:0.83rem;color:var(--text2);margin:0 0 12px">${t('wizard_food_desc')}</p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-size:0.75rem;color:var(--text3)">${tFmt('wizard_selected_count', { sel: selCount, exc: excCount })}</span>
-        <button onclick="_wizardFoodSelectAll()" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">${t('wizard_select_all')}</button>
+        <button onclick="_wizardCategorySelectAll()" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">${t('wizard_select_all')}</button>
       </div>`;
-    cats.forEach(cat => {
-      const inCat = foods.filter(f => f.category === cat);
-      if (!inCat.length) return;
-      html += `<div class="wizard-section-title">${t('wizard_food_cat_' + cat)}</div><div class="wizard-meal-list">`;
-      inCat.forEach(f => {
-        const ex = _wizardExcludedFoodsSet.has(f.id);
-        html += `<div class="wizard-meal-row${ex ? ' excluded' : ''}" onclick="wizardToggleFood('${f.id}')" data-food-id="${f.id}">
+    groups.forEach(group => {
+      const inGroup = cats.filter(c => c.group === group);
+      if (!inGroup.length) return;
+      html += `<div class="wizard-section-title">${t('wizard_food_cat_' + group)}</div><div class="wizard-meal-list">`;
+      inGroup.forEach(c => {
+        const ex = _wizardExcludedCategoriesSet.has(c.id);
+        html += `<div class="wizard-meal-row${ex ? ' excluded' : ''}" onclick="wizardToggleCategory('${c.id}')" data-category-id="${c.id}">
           <div class="wmr-left">
             <div class="wfood-chip-check">${ex
               ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
               : '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'}</div>
-            <span class="wmr-name">${tName(f)}</span>
+            <span class="wmr-name">${tName(c)}</span>
           </div>
         </div>`;
       });
@@ -2042,7 +2041,7 @@ function _renderWizardStep() {
   }
 
   // ── Step 1: Style selection ──
-  if (_wizardStep === WIZARD_STYLE_STEP) {
+  if (step === 'style') {
     titleEl.textContent = t('wizard_style_title');
     labelEl.textContent = tFmt('wizard_step_label', { n: 2, total });
     subEl.textContent   = t('wizard_style_desc');
@@ -2079,7 +2078,7 @@ function _renderWizardStep() {
   }
 
   // ── Step 2: Repeat-meals option ──
-  if (_wizardStep === WIZARD_REPEAT_STEP) {
+  if (step === 'repeat') {
     titleEl.textContent = t('wizard_repeat_title');
     labelEl.textContent = tFmt('wizard_step_label', { n: 3, total });
     subEl.textContent   = t('wizard_repeat_desc');
@@ -2107,9 +2106,39 @@ function _renderWizardStep() {
     return;
   }
 
-  // ── Steps 3-6: Meal exclusions ──
-  const mealIdx = _wizardStep - 3; // 0-based into WIZARD_MEALS
-  if (mealIdx < _wizardMeals.length) {
+  // ── Step 3: Automatic vs manual recipe selection ──
+  if (step === 'mode') {
+    titleEl.textContent = t('wizard_mode_title');
+    labelEl.textContent = tFmt('wizard_step_label', { n: 4, total });
+    subEl.textContent   = t('wizard_mode_desc');
+    btnNext.textContent = t('btn_next');
+    const mode = state.wizardMode || 'auto';
+    body.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
+        <div class="wstyle-card${mode==='auto'?' selected':''}" data-mode="auto" onclick="wizardSetMode('auto')">
+          <div class="wstyle-icon">🎲</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">${t('wizard_mode_auto_title')}</div>
+            <div class="wstyle-sub">${t('wizard_mode_auto_sub')}</div>
+          </div>
+          <div class="wstyle-check">${mode==='auto'?'✓':''}</div>
+        </div>
+        <div class="wstyle-card${mode==='manual'?' selected':''}" data-mode="manual" onclick="wizardSetMode('manual')">
+          <div class="wstyle-icon">🎛️</div>
+          <div class="wstyle-info">
+            <div class="wstyle-title">${t('wizard_mode_manual_title')}</div>
+            <div class="wstyle-sub">${t('wizard_mode_manual_sub')}</div>
+          </div>
+          <div class="wstyle-check">${mode==='manual'?'✓':''}</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // ── Steps 4..N (manual mode only): Meal exclusions ──
+  if (step.startsWith('meal:')) {
+    const mealKey = step.slice(5);
+    const mealIdx = _wizardMeals.findIndex(m => m.key === mealKey);
     const meal = _wizardMeals[mealIdx];
     titleEl.textContent = `${meal.emoji} ${meal.label}`;
     labelEl.textContent = tFmt('wizard_step_label', { n: _wizardStep + 1, total });
@@ -2121,11 +2150,11 @@ function _renderWizardStep() {
     let meals = _allMeals().filter(r =>
       r.meal === meal.key || (meal.key === 'snack' && r.meal === 'afternoon')
     );
-    // Never show meals containing a food deselected in step 0 — they're
+    // Never show meals tagged with a category deselected in step 0 — they're
     // already hard-excluded from plan generation, so listing them here (for
     // the user to exclude "again") would just be confusing.
-    if (_wizardExcludedFoodsSet.size) {
-      meals = meals.filter(r => !_recipeHasExcludedFood(r, _wizardExcludedFoodsSet));
+    if (_wizardExcludedCategoriesSet.size) {
+      meals = meals.filter(r => !_recipeHasExcludedCategory(r, _wizardExcludedCategoriesSet));
     }
     // Filter by style
     if (style === 'simple')  meals = meals.filter(r => !GOURMET_IDS.has(r.id));
@@ -2194,44 +2223,57 @@ function _renderWizardStep() {
     return;
   }
 
-  // ── Step 6: Confirm ──
+  // ── Confirm (final step) ──
   titleEl.textContent = t('wizard_confirm_title');
   labelEl.textContent = `${t('wizard_style_title')}: ${{ simple: t('wizard_simple_title'), mixed: t('wizard_mixed_title'), gourmet: t('wizard_gourmet_title') }[state.wizardStyle||'simple']}`
     + (state.wizardRepeatMeals ? ` · ${t('wizard_repeat_on_title')}` : '');
   subEl.textContent   = t('wizard_confirm_sub');
   btnNext.textContent = t('btn_generate');
 
-  let html = '<div class="wizard-confirm-list">';
-  _wizardMeals.forEach(meal => {
-    const excSet = _wizardExcluded[meal.key];
-    let allForMeal = _allMeals().filter(r => r.meal===meal.key||(meal.key==='snack'&&r.meal==='afternoon'));
-    if (_wizardExcludedFoodsSet.size) {
-      allForMeal = allForMeal.filter(r => !_recipeHasExcludedFood(r, _wizardExcludedFoodsSet));
-    }
-    // Deduplicate to get wizard-level rows
-    const seenG2 = new Set();
-    const wizRows = [];
-    allForMeal.forEach(r => {
-      const g = r.foodGroup;
-      if (g && seenG2.has(g)) return;
-      if (g) seenG2.add(g);
-      wizRows.push(r);
+  let html = '';
+  if (state.wizardMode === 'manual') {
+    html += '<div class="wizard-confirm-list">';
+    _wizardMeals.forEach(meal => {
+      const excSet = _wizardExcluded[meal.key];
+      let allForMeal = _allMeals().filter(r => r.meal===meal.key||(meal.key==='snack'&&r.meal==='afternoon'));
+      if (_wizardExcludedCategoriesSet.size) {
+        allForMeal = allForMeal.filter(r => !_recipeHasExcludedCategory(r, _wizardExcludedCategoriesSet));
+      }
+      // Deduplicate to get wizard-level rows
+      const seenG2 = new Set();
+      const wizRows = [];
+      allForMeal.forEach(r => {
+        const g = r.foodGroup;
+        if (g && seenG2.has(g)) return;
+        if (g) seenG2.add(g);
+        wizRows.push(r);
+      });
+      const excRows = wizRows.filter(r => {
+        const siblings = r.foodGroup ? allForMeal.filter(x=>x.foodGroup===r.foodGroup).map(x=>x.id) : [r.id];
+        return siblings.every(id => excSet.has(id));
+      });
+      const excNames = excRows.map(r => r.wizardName ? (tName(r, 'wizardName') || r.wizardName) : tName(r));
+      html += `<div class="wizard-confirm-meal">
+        <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label}
+          <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length})</span>
+        </div>
+        ${excNames.length
+          ? `<div class="wizard-confirm-excluded">❌ ${excNames.slice(0,4).join(', ')}${excNames.length>4?' '+tFmt('wizard_more',{n:excNames.length-4}):''}</div>`
+          : `<div class="wizard-confirm-ok">${t('wizard_all_ok')}</div>`}
+      </div>`;
     });
-    const excRows = wizRows.filter(r => {
-      const siblings = r.foodGroup ? allForMeal.filter(x=>x.foodGroup===r.foodGroup).map(x=>x.id) : [r.id];
-      return siblings.every(id => excSet.has(id));
-    });
-    const excNames = excRows.map(r => r.wizardName ? (tName(r, 'wizardName') || r.wizardName) : tName(r));
+    html += '</div>';
+  } else {
+    const excludedCatNames = FOOD_CATEGORIES
+      .filter(c => _wizardExcludedCategoriesSet.has(c.id))
+      .map(c => tName(c));
     html += `<div class="wizard-confirm-meal">
-      <div class="wizard-confirm-meal-title">${meal.emoji} ${meal.label}
-        <span style="font-weight:400;color:var(--text3)">(${wizRows.length-excRows.length}/${wizRows.length})</span>
-      </div>
-      ${excNames.length
-        ? `<div class="wizard-confirm-excluded">❌ ${excNames.slice(0,4).join(', ')}${excNames.length>4?' '+tFmt('wizard_more',{n:excNames.length-4}):''}</div>`
-        : `<div class="wizard-confirm-ok">${t('wizard_all_ok')}</div>`}
+      <div class="wizard-confirm-meal-title">${t('wizard_confirm_auto_note')}</div>
+      ${excludedCatNames.length
+        ? `<div class="wizard-confirm-excluded">❌ ${tFmt('wizard_confirm_excluded_categories_label', { list: excludedCatNames.join(', ') })}</div>`
+        : `<div class="wizard-confirm-ok">${t('wizard_confirm_no_restrictions')}</div>`}
     </div>`;
-  });
-  html += '</div>';
+  }
   body.innerHTML = html;
 }
 
@@ -2254,7 +2296,8 @@ function wizardToggleGroup(mealKey, ids, el) {
     if (checkEl) checkEl.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   }
   // Update the counter display
-  const meal = WIZARD_MEALS[_wizardStep - 3];
+  const _curStep = _wizardStepPlan()[_wizardStep] || '';
+  const meal = _curStep.startsWith('meal:') ? getWizardMeals().find(m => m.key === _curStep.slice(5)) : null;
   if (meal) {
     const ctr = document.querySelector('.wizard-meal-list')?.previousElementSibling?.querySelector('span');
     if (ctr) {
@@ -2280,25 +2323,26 @@ function _wizardSelectAll(mealKey) {
   _renderWizardStep();
 }
 
-function _wizardFoodSelectAll() {
-  _wizardExcludedFoodsSet.clear();
+function _wizardCategorySelectAll() {
+  _wizardExcludedCategoriesSet.clear();
   _renderWizardStep();
 }
 
-function wizardToggleFood(foodId) {
-  if (_wizardExcludedFoodsSet.has(foodId)) {
-    _wizardExcludedFoodsSet.delete(foodId);
+function wizardToggleCategory(categoryId) {
+  if (_wizardExcludedCategoriesSet.has(categoryId)) {
+    _wizardExcludedCategoriesSet.delete(categoryId);
   } else {
-    _wizardExcludedFoodsSet.add(foodId);
+    _wizardExcludedCategoriesSet.add(categoryId);
   }
-  // Foods are split across several per-category lists (unlike the single
+  // Categories are split across several section lists (unlike the single
   // per-meal list wizardToggleGroup patches in place), so a full re-render
-  // is simpler and cheap enough at this list size (~40-50 items).
+  // is simpler and cheap enough at this list size (~40 items).
   _renderWizardStep();
 }
 
 function wizardNext() {
-  if (_wizardStep < WIZARD_CONFIRM_STEP) {
+  const plan = _wizardStepPlan();
+  if (_wizardStep < plan.length - 1) {
     _wizardStep++;
     _renderWizardStep();
   } else {
@@ -2309,12 +2353,15 @@ function wizardNext() {
     _closeWizard(true);
     history.replaceState({ vivon: 'tab', tab: 'week' }, '', location.pathname + location.search);
     state.planCreated = true;
+    const isManual = state.wizardMode === 'manual';
     state.wizardExcluded = {};
     WIZARD_MEALS.forEach(m => { state.wizardExcluded[m.key] = [..._wizardExcluded[m.key]]; });
-    state.excludedFoods = [..._wizardExcludedFoodsSet];
-    // Run smart generator using wizard style + exclusions + preferred foods
+    state.wizardExcludedCategories = [..._wizardExcludedCategoriesSet];
+    // Run smart generator using wizard style + category exclusions. In
+    // automatic mode the per-meal exclusion steps never ran, so pass {}
+    // rather than possibly-stale per-meal data from a previous manual run.
     const style = state.wizardStyle || 'simple';
-    state.week = generateSmartWeek(style, state.wizardExcluded, !!state.wizardRepeatMeals, state.excludedFoods);
+    state.week = generateSmartWeek(style, isManual ? state.wizardExcluded : {}, !!state.wizardRepeatMeals, state.wizardExcludedCategories);
     saveState();
     updatePlanCreatedUI();
     if (state.week._goalsUnmet) {
@@ -2407,7 +2454,7 @@ function purgeGeneratedComposedMeals() {
   saveState();
 }
 
-function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals = false, excludedFoodIds = []) {
+function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals = false, excludedCategoryIds = []) {
   // A fresh auto-generated plan already ran its own swap-to-fit iterations
   // below — any remaining shortfall shouldn't re-trigger the manual
   // "Αντικατάσταση" banner (that's reserved for when the user drags the
@@ -2417,13 +2464,13 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   if (state?.customRecipes) state.customRecipes = state.customRecipes.filter(r => !r._generated);
   const pool = _allMeals();
 
-  // A meal is excluded outright when it contains a food the user deselected
-  // in the wizard's food step — this is a hard filter, same as the per-meal
-  // exclusions, not a mere preference. See _recipeHasExcludedFood() near
+  // A meal is excluded outright when it carries a tag for a category the
+  // user deselected in the wizard's food step — this is a hard filter, same
+  // as the per-meal exclusions. See _recipeHasExcludedCategory() near
   // _allMeals() for the matching logic (shared with the wizard's food step).
-  const excludedFoodSet = new Set(excludedFoodIds || []);
-  function recipeHasExcludedFood(r) {
-    return _recipeHasExcludedFood(r, excludedFoodSet);
+  const excludedCategorySet = new Set(excludedCategoryIds || []);
+  function recipeHasExcludedCategory(r) {
+    return _recipeHasExcludedCategory(r, excludedCategorySet);
   }
 
   // Normalise excluded sets
@@ -2453,7 +2500,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
 
   // Base candidates: slot-type match + exclusion filter + no side dishes
   // afternoon slot accepts both meal:"afternoon" and meal:"snack" entries
-  function candidates(slotType, { allowSingleFoods = false, allowExcludedFoods = false } = {}) {
+  function candidates(slotType, { allowSingleFoods = false, allowExcludedCategories = false } = {}) {
     return pool.filter(r => {
       const matchesSlot = r.meal === slotType
         || (slotType === 'afternoon' && (r.meal === 'afternoon' || r.meal === 'snack'));
@@ -2461,21 +2508,21 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
       if (r.side) return false;
       if (r.kcal_est && (!allowSingleFoods || !SINGLE_FOOD_SLOTS.has(slotType))) return false;
       if (excSets[slotType] && excSets[slotType].has(r.id)) return false;
-      if (!allowExcludedFoods && recipeHasExcludedFood(r)) return false;
+      if (!allowExcludedCategories && recipeHasExcludedCategory(r)) return false;
       return true;
     });
   }
 
   // Recipes first; only fall back to single foods (STANDARD_MEALS) when no
   // recipe can satisfy the slot at all. If excluding the user's deselected
-  // foods empties the slot entirely, relax that exclusion as a last resort
-  // rather than leaving the slot unfilled.
+  // categories empties the slot entirely, relax that exclusion as a last
+  // resort rather than leaving the slot unfilled.
   function candidatesWithFallback(slotType) {
     const recipesOnly = candidates(slotType, { allowSingleFoods: false });
     if (recipesOnly.length) return recipesOnly;
     const withSingleFoods = candidates(slotType, { allowSingleFoods: true });
     if (withSingleFoods.length) return withSingleFoods;
-    return candidates(slotType, { allowSingleFoods: true, allowExcludedFoods: true });
+    return candidates(slotType, { allowSingleFoods: true, allowExcludedCategories: true });
   }
 
   function shuffle(arr) {
@@ -2601,7 +2648,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   // least one gourmet-tagged meal somewhere in lunch/dinner, and rarely
   // (not "often") let one of those be a "eating out" treat (pizza, pasta
   // out, restaurant) rather than always a home-cooked gourmet recipe.
-  _ensureAtLeastOneGourmetMeal(week, excSets);
+  _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds);
 
   // Optimise each day independently to hit calorie + protein targets.
   // Each day is wrapped so a single bad day (unexpected data, division
@@ -2630,7 +2677,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   for (let i = 0; i < MAX_SWAP_ITERATIONS; i++) {
     const stillShort = week.some(d => d._proteinShortfall);
     if (!stillShort) break;
-    const changed = _swapShortfallDaysToHighProtein(week);
+    const changed = _swapShortfallDaysToHighProtein(week, excludedCategoryIds);
     optimiseAllDays();
     if (!changed) break; // no more candidates to swap in — further looping won't help
   }
@@ -2659,10 +2706,11 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
 const EATING_OUT_IDS = new Set(['ex_l54','ex_l55','ex_l56','ex_l57','ex_d21','ex_d22','ex_d23','ex_d24']);
 const EATING_OUT_CHANCE = 0.12; // rare — roughly 1 in 8 generated weeks gets a treat meal instead of a gourmet recipe
 
-function _ensureAtLeastOneGourmetMeal(week, excSets) {
+function _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds = []) {
   const hasGourmet = week.some(day => day.meals.some(m => GOURMET_IDS.has(m.recipeId) || GOURMET_IDS.has(m.standardId)));
   if (hasGourmet) return;
 
+  const excludedCategorySet = new Set(excludedCategoryIds || []);
   const wantEatingOut = Math.random() < EATING_OUT_CHANCE;
   const slotCandidates = [];
   week.forEach((day, di) => {
@@ -2679,12 +2727,13 @@ function _ensureAtLeastOneGourmetMeal(week, excSets) {
     r.meal === target.type &&
     !r.side &&
     !excluded.has(r.id) &&
+    !_recipeHasExcludedCategory(r, excludedCategorySet) &&
     (wantEatingOut ? EATING_OUT_IDS.has(r.id) : !EATING_OUT_IDS.has(r.id))
   );
   // If the preferred flavor (eating-out vs. home-cooked gourmet) has no
   // candidates for this slot, fall back to any gourmet option for it.
   const pool = gourmetPool.length ? gourmetPool
-    : [..._allMeals()].filter(r => GOURMET_IDS.has(r.id) && r.meal === target.type && !r.side && !excluded.has(r.id));
+    : [..._allMeals()].filter(r => GOURMET_IDS.has(r.id) && r.meal === target.type && !r.side && !excluded.has(r.id) && !_recipeHasExcludedCategory(r, excludedCategorySet));
   if (!pool.length) return;
 
   const picked = pool[Math.floor(Math.random() * pool.length)];
@@ -2975,7 +3024,7 @@ function _optimiseDayMacros(day, targets) {
   const preClampKcal = totals().kcal;
   if (preClampKcal > HARD_KCAL_CAP) {
     const shrink = HARD_KCAL_CAP / preClampKcal;
-    items.forEach(it => { it.sf = Math.max(0.1, it.sf * shrink); });
+    items.forEach(it => { it.sf = Math.max(it.sfMin, it.sf * shrink); });
   }
 
   items.forEach(it => { it.m.scaleFactor = Math.round(it.sf * 100) / 100; });
@@ -2998,14 +3047,15 @@ function _optimiseDayMacros(day, targets) {
 // generator loop and by the user-triggered "swap" button. Returns true if it
 // actually changed anything (used to detect "no more candidates left" so
 // callers can stop iterating instead of looping uselessly).
-function _swapShortfallDaysToHighProtein(weekArr) {
+function _swapShortfallDaysToHighProtein(weekArr, excludedCategoryIds = []) {
   const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
   const LEAN_THRESHOLD = 0.07;
   let changed = false;
+  const excludedCategorySet = new Set(excludedCategoryIds || []);
 
   function bestForType(type) {
     return allR
-      .filter(r => r.meal === type)
+      .filter(r => r.meal === type && !_recipeHasExcludedCategory(r, excludedCategorySet))
       .map(r => { const m = calcRecipeMacros(r, 1); return { r, density: m.kcal > 0 ? m.p / m.kcal : 0, p: m.p, kcal: m.kcal }; })
       .sort((a, b) => b.density - a.density);
   }
@@ -3055,7 +3105,7 @@ function _swapShortfallDaysToHighProtein(weekArr) {
 }
 
 function swapToHighProteinMeals() {
-  _swapShortfallDaysToHighProtein(state.week);
+  _swapShortfallDaysToHighProtein(state.week, state.wizardExcludedCategories);
 
   // Re-optimise after swapping, then clear shortfall flags — user has been informed, don't nag
   const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
@@ -3638,6 +3688,27 @@ function renderToday() {
   updateActivitySection();
 }
 
+// ── Meal ingredient subtitle (week-view meal chips) ──
+// Builds a short "Food • Food • Food" string from a meal's ingredients,
+// capped to the 6 most important items so the card stays compact.
+function _mealIngredientSubtitle(sm, recipe) {
+  let names;
+  if (sm) {
+    names = sm.items || [];
+  } else if (recipe) {
+    const allFoods = [...FOODS_DB, ...(state.customFoods || [])];
+    names = recipe.ingredients
+      .map(ing => {
+        const food = allFoods.find(f => f.id === ing.foodId);
+        return food ? tName(food) : null;
+      })
+      .filter(Boolean);
+  } else {
+    names = [];
+  }
+  return esc(names.slice(0, 6).join(' • '));
+}
+
 // ── PAGE: WEEK ──
 function renderWeek() {
   const allR = [...RECIPES_DB, ...state.customRecipes];
@@ -3763,20 +3834,22 @@ function renderWeek() {
 
       const itemsHtml = meals.map(me => {
         const mi = day.meals.indexOf(me);
-        let name = '', kcal = 0, emoji = '';
+        let name = '', kcal = 0, emoji = '', subtitle = '';
         if (me.standardId) {
           const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
           if (!sm) return '';
           name = tName(sm) || sm.name; emoji = sm.emoji;
           kcal = Math.round(sm.kcal_est * (me.scaleFactor||1));
+          subtitle = _mealIngredientSubtitle(sm, null);
         } else {
           const r = allR.find(x => x.id === me.recipeId);
           if (!r) return '';
           const mac = calcRecipeMacros(r, me.scaleFactor||1);
           name = tName(r); emoji = r.emoji; kcal = mac.kcal;
+          subtitle = _mealIngredientSubtitle(null, r);
         }
-        return `<div style="margin-bottom:7px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px">
+        return `<div style="margin-bottom:5px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1px">
             <span style="font-size:0.6rem;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em">${meta.label}</span>
           </div>
           <div class="week-meal-chip" style="--chip-bg:${meta.bg};--chip-border:${meta.border};--chip-color:${meta.color}" onclick="openSwapMeal(${mi},${di})">
@@ -3785,6 +3858,7 @@ function renderWeek() {
               <span style="font-size:0.7rem;font-weight:700;color:var(--text);line-height:1.3;flex:1">${name}</span>
               <span class="week-meal-edit-icon">✎</span>
             </div>
+            ${subtitle ? `<div class="week-meal-chip-subtitle">${subtitle}</div>` : ''}
             <div style="font-size:0.62rem;color:${meta.color};font-weight:700">${kcal} kcal</div>
           </div>
         </div>`;
@@ -4066,7 +4140,7 @@ function confirmRegenerateInline() {
   // Regenerate never repeats meals — this shortcut only offers a style
   // choice, not the repeat-meals option, so it must not silently inherit
   // whatever was picked the last time the full wizard ran.
-  state.week = generateSmartWeek(style, excPerMeal, false, state.excludedFoods);
+  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories);
   saveState();
   renderWeek();
   if (state.week._goalsUnmet) {
@@ -4118,7 +4192,7 @@ function confirmRegenerate() {
   // Regenerate never repeats meals — this modal only offers a style choice,
   // not the repeat-meals option, so it must not silently inherit whatever
   // was picked the last time the full wizard ran.
-  state.week = generateSmartWeek(style, excPerMeal, false, state.excludedFoods);
+  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories);
   saveState();
   renderWeek();
   if (state.week._goalsUnmet) {
@@ -7947,6 +8021,108 @@ function _addSwipeDismiss(el, onDismiss, { directions = ['down'], threshold = 72
     el.removeEventListener('touchend',   onEnd);
   };
 }
+
+/* ── SLIDER THUMB-ONLY DRAG (prevents accidental value changes while scrolling) ──
+   Native <input type="range"> jumps its value to wherever you tap on the track,
+   and on mobile that happens constantly during vertical page scroll. This module
+   disables that: tapping the track does nothing, and dragging only works if the
+   gesture starts on the thumb itself AND moves mostly horizontally. If vertical
+   movement dominates (or wins outright), it's treated as a scroll and the slider
+   is left untouched so the page scrolls normally. */
+(function () {
+  const DRAG_THRESHOLD = 10; // px — gesture must clear this before we commit to a direction
+  const THUMB_TOLERANCE = 6; // px — extra hit-slop around the visual thumb, forgiving for fingers
+
+  function thumbHalfWidth(el) {
+    return el.classList.contains('swap-scale-slider') ? 11 : 13; // half of 22px / 26px thumb
+  }
+
+  function thumbCenterX(el) {
+    const rect = el.getBoundingClientRect();
+    const min = parseFloat(el.min) || 0;
+    const max = parseFloat(el.max) || 100;
+    const val = parseFloat(el.value);
+    const pct = max > min ? (val - min) / (max - min) : 0;
+    const half = thumbHalfWidth(el);
+    // Browsers inset the thumb's travel range by its own half-width on each side.
+    return rect.left + half + pct * (rect.width - 2 * half);
+  }
+
+  function isOnThumb(el, clientX, clientY) {
+    const rect = el.getBoundingClientRect();
+    if (clientY < rect.top - THUMB_TOLERANCE || clientY > rect.bottom + THUMB_TOLERANCE) return false;
+    const half = thumbHalfWidth(el);
+    const cx = thumbCenterX(el);
+    return Math.abs(clientX - cx) <= half + THUMB_TOLERANCE;
+  }
+
+  function valueFromX(el, clientX) {
+    const rect = el.getBoundingClientRect();
+    const min = parseFloat(el.min) || 0;
+    const max = parseFloat(el.max) || 100;
+    const step = parseFloat(el.step) || 1;
+    const half = thumbHalfWidth(el);
+    const usableWidth = Math.max(1, rect.width - 2 * half);
+    let pct = (clientX - rect.left - half) / usableWidth;
+    pct = Math.min(1, Math.max(0, pct));
+    let val = min + pct * (max - min);
+    val = Math.round(val / step) * step;
+    val = Math.min(max, Math.max(min, val));
+    // Avoid float noise like 1550.0000000002
+    const decimals = (String(step).split('.')[1] || '').length;
+    return decimals ? parseFloat(val.toFixed(decimals)) : val;
+  }
+
+  let active = null; // { el, startX, startY, dragging, decided }
+
+  function onPointerDown(e) {
+    const el = e.target;
+    if (!el || el.tagName !== 'INPUT' || el.type !== 'range') return;
+    if (!isOnThumb(el, e.clientX, e.clientY)) {
+      // Tap landed on the track, not the thumb — swallow it so the native
+      // implementation doesn't snap the value to the tap position.
+      e.preventDefault();
+      return;
+    }
+    active = { el, startX: e.clientX, startY: e.clientY, dragging: false, decided: false };
+  }
+
+  function onPointerMove(e) {
+    if (!active) return;
+    const dx = e.clientX - active.startX;
+    const dy = e.clientY - active.startY;
+    const adx = Math.abs(dx), ady = Math.abs(dy);
+
+    if (!active.decided) {
+      if (adx < DRAG_THRESHOLD && ady < DRAG_THRESHOLD) return; // not enough movement yet
+      active.decided = true;
+      active.dragging = adx > ady; // horizontal wins → drag; vertical wins → let it scroll
+      if (!active.dragging) { active = null; return; } // hand off to native scrolling
+    }
+
+    if (active.dragging) {
+      e.preventDefault();
+      const el = active.el;
+      const newVal = valueFromX(el, e.clientX);
+      if (String(newVal) !== el.value) {
+        el.value = newVal;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  }
+
+  function onPointerUp(e) {
+    if (active && active.dragging) {
+      active.el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    active = null;
+  }
+
+  document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: false });
+  document.addEventListener('pointermove', onPointerMove, { capture: true, passive: false });
+  document.addEventListener('pointerup', onPointerUp, { capture: true, passive: true });
+  document.addEventListener('pointercancel', onPointerUp, { capture: true, passive: true });
+})();
 
 /* ── HISTORY API (back-button support) ── */
 function _historyPushTab(tab) {

@@ -66,15 +66,27 @@ let currentSuite = '';
 function suite(name) { currentSuite = name; }
 
 let _testCounter = 0;
+// Async test() calls push a promise here so the final render (below) can
+// await every pending test before computing pass/fail counts — otherwise an
+// async fn()'s rejection surfaces only as a console "Uncaught (in promise)"
+// after the synchronous summary has already been drawn (a false green).
+const _pendingTests = [];
 
 function test(name, fn) {
   _testCounter++;
   const numbered = `#${_testCounter} ${name}`;
+  const entry = { suite: currentSuite, name: numbered, pass: true };
+  results.push(entry);
   try {
-    fn();
-    results.push({ suite: currentSuite, name: numbered, pass: true });
+    const ret = fn();
+    if (ret && typeof ret.then === 'function') {
+      _pendingTests.push(
+        ret.catch(e => { entry.pass = false; entry.msg = e.message; })
+      );
+    }
   } catch (e) {
-    results.push({ suite: currentSuite, name: numbered, pass: false, msg: e.message });
+    entry.pass = false;
+    entry.msg = e.message;
   }
 }
 
@@ -135,20 +147,22 @@ test('obese', () => {
   assertEq(calcBMI(100, 170), '34.6', 'obese BMI');
 });
 
+// Test harness stubs localStorage.getItem to always return null, so i18n's
+// _currentLang defaults to 'en' — these assert the English strings to match.
 test('bmiLabel — underweight', () => {
-  assertEq(bmiLabel(17).label, 'Λιποβαρής');
+  assertEq(bmiLabel(17).label, 'Underweight');
 });
 
 test('bmiLabel — normal', () => {
-  assertEq(bmiLabel(22).label, 'Κανονικό');
+  assertEq(bmiLabel(22).label, 'Normal');
 });
 
 test('bmiLabel — overweight', () => {
-  assertEq(bmiLabel(27).label, 'Υπέρβαρος');
+  assertEq(bmiLabel(27).label, 'Overweight');
 });
 
 test('bmiLabel — obese', () => {
-  assertEq(bmiLabel(32).label, 'Παχυσαρκία');
+  assertEq(bmiLabel(32).label, 'Obese');
 });
 
 // ══════════════════════════════════════════════════════════════════
@@ -481,13 +495,17 @@ test('optimiser sets scaleFactor on all meals', () => {
   });
 });
 
-test('optimiser scaleFactor stays within [0.6, 1.6] bounds', () => {
+// sm1/sm2 are STANDARD_MEALS (standardId), which the optimizer treats as
+// fixedServing — bounded to [SF_FIXED_MIN, SF_FIXED_MAX] = [0.75, 1.4],
+// a tighter band than the general [SF_FC_MIN, SF_*_MAX] = [0.15, 2.0]
+// used for recipe-based meals (see _optimiseDayMacros).
+test('optimiser scaleFactor stays within [0.75, 1.4] bounds for fixed servings', () => {
   const day = makeFakeDay(['sm1', 'sm2']);
   // Extreme target: much higher than raw total
   _optimiseDayMacros(day, { kcal: 9999, protein: 500, carbs: 999, fat: 999 });
   day.meals.forEach(m => {
-    assert(m.scaleFactor <= 1.6, `scaleFactor ${m.scaleFactor} exceeds max 1.6`);
-    assert(m.scaleFactor >= 0.6, `scaleFactor ${m.scaleFactor} below min 0.6`);
+    assert(m.scaleFactor <= 1.4, `scaleFactor ${m.scaleFactor} exceeds max 1.4`);
+    assert(m.scaleFactor >= 0.75, `scaleFactor ${m.scaleFactor} below min 0.75`);
   });
 });
 
@@ -495,7 +513,7 @@ test('optimiser scaleFactor stays within bounds when target is very low', () => 
   const day = makeFakeDay(['sm1', 'sm2']);
   _optimiseDayMacros(day, { kcal: 1, protein: 1, carbs: 1, fat: 1 });
   day.meals.forEach(m => {
-    assert(m.scaleFactor >= 0.6, `scaleFactor ${m.scaleFactor} below min 0.6`);
+    assert(m.scaleFactor >= 0.75, `scaleFactor ${m.scaleFactor} below min 0.75`);
   });
 });
 
@@ -523,6 +541,134 @@ test('optimiser does not crash on meal with no matching standard id', () => {
   _optimiseDayMacros(day, { kcal: 1800, protein: 150, carbs: 200, fat: 60 });
   // Should not throw — no-op
   assert(true, 'no crash');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 12b — calcMaxRealisticProtein (shared 40%-of-kcal protein cap)
+// ══════════════════════════════════════════════════════════════════
+suite('calcMaxRealisticProtein');
+
+test('2000 kcal -> 200g protein', () => {
+  assertEq(calcMaxRealisticProtein(2000), 200);
+});
+
+test('0 kcal -> 0g protein (degenerate input, no NaN/negative)', () => {
+  assertEq(calcMaxRealisticProtein(0), 0);
+});
+
+test('1850 kcal rounds to nearest gram (46.25 -> 46)', () => {
+  assertEq(calcMaxRealisticProtein(1850), 46);
+});
+
+test('scales linearly with kcal', () => {
+  assertEq(calcMaxRealisticProtein(1000) * 2, calcMaxRealisticProtein(2000));
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 12c — _swapShortfallDaysToHighProtein
+// ══════════════════════════════════════════════════════════════════
+suite('_swapShortfallDaysToHighProtein');
+
+function _makeSwapTestRecipes() {
+  // Injected via state.customRecipes (the function reads
+  // [...RECIPES_DB, ...(state.customRecipes||[])]) so these ids can't
+  // collide with real data regardless of DB contents.
+  return [
+    { id: '_test_lowP', meal: 'lunch', fixedMacros: { kcal: 400, p: 10, c: 50, f: 15 } }, // density 0.025 — below LEAN_THRESHOLD 0.07
+    { id: '_test_highP', meal: 'lunch', fixedMacros: { kcal: 400, p: 40, c: 20, f: 10 } }, // density 0.10 — lean
+    { id: '_test_highP2', meal: 'lunch', fixedMacros: { kcal: 400, p: 35, c: 20, f: 10 } }, // density 0.0875 — lean, second-best
+  ];
+}
+
+test('week with no _proteinShortfall days is left unchanged', () => {
+  state.customRecipes = _makeSwapTestRecipes();
+  const week = [{ day: 1, _proteinShortfall: false, meals: [{ type: 'lunch', recipeId: '_test_lowP', scaleFactor: 1 }] }];
+  const changed = _swapShortfallDaysToHighProtein(week);
+  assertEq(changed, false, 'should report no change');
+  assertEq(week[0].meals[0].recipeId, '_test_lowP', 'meal should be untouched');
+  state.customRecipes = [];
+});
+
+test('already-lean meal on a shortfall day is left untouched', () => {
+  state.customRecipes = _makeSwapTestRecipes();
+  const week = [{ day: 1, _proteinShortfall: true, meals: [{ type: 'lunch', recipeId: '_test_highP', scaleFactor: 1 }] }];
+  const changed = _swapShortfallDaysToHighProtein(week);
+  assertEq(changed, false, 'lean meal should not be swapped');
+  assertEq(week[0].meals[0].recipeId, '_test_highP');
+  state.customRecipes = [];
+});
+
+test('low-protein meal on a shortfall day is swapped for the highest-density candidate', () => {
+  state.customRecipes = _makeSwapTestRecipes();
+  const week = [{ day: 1, _proteinShortfall: true, meals: [{ type: 'lunch', recipeId: '_test_lowP', scaleFactor: 1 }] }];
+  const changed = _swapShortfallDaysToHighProtein(week);
+  assertEq(changed, true, 'should report a change');
+  assertEq(week[0].meals[0].recipeId, '_test_highP', 'should swap to the highest-density lean candidate');
+  assertEq(week[0].meals[0].scaleFactor, 1, 'scaleFactor should reset to 1 after swap');
+  state.customRecipes = [];
+});
+
+test('falls back to within-day dedup when the week-wide pool is exhausted', () => {
+  state.customRecipes = _makeSwapTestRecipes();
+  // _test_highP already used elsewhere this week for 'lunch' -> week-wide
+  // pool for this slot is exhausted down to _test_highP2.
+  const week = [
+    { day: 1, _proteinShortfall: false, meals: [{ type: 'lunch', recipeId: '_test_highP', scaleFactor: 1 }] },
+    { day: 2, _proteinShortfall: true,  meals: [{ type: 'lunch', recipeId: '_test_lowP',  scaleFactor: 1 }] },
+  ];
+  _swapShortfallDaysToHighProtein(week);
+  assertEq(week[1].meals[0].recipeId, '_test_highP2', 'should fall back to the next-best candidate not yet used this week');
+  state.customRecipes = [];
+});
+
+test('does not throw when excluded category empties the candidate pool', () => {
+  state.customRecipes = [{ id: '_test_tagged', meal: 'lunch', tags: ['dairy'], fixedMacros: { kcal: 400, p: 10, c: 50, f: 15 } }];
+  const week = [{ day: 1, _proteinShortfall: true, meals: [{ type: 'lunch', recipeId: '_test_tagged', scaleFactor: 1 }] }];
+  let threw = false;
+  try { _swapShortfallDaysToHighProtein(week, ['dairy']); } catch(e) { threw = true; }
+  assert(!threw, 'should not throw when every candidate is excluded');
+  state.customRecipes = [];
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 12d — getTodayPlanDayIndex
+// ══════════════════════════════════════════════════════════════════
+suite('getTodayPlanDayIndex');
+
+test('returns null when planStartDate is unset', () => {
+  const prevStart = state.planStartDate, prevWeek = state.week;
+  state.planStartDate = null;
+  state.week = [1,2,3,4,5,6,7].map(() => ({ meals: [] }));
+  assertEq(getTodayPlanDayIndex(), null);
+  state.planStartDate = prevStart; state.week = prevWeek;
+});
+
+test('returns 0 when today is exactly the plan start date', () => {
+  const prevStart = state.planStartDate, prevWeek = state.week;
+  state.week = [1,2,3,4,5,6,7].map(() => ({ meals: [] }));
+  state.planStartDate = new Date().toISOString().split('T')[0];
+  assertEq(getTodayPlanDayIndex(), 0);
+  state.planStartDate = prevStart; state.week = prevWeek;
+});
+
+test('returns null when today is past the end of a 7-day week', () => {
+  const prevStart = state.planStartDate, prevWeek = state.week;
+  state.week = [1,2,3,4,5,6,7].map(() => ({ meals: [] }));
+  const past = new Date();
+  past.setDate(past.getDate() - 8); // 8 days ago -> diffDays 8, out of [0,7)
+  state.planStartDate = past.toISOString().split('T')[0];
+  assertEq(getTodayPlanDayIndex(), null);
+  state.planStartDate = prevStart; state.week = prevWeek;
+});
+
+test('returns null (not a negative index) when planStartDate is in the future', () => {
+  const prevStart = state.planStartDate, prevWeek = state.week;
+  state.week = [1,2,3,4,5,6,7].map(() => ({ meals: [] }));
+  const future = new Date();
+  future.setDate(future.getDate() + 3);
+  state.planStartDate = future.toISOString().split('T')[0];
+  assertEq(getTodayPlanDayIndex(), null);
+  state.planStartDate = prevStart; state.week = prevWeek;
 });
 
 // ══════════════════════════════════════════════════════════════════
@@ -972,8 +1118,8 @@ test('favorites starts as empty array', () => {
   assert(Array.isArray(s.favorites) && s.favorites.length === 0);
 });
 
-test('wizardStyle defaults to simple', () => {
-  assertEq(_freshState().wizardStyle, 'simple');
+test('wizardStyle defaults to mixed', () => {
+  assertEq(_freshState().wizardStyle, 'mixed');
 });
 
 // ══════════════════════════════════════════════════════════════════
@@ -1132,13 +1278,16 @@ test('each day has correct meal slot order', () => {
   });
 });
 
-test('all scaleFactor values are within [0.6, 1.6] after optimisation', () => {
+// Overall optimizer bounds are [SF_FC_MIN, SF_*_MAX] = [0.15, 2.0] for
+// recipe-based meals (see _optimiseDayMacros); fixed-serving meals get the
+// tighter [0.75, 1.4] band, which is a subset of this range.
+test('all scaleFactor values are within [0.15, 2.0] after optimisation', () => {
   const week = generateSmartWeek('simple', {});
   week.forEach((day, di) => {
     day.meals.forEach((m, mi) => {
       const sf = m.scaleFactor ?? 1;
-      assert(sf >= 0.6 && sf <= 1.6,
-        `day ${di+1} meal ${mi+1} scaleFactor ${sf} out of [0.6, 1.6]`);
+      assert(sf >= 0.15 && sf <= 2.0,
+        `day ${di+1} meal ${mi+1} scaleFactor ${sf} out of [0.15, 2.0]`);
     });
   });
 });
@@ -1169,11 +1318,27 @@ test('gourmet style includes at least some gourmet meals', () => {
   assert(hasGourmet, 'gourmet style should produce at least one gourmet meal');
 });
 
-test('simple style produces no gourmet meals', () => {
+// generateSmartWeek deliberately guarantees at least one gourmet-tagged
+// lunch/dinner meal even for 'simple' plans (see _ensureAtLeastOneGourmetMeal
+// and the comment above its call site) — "simple" means mostly-plain, not
+// zero-gourmet, so this asserts a low ratio rather than none at all.
+test('simple style produces mostly non-gourmet meals', () => {
   const week = generateSmartWeek('simple', {});
   const allIds = week.flatMap(d => d.meals.map(m => m.recipeId || m.standardId));
-  const hasGourmet = allIds.some(id => id && GOURMET_IDS.has(id));
-  assert(!hasGourmet, 'simple style should not produce gourmet meals');
+  const gourmetCount = allIds.filter(id => id && GOURMET_IDS.has(id)).length;
+  assert(gourmetCount <= 2, `expected at most ~1 guaranteed gourmet meal, got ${gourmetCount}`);
+});
+
+test('_ensureAtLeastOneGourmetMeal guarantee holds across repeated generations', () => {
+  // Regression guard for _ensureAtLeastOneGourmetMeal: it runs unconditionally
+  // after every generateSmartWeek call and uses Math.random() internally, so
+  // a single run isn't enough to catch a broken guarantee — run several times.
+  for (let i = 0; i < 10; i++) {
+    const week = generateSmartWeek('simple', {});
+    const allIds = week.flatMap(d => d.meals.map(m => m.recipeId || m.standardId));
+    const hasGourmet = allIds.some(id => id && GOURMET_IDS.has(id));
+    assert(hasGourmet, `run ${i + 1}: simple week should still guarantee one gourmet meal`);
+  }
 });
 
 test('does not crash with all meals excluded (falls back gracefully)', () => {
@@ -1238,23 +1403,29 @@ test('wizardNext increments step', () => {
   assertEq(_wizardStep, 1);
 });
 
+// The wizard's step count is dynamic (_wizardStepPlan() varies by
+// wizardMode — manual mode inserts one step per meal), so there's no fixed
+// "confirm step" constant. The last index is always plan.length - 1, and
+// wizardNext() called that many times lands on / finalises at 'confirm'.
 test('wizardNext increments through all steps to CONFIRM', () => {
   resetWizard();
-  for (let i = 0; i < WIZARD_CONFIRM_STEP; i++) wizardNext();
-  assertEq(_wizardStep, WIZARD_CONFIRM_STEP);
+  const lastStep = _wizardStepPlan().length - 1;
+  for (let i = 0; i < lastStep; i++) wizardNext();
+  assertEq(_wizardStep, lastStep);
 });
 
 test('wizardNext at CONFIRM step finalises plan (planCreated = true)', () => {
   resetWizard();
   state.planCreated = false;
-  // Advance to confirm step
-  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  const lastStep = _wizardStepPlan().length - 1;
+  for (let i = 0; i <= lastStep; i++) wizardNext();
   assert(state.planCreated, 'planCreated should be true after finishing wizard');
 });
 
 test('finalised week has 7 days', () => {
   resetWizard();
-  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  const lastStep = _wizardStepPlan().length - 1;
+  for (let i = 0; i <= lastStep; i++) wizardNext();
   assertEq(state.week.length, 7);
 });
 
@@ -1328,7 +1499,8 @@ test('excluded meals from wizard are preserved in state after plan creation', ()
   if (!firstId) return;
   _wizardExcluded[mealKey].add(firstId);
   // Advance past confirm
-  for (let i = 0; i <= WIZARD_CONFIRM_STEP; i++) wizardNext();
+  const lastStep = _wizardStepPlan().length - 1;
+  for (let i = 0; i <= lastStep; i++) wizardNext();
   assert(Array.isArray(state.wizardExcluded[mealKey]),
     'state.wizardExcluded should be serialised array');
   assert(state.wizardExcluded[mealKey].includes(firstId),
@@ -1864,7 +2036,11 @@ suite('Auth / App split — redirect flow');
 // ══════════════════════════════════════════════════════════════════
 // Render results
 // ══════════════════════════════════════════════════════════════════
-(function render() {
+(async function render() {
+  // Wait for every async test() call to settle so results[].pass reflects
+  // real outcomes, not just "didn't throw synchronously".
+  await Promise.all(_pendingTests);
+
   const out = document.getElementById('output');
   const suites = [...new Set(results.map(r => r.suite))];
 

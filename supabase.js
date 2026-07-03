@@ -150,6 +150,8 @@ async function sbLoadUserData(userId) {
     result.wizardExcluded = userState.wizard_excluded ?? {};
     result.wizardStyle    = userState.wizard_style    ?? 'simple';
     result.excludedFoods  = userState.excluded_foods  ?? [];
+    result.wizardExcludedCategories = userState.wizard_excluded_categories ?? [];
+    result.wizardMode     = userState.wizard_mode     ?? 'auto';
   }
 
   return result;
@@ -249,7 +251,7 @@ async function sbSaveCustomRecipes(userId, customRecipes) {
   }
 }
 
-async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab, planCreated, planStartDate, wizardExcluded, wizardStyle, excludedFoods }) {
+async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, activeTab, planCreated, planStartDate, wizardExcluded, wizardStyle, excludedFoods, wizardExcludedCategories, wizardMode }) {
   const { data: existing, error: fetchErr } = await _supabase.from('user_state').select('id').eq('user_id', userId).maybeSingle();
   if (fetchErr) throw new Error(`[user_state fetch] ${fetchErr.message}`);
   const { error } = await _supabase.from('user_state').upsert({
@@ -264,6 +266,8 @@ async function sbSaveUserState(userId, { favorites, dayTemplates, optimizeMode, 
     wizard_excluded:  wizardExcluded  ?? {},
     wizard_style:     wizardStyle     ?? 'simple',
     excluded_foods:   excludedFoods   ?? [],
+    wizard_excluded_categories: wizardExcludedCategories ?? [],
+    wizard_mode:      wizardMode      ?? 'auto',
   }, { onConflict: 'id' });
   if (error) throw new Error(`[user_state] ${error.message}`);
 }
