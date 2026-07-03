@@ -3709,7 +3709,7 @@ function renderWeek() {
           </button>` : ''}
           <div style="display:flex;gap:5px;margin-left:auto;align-items:center">
             <button id="week-create-plan-btn" onclick="createPlan()" title="${t('prof_create_plan_btn')}"
-              style="display:flex;align-items:center;gap:5px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap">
+              style="display:flex;align-items:center;gap:5px;background:var(--green);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap">
               📋
               <span class="week-btn-label">${t('prof_create_plan_btn').replace(/^📋\s*/, '')}</span>
               <span class="week-btn-label-mobile">${t('week_new_plan_btn_short')}</span>

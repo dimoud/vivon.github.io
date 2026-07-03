@@ -462,6 +462,8 @@ h3 { font-size: 0.95rem; }
   padding: 14px 16px 12px;
 }
 .week-btn-label-mobile { display: none; }
+/* Match the PDF/Copy buttons' height exactly, at every width */
+#week-create-plan-btn { padding: 6px 12px; font-size: 0.75rem; min-height: 30px; }
 @media (max-width: 600px) {
   .week-page-header { padding: 12px 14px; }
   .week-page-header h1 { font-size: 1.15rem !important; }
@@ -492,6 +494,7 @@ h3 { font-size: 0.95rem; }
   /* Bigger touch targets for buttons */
   .btn { padding: 10px 16px; min-height: 42px; }
   .btn-sm { padding: 8px 12px; font-size: 0.78rem; min-height: 36px; }
+  #week-create-plan-btn { padding: 8px 12px; min-height: 36px; }
   .meal-check { width: 36px; height: 36px; }
   .supp-check { width: 32px; height: 32px; }
 
