@@ -29,6 +29,7 @@ let state = {
   wizardRepeatMeals: false,
   excludedFoods: [], // legacy, superseded by wizardExcludedCategories — kept unused to avoid breaking old cloud snapshots
   wizardExcludedCategories: [],
+  wizardExcludedFoods: [],
   wizardMode: 'auto',
 };
 
@@ -102,6 +103,7 @@ async function syncToSupabase() {
         wizardRepeatMeals: snap.wizardRepeatMeals,
         excludedFoods: snap.excludedFoods,
         wizardExcludedCategories: snap.wizardExcludedCategories,
+        wizardExcludedFoods: snap.wizardExcludedFoods,
         wizardMode: snap.wizardMode,
       }),
     ]);
@@ -141,6 +143,7 @@ function _freshState() {
     wizardRepeatMeals: false,
     excludedFoods: [], // legacy, superseded by wizardExcludedCategories — kept unused to avoid breaking old cloud snapshots
     wizardExcludedCategories: [],
+    wizardExcludedFoods: [],
     wizardMode: 'auto',
   };
 }
@@ -1871,7 +1874,13 @@ function _confirmWeekDatePicker() {
 // Επιστρέφει τον δείκτη ημέρας (0-based) του προγράμματος που αντιστοιχεί στη σημερινή ημερομηνία, ή null αν δεν είναι εντός εύρους
 function getTodayPlanDayIndex() {
   if (!state.planStartDate || !state.week?.length) return null;
-  const start = new Date(state.planStartDate);
+  // state.planStartDate is a bare "YYYY-MM-DD" string. `new Date(str)` parses
+  // that as UTC midnight, not local midnight — in timezones ahead of UTC the
+  // instant can land on the previous local calendar day, silently shifting
+  // `start` back a day and off-by-one'ing every index below. Parse the
+  // year/month/day components directly into a local-midnight Date instead.
+  const [sy, sm, sd] = state.planStartDate.split('-').map(Number);
+  const start = new Date(sy, sm - 1, sd);
   start.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -1927,6 +1936,7 @@ function _wizardStepPlan() {
 let _wizardStep = 0;
 let _wizardExcluded = {};  // { mealKey: Set<mealId> }
 let _wizardExcludedCategoriesSet = new Set(); // Set<categoryId> — categories the user deselected in step 0
+let _wizardExcludedFoodsSet = new Set(); // Set<leaf FOOD_CATEGORIES id> — individual foods deselected in step 0
 
 function _allMeals() {
   return [
@@ -1946,6 +1956,18 @@ function _recipeHasExcludedCategory(r, excludedCategorySet) {
   if (!excludedCategorySet || !excludedCategorySet.size) return false;
   if (!Array.isArray(r.tags) || !r.tags.length) return false;
   return r.tags.some(tag => excludedCategorySet.has(tag));
+}
+
+// Does this recipe use an individual ingredient (FOODS_DB id) the user
+// deselected at the leaf food-item level in step 0 (e.g. "Μαρούλι" under
+// Λαχανικά)? Only RECIPES_DB/customRecipes entries carry a structured
+// ingredients[] list — STANDARD_MEALS entries have no per-ingredient data
+// (see calcRecipeMacros) and are therefore exempt from this filter; they
+// remain governed only by the coarser _recipeHasExcludedCategory tag match.
+function _recipeHasExcludedFood(r, excludedFoodSet) {
+  if (!excludedFoodSet || !excludedFoodSet.size) return false;
+  if (!Array.isArray(r.ingredients) || !r.ingredients.length) return false;
+  return r.ingredients.some(ing => excludedFoodSet.has(ing.foodId));
 }
 
 let _wizardSwipeCleanup = null;
@@ -1984,6 +2006,7 @@ function _openMealWizard() {
     _wizardExcluded[m.key] = new Set(state.wizardExcluded?.[m.key] || []);
   });
   _wizardExcludedCategoriesSet = new Set(state.wizardExcludedCategories || []);
+  _wizardExcludedFoodsSet = new Set(state.wizardExcludedFoods || []);
   if (!state.wizardMode) state.wizardMode = 'auto';
   _wizardStep = 0;
   _renderWizardStep();
@@ -2055,22 +2078,24 @@ function _renderWizardStep() {
     subEl.textContent   = t('wizard_food_sublabel');
     btnNext.textContent = t('btn_next');
 
-    const cats = FOOD_CATEGORIES;
+    const cats = FOOD_CATEGORIES.filter(c => !c.hideInWizard);
     const groups = ['protein','legumes','carbs','veggies','fruit','nuts','dairy','other'];
-    const excCount = cats.filter(c => _wizardExcludedCategoriesSet.has(c.id)).length;
+    const isExcluded = c => c.leaf ? _wizardExcludedFoodsSet.has(c.id) : _wizardExcludedCategoriesSet.has(c.id);
+    const excCount = cats.filter(isExcluded).length;
     const selCount = cats.length - excCount;
     let html = `<p style="font-size:0.83rem;color:var(--text2);margin:0 0 12px">${t('wizard_food_desc')}</p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <span style="font-size:0.75rem;color:var(--text3)">${tFmt('wizard_selected_count', { sel: selCount, exc: excCount })}</span>
-        <button onclick="_wizardCategorySelectAll()" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">${t('wizard_select_all')}</button>
+        <button onclick="_wizardFoodStepSelectAll()" style="font-size:0.72rem;color:var(--green-d);background:none;border:none;cursor:pointer;font-weight:700">${t('wizard_select_all')}</button>
       </div>`;
     groups.forEach(group => {
       const inGroup = cats.filter(c => c.group === group);
       if (!inGroup.length) return;
       html += `<div class="wizard-section-title">${t('wizard_food_cat_' + group)}</div><div class="wizard-meal-list">`;
       inGroup.forEach(c => {
-        const ex = _wizardExcludedCategoriesSet.has(c.id);
-        html += `<div class="wizard-meal-row${ex ? ' excluded' : ''}" onclick="wizardToggleCategory('${c.id}')" data-category-id="${c.id}">
+        const ex = isExcluded(c);
+        const toggleFn = c.leaf ? 'wizardToggleFood' : 'wizardToggleCategory';
+        html += `<div class="wizard-meal-row${ex ? ' excluded' : ''}" onclick="${toggleFn}('${c.id}')" data-category-id="${c.id}">
           <div class="wmr-left">
             <div class="wfood-chip-check">${ex
               ? '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
@@ -2201,6 +2226,12 @@ function _renderWizardStep() {
     if (_wizardExcludedCategoriesSet.size) {
       meals = meals.filter(r => !_recipeHasExcludedCategory(r, _wizardExcludedCategoriesSet));
     }
+    // Same for individual foods deselected in step 0 (e.g. "Μαρούλι").
+    if (_wizardExcludedFoodsSet.size) {
+      const excludedFoodIdsNow = FOOD_CATEGORIES.filter(c => _wizardExcludedFoodsSet.has(c.id)).flatMap(c => c.foodIds);
+      const excludedFoodSetNow = new Set(excludedFoodIdsNow);
+      meals = meals.filter(r => !_recipeHasExcludedFood(r, excludedFoodSetNow));
+    }
     // Filter by style
     if (style === 'simple')  meals = meals.filter(r => !GOURMET_IDS.has(r.id));
     if (style === 'gourmet') {
@@ -2284,6 +2315,11 @@ function _renderWizardStep() {
       if (_wizardExcludedCategoriesSet.size) {
         allForMeal = allForMeal.filter(r => !_recipeHasExcludedCategory(r, _wizardExcludedCategoriesSet));
       }
+      if (_wizardExcludedFoodsSet.size) {
+        const excludedFoodIdsNow = FOOD_CATEGORIES.filter(c => _wizardExcludedFoodsSet.has(c.id)).flatMap(c => c.foodIds);
+        const excludedFoodSetNow = new Set(excludedFoodIdsNow);
+        allForMeal = allForMeal.filter(r => !_recipeHasExcludedFood(r, excludedFoodSetNow));
+      }
       // Deduplicate to get wizard-level rows
       const seenG2 = new Set();
       const wizRows = [];
@@ -2310,7 +2346,7 @@ function _renderWizardStep() {
     html += '</div>';
   } else {
     const excludedCatNames = FOOD_CATEGORIES
-      .filter(c => _wizardExcludedCategoriesSet.has(c.id))
+      .filter(c => !c.hideInWizard && (c.leaf ? _wizardExcludedFoodsSet.has(c.id) : _wizardExcludedCategoriesSet.has(c.id)))
       .map(c => tName(c));
     html += `<div class="wizard-confirm-meal">
       <div class="wizard-confirm-meal-title">${t('wizard_confirm_auto_note')}</div>
@@ -2373,6 +2409,15 @@ function _wizardCategorySelectAll() {
   _renderWizardStep();
 }
 
+// Step-0 header "select all" — clears both the (non-leaf) category
+// exclusions and the (leaf) individual-food exclusions in one click, since
+// they render as a single unified list to the user.
+function _wizardFoodStepSelectAll() {
+  _wizardExcludedCategoriesSet.clear();
+  _wizardExcludedFoodsSet.clear();
+  _renderWizardStep();
+}
+
 function wizardToggleCategory(categoryId) {
   if (_wizardExcludedCategoriesSet.has(categoryId)) {
     _wizardExcludedCategoriesSet.delete(categoryId);
@@ -2382,6 +2427,15 @@ function wizardToggleCategory(categoryId) {
   // Categories are split across several section lists (unlike the single
   // per-meal list wizardToggleGroup patches in place), so a full re-render
   // is simpler and cheap enough at this list size (~40 items).
+  _renderWizardStep();
+}
+
+function wizardToggleFood(foodCategoryId) {
+  if (_wizardExcludedFoodsSet.has(foodCategoryId)) {
+    _wizardExcludedFoodsSet.delete(foodCategoryId);
+  } else {
+    _wizardExcludedFoodsSet.add(foodCategoryId);
+  }
   _renderWizardStep();
 }
 
@@ -2402,11 +2456,18 @@ function wizardNext() {
     state.wizardExcluded = {};
     WIZARD_MEALS.forEach(m => { state.wizardExcluded[m.key] = [..._wizardExcluded[m.key]]; });
     state.wizardExcludedCategories = [..._wizardExcludedCategoriesSet];
-    // Run smart generator using wizard style + category exclusions. In
+    // Leaf food exclusions are stored as FOOD_CATEGORIES leaf ids in the
+    // wizard-local Set, but generateSmartWeek/_recipeHasExcludedFood match
+    // against raw FOODS_DB ids (recipe.ingredients[].foodId) — flatten here,
+    // once, at wizard-finish time.
+    state.wizardExcludedFoods = FOOD_CATEGORIES
+      .filter(c => _wizardExcludedFoodsSet.has(c.id))
+      .flatMap(c => c.foodIds);
+    // Run smart generator using wizard style + category/food exclusions. In
     // automatic mode the per-meal exclusion steps never ran, so pass {}
     // rather than possibly-stale per-meal data from a previous manual run.
     const style = state.wizardStyle || 'simple';
-    state.week = generateSmartWeek(style, isManual ? state.wizardExcluded : {}, !!state.wizardRepeatMeals, state.wizardExcludedCategories);
+    state.week = generateSmartWeek(style, isManual ? state.wizardExcluded : {}, !!state.wizardRepeatMeals, state.wizardExcludedCategories, state.wizardExcludedFoods);
     saveState();
     updatePlanCreatedUI();
     if (state.week._goalsUnmet) {
@@ -2499,7 +2560,7 @@ function purgeGeneratedComposedMeals() {
   saveState();
 }
 
-function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals = false, excludedCategoryIds = []) {
+function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals = false, excludedCategoryIds = [], excludedFoodIds = []) {
   // A fresh auto-generated plan already ran its own swap-to-fit iterations
   // below — any remaining shortfall shouldn't re-trigger the manual
   // "Αντικατάσταση" banner (that's reserved for when the user drags the
@@ -2516,6 +2577,15 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   const excludedCategorySet = new Set(excludedCategoryIds || []);
   function recipeHasExcludedCategory(r) {
     return _recipeHasExcludedCategory(r, excludedCategorySet);
+  }
+
+  // Same idea, but at the individual-ingredient level (foodId), for foods
+  // the user deselected specifically (e.g. "Μαρούλι") rather than an entire
+  // category. Only affects RECIPES_DB/customRecipes entries — see
+  // _recipeHasExcludedFood() for why STANDARD_MEALS entries are exempt.
+  const excludedFoodSet = new Set(excludedFoodIds || []);
+  function recipeHasExcludedFood(r) {
+    return _recipeHasExcludedFood(r, excludedFoodSet);
   }
 
   // Normalise excluded sets
@@ -2545,7 +2615,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
 
   // Base candidates: slot-type match + exclusion filter + no side dishes
   // afternoon slot accepts both meal:"afternoon" and meal:"snack" entries
-  function candidates(slotType, { allowSingleFoods = false, allowExcludedCategories = false } = {}) {
+  function candidates(slotType, { allowSingleFoods = false, allowExcludedCategories = false, allowExcludedFoods = false } = {}) {
     return pool.filter(r => {
       const matchesSlot = r.meal === slotType
         || (slotType === 'afternoon' && (r.meal === 'afternoon' || r.meal === 'snack'));
@@ -2553,6 +2623,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
       if (r.side) return false;
       if (r.kcal_est && (!allowSingleFoods || !SINGLE_FOOD_SLOTS.has(slotType))) return false;
       if (excSets[slotType] && excSets[slotType].has(r.id)) return false;
+      if (!allowExcludedFoods && recipeHasExcludedFood(r)) return false;
       if (!allowExcludedCategories && recipeHasExcludedCategory(r)) return false;
       return true;
     });
@@ -2560,14 +2631,17 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
 
   // Recipes first; only fall back to single foods (STANDARD_MEALS) when no
   // recipe can satisfy the slot at all. If excluding the user's deselected
-  // categories empties the slot entirely, relax that exclusion as a last
-  // resort rather than leaving the slot unfilled.
+  // foods/categories empties the slot entirely, relax those exclusions in
+  // turn (food-level first, since it's the more specific user intent) as a
+  // last resort rather than leaving the slot unfilled.
   function candidatesWithFallback(slotType) {
     const recipesOnly = candidates(slotType, { allowSingleFoods: false });
     if (recipesOnly.length) return recipesOnly;
     const withSingleFoods = candidates(slotType, { allowSingleFoods: true });
     if (withSingleFoods.length) return withSingleFoods;
-    return candidates(slotType, { allowSingleFoods: true, allowExcludedCategories: true });
+    const ignoreFoodExcl = candidates(slotType, { allowSingleFoods: true, allowExcludedFoods: true });
+    if (ignoreFoodExcl.length) return ignoreFoodExcl;
+    return candidates(slotType, { allowSingleFoods: true, allowExcludedFoods: true, allowExcludedCategories: true });
   }
 
   function shuffle(arr) {
@@ -2693,7 +2767,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   // least one gourmet-tagged meal somewhere in lunch/dinner, and rarely
   // (not "often") let one of those be a "eating out" treat (pizza, pasta
   // out, restaurant) rather than always a home-cooked gourmet recipe.
-  _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds);
+  _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds, excludedFoodIds);
 
   // Optimise each day independently to hit calorie + protein targets.
   // Each day is wrapped so a single bad day (unexpected data, division
@@ -2722,7 +2796,7 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
   for (let i = 0; i < MAX_SWAP_ITERATIONS; i++) {
     const stillShort = week.some(d => d._proteinShortfall);
     if (!stillShort) break;
-    const changed = _swapShortfallDaysToHighProtein(week, excludedCategoryIds);
+    const changed = _swapShortfallDaysToHighProtein(week, excludedCategoryIds, excludedFoodIds);
     optimiseAllDays();
     if (!changed) break; // no more candidates to swap in — further looping won't help
   }
@@ -2751,11 +2825,12 @@ function generateSmartWeek(style = 'simple', excludedPerMeal = {}, repeatMeals =
 const EATING_OUT_IDS = new Set(['ex_l54','ex_l55','ex_l56','ex_l57','ex_d21','ex_d22','ex_d23','ex_d24']);
 const EATING_OUT_CHANCE = 0.12; // rare — roughly 1 in 8 generated weeks gets a treat meal instead of a gourmet recipe
 
-function _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds = []) {
+function _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds = [], excludedFoodIds = []) {
   const hasGourmet = week.some(day => day.meals.some(m => GOURMET_IDS.has(m.recipeId) || GOURMET_IDS.has(m.standardId)));
   if (hasGourmet) return;
 
   const excludedCategorySet = new Set(excludedCategoryIds || []);
+  const excludedFoodSet = new Set(excludedFoodIds || []);
   const wantEatingOut = Math.random() < EATING_OUT_CHANCE;
   const slotCandidates = [];
   week.forEach((day, di) => {
@@ -2773,12 +2848,13 @@ function _ensureAtLeastOneGourmetMeal(week, excSets, excludedCategoryIds = []) {
     !r.side &&
     !excluded.has(r.id) &&
     !_recipeHasExcludedCategory(r, excludedCategorySet) &&
+    !_recipeHasExcludedFood(r, excludedFoodSet) &&
     (wantEatingOut ? EATING_OUT_IDS.has(r.id) : !EATING_OUT_IDS.has(r.id))
   );
   // If the preferred flavor (eating-out vs. home-cooked gourmet) has no
   // candidates for this slot, fall back to any gourmet option for it.
   const pool = gourmetPool.length ? gourmetPool
-    : [..._allMeals()].filter(r => GOURMET_IDS.has(r.id) && r.meal === target.type && !r.side && !excluded.has(r.id) && !_recipeHasExcludedCategory(r, excludedCategorySet));
+    : [..._allMeals()].filter(r => GOURMET_IDS.has(r.id) && r.meal === target.type && !r.side && !excluded.has(r.id) && !_recipeHasExcludedCategory(r, excludedCategorySet) && !_recipeHasExcludedFood(r, excludedFoodSet));
   if (!pool.length) return;
 
   const picked = pool[Math.floor(Math.random() * pool.length)];
@@ -3092,15 +3168,16 @@ function _optimiseDayMacros(day, targets) {
 // generator loop and by the user-triggered "swap" button. Returns true if it
 // actually changed anything (used to detect "no more candidates left" so
 // callers can stop iterating instead of looping uselessly).
-function _swapShortfallDaysToHighProtein(weekArr, excludedCategoryIds = []) {
+function _swapShortfallDaysToHighProtein(weekArr, excludedCategoryIds = [], excludedFoodIds = []) {
   const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
   const LEAN_THRESHOLD = 0.07;
   let changed = false;
   const excludedCategorySet = new Set(excludedCategoryIds || []);
+  const excludedFoodSet = new Set(excludedFoodIds || []);
 
   function bestForType(type) {
     return allR
-      .filter(r => r.meal === type && !_recipeHasExcludedCategory(r, excludedCategorySet))
+      .filter(r => r.meal === type && !_recipeHasExcludedCategory(r, excludedCategorySet) && !_recipeHasExcludedFood(r, excludedFoodSet))
       .map(r => { const m = calcRecipeMacros(r, 1); return { r, density: m.kcal > 0 ? m.p / m.kcal : 0, p: m.p, kcal: m.kcal }; })
       .sort((a, b) => b.density - a.density);
   }
@@ -3150,7 +3227,7 @@ function _swapShortfallDaysToHighProtein(weekArr, excludedCategoryIds = []) {
 }
 
 function swapToHighProteinMeals() {
-  _swapShortfallDaysToHighProtein(state.week, state.wizardExcludedCategories);
+  _swapShortfallDaysToHighProtein(state.week, state.wizardExcludedCategories, state.wizardExcludedFoods);
 
   // Re-optimise after swapping, then clear shortfall flags — user has been informed, don't nag
   const targets = { kcal: state.goals.kcal, protein: state.goals.protein || 160 };
@@ -3977,7 +4054,7 @@ function renderWeek() {
     return `<div class="week-day-card" style="border-top:${borderTop}">
       <div class="week-day-card-header" onclick="goToDay(${di})" title="${t('week_go_to_day')}">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:900;font-size:0.85rem;color:var(--text)">${getDayTitle(di)}</div>
+          <div style="font-weight:900;font-size:0.85rem;color:${day._proteinShortfall ? '#ef4444' : 'var(--text)'}">${getDayTitle(di)}</div>
           <span style="font-size:0.6rem;color:var(--text3)">→</span>
         </div>
         ${dateStr}
@@ -4241,7 +4318,7 @@ function confirmRegenerateInline() {
   // Regenerate never repeats meals — this shortcut only offers a style
   // choice, not the repeat-meals option, so it must not silently inherit
   // whatever was picked the last time the full wizard ran.
-  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories);
+  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories, state.wizardExcludedFoods);
   saveState();
   renderWeek();
   if (state.week._goalsUnmet) {
@@ -4293,7 +4370,7 @@ function confirmRegenerate() {
   // Regenerate never repeats meals — this modal only offers a style choice,
   // not the repeat-meals option, so it must not silently inherit whatever
   // was picked the last time the full wizard ran.
-  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories);
+  state.week = generateSmartWeek(style, excPerMeal, false, state.wizardExcludedCategories, state.wizardExcludedFoods);
   saveState();
   renderWeek();
   if (state.week._goalsUnmet) {

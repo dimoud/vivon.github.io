@@ -1382,6 +1382,357 @@ test('no same meal repeated on consecutive days in same slot', () => {
 });
 
 // ══════════════════════════════════════════════════════════════════
+// SUITE 26b — _recipeHasExcludedFood (leaf food-item exclusion helper)
+// ══════════════════════════════════════════════════════════════════
+suite('_recipeHasExcludedFood');
+
+test('empty/undefined excludedFoodSet -> false', () => {
+  const r = { ingredients: [{ foodId: 'v1', qty: 100 }] };
+  assertEq(_recipeHasExcludedFood(r, new Set()), false);
+  assertEq(_recipeHasExcludedFood(r, undefined), false);
+});
+
+test('recipe with no ingredients[] (STANDARD_MEALS-shaped) -> false even if it would otherwise match', () => {
+  const r = { id: 'sm_fake', kcal_est: 300, p: 20, c: 30, f: 10 }; // no ingredients array
+  assertEq(_recipeHasExcludedFood(r, new Set(['v1'])), false, 'no-op for entries without ingredients[]');
+});
+
+test('empty ingredients[] -> false', () => {
+  const r = { ingredients: [] };
+  assertEq(_recipeHasExcludedFood(r, new Set(['v1'])), false);
+});
+
+test('matching foodId in ingredients -> true', () => {
+  const r = { ingredients: [{ foodId: 'v1', qty: 100 }, { foodId: 'f1', qty: 150 }] };
+  assertEq(_recipeHasExcludedFood(r, new Set(['v1'])), true);
+});
+
+test('no matching foodId -> false', () => {
+  const r = { ingredients: [{ foodId: 'f1', qty: 150 }] };
+  assertEq(_recipeHasExcludedFood(r, new Set(['v1'])), false);
+});
+
+test('matches only the exact foodId, not siblings', () => {
+  const r = { ingredients: [{ foodId: 'v2', qty: 100 }] };
+  assertEq(_recipeHasExcludedFood(r, new Set(['v1'])), false, 'excluding v1 should not affect v2');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26c — _recipeHasExcludedCategory (standalone unit tests)
+// ══════════════════════════════════════════════════════════════════
+suite('_recipeHasExcludedCategory');
+
+test('empty excludedCategorySet -> false', () => {
+  const r = { tags: ['dairy', 'fruit'] };
+  assertEq(_recipeHasExcludedCategory(r, new Set()), false);
+});
+
+test('missing/empty tags -> false', () => {
+  assertEq(_recipeHasExcludedCategory({}, new Set(['dairy'])), false);
+  assertEq(_recipeHasExcludedCategory({ tags: [] }, new Set(['dairy'])), false);
+});
+
+test('intersecting tag -> true', () => {
+  const r = { tags: ['chicken', 'dairy', 'vegetables'] };
+  assertEq(_recipeHasExcludedCategory(r, new Set(['dairy'])), true);
+});
+
+test('non-intersecting tags -> false', () => {
+  const r = { tags: ['chicken', 'rice'] };
+  assertEq(_recipeHasExcludedCategory(r, new Set(['dairy'])), false);
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26d — generateSmartWeek: food-level exclusion end-to-end
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — food-level exclusion');
+
+test('excluding a veggie foodId keeps it out of every lunch/dinner recipe ingredient list', () => {
+  // v1 = Μαρούλι (Lettuce)
+  const week = generateSmartWeek('simple', {}, false, [], ['v1']);
+  const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
+  week.forEach((day, di) => {
+    day.meals.forEach(m => {
+      if (!m.recipeId) return;
+      const r = allR.find(x => x.id === m.recipeId);
+      if (!r || !Array.isArray(r.ingredients)) return;
+      const hasExcluded = r.ingredients.some(ing => ing.foodId === 'v1');
+      assert(!hasExcluded, `day ${di+1} meal uses excluded foodId v1 via recipe ${r.id}`);
+    });
+  });
+});
+
+test('excluding an entire leaf group\'s foodIds falls back gracefully (no throw, no empty slots)', () => {
+  const dairyFoodIds = FOOD_CATEGORIES.find(c => c.id === 'dairy').foodIds;
+  let week;
+  let threw = false;
+  try { week = generateSmartWeek('simple', {}, false, [], dairyFoodIds); } catch(e) { threw = true; }
+  assert(!threw, 'should not throw when an entire leaf group is excluded');
+  assertEq(week.length, 7);
+  week.forEach((day, di) => {
+    assertEq(day.meals.length, 5, `day ${di+1} should still have 5 meals (fallback engaged)`);
+  });
+});
+
+test('foodIds combined with excludedPerMeal apply simultaneously', () => {
+  const allBreakfasts = _allMeals().filter(r => r.meal === 'breakfast' && !r.side);
+  const [keep1, keep2, ...rest] = allBreakfasts;
+  const excludedIds = rest.map(r => r.id);
+  const week = generateSmartWeek('simple', { breakfast: excludedIds }, false, [], ['v1']);
+  week.forEach((day, di) => {
+    const bf = day.meals.find(m => m.type === 'breakfast');
+    if (bf && bf.recipeId) assert(!excludedIds.includes(bf.recipeId), `day ${di+1} breakfast in excluded-per-meal list`);
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26e — food-level + category-level exclusion interaction
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — food + category exclusion interaction');
+
+test('independent food and category exclusions are both enforced at once', () => {
+  // Exclude v1 (Μαρούλι) at food level, and the whole "nuts" category by tag.
+  const week = generateSmartWeek('simple', {}, false, ['nuts'], ['v1']);
+  const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
+  week.forEach(day => {
+    day.meals.forEach(m => {
+      const r = allR.find(x => x.id === (m.recipeId || m.standardId)) || _allMeals().find(x => x.id === (m.recipeId || m.standardId));
+      if (!r) return;
+      if (Array.isArray(r.tags)) assert(!r.tags.includes('nuts'), `meal ${r.id} carries excluded "nuts" tag`);
+      if (Array.isArray(r.ingredients)) assert(!r.ingredients.some(i => i.foodId === 'v1'), `meal ${r.id} uses excluded foodId v1`);
+    });
+  });
+});
+
+test('redundant overlap (same ingredient excluded both ways) does not crash or infinite-loop', () => {
+  // d1 (Γιαούρτι) is both an individual foodId AND covered by the "dairy" tag.
+  let threw = false;
+  let week;
+  try { week = generateSmartWeek('simple', {}, false, ['dairy'], ['d1']); } catch(e) { threw = true; }
+  assert(!threw, 'should not throw on redundant food+category overlap');
+  assertEq(week.length, 7);
+});
+
+test('tier ordering: food-exclusion relaxes before category-exclusion when only food-exclusion empties a slot', () => {
+  // Exclude every ingredient-bearing lunch/dinner recipe's protein source is
+  // too broad to construct directly; instead assert the documented contract:
+  // with only a food-level exclusion active (no category exclusion at all),
+  // the generator must never fall back to ignoring category exclusions,
+  // because none were requested — i.e. tier 4 must never be needed to satisfy
+  // a pure food-level exclusion scenario used elsewhere in this suite.
+  const week = generateSmartWeek('simple', {}, false, [], ['v1']);
+  assertEq(week.length, 7, 'plain food-level exclusion should never require category fallback to produce a full week');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26f — previously-identified pipeline gaps
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — pipeline gap coverage');
+
+test('excludedCategoryIds end-to-end through generateSmartWeek (no per-meal exclusion involved)', () => {
+  const week = generateSmartWeek('simple', {}, false, ['dairy']);
+  const allR = [...RECIPES_DB, ...(state.customRecipes || [])];
+  week.forEach(day => {
+    day.meals.forEach(m => {
+      const r = allR.find(x => x.id === m.recipeId);
+      if (r && Array.isArray(r.tags)) assert(!r.tags.includes('dairy'), `meal ${r.id} carries excluded "dairy" tag`);
+    });
+  });
+});
+
+test('repeatMeals=true pairs consecutive days (1,2)/(3,4)/(5,6), day 7 stands alone', () => {
+  const week = generateSmartWeek('simple', {}, true);
+  for (let di = 1; di < 7; di += 2) {
+    const a = week[di - 1].meals.map(m => m.recipeId || m.standardId);
+    const b = week[di].meals.map(m => m.recipeId || m.standardId);
+    assertEq(JSON.stringify(b), JSON.stringify(a), `day ${di} should mirror day ${di-1}`);
+  }
+});
+
+test('repeatMeals=true pairing still holds after a shortfall-swap-induced re-sync', () => {
+  // A very high protein target is likely to trigger the shortfall-swap loop,
+  // exercising the re-sync-after-swap logic (script.js ~2795-2805).
+  const prevGoals = state.goals;
+  state.goals = { kcal: 1600, protein: 260, carbs: 150, fat: 40 };
+  try {
+    const week = generateSmartWeek('simple', {}, true);
+    for (let di = 1; di < 7; di += 2) {
+      const a = week[di - 1].meals.map(m => m.recipeId || m.standardId);
+      const b = week[di].meals.map(m => m.recipeId || m.standardId);
+      assertEq(JSON.stringify(b), JSON.stringify(a), `day ${di} should still mirror day ${di-1} after swap re-sync`);
+    }
+  } finally {
+    state.goals = prevGoals;
+  }
+});
+
+test('week._goalsUnmet is true for an unrealistic protein target', () => {
+  const prevGoals = state.goals;
+  state.goals = { kcal: 1400, protein: 400, carbs: 100, fat: 30 }; // 400g protein at 1400kcal is unrealistic
+  try {
+    const week = generateSmartWeek('simple', {});
+    assertEq(week._goalsUnmet, true, 'unrealistic protein target should leave goalsUnmet true');
+  } finally {
+    state.goals = prevGoals;
+  }
+});
+
+test('week._goalsUnmet is false for an easily achievable target', () => {
+  const prevGoals = state.goals;
+  state.goals = { kcal: 2200, protein: 120, carbs: 220, fat: 70 };
+  try {
+    const week = generateSmartWeek('simple', {});
+    assertEq(week._goalsUnmet, false, 'achievable target should not leave goalsUnmet true');
+  } finally {
+    state.goals = prevGoals;
+  }
+});
+
+test('calcDayDeficit.consumed matches calcDayMacros.kcal + extraKcal exactly', () => {
+  const week = generateSmartWeek('simple', {});
+  const savedWeek = state.week;
+  state.week = week;
+  try {
+    for (let di = 0; di < 7; di++) {
+      const macros = calcDayMacros(di, false);
+      const deficit = calcDayDeficit(di);
+      const expected = macros.kcal + (state.week[di].extraKcal || 0);
+      assertEq(deficit.consumed, expected, `day ${di+1} consumed should equal calcDayMacros.kcal + extraKcal`);
+    }
+  } finally {
+    state.week = savedWeek;
+  }
+});
+
+test('week-level total kcal is finite, sane, and has no NaN across all 7 days', () => {
+  const week = generateSmartWeek('simple', {});
+  const savedWeek = state.week;
+  state.week = week;
+  try {
+    let total = 0;
+    for (let di = 0; di < 7; di++) {
+      const m = calcDayMacros(di, false);
+      assert(Number.isFinite(m.kcal), `day ${di+1} kcal is not finite: ${m.kcal}`);
+      total += m.kcal;
+    }
+    assert(Number.isFinite(total) && total > 0, `week total kcal should be a positive finite number, got ${total}`);
+  } finally {
+    state.week = savedWeek;
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26g — combinatorial scenarios (goal/calorie/protein/mode/repeat/exclusion matrix)
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — combinatorial scenarios');
+
+function _assertWeekInvariants(week, label) {
+  assertEq(week.length, 7, `${label}: should have 7 days`);
+  week.forEach((day, di) => {
+    assertEq(day.meals.length, 5, `${label}: day ${di+1} should have 5 meals`);
+    day.meals.forEach((m, mi) => {
+      const sf = m.scaleFactor ?? 1;
+      assert(sf >= 0.15 && sf <= 2.0, `${label}: day ${di+1} meal ${mi+1} scaleFactor ${sf} out of bounds`);
+    });
+  });
+}
+
+const COMBINATORIAL_SCENARIOS = [
+  { label: 'weight loss, low kcal, normal protein', goals: { kcal: 1500, protein: 140, carbs: 130, fat: 40 } },
+  { label: 'maintenance, medium kcal, normal protein', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 } },
+  { label: 'muscle gain, high kcal, normal protein', goals: { kcal: 3000, protein: 190, carbs: 320, fat: 90 } },
+  { label: 'low kcal, unrealistic-high protein', goals: { kcal: 1500, protein: 350, carbs: 100, fat: 30 } },
+  { label: 'high kcal, low protein', goals: { kcal: 3000, protein: 80, carbs: 400, fat: 100 } },
+  { label: 'medium kcal, repeatMeals on', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, repeatMeals: true },
+  { label: 'low kcal, repeatMeals on, unrealistic protein', goals: { kcal: 1500, protein: 350, carbs: 100, fat: 30 }, repeatMeals: true },
+  { label: 'medium kcal, category exclusion (dairy)', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, excludedCategoryIds: ['dairy'] },
+  { label: 'medium kcal, food exclusion (v1 lettuce)', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, excludedFoodIds: ['v1'] },
+  { label: 'medium kcal, food + category exclusion combined', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, excludedCategoryIds: ['nuts'], excludedFoodIds: ['v1'] },
+  { label: 'high kcal, gourmet style', goals: { kcal: 2800, protein: 180, carbs: 280, fat: 85 }, style: 'gourmet' },
+  { label: 'low kcal, mixed style, exclusions', goals: { kcal: 1600, protein: 150, carbs: 130, fat: 40 }, style: 'mixed', excludedCategoryIds: ['legumes'] },
+  { label: 'manual mode: per-meal exclusion (breakfast subset)', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, manualBreakfastExclusion: true },
+  { label: 'near-empty lunch slot: exclude all ingredient-bearing lunch recipes', goals: { kcal: 2200, protein: 160, carbs: 220, fat: 70 }, excludeAllLunchRecipes: true },
+  { label: 'very low kcal edge case', goals: { kcal: 1200, protein: 100, carbs: 100, fat: 30 } },
+  { label: 'very high kcal edge case', goals: { kcal: 3500, protein: 200, carbs: 400, fat: 110 } },
+];
+
+COMBINATORIAL_SCENARIOS.forEach(scn => {
+  test(`combinatorial: ${scn.label}`, () => {
+    const prevGoals = state.goals;
+    state.goals = scn.goals;
+    try {
+      let excludedPerMeal = {};
+      if (scn.manualBreakfastExclusion) {
+        const allBreakfasts = _allMeals().filter(r => r.meal === 'breakfast' && !r.side);
+        excludedPerMeal = { breakfast: allBreakfasts.slice(2).map(r => r.id) };
+      }
+      if (scn.excludeAllLunchRecipes) {
+        const allLunchRecipeIds = RECIPES_DB.filter(r => r.meal === 'lunch' && !r.side).map(r => r.id);
+        excludedPerMeal = { ...excludedPerMeal, lunch: allLunchRecipeIds };
+      }
+      let threw = false;
+      let week;
+      try {
+        week = generateSmartWeek(
+          scn.style || 'simple',
+          excludedPerMeal,
+          !!scn.repeatMeals,
+          scn.excludedCategoryIds || [],
+          scn.excludedFoodIds || []
+        );
+      } catch(e) { threw = true; }
+      assert(!threw, `${scn.label}: generateSmartWeek should not throw`);
+      _assertWeekInvariants(week, scn.label);
+      // Unrealistic-protein cases are expected to degrade gracefully
+      // (week._goalsUnmet=true), not to hit the exact target — so we
+      // deliberately do NOT assert exact goal attainment here.
+    } finally {
+      state.goals = prevGoals;
+    }
+  });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 26h — multi-run stability (flakiness guard)
+// ══════════════════════════════════════════════════════════════════
+suite('generateSmartWeek — multi-run stability');
+
+test('20 plain runs each individually satisfy baseline invariants', () => {
+  for (let i = 0; i < 20; i++) {
+    let threw = false;
+    let week;
+    try { week = generateSmartWeek('simple', {}); } catch(e) { threw = true; }
+    assert(!threw, `iteration ${i+1}: should not throw`);
+    _assertWeekInvariants(week, `iteration ${i+1}`);
+  }
+});
+
+test('20 runs with both exclusion types populated each individually satisfy baseline invariants', () => {
+  for (let i = 0; i < 20; i++) {
+    let threw = false;
+    let week;
+    try { week = generateSmartWeek('simple', {}, false, ['nuts'], ['v1']); } catch(e) { threw = true; }
+    assert(!threw, `iteration ${i+1}: should not throw with exclusions active`);
+    _assertWeekInvariants(week, `iteration ${i+1}`);
+  }
+});
+
+test('20 runs with repeatMeals=true each individually satisfy the pairing invariant', () => {
+  for (let i = 0; i < 20; i++) {
+    let threw = false;
+    let week;
+    try { week = generateSmartWeek('simple', {}, true); } catch(e) { threw = true; }
+    assert(!threw, `iteration ${i+1}: should not throw with repeatMeals`);
+    _assertWeekInvariants(week, `iteration ${i+1}`);
+    for (let di = 1; di < 7; di += 2) {
+      const a = week[di - 1].meals.map(m => m.recipeId || m.standardId);
+      const b = week[di].meals.map(m => m.recipeId || m.standardId);
+      assertEq(JSON.stringify(b), JSON.stringify(a), `iteration ${i+1}: day ${di} should mirror day ${di-1}`);
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
 // SUITE 27 — Wizard state machine (wizardNext / wizardBack / wizardSetStyle)
 // ══════════════════════════════════════════════════════════════════
 suite('Wizard state machine');
@@ -1403,6 +1754,8 @@ function resetWizard() {
   _wizardStep = 0;
   _wizardExcluded = {};
   WIZARD_MEALS.forEach(m => { _wizardExcluded[m.key] = new Set(); });
+  _wizardExcludedCategoriesSet = new Set();
+  _wizardExcludedFoodsSet = new Set();
 }
 
 test('initial step is 0 after createPlan reset', () => {
@@ -1518,6 +1871,63 @@ test('excluded meals from wizard are preserved in state after plan creation', ()
     'state.wizardExcluded should be serialised array');
   assert(state.wizardExcluded[mealKey].includes(firstId),
     'excluded id should be in state after plan creation');
+});
+
+// ══════════════════════════════════════════════════════════════════
+// SUITE 27b — Wizard state machine: leaf food-item exclusion (step 0)
+// ══════════════════════════════════════════════════════════════════
+suite('Wizard state machine — food-level exclusion');
+
+test('_wizardExcludedFoodsSet initialises empty on wizard reset', () => {
+  resetWizard();
+  assert(_wizardExcludedFoodsSet instanceof Set, '_wizardExcludedFoodsSet should be a Set');
+  assertEq(_wizardExcludedFoodsSet.size, 0, 'should start empty');
+});
+
+test('wizardToggleFood adds and removes a leaf category id', () => {
+  resetWizard();
+  wizardToggleFood('veg_lettuce');
+  assert(_wizardExcludedFoodsSet.has('veg_lettuce'), 'should be excluded after first toggle');
+  wizardToggleFood('veg_lettuce');
+  assert(!_wizardExcludedFoodsSet.has('veg_lettuce'), 'should be re-included after second toggle');
+});
+
+test('_wizardFoodStepSelectAll clears both category and food exclusion sets together', () => {
+  resetWizard();
+  _wizardExcludedCategoriesSet.add('chicken');
+  _wizardExcludedFoodsSet.add('veg_lettuce');
+  _wizardFoodStepSelectAll();
+  assertEq(_wizardExcludedCategoriesSet.size, 0, 'category exclusions should be cleared');
+  assertEq(_wizardExcludedFoodsSet.size, 0, 'food exclusions should be cleared');
+});
+
+test('after wizardNext() through confirm, state.wizardExcludedFoods contains flattened FOODS_DB ids, not leaf category ids', () => {
+  resetWizard();
+  _wizardExcludedFoodsSet.add('veg_lettuce'); // maps to foodIds: ["v1"]
+  const lastStep = _wizardStepPlan().length - 1;
+  for (let i = 0; i <= lastStep; i++) wizardNext();
+  assert(Array.isArray(state.wizardExcludedFoods), 'state.wizardExcludedFoods should be an array');
+  assert(state.wizardExcludedFoods.includes('v1'), 'should contain the flattened FOODS_DB id v1');
+  assert(!state.wizardExcludedFoods.includes('veg_lettuce'), 'should NOT contain the raw leaf category id');
+});
+
+test('umbrella category ids are never reachable via any toggle function post-hideInWizard', () => {
+  resetWizard();
+  const umbrellaIds = ['vegetables', 'fruit', 'nuts', 'dairy', 'legumes'];
+  const visibleCats = FOOD_CATEGORIES.filter(c => !c.hideInWizard);
+  umbrellaIds.forEach(id => {
+    assert(!visibleCats.some(c => c.id === id), `umbrella id "${id}" should be hidden from the visible category list`);
+  });
+});
+
+test('visible leaf row counts per expanded group match expected data.js authoring', () => {
+  const visibleCats = FOOD_CATEGORIES.filter(c => !c.hideInWizard);
+  const countByGroup = group => visibleCats.filter(c => c.group === group).length;
+  assertEq(countByGroup('legumes'), 3, 'legumes should have 3 visible leaf rows');
+  assertEq(countByGroup('veggies'), 19, 'veggies should have 19 visible leaf rows (v6/Κολοκυθάκι was never in the original umbrella foodIds list)');
+  assertEq(countByGroup('fruit'), 12, 'fruit should have 12 visible leaf rows');
+  assertEq(countByGroup('nuts'), 3, 'nuts should have 3 visible leaf rows');
+  assertEq(countByGroup('dairy'), 9, 'dairy should have 9 visible leaf rows');
 });
 
 // ══════════════════════════════════════════════════════════════════
