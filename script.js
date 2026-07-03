@@ -6715,7 +6715,7 @@ function _pdfPersonBadge() {
   const avatarHtml = _isSafeUrl(photoUrl)
     ? `<img src="${photoUrl}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="">`
     : `<div style="width:52px;height:52px;border-radius:50%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#6b7280;flex-shrink:0">${(name || 'V').charAt(0).toUpperCase()}</div>`;
-  return `<div style="position:fixed;bottom:6mm;left:7mm;display:flex;align-items:center;gap:10px;opacity:0.7;z-index:100">
+  return `<div style="position:fixed;bottom:10mm;left:7mm;display:flex;align-items:center;gap:10px;opacity:0.7;z-index:100">
     ${avatarHtml}
     ${name ? `<span style="font-size:18px;font-weight:800;color:#374151;white-space:nowrap">${esc(name)}</span>` : ''}
   </div>`;
@@ -7240,70 +7240,96 @@ function exportPDF_week() {
     return dayNamesAllP[d.getDay()];
   }
 
-  const weekCols = state.week.map((day, di) => {
+  // ── Timetable rendering (mirrors the webapp's weekly grid: a shared
+  // time column on the left with each meal slot's time/label shown once,
+  // real <table> rows so every day-column's cells land on the same
+  // horizontal line and a ruler line is drawn between every row) ──
+  const slotTimesP = getMealTimes();
+
+  const dayHeaderCells = state.week.map((day, di) => {
     const tot = calcDayMacros(di, false);
     const pct = Math.round((tot.kcal / g.kcal) * 100);
-    const allDone = day.meals.length > 0 && day.meals.every(me => me.done);
     const barColor = pct > 105 ? '#ef4444' : pct > 90 ? '#22c55e' : '#f59e0b';
-    const dateStr = state.planStartDate ? `<div style="font-size:9px;color:#6b7280;font-weight:600;margin-top:1px">${formatPlanDay(di)}</div>` : '';
+    const dateStr = state.planStartDate ? `<div style="font-size:8px;color:#6b7280;font-weight:600;margin-top:1px">${formatPlanDay(di)}</div>` : '';
+    return `<td style="padding:5px 6px 4px;border-bottom:1px solid #e5e7eb;border-top:3px solid ${barColor};vertical-align:top;min-width:0">
+      <div style="font-weight:900;font-size:10px;color:#111">${getPdfDayTitle(di)}</div>
+      ${dateStr}
+      <div style="margin-top:3px">
+        <div style="font-size:11px;font-weight:900;color:${barColor}">${tot.kcal > 0 ? tot.kcal.toLocaleString() : '—'} kcal</div>
+        <div style="font-size:8px;color:${barColor};font-weight:700">${tot.kcal > 0 ? pct+'%' : ''}</div>
+      </div>
+    </td>`;
+  }).join('');
 
-    const byType = {};
-    day.meals.forEach(me => {
-      if (!byType[me.type]) byType[me.type] = [];
-      byType[me.type].push(me);
-    });
+  const mealRowsP = mealOrderP.map(type => {
+    const meta = mealMetaP[type];
+    const timeCell = `<td style="padding:5px 6px;border-right:1px solid #e5e7eb;vertical-align:top;white-space:nowrap">
+      <div style="font-size:9px;font-weight:800;color:#111">${slotTimesP[type] || ''}</div>
+      <div style="font-size:6.5px;font-weight:700;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em;margin-top:1px">${meta.label}</div>
+    </td>`;
 
-    const mealCards = mealOrderP.map(type => {
-      const meals = byType[type];
-      if (!meals || meals.length === 0) return '';
-      const meta = mealMetaP[type];
-      return meals.map(me => {
+    const dayCells = state.week.map((day, di) => {
+      const meals = day.meals.filter(me => me.type === type);
+      const mealHtml = meals.map(me => {
         const sm = me.standardId ? STANDARD_MEALS.find(s => s.id === me.standardId) : null;
         const r  = me.standardId ? null : allRecipes.find(x => x.id === me.recipeId);
         if (me.standardId ? !sm : !r) return '';
         const d = getMealCardData(sm, r, me.scaleFactor || 1);
-        return `<div style="margin-bottom:4px">
-          <div style="font-size:7.5px;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px">${meta.label}</div>
-          <div style="background:${meta.bg};border-left:2px solid ${meta.border};border-radius:0 4px 4px 0;padding:3px 5px">
-            <div style="display:flex;align-items:center;gap:3px;margin-bottom:1px">
-              <span style="font-size:13px;flex-shrink:0;line-height:1">${d.emoji}</span>
-              <span style="font-size:8.5px;font-weight:700;color:#111;line-height:1.2;flex:1">${d.name}</span>
-            </div>
-            ${d.subtitle ? `<div style="font-size:6.5px;color:#6b7280;line-height:1.15;margin-bottom:1px;overflow:hidden;max-height:15px">${d.subtitle}</div>` : ''}
-            <div style="font-size:7.5px;color:${meta.color};font-weight:700">${d.approx ? '~' : ''}${d.kcal} kcal</div>
+        return `<div style="background:${meta.bg};border-left:2px solid ${meta.border};border-radius:0 4px 4px 0;padding:3px 5px;margin-bottom:3px">
+          <div style="display:flex;align-items:center;gap:3px;margin-bottom:1px">
+            <span style="font-size:13px;flex-shrink:0;line-height:1">${d.emoji}</span>
+            <span style="font-size:8.5px;font-weight:700;color:#111;line-height:1.2;flex:1">${d.name}</span>
           </div>
+          ${d.subtitle ? `<div style="font-size:6.5px;color:#6b7280;line-height:1.15;margin-bottom:1px;overflow:hidden;max-height:15px">${d.subtitle}</div>` : ''}
+          <div style="font-size:7.5px;color:${meta.color};font-weight:700">${d.approx ? '~' : ''}${d.kcal} kcal</div>
         </div>`;
       }).join('');
+      return `<td style="padding:4px 5px;vertical-align:top;min-width:0">${mealHtml}</td>`;
     }).join('');
 
-    return `<div style="flex:1;min-width:0;background:#fff;border-radius:6px;border:1px solid #e5e7eb;border-top:3px solid ${barColor};overflow:hidden">
-      <div style="padding:5px 6px 4px;border-bottom:1px solid #f3f4f6">
-        <div style="font-weight:900;font-size:10px;color:#111">${getPdfDayTitle(di)}</div>
-        ${dateStr}
-        <div style="margin-top:3px">
-          <div style="font-size:11px;font-weight:900;color:${barColor}">${tot.kcal > 0 ? tot.kcal.toLocaleString() : '—'} kcal</div>
-          <div style="font-size:8px;color:${barColor};font-weight:700">${tot.kcal > 0 ? pct+'%' : ''}</div>
-        </div>
-        <div style="height:2px;background:#e5e7eb;border-radius:2px;margin-top:3px;overflow:hidden">
-          <div style="height:2px;width:${Math.min(pct,100)}%;background:${barColor};border-radius:2px"></div>
-        </div>
-      </div>
-      <div style="padding:4px 5px 5px">
-        ${mealCards || `<div style="font-size:8px;color:#9ca3af;text-align:center;padding:8px 0">${t('week_no_meal_pdf')}</div>`}
-        ${allDone ? `<div style="margin-top:3px;text-align:center"><span style="font-size:7.5px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:1px 6px">${t('week_completed_short')}</span></div>` : ''}
-      </div>
-    </div>`;
+    return `<tr style="border-top:1px solid #e5e7eb">${timeCell}${dayCells}</tr>`;
   }).join('');
+
+  const footerRowP = state.week.map((day, di) => {
+    const allDone = day.meals.length > 0 && day.meals.every(me => me.done);
+    return `<td style="padding:3px 5px 6px;vertical-align:top">
+      ${allDone ? `<div style="text-align:center"><span style="font-size:7.5px;color:#22c55e;font-weight:700;background:#dcfce7;border-radius:20px;padding:1px 6px">${t('week_completed_short')}</span></div>` : ''}
+    </td>`;
+  }).join('');
+
+  const weekTimetable = `<table style="width:100%;border-collapse:collapse;table-layout:fixed;background:#fff;border-radius:6px;overflow:hidden;border:1px solid #e5e7eb">
+    <thead><tr><td style="border-bottom:1px solid #e5e7eb"></td>${dayHeaderCells}</tr></thead>
+    <tbody>${mealRowsP}<tr style="border-top:1px solid #e5e7eb">${'<td></td>'}${footerRowP}</tr></tbody>
+  </table>`;
 
   const summaryPage = `
     ${_pdfPersonBadge()}
     <div style="padding:5mm 5mm 4mm;font-family:'Helvetica Neue',Arial,sans-serif;background:#f8fafc;">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb;gap:10px">
         <div>
           <div style="font-size:18px;font-weight:900;color:#111;letter-spacing:-0.5px">${t('pdf_week_title')}</div>
           <div style="font-size:9px;color:#6b7280;margin-top:1px">${tFmt('pdf_week_subtitle', { kcal: avgKcalW.toLocaleString() })}</div>
         </div>
-        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+        ${(() => {
+          const pBmi = calcBMI(p.weight, p.height);
+          const pBmr = calcBMR(p);
+          const pTdee = calcTDEE(p);
+          const { label: pBmiLbl, color: pBmiCol } = bmiLabel(parseFloat(pBmi));
+          function statChip(emoji, bg, val, label, sub, color) {
+            return `<div style="display:flex;flex-direction:column;align-items:center;text-align:center;min-width:52px">
+              <div style="width:20px;height:20px;border-radius:50%;background:${bg};display:flex;align-items:center;justify-content:center;font-size:9px;margin-bottom:2px">${emoji}</div>
+              <div style="font-size:10px;font-weight:900;color:${color};line-height:1">${val}</div>
+              <div style="font-size:5.5px;font-weight:700;color:${color};margin-top:1px;white-space:nowrap">${label}</div>
+              <div style="font-size:5px;color:#9ca3af;margin-top:1px;white-space:nowrap">${sub}</div>
+            </div>`;
+          }
+          return `<div style="display:flex;gap:10px;padding:5px 10px;background:#fff;border-radius:8px;border:1px solid #e5e7eb;flex-shrink:0">
+            ${statChip('⚖️', '#fff3e0', pBmi, pBmiLbl, 'BMI', pBmiCol)}
+            ${statChip('〰️', '#e0f2fe', pBmr, t('prof_bmr_label'), 'BMR kcal', '#3b82f6')}
+            ${statChip('🌿', '#dcfce7', pTdee, p.useCustomTDEE ? t('tdee_custom') : t('tdee_label'), 'TDEE kcal', '#15803d')}
+          </div>`;
+        })()}
+        <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
           ${weekRangePrint ? `<div style="font-size:8px;color:#6b7280">${weekRangePrint}</div>` : ''}
           <div style="display:flex;align-items:center;gap:5px">
             <img src="logo.png" alt="" style="height:48px;width:auto;object-fit:contain;opacity:0.85" onerror="this.style.display='none'">
@@ -7333,34 +7359,40 @@ function exportPDF_week() {
           <div style="font-size:6.5px;color:#9ca3af;margin-top:1px">${balSub}</div>
         </div>
       </div>
-      <div style="display:flex;gap:4px;align-items:flex-start;margin-bottom:6px">
-        ${weekCols}
+      <div style="margin-bottom:6px">
+        ${weekTimetable}
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
-        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
-          <div style="font-size:12px;margin-bottom:1px">🔥</div>
-          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">${t('pdf_week_total')}</div>
-          <div style="font-size:10px;font-weight:900;color:#111">${totalKcalW.toLocaleString()} kcal</div>
-          <div style="font-size:6.5px;color:#9ca3af">${tFmt('week_avg_kcal_day', { kcal: avgKcalW.toLocaleString() })}</div>
+      <div style="display:flex;justify-content:flex-end;gap:5px;padding-left:34mm">
+        <div style="flex:0 1 120px;background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:5px 6px;text-align:center">
+          <div style="font-size:11px;margin-bottom:1px">🔥</div>
+          <div style="font-size:6px;color:#9ca3af;margin-bottom:1px">${t('pdf_week_total')}</div>
+          <div style="font-size:9px;font-weight:900;color:#111">${totalKcalW.toLocaleString()} kcal</div>
+          <div style="font-size:6px;color:#9ca3af">${tFmt('week_avg_kcal_day', { kcal: avgKcalW.toLocaleString() })}</div>
         </div>
-        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
-          <div style="font-size:12px;margin-bottom:1px">🌿</div>
-          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">${t('week_food_variety')}</div>
-          <div style="font-size:10px;font-weight:900;color:#111">${tFmt('week_food_variety_count', { n: uniqueFoodsW.size })}</div>
-          <div style="font-size:6.5px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? t('diversity_great') : t('diversity_more')}</div>
+        <div style="flex:0 1 120px;background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:5px 6px;text-align:center">
+          <div style="font-size:11px;margin-bottom:1px">🌿</div>
+          <div style="font-size:6px;color:#9ca3af;margin-bottom:1px">${t('week_food_variety')}</div>
+          <div style="font-size:9px;font-weight:900;color:#111">${tFmt('week_food_variety_count', { n: uniqueFoodsW.size })}</div>
+          <div style="font-size:6px;color:${uniqueFoodsW.size >= 30 ? '#22c55e' : '#f59e0b'}">${uniqueFoodsW.size >= 30 ? t('diversity_great') : t('diversity_more')}</div>
         </div>
-        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
-          <div style="font-size:12px;margin-bottom:1px">💧</div>
-          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">${t('week_hydration')}</div>
-          <div style="font-size:10px;font-weight:900;color:#111">${(state.profile.weight * 0.035).toFixed(1)}L</div>
-          <div style="font-size:6.5px;color:#9ca3af">${tFmt('week_hydration_goal', { ml: Math.round(state.profile.weight * 35) })}</div>
+        <div style="flex:0 1 120px;background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:5px 6px;text-align:center">
+          <div style="font-size:11px;margin-bottom:1px">💧</div>
+          <div style="font-size:6px;color:#9ca3af;margin-bottom:1px">${t('week_hydration')}</div>
+          <div style="font-size:9px;font-weight:900;color:#111">${(state.profile.weight * 0.035).toFixed(1)}L</div>
+          <div style="font-size:6px;color:#9ca3af">${tFmt('week_hydration_goal', { ml: Math.round(state.profile.weight * 35) })}</div>
         </div>
-        <div style="background:#fff;border-radius:6px;border:1px solid #e5e7eb;padding:6px 8px;text-align:center">
-          <div style="font-size:12px;margin-bottom:1px">🎯</div>
-          <div style="font-size:6.5px;color:#9ca3af;margin-bottom:1px">${t('week_goal_progress')}</div>
-          <div style="font-size:10px;font-weight:900;color:${parseFloat(weightChangeW) <= 0 ? '#22c55e' : '#ef4444'}">${parseFloat(weightChangeW) > 0 ? '+' : ''}${weightChangeW} kg</div>
-          <div style="font-size:6.5px;color:#9ca3af">${t('pdf_this_week')}</div>
-        </div>
+        ${(() => {
+          const tdeeW = calcTDEE(state.profile);
+          const goalKcalPerDayW = g.kcal || tdeeW;
+          const tdeeWeeklyDeficitW = (tdeeW - goalKcalPerDayW) * 7;
+          const tdeeKgEquivW = (tdeeWeeklyDeficitW / 7700).toFixed(2);
+          const tdeeColorW = tdeeWeeklyDeficitW >= 0 ? '#22c55e' : '#ef4444';
+          return `<div style="flex:0 1 120px;background:#f0fdf4;border-radius:6px;border:1px solid #bbf7d0;padding:5px 6px;text-align:left">
+          <div style="font-size:6px;font-weight:800;color:#15803d;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px">${t('week_tdee_based')}</div>
+          <div style="font-size:6px;color:#166534;margin-bottom:2px;white-space:nowrap">${tFmt('week_tdee_goal', {tdee: tdeeW.toLocaleString(), goal: goalKcalPerDayW.toLocaleString()})}</div>
+          <div style="font-size:9px;font-weight:900;color:${tdeeColorW}">${tdeeWeeklyDeficitW >= 0 ? '−' : '+'}${Math.abs(tdeeWeeklyDeficitW).toLocaleString()} kcal <span style="font-size:6.5px;font-weight:700">≈ ${parseFloat(tdeeKgEquivW) >= 0 ? '-' : '+'}${Math.abs(parseFloat(tdeeKgEquivW))} kg</span></div>
+        </div>`;
+        })()}
       </div>
     </div>`;
 

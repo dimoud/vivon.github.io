@@ -66,28 +66,37 @@ let currentSuite = '';
 function suite(name) { currentSuite = name; }
 
 let _testCounter = 0;
-// Async test() calls push a promise here so the final render (below) can
-// await every pending test before computing pass/fail counts — otherwise an
-// async fn()'s rejection surfaces only as a console "Uncaught (in promise)"
-// after the synchronous summary has already been drawn (a false green).
-const _pendingTests = [];
+// test() is called synchronously ~300 times as the script loads, but several
+// tests are async (sendFeedback, syncToSupabase) and share mutable closure
+// state (e.g. _lastGasCall, window.fetch overrides) across the suite — they
+// assume one test fully finishes before the next starts, exactly like a
+// normal synchronous test would. Without serialization, an async fn() only
+// runs its synchronous prefix before test() returns and the *next* test's
+// synchronous prefix (which typically resets that shared state) runs before
+// the first one's awaited continuation resumes — a classic interleaving
+// race that manifests as "fetch not called" on tests that never actually
+// ran wrong, they just got their setup stomped by a neighboring test.
+// _testChain serializes every test (sync or async) onto one promise queue
+// so execution order always matches declaration order, and the final
+// render (below) awaits _testChain so results[].pass reflects real outcomes.
+let _testChain = Promise.resolve();
 
 function test(name, fn) {
   _testCounter++;
   const numbered = `#${_testCounter} ${name}`;
   const entry = { suite: currentSuite, name: numbered, pass: true };
   results.push(entry);
-  try {
-    const ret = fn();
-    if (ret && typeof ret.then === 'function') {
-      _pendingTests.push(
-        ret.catch(e => { entry.pass = false; entry.msg = e.message; })
-      );
+  _testChain = _testChain.then(() => {
+    try {
+      const ret = fn();
+      if (ret && typeof ret.then === 'function') {
+        return ret.catch(e => { entry.pass = false; entry.msg = e.message; });
+      }
+    } catch (e) {
+      entry.pass = false;
+      entry.msg = e.message;
     }
-  } catch (e) {
-    entry.pass = false;
-    entry.msg = e.message;
-  }
+  });
 }
 
 function assert(condition, msg) {
@@ -1904,8 +1913,12 @@ suite('sendFeedback — GAS mail engine');
     };
   });
 
-  // Restore fetch
-  window.fetch = _origFetch;
+  // Restore fetch — must run AFTER every test above has actually executed,
+  // not right after they're queued (test() only registers work on
+  // _testChain; the suite's own tests are still pending at this point in
+  // synchronous execution), otherwise this fires first and every async test
+  // above ends up calling the real, unmocked fetch.
+  _testChain = _testChain.then(() => { window.fetch = _origFetch; });
 })();
 
 // ══════════════════════════════════════════════════════════════════
@@ -2067,9 +2080,10 @@ suite('Auth / App split — redirect flow');
 // Render results
 // ══════════════════════════════════════════════════════════════════
 (async function render() {
-  // Wait for every async test() call to settle so results[].pass reflects
-  // real outcomes, not just "didn't throw synchronously".
-  await Promise.all(_pendingTests);
+  // Wait for every queued test() call to run (in declaration order — see
+  // _testChain above) so results[].pass reflects real outcomes, not just
+  // "didn't throw synchronously".
+  await _testChain;
 
   const out = document.getElementById('output');
   const suites = [...new Set(results.map(r => r.suite))];
