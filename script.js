@@ -2123,7 +2123,7 @@ const SLOT_TIMES = ['07:00','10:00','13:00','16:00','19:30'];
 
 // ── Quantity ladders used by the manual meal builder (Main/Side/Salad/Extra) ──
 const MB_QTY_LADDER_G  = Array.from({ length: (300 - 50) / 10 + 1 }, (_, i) => 50 + i * 10); // 50,60,...,300
-const MB_QTY_LADDER_TEM = [0.5,1,1.5,2,3,4];
+const MB_QTY_LADDER_TEM = [1,2,3,4,5,6];
 const MB_QTY_LADDER_TSP = [1,2,3,4,6,8];
 const MB_QTY_LADDER_ML  = Array.from({ length: (300 - 50) / 10 + 1 }, (_, i) => 50 + i * 10); // 50,60,...,300
 function mbQtyLadder(unit) {
@@ -3028,6 +3028,8 @@ function renderToday() {
         if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
         else if (food.unit === 'κ.γ.' || food.unit === 'κ.σ.') qty = Math.round(qty * 2) / 2;
         else qty = Math.round(qty);
+        // Ποτέ 0 αν το αρχικό υλικό υπήρχε στη συνταγή
+        if (qty <= 0 && ing.qty > 0) qty = (food.unit === 'κ.γ.' || food.unit === 'κ.σ.') ? 0.5 : (food.unit === 'g' ? 10 : 1);
         // Whey πάντα 30g
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
         return `<div class="ingredient-row"><span class="ingredient-name">${esc(tName(food))}</span><span class="ingredient-qty">${qty}${food.unit}</span></div>`;
@@ -6244,6 +6246,7 @@ function exportDayPDF(dayIdx) {
         let qty = ing.qty * (m.scaleFactor||1);
         if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
         else qty = Math.round(qty);
+        if (qty <= 0 && ing.qty > 0) qty = (food.unit === 'g') ? 10 : 1;
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
         return tName(food) + ' ' + qty + food.unit;
       }).filter(Boolean).join(' · ');
@@ -6374,6 +6377,7 @@ function exportPDF_today() {
         let qty = ing.qty * (m.scaleFactor||1);
         if (food.unit === 'g') qty = Math.round(qty / 10) * 10;
         else qty = Math.round(qty);
+        if (qty <= 0 && ing.qty > 0) qty = (food.unit === 'g') ? 10 : 1;
         if (ing.foodId === 'f9' && food.unit === 'g') qty = 30;
         return tName(food) + ' ' + qty + food.unit;
       }).filter(Boolean).join(' · ');
