@@ -75,6 +75,7 @@ const I18N = {
   feedback_send:         { el: '📤 Αποστολή Σχολίου', en: '📤 Send Feedback', es: '📤 Enviar Comentario', fr: '📤 Envoyer l\'avis' },
   feedback_sending:      { el: 'Αποστολή...', en: 'Sending...', es: 'Enviando...', fr: 'Envoi...' },
   feedback_sent:         { el: '✅ Το σχόλιό σου στάλθηκε! Ευχαριστούμε!', en: '✅ Your feedback was sent! Thank you!', es: '✅ ¡Tu comentario fue enviado! ¡Gracias!', fr: '✅ Votre avis a été envoyé ! Merci !' },
+  feedback_saved_no_mail: { el: '⚠️ Το σχόλιό σου αποθηκεύτηκε, αλλά η ειδοποίηση email απέτυχε.', en: '⚠️ Your feedback was saved, but the email notification failed.', es: '⚠️ Tu comentario se guardó, pero la notificación por correo falló.', fr: '⚠️ Votre avis a été enregistré, mais la notification par e-mail a échoué.' },
   feedback_empty:        { el: '⚠️ Γράψε κάτι πριν το στείλεις.', en: '⚠️ Write something before sending.', es: '⚠️ Escribe algo antes de enviar.', fr: '⚠️ Écrivez quelque chose avant d\'envoyer.' },
   feedback_error:        { el: '❌ Σφάλμα αποστολής. Δοκιμάστε ξανά.', en: '❌ Send error. Try again.', es: '❌ Error al enviar. Inténtalo de nuevo.', fr: '❌ Erreur d\'envoi. Réessayez.' },
   feedback_type_label:   { el: 'Τύπος:', en: 'Type:', es: 'Tipo:', fr: 'Type :' },

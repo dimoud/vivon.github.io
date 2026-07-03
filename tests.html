@@ -1878,6 +1878,32 @@ suite('sendFeedback — GAS mail engine');
     assert(_lastGasCall === null, 'fetch should not be called for empty message');
   });
 
+  test('GAS rejection does not report success to the user', async () => {
+    // Regression guard: sendFeedback must not claim "sent" when the GAS
+    // endpoint responds with ok:true but result !== 'success' (e.g. a
+    // rejected _key, quota limit, or validation error on the backend).
+    const toastEl = _ensureEl('toast', 'div');
+    window.fetch = function(url, opts) {
+      if (typeof url === 'string' && url === GAS_URL) {
+        return Promise.resolve({ ok: true, json: async () => ({ result: 'error', error: 'bad key' }) });
+      }
+      return Promise.resolve({ ok: false, json: async () => ({}) });
+    };
+    const ta = _ensureEl('feedback-text', 'textarea');
+    ta.value = 'This send should be reported as failed';
+    await sendFeedback();
+    assert(toastEl.textContent !== t('feedback_sent'),
+      `toast should not claim success when GAS rejects the request, got: "${toastEl.textContent}"`);
+    // Restore the happy-path mock for any tests after this one.
+    window.fetch = function(url, opts) {
+      if (typeof url === 'string' && url === GAS_URL) {
+        _lastGasCall = { url, opts };
+        return Promise.resolve({ ok: true, json: async () => ({ result: 'success' }) });
+      }
+      return Promise.resolve({ ok: false, json: async () => ({}) });
+    };
+  });
+
   // Restore fetch
   window.fetch = _origFetch;
 })();

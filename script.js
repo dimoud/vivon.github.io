@@ -7919,7 +7919,11 @@ async function sendFeedback() {
       } catch(e) {}
     }
 
-    // Send email notification via Google Apps Script
+    // Send email notification via Google Apps Script — mirrors the
+    // response validation used by the working contact-form.js reference
+    // (check res.ok, then json().result === 'success') so a rejected
+    // request can't silently be reported to the user as "sent".
+    let mailSent = false;
     try {
       const GAS_URL = 'https://script.google.com/macros/s/AKfycbx6XHAAeJMIUVUBtHmjNqu6NGSKvFWgkWeUT4x6x_UMsmEaoPXFPMqlhXLKH5dJ0aGlag/exec';
       const fd = new FormData();
@@ -7929,10 +7933,16 @@ async function sendFeedback() {
       fd.append('subject', `[VIVON Feedback] ${payload.type} from ${payload.user_email}`);
       fd.append('message', `Type: ${payload.type}\nFrom: ${payload.user_email}\nLang: ${payload.lang}\nApp: ${payload.app}\nDate: ${payload.created_at}\n\n${payload.message}`);
       fd.append('name', payload.user_email);
-      await fetch(GAS_URL, { method: 'POST', body: fd });
-    } catch(e) {}
+      const res = await fetch(GAS_URL, { method: 'POST', body: fd });
+      if (res.ok) {
+        const json = await res.json();
+        mailSent = !!(json && json.result === 'success');
+      }
+    } catch(e) {
+      console.error('sendFeedback: GAS mail request failed', e);
+    }
 
-    showToast(t('feedback_sent'), 3000);
+    showToast(mailSent ? t('feedback_sent') : t('feedback_saved_no_mail'), 3000);
     const ta = document.getElementById('feedback-text');
     if (ta) ta.value = '';
   } catch(e) {
