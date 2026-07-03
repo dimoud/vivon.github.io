@@ -1204,6 +1204,17 @@ input[type="range"]::-moz-range-thumb {
 .recipe-card.favorite { border-color: var(--amber); }
 .recipe-card-emoji { font-size: 2rem; margin-bottom: 6px; }
 .recipe-card-name { font-size: 0.75rem; font-weight: 700; line-height: 1.3; }
+.recipe-card-subtitle {
+  font-size: 0.66rem;
+  line-height: 1.2;
+  color: var(--text2);
+  margin-top: 3px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .recipe-card-kcal { font-size: 0.68rem; color: var(--green-d); font-weight: 700; margin-top: 4px; }
 .recipe-card-meal { font-size: 0.62rem; color: var(--text3); text-transform: uppercase; }
 
@@ -1688,6 +1699,93 @@ select { cursor: pointer; }
 .week-day-card-meal-slot:last-child { padding-bottom: 8px; }
 .week-day-card-footer { grid-row: 7; padding: 0 8px 10px; }
 
+/* Discrete horizontal line between meal rows — separates the timetable's
+   rows visually without the per-card time/label header that used to do
+   this job (time now lives once in .week-time-col on the left). */
+.week-day-card-meal-slot--row { border-top: 1px solid var(--border); padding-top: 8px; }
+.week-day-card-meal-slot--row:first-child { border-top: none; padding-top: 8px; }
+
+/* ── Timetable time column (leftmost) ──
+   Mirrors .week-day-card's row structure (header / 5 meal-type slots via
+   subgrid / footer) so its "07:00 BREAKFAST" labels land on the exact same
+   horizontal row as the matching meal-type slot in every day-column,
+   without repeating the time on every single card. */
+.week-days-grid--timetable { grid-template-columns: auto repeat(7, 1fr); }
+.week-time-col {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 7;
+  min-width: 0;
+}
+@supports not (grid-template-rows: subgrid) {
+  .week-time-col { display: none; } /* no side-by-side columns to label on the stacked mobile fallback */
+}
+.week-time-col-header { grid-row: 1; }
+.week-time-col .week-day-card-body {
+  grid-row: 2 / 7;
+  display: grid;
+  grid-template-rows: subgrid;
+}
+.week-time-col-slot {
+  padding: 8px 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+.week-time-col-time { font-size: 0.72rem; font-weight: 800; color: var(--text); }
+.week-time-col-label { font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 1px; }
+
+/* ── Shared MealCard ("mc-" prefix — deliberately not ".meal-card", which
+   is already the Daily page's per-meal card component) — used by the
+   weekly planner, change-meal dialog, add-meal picker, meal library and
+   builder, so a meal always looks the same everywhere. Stacked vertically:
+   icon+title row, kcal directly below (left-aligned, green), then the
+   ingredient subtitle, then macros where shown — matching the original
+   weekly-chip layout. `.mc--compact` is used where the card sits inside a
+   picker/list and needs a slightly smaller type scale (per spec: "almost
+   identical, just slightly more compact"). ── */
+.mc-title-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.mc-emoji {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.mc--compact .mc-emoji { font-size: 1.15rem; }
+.mc-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+}
+.mc--compact .mc-name { font-size: 0.7rem; }
+.mc-kcal {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--green-d, #16a34a);
+  margin-top: 3px;
+}
+.mc--compact .mc-kcal { font-size: 0.62rem; margin-top: 2px; }
+.mc-subtitle {
+  font-size: 0.75rem;
+  line-height: 1.15;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.mc--compact .mc-subtitle { font-size: 0.68rem; margin-top: 1px; }
+.mc-macros {
+  font-size: 0.7rem;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.mc--compact .mc-macros { font-size: 0.62rem; margin-top: 1px; }
+
 /* Week meal chip — clickable meal card inside weekly view */
 .week-meal-chip {
   background: var(--chip-bg, #f9fafb);
@@ -1712,21 +1810,12 @@ select { cursor: pointer; }
   opacity: 0.85;
   transition-duration: 0.08s;
 }
-.week-meal-chip-subtitle {
-  font-size: 0.68rem;
-  line-height: 1.15;
-  color: var(--text2);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 3px;
-}
 .week-meal-edit-icon {
+  position: absolute;
+  top: 5px;
+  right: 7px;
   font-size: 0.72rem;
   color: var(--chip-color, var(--text3));
-  flex-shrink: 0;
   opacity: 0;
   transition: opacity 0.15s;
 }
@@ -1844,8 +1933,10 @@ select { cursor: pointer; }
   background: var(--green-bg) !important;
   box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
 }
-.swap-row-selected .swap-name { color: var(--green-d); }
-.swap-row-selected .swap-kcal { color: var(--green-d); }
+.swap-row-selected .mc-name { color: var(--green-d); }
+.swap-row-selected .mc-kcal { color: var(--green-d); }
+.selected-builder .mc-name { color: var(--green-d); }
+.selected-builder .mc-kcal { color: var(--green-d); }
 .swap-row-left {
   display: flex;
   align-items: flex-start;

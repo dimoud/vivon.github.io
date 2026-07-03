@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Preview</title>
+<link rel="stylesheet" href="style.css">
+<style>body{margin:0;background:#f3f4f6}</style>
+</head>
+<body>
+<div id="page-week" class="page active"></div>
+
+<script>
+window.supabase = {
+  createClient: () => ({
+    auth: { signUp: async()=>({}), signInWithPassword: async()=>({}), signOut: async()=>{}, resetPasswordForEmail: async()=>({}), onAuthStateChange: ()=>{}, getSession: async()=>({data:{session:null}}) },
+    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async()=>({}), order: () => ({ maybeSingle: async()=>({}) }) }) }) }),
+  }),
+};
+window._currentUser = null;
+window.localStorage = { getItem: () => null, setItem: () => {} };
+</script>
+<script src="data.js"></script>
+<script src="supabase.js"></script>
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+<script>
+  state.profile.weight = 80; state.profile.height = 178; state.profile.age = 30; state.profile.gender = 'male';
+  state.goals.kcal = 2400; state.goals.protein = 180; state.goals.carbs = 220; state.goals.fat = 70;
+  state.planCreated = true;
+  state.planStartDate = new Date().toISOString().slice(0,10);
+  state.week = generateSmartWeek('mixed', {});
+  try { renderWeek(); } catch(e) {
+    document.body.innerHTML = '<pre style="color:red;padding:20px">' + e.stack + '</pre>';
+  }
+</script>
+</body>
+</html>

@@ -1032,6 +1032,16 @@ const MAX_PROTEIN_KCAL_SHARE = 0.40;
 function calcMaxRealisticProtein(kcal) {
   return Math.round((kcal * MAX_PROTEIN_KCAL_SHARE) / 4); // 4 kcal per gram of protein
 }
+// Fixed track ceiling for the protein <input type="range"> — the realistic
+// max at the kcal slider's own max of 3500, so it never actually restricts
+// anything reachable. The DOM max is intentionally NOT set to
+// calcMaxRealisticProtein(kcal) — if it were, the thumb's rendered position
+// (value/max) would shift every time the kcal goal changes even though the
+// protein value itself didn't move, which reads to users as "the protein
+// target moved on its own". The live ceiling is still shown via the hint
+// text/tooltip and enforced on input through _clampProteinGoalInput; only
+// the visual track width is fixed.
+const PROTEIN_SLIDER_MAX = calcMaxRealisticProtein(3500);
 
 function renderProfile() {
   // Write to whichever container is currently live
@@ -1254,7 +1264,8 @@ function _renderProfileInto(target) {
           </div>
           <input type="range" id="prof-kcal" min="1000" max="3500" step="50" value="${g.kcal}"
             class="${sliderClass} goal-slider"
-            oninput="updateGoalFromProfile('kcal',this.value)" style="width:100%;accent-color:${kcalColor}">`;
+            oninput="previewGoalFromProfile('kcal',this.value)"
+            onchange="commitGoalFromProfile('kcal',this.value)" style="width:100%;accent-color:${kcalColor}">`;
           })()}
           <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text3);margin-top:3px">
             <span>1000</span><span></span><span>3500</span>
@@ -1266,9 +1277,10 @@ function _renderProfileInto(target) {
             <span style="display:flex;align-items:center;gap:6px"><span>${t('prof_protein_label')}</span></span>
             <strong id="prof-prot-val" style="color:var(--blue)">${g.protein}g</strong>
           </div>
-          <input type="range" id="prof-prot" min="60" max="${calcMaxRealisticProtein(g.kcal)}" step="5" value="${Math.min(g.protein, calcMaxRealisticProtein(g.kcal))}"
+          <input type="range" id="prof-prot" min="60" max="${PROTEIN_SLIDER_MAX}" step="5" value="${Math.min(g.protein, calcMaxRealisticProtein(g.kcal))}"
             class="prof-range-blue goal-slider" title="${tFmt('goal_protein_max_tooltip', { max: calcMaxRealisticProtein(g.kcal) })}"
-            oninput="updateGoalFromProfile('protein',this.value)" style="width:100%">
+            oninput="previewGoalFromProfile('protein',this.value)"
+            onchange="commitGoalFromProfile('protein',this.value)" style="width:100%">
           <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text3);margin-top:3px">
             <span>60g</span><span id="td-prot-hint" style="color:var(--blue);font-weight:700">${tFmt('prof_protein_hint', {val: idealProt})}</span><span id="prof-prot-hint-max">${calcMaxRealisticProtein(g.kcal)}g</span>
           </div>
@@ -1521,13 +1533,19 @@ function _clampProteinGoalInput(v, kcal) {
   return v;
 }
 
+// Resyncs the protein slider's realistic ceiling after the kcal goal
+// changes. Deliberately leaves the DOM `max` attribute alone (it stays at
+// the fixed PROTEIN_SLIDER_MAX) — only the tooltip/hint text and, if the
+// current value now exceeds the new ceiling, the value itself are updated.
+// Moving `value` here is a genuine change (the protein goal really did get
+// clamped down) and is expected to move the thumb; resizing `max` was the
+// bug, since it moved the thumb for goals that hadn't changed at all.
 function _syncProteinSliderMax(kcal) {
   const max = calcMaxRealisticProtein(kcal);
   const tooltip = tFmt('goal_protein_max_tooltip', { max });
   ['prof-prot', 'week-prot-slider'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.max = max;
     el.title = tooltip;
     if (parseInt(el.value, 10) > max) el.value = max;
   });
@@ -1537,17 +1555,35 @@ function _syncProteinSliderMax(kcal) {
   });
 }
 
-function updateGoalFromProfile(key, val) {
-  let v = parseInt(val);
-  if (key === 'protein') v = _clampProteinGoalInput(v, state.goals.kcal);
-  state.goals[key] = v;
-  // Manual slider move → clear pace selection
+// Runs on every 'input' tick while dragging — must stay cheap (label/color
+// text only). Does NOT touch state, storage, or the protein slider's max,
+// so it can't cause jank or make the other slider's thumb jump mid-drag.
+function previewGoalFromProfile(key, val) {
+  const v = parseInt(val);
+  const labels = { kcal: 'prof-kcal-val', protein: 'prof-prot-val', carbs: 'prof-carb-val', fat: 'prof-fat-val' };
+  const suffixes = { kcal: ' kcal', protein: 'g', carbs: 'g', fat: 'g' };
+  const el = document.getElementById(labels[key]);
+  if (el) el.textContent = v + suffixes[key];
   if (key === 'kcal') {
-    state.goals.goalPace = null;
     const kcalEl = document.getElementById('prof-kcal-val');
     if (kcalEl) kcalEl.style.color = 'var(--amber)';
     const slider = document.getElementById('prof-kcal');
     if (slider) { slider.className = slider.className.replace(/prof-range-\w+/, 'prof-range-amber'); slider.style.accentColor = 'var(--amber)'; }
+  }
+}
+
+// Runs once on 'change' (drag released / arrow-key commit) — does the
+// actual state update, protein-ceiling resync, and save. Kept off the
+// per-tick 'input' handler because saveState()/autoSaveSettings() and the
+// protein max resync are too heavy to run dozens of times per drag, and
+// resyncing the protein slider's max mid-drag made its thumb visibly jump
+// even though the protein goal itself hadn't changed.
+function commitGoalFromProfile(key, val) {
+  let v = parseInt(val);
+  if (key === 'protein') v = _clampProteinGoalInput(v, state.goals.kcal);
+  state.goals[key] = v;
+  if (key === 'kcal') {
+    state.goals.goalPace = null;
     // Protein ceiling moves with the kcal goal — resync bound + clamp current value
     _syncProteinSliderMax(v);
     if (state.goals.protein > calcMaxRealisticProtein(v)) {
@@ -1568,6 +1604,18 @@ function updateGoalFromProfile(key, val) {
   }
   saveState();
   autoSaveSettings();
+}
+
+// Runs on every 'input' tick while dragging the week-page kcal/protein
+// sliders — label text only, so dragging stays smooth. The expensive part
+// (re-optimising all 7 days' macros, full renderWeek(), and saving) happens
+// once in updateWeekGoalSlider() on 'change', when the drag is released.
+function previewWeekGoalSlider(key, val) {
+  const v = parseInt(val);
+  const kcalEl = document.getElementById('week-kcal-val');
+  const protEl = document.getElementById('week-prot-val');
+  if (key === 'kcal' && kcalEl) kcalEl.textContent = v + ' kcal';
+  if (key === 'protein' && protEl) protEl.textContent = v + 'g';
 }
 
 function updateWeekGoalSlider(key, val) {
@@ -3688,7 +3736,13 @@ function renderToday() {
   updateActivitySection();
 }
 
-// ── Meal ingredient subtitle (week-view meal chips) ──
+// ── Shared MealCard model + renderer ──
+// Single source of truth for how a meal (standard-meal or recipe) is
+// represented as a card everywhere in the app: weekly planner, change-meal
+// dialog, add-meal picker, meal library, builder. Keeping one extractor +
+// one HTML renderer means every screen shows the same icon/title/subtitle/
+// macros/kcal instead of each screen inventing its own field subset.
+
 // Builds a short "Food • Food • Food" string from a meal's ingredients,
 // capped to the 6 most important items so the card stays compact.
 function _mealIngredientSubtitle(sm, recipe) {
@@ -3709,6 +3763,58 @@ function _mealIngredientSubtitle(sm, recipe) {
   return esc(names.slice(0, 6).join(' • '));
 }
 
+// Normalises a STANDARD_MEALS entry or a recipe (+ optional scaleFactor)
+// into the flat shape every MealCard renderer needs.
+function getMealCardData(sm, recipe, scaleFactor = 1) {
+  if (sm) {
+    const sf = scaleFactor || 1;
+    return {
+      emoji: sm.emoji,
+      name: tName(sm) || sm.name,
+      subtitle: _mealIngredientSubtitle(sm, null),
+      kcal: Math.round((sm.kcal_est || 0) * sf),
+      p: Math.round((sm.p || 0) * sf),
+      c: Math.round((sm.c || 0) * sf),
+      f: Math.round((sm.f || 0) * sf),
+      approx: true,
+    };
+  }
+  const m = calcRecipeMacros(recipe, scaleFactor || 1);
+  return {
+    emoji: recipe.emoji,
+    name: esc(tName(recipe)),
+    subtitle: _mealIngredientSubtitle(null, recipe),
+    kcal: m.kcal, p: m.p, c: m.c, f: m.f,
+    approx: false,
+  };
+}
+
+// Renders a full meal card (icon+title row, then kcal, then ingredient
+// subtitle — plus a P/C/F macro line when showMacros is true) shared by
+// the weekly planner, change-meal dialog, add-meal picker and meal
+// library. Stacked vertically (title row on top, kcal directly below it,
+// left-aligned) to match the original weekly-chip layout. Returns a
+// complete "mc" element (add compact=true for pickers/lists, which shrinks
+// type sizes slightly per the "almost identical, just slightly more
+// compact" spec) — drop it inside the caller's flex row alongside any
+// edit-icon/add-button; do not add the mc/mc--compact classes yourself.
+// showMacros: the weekly planner intentionally omits the macro line (title +
+// ingredients + kcal only, as before); pickers/library show it since users
+// pick a meal there without opening its details.
+function renderMealCardInner(d, showMacros = false, compact = false) {
+  const pAbbr = t('macro_p_abbr'), cAbbr = t('macro_c_abbr'), fAbbr = t('macro_f_abbr');
+  return `
+    <div class="mc${compact ? ' mc--compact' : ''}">
+      <div class="mc-title-row">
+        <span class="mc-emoji">${d.emoji}</span>
+        <span class="mc-name">${d.name}</span>
+      </div>
+      ${d.subtitle ? `<div class="mc-subtitle">${d.subtitle}</div>` : ''}
+      ${showMacros ? `<div class="mc-macros">${pAbbr}:${d.p}g • ${cAbbr}:${d.c}g • ${fAbbr}:${d.f}g</div>` : ''}
+      <div class="mc-kcal">${d.approx ? '~' : ''}${d.kcal} kcal</div>
+    </div>`;
+}
+
 // ── PAGE: WEEK ──
 function renderWeek() {
   const allR = [...RECIPES_DB, ...state.customRecipes];
@@ -3727,6 +3833,21 @@ function renderWeek() {
     d.setDate(d.getDate() + di);
     return dayNamesLong[d.getDay()];
   }
+
+  // ── Time-of-day column (leftmost) — shows each meal slot's time ONCE,
+  // shared across every day-column, so the grid reads as a timetable
+  // instead of repeating the time on every single card.
+  const slotTimes = getMealTimes();
+  const timeColRows = mealOrder.map(type => `
+    <div class="week-day-card-meal-slot week-day-card-meal-slot--row week-time-col-slot">
+      <div class="week-time-col-time">${slotTimes[type] || ''}</div>
+      <div class="week-time-col-label" style="color:${mealMeta[type].color}">${mealMeta[type].label}</div>
+    </div>`).join('');
+  const timeCol = `<div class="week-time-col">
+    <div class="week-day-card-header week-time-col-header"></div>
+    <div class="week-day-card-body">${timeColRows}</div>
+    <div class="week-day-card-footer"></div>
+  </div>`;
 
   // ── Εβδομαδιαία stats ──
   let totalKcal = 0, totalP = 0, totalC = 0, totalF = 0, daysWithMeals = 0;
@@ -3829,41 +3950,21 @@ function renderWeek() {
       const meals = byType[type];
       const meta = mealMeta[type];
       if (!meals || meals.length === 0) {
-        return `<div class="week-day-card-meal-slot"></div>`;
+        return `<div class="week-day-card-meal-slot week-day-card-meal-slot--row"></div>`;
       }
 
       const itemsHtml = meals.map(me => {
         const mi = day.meals.indexOf(me);
-        let name = '', kcal = 0, emoji = '', subtitle = '';
-        if (me.standardId) {
-          const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
-          if (!sm) return '';
-          name = tName(sm) || sm.name; emoji = sm.emoji;
-          kcal = Math.round(sm.kcal_est * (me.scaleFactor||1));
-          subtitle = _mealIngredientSubtitle(sm, null);
-        } else {
-          const r = allR.find(x => x.id === me.recipeId);
-          if (!r) return '';
-          const mac = calcRecipeMacros(r, me.scaleFactor||1);
-          name = tName(r); emoji = r.emoji; kcal = mac.kcal;
-          subtitle = _mealIngredientSubtitle(null, r);
-        }
-        return `<div style="margin-bottom:5px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1px">
-            <span style="font-size:0.6rem;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em">${meta.label}</span>
-          </div>
-          <div class="week-meal-chip" style="--chip-bg:${meta.bg};--chip-border:${meta.border};--chip-color:${meta.color}" onclick="openSwapMeal(${mi},${di})">
-            <div style="display:flex;align-items:center;gap:5px;margin-bottom:1px">
-              <span style="font-size:1.15rem;flex-shrink:0">${emoji}</span>
-              <span style="font-size:0.7rem;font-weight:700;color:var(--text);line-height:1.3;flex:1">${name}</span>
-              <span class="week-meal-edit-icon">✎</span>
-            </div>
-            ${subtitle ? `<div class="week-meal-chip-subtitle">${subtitle}</div>` : ''}
-            <div style="font-size:0.62rem;color:${meta.color};font-weight:700">${kcal} kcal</div>
-          </div>
+        const sm = me.standardId ? STANDARD_MEALS.find(s => s.id === me.standardId) : null;
+        const r  = me.standardId ? null : allR.find(x => x.id === me.recipeId);
+        if (me.standardId ? !sm : !r) return '';
+        const d = getMealCardData(sm, r, me.scaleFactor || 1);
+        return `<div class="week-meal-chip" style="--chip-bg:${meta.bg};--chip-border:${meta.border};--chip-color:${meta.color}" onclick="openSwapMeal(${mi},${di})">
+          ${renderMealCardInner(d, false, true)}
+          <span class="week-meal-edit-icon">✎</span>
         </div>`;
       }).join('');
-      return `<div class="week-day-card-meal-slot">${itemsHtml}</div>`;
+      return `<div class="week-day-card-meal-slot week-day-card-meal-slot--row">${itemsHtml}</div>`;
     }).join('');
 
     const footerHtml = (() => {
@@ -3971,7 +4072,8 @@ function renderWeek() {
               </div>
               <input type="range" id="week-kcal-slider" min="1000" max="3500" step="50" value="${state.goals.kcal}"
                 style="width:100%;accent-color:var(--amber)"
-                oninput="updateWeekGoalSlider('kcal',this.value)">
+                oninput="previewWeekGoalSlider('kcal',this.value)"
+                onchange="updateWeekGoalSlider('kcal',this.value)">
               <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3)"><span>1000</span><span>3500</span></div>
             </div>
             <div>
@@ -3979,9 +4081,10 @@ function renderWeek() {
                 <span style="font-size:0.68rem;font-weight:700;color:var(--text2)">${t('prof_protein_label')}</span>
                 <strong id="week-prot-val" style="font-size:0.72rem;color:var(--blue)">${Math.min(state.goals.protein, calcMaxRealisticProtein(state.goals.kcal))}g</strong>
               </div>
-              <input type="range" id="week-prot-slider" min="60" max="${calcMaxRealisticProtein(state.goals.kcal)}" step="5" value="${Math.min(state.goals.protein, calcMaxRealisticProtein(state.goals.kcal))}"
+              <input type="range" id="week-prot-slider" min="60" max="${PROTEIN_SLIDER_MAX}" step="5" value="${Math.min(state.goals.protein, calcMaxRealisticProtein(state.goals.kcal))}"
                 style="width:100%;accent-color:#3b82f6" title="${tFmt('goal_protein_max_tooltip', { max: calcMaxRealisticProtein(state.goals.kcal) })}"
-                oninput="updateWeekGoalSlider('protein',this.value)">
+                oninput="previewWeekGoalSlider('protein',this.value)"
+                onchange="updateWeekGoalSlider('protein',this.value)">
               <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--text3)"><span>60g</span><span id="week-prot-hint-max">${calcMaxRealisticProtein(state.goals.kcal)}g</span></div>
             </div>
           </div>
@@ -3990,7 +4093,8 @@ function renderWeek() {
 
       <!-- 7-day grid -->
       <div style="padding:12px 12px 8px">
-        <div class="week-days-grid">
+        <div class="week-days-grid week-days-grid--timetable">
+          ${timeCol}
           ${cols}
         </div>
       </div>
@@ -4264,9 +4368,11 @@ function renderRecipes(filter = '') {
         ${recipes.map(r => {
           const m = calcRecipeMacros(r);
           const isFav = state.favorites.includes(r.id);
+          const subtitle = _mealIngredientSubtitle(null, r);
           return `<div class="recipe-card ${isFav?'favorite':''}" onclick="openRecipeDetail('${r.id}')">
             <div class="recipe-card-emoji">${r.emoji}</div>
             <div class="recipe-card-name">${esc(tName(r))}</div>
+            ${subtitle ? `<div class="recipe-card-subtitle">${subtitle}</div>` : ''}
             <div class="recipe-card-kcal">${m.kcal} kcal</div>
             <div class="recipe-card-meal">${t('macro_p_abbr')}:${m.p}g | ${t('macro_c_abbr')}:${m.c}g | ${t('macro_f_abbr')}:${m.f}g</div>
             <button style="margin-top:6px;font-size:0.8rem;border:none;background:none;cursor:pointer" onclick="event.stopPropagation();toggleFavorite('${r.id}')">${isFav?'⭐':'☆'}</button>
@@ -4494,7 +4600,6 @@ function renderBuilderPage(typeFilter) {
 
   // ── LEFT: meal library ──
   const libSearch = (window._builderSearch || '').toLowerCase();
-  const _pAbbr = t('macro_p_abbr'), _cAbbr = t('macro_c_abbr'), _fAbbr = t('macro_f_abbr');
   let libHtml = '';
   mealTypes.forEach(mType => {
     const meta = mealTypeMeta[mType];
@@ -4509,26 +4614,17 @@ function renderBuilderPage(typeFilter) {
     libHtml += `<div class="dplanner-lib-grid">`;
     standards.forEach(s => {
       const sel = builderMeals.find(x => x.id === s.id && x.isStandard);
+      const d = getMealCardData(s, null);
       libHtml += `<div class="dplanner-meal-card ${sel ? 'selected-dp' : ''}" onclick="builderPageToggle('${s.id}',true)">
-        <div class="dplanner-meal-emoji">${s.emoji}</div>
-        <div class="dplanner-meal-info">
-          <div class="dplanner-meal-name">${tName(s) || s.name}</div>
-          <div class="dplanner-meal-meta">${_pAbbr}:${s.p||'?'}g · ${_cAbbr}:${s.c||'?'}g · ${_fAbbr}:${s.f||'?'}g</div>
-        </div>
-        <div class="dplanner-meal-kcal">~${s.kcal_est} kcal</div>
+        ${renderMealCardInner(d, true, true)}
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${s.id}',true)">${sel ? '✕' : '+'}</button>
       </div>`;
     });
     recipes.forEach(r => {
-      const m = calcRecipeMacros(r);
       const sel = builderMeals.find(x => x.id === r.id && !x.isStandard);
+      const d = getMealCardData(null, r);
       libHtml += `<div class="dplanner-meal-card ${sel ? 'selected-dp' : ''}" onclick="builderPageToggle('${r.id}',false)">
-        <div class="dplanner-meal-emoji">${r.emoji}</div>
-        <div class="dplanner-meal-info">
-          <div class="dplanner-meal-name">${esc(tName(r))}</div>
-          <div class="dplanner-meal-meta">${_pAbbr}:${m.p}g · ${_cAbbr}:${m.c}g · ${_fAbbr}:${m.f}g</div>
-        </div>
-        <div class="dplanner-meal-kcal">${m.kcal} kcal</div>
+        ${renderMealCardInner(d, true, true)}
         <button class="dplanner-add-btn dplanner-add-btn--visible" onclick="event.stopPropagation();builderPageToggle('${r.id}',false)">${sel ? '✕' : '+'}</button>
       </div>`;
     });
@@ -5572,21 +5668,16 @@ function renderBuilderRecipeList(typeFilter) {
     html += `<div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin:8px 0 4px">${_mealLabels[mType]}</div>`;
     standards.forEach(s => {
       const inBuilder = builderMeals.find(x => x.id === s.id && x.isStandard);
+      const d = getMealCardData(s, null);
       html += `<div class="swap-row ${inBuilder?'selected-builder':''}" onclick="builderToggle('${s.id}',true)">
-        <div class="swap-row-left"><span class="swap-emoji">${s.emoji}</span>
-          <div><div class="swap-name">⭐ ${tName(s) || s.name}</div><div class="swap-items">${s.items.slice(0,2).join(' · ')}</div></div>
-        </div>
-        <div class="swap-kcal">~${s.kcal_est}<span>kcal</span></div>
+        ${renderMealCardInner(d, true, true)}
       </div>`;
     });
     recipes.forEach(r => {
-      const m = calcRecipeMacros(r);
       const inBuilder = builderMeals.find(x => x.id === r.id && !x.isStandard);
+      const d = getMealCardData(null, r);
       html += `<div class="swap-row ${inBuilder?'selected-builder':''}" onclick="builderToggle('${r.id}',false)">
-        <div class="swap-row-left"><span class="swap-emoji">${r.emoji}</span>
-          <div><div class="swap-name">${esc(tName(r))}</div><div class="swap-items">${t('macro_p_abbr')}:${m.p}g · ${t('macro_c_abbr')}:${m.c}g · ${t('macro_f_abbr')}:${m.f}g</div></div>
-        </div>
-        <div class="swap-kcal">${m.kcal}<span>kcal</span></div>
+        ${renderMealCardInner(d, true, true)}
       </div>`;
     });
   });
@@ -6029,34 +6120,22 @@ function openSwapMeal(mi, dayIdx) {
   // Init pending state
   _swapPending = { mi, dayIdx, type: currentType, id: currentId, isStd: !!currentMeal.standardId, sf: currentSf };
 
-  const standardItems = standards.map(s => ({
-    key: 'std:' + s.id,
-    html: `<div class="swap-row${s.id === currentId ? ' swap-row-selected' : ''}" data-name="${(tName(s)||s.name).toLowerCase()}" data-id="${s.id}" data-isstd="1" data-kcal="${s.kcal_est}" data-p="${s.p||0}" data-c="${s.c||0}" data-f="${s.f||0}" onclick="_swapRowClick(this)">
-      <div class="swap-row-left">
-        <span class="swap-emoji">${s.emoji}</span>
-        <div>
-          <div class="swap-name">${tName(s) || s.name}</div>
-          <div class="swap-items">${s.items.join(' · ')}</div>
-          ${s.note ? `<div class="swap-note">${s.note}</div>` : ''}
-        </div>
-      </div>
-      <div class="swap-kcal">~${s.kcal_est}<br><span>kcal</span></div>
-    </div>`
-  }));
+  const standardItems = standards.map(s => {
+    const d = getMealCardData(s, null);
+    return {
+      key: 'std:' + s.id,
+      html: `<div class="swap-row${s.id === currentId ? ' swap-row-selected' : ''}" data-name="${(tName(s)||s.name).toLowerCase()}" data-id="${s.id}" data-isstd="1" data-kcal="${d.kcal}" data-p="${d.p}" data-c="${d.c}" data-f="${d.f}" onclick="_swapRowClick(this)">
+        ${renderMealCardInner(d, true, true)}
+      </div>`
+    };
+  });
 
   const recipeItems = recipes.map(r => {
-    const m = calcRecipeMacros(r);
+    const d = getMealCardData(null, r);
     return {
       key: 'rec:' + r.id,
-      html: `<div class="swap-row${r.id === currentId ? ' swap-row-selected' : ''}" data-name="${esc(tName(r).toLowerCase())}" data-id="${r.id}" data-isstd="0" data-kcal="${m.kcal}" data-p="${m.p}" data-c="${m.c}" data-f="${m.f}" onclick="_swapRowClick(this)">
-        <div class="swap-row-left">
-          <span class="swap-emoji">${r.emoji}</span>
-          <div>
-            <div class="swap-name">${esc(tName(r))}</div>
-            <div class="swap-items">${t('macro_p_abbr')}:${m.p}g · ${t('macro_c_abbr')}:${m.c}g · ${t('macro_f_abbr')}:${m.f}g</div>
-          </div>
-        </div>
-        <div class="swap-kcal">${m.kcal}<br><span>kcal</span></div>
+      html: `<div class="swap-row${r.id === currentId ? ' swap-row-selected' : ''}" data-name="${esc(tName(r).toLowerCase())}" data-id="${r.id}" data-isstd="0" data-kcal="${d.kcal}" data-p="${d.p}" data-c="${d.c}" data-f="${d.f}" onclick="_swapRowClick(this)">
+        ${renderMealCardInner(d, true, true)}
       </div>`
     };
   });
@@ -7182,26 +7261,19 @@ function exportPDF_week() {
       if (!meals || meals.length === 0) return '';
       const meta = mealMetaP[type];
       return meals.map(me => {
-        let name = '', kcal = 0, emoji = '';
-        if (me.standardId) {
-          const sm = STANDARD_MEALS.find(s => s.id === me.standardId);
-          if (!sm) return '';
-          name = tName(sm) || sm.name; emoji = sm.emoji;
-          kcal = Math.round(sm.kcal_est * (me.scaleFactor||1));
-        } else {
-          const r = allRecipes.find(x => x.id === me.recipeId);
-          if (!r) return '';
-          const mac = calcRecipeMacros(r, me.scaleFactor||1);
-          name = tName(r); emoji = r.emoji; kcal = mac.kcal;
-        }
+        const sm = me.standardId ? STANDARD_MEALS.find(s => s.id === me.standardId) : null;
+        const r  = me.standardId ? null : allRecipes.find(x => x.id === me.recipeId);
+        if (me.standardId ? !sm : !r) return '';
+        const d = getMealCardData(sm, r, me.scaleFactor || 1);
         return `<div style="margin-bottom:4px">
           <div style="font-size:7.5px;font-weight:800;color:${meta.color};text-transform:uppercase;letter-spacing:0.04em;margin-bottom:1px">${meta.label}</div>
           <div style="background:${meta.bg};border-left:2px solid ${meta.border};border-radius:0 4px 4px 0;padding:3px 5px">
             <div style="display:flex;align-items:center;gap:3px;margin-bottom:1px">
-              <span style="font-size:13px;flex-shrink:0;line-height:1">${emoji}</span>
-              <span style="font-size:8.5px;font-weight:700;color:#111;line-height:1.2;flex:1">${name}</span>
+              <span style="font-size:13px;flex-shrink:0;line-height:1">${d.emoji}</span>
+              <span style="font-size:8.5px;font-weight:700;color:#111;line-height:1.2;flex:1">${d.name}</span>
             </div>
-            <div style="font-size:7.5px;color:${meta.color};font-weight:700">${kcal} kcal</div>
+            ${d.subtitle ? `<div style="font-size:6.5px;color:#6b7280;line-height:1.15;margin-bottom:1px;overflow:hidden;max-height:15px">${d.subtitle}</div>` : ''}
+            <div style="font-size:7.5px;color:${meta.color};font-weight:700">${d.approx ? '~' : ''}${d.kcal} kcal</div>
           </div>
         </div>`;
       }).join('');
@@ -8021,108 +8093,6 @@ function _addSwipeDismiss(el, onDismiss, { directions = ['down'], threshold = 72
     el.removeEventListener('touchend',   onEnd);
   };
 }
-
-/* ── SLIDER THUMB-ONLY DRAG (prevents accidental value changes while scrolling) ──
-   Native <input type="range"> jumps its value to wherever you tap on the track,
-   and on mobile that happens constantly during vertical page scroll. This module
-   disables that: tapping the track does nothing, and dragging only works if the
-   gesture starts on the thumb itself AND moves mostly horizontally. If vertical
-   movement dominates (or wins outright), it's treated as a scroll and the slider
-   is left untouched so the page scrolls normally. */
-(function () {
-  const DRAG_THRESHOLD = 10; // px — gesture must clear this before we commit to a direction
-  const THUMB_TOLERANCE = 6; // px — extra hit-slop around the visual thumb, forgiving for fingers
-
-  function thumbHalfWidth(el) {
-    return el.classList.contains('swap-scale-slider') ? 11 : 13; // half of 22px / 26px thumb
-  }
-
-  function thumbCenterX(el) {
-    const rect = el.getBoundingClientRect();
-    const min = parseFloat(el.min) || 0;
-    const max = parseFloat(el.max) || 100;
-    const val = parseFloat(el.value);
-    const pct = max > min ? (val - min) / (max - min) : 0;
-    const half = thumbHalfWidth(el);
-    // Browsers inset the thumb's travel range by its own half-width on each side.
-    return rect.left + half + pct * (rect.width - 2 * half);
-  }
-
-  function isOnThumb(el, clientX, clientY) {
-    const rect = el.getBoundingClientRect();
-    if (clientY < rect.top - THUMB_TOLERANCE || clientY > rect.bottom + THUMB_TOLERANCE) return false;
-    const half = thumbHalfWidth(el);
-    const cx = thumbCenterX(el);
-    return Math.abs(clientX - cx) <= half + THUMB_TOLERANCE;
-  }
-
-  function valueFromX(el, clientX) {
-    const rect = el.getBoundingClientRect();
-    const min = parseFloat(el.min) || 0;
-    const max = parseFloat(el.max) || 100;
-    const step = parseFloat(el.step) || 1;
-    const half = thumbHalfWidth(el);
-    const usableWidth = Math.max(1, rect.width - 2 * half);
-    let pct = (clientX - rect.left - half) / usableWidth;
-    pct = Math.min(1, Math.max(0, pct));
-    let val = min + pct * (max - min);
-    val = Math.round(val / step) * step;
-    val = Math.min(max, Math.max(min, val));
-    // Avoid float noise like 1550.0000000002
-    const decimals = (String(step).split('.')[1] || '').length;
-    return decimals ? parseFloat(val.toFixed(decimals)) : val;
-  }
-
-  let active = null; // { el, startX, startY, dragging, decided }
-
-  function onPointerDown(e) {
-    const el = e.target;
-    if (!el || el.tagName !== 'INPUT' || el.type !== 'range') return;
-    if (!isOnThumb(el, e.clientX, e.clientY)) {
-      // Tap landed on the track, not the thumb — swallow it so the native
-      // implementation doesn't snap the value to the tap position.
-      e.preventDefault();
-      return;
-    }
-    active = { el, startX: e.clientX, startY: e.clientY, dragging: false, decided: false };
-  }
-
-  function onPointerMove(e) {
-    if (!active) return;
-    const dx = e.clientX - active.startX;
-    const dy = e.clientY - active.startY;
-    const adx = Math.abs(dx), ady = Math.abs(dy);
-
-    if (!active.decided) {
-      if (adx < DRAG_THRESHOLD && ady < DRAG_THRESHOLD) return; // not enough movement yet
-      active.decided = true;
-      active.dragging = adx > ady; // horizontal wins → drag; vertical wins → let it scroll
-      if (!active.dragging) { active = null; return; } // hand off to native scrolling
-    }
-
-    if (active.dragging) {
-      e.preventDefault();
-      const el = active.el;
-      const newVal = valueFromX(el, e.clientX);
-      if (String(newVal) !== el.value) {
-        el.value = newVal;
-        el.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-    }
-  }
-
-  function onPointerUp(e) {
-    if (active && active.dragging) {
-      active.el.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-    active = null;
-  }
-
-  document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: false });
-  document.addEventListener('pointermove', onPointerMove, { capture: true, passive: false });
-  document.addEventListener('pointerup', onPointerUp, { capture: true, passive: true });
-  document.addEventListener('pointercancel', onPointerUp, { capture: true, passive: true });
-})();
 
 /* ── HISTORY API (back-button support) ── */
 function _historyPushTab(tab) {
