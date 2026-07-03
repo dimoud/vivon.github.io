@@ -673,7 +673,7 @@ function renderBodyChart(log) {
       const e = filtered[Math.max(0, Math.min(n-1, idx))];
       const parts = [`📅 ${fmtDateGr(e.date)}`];
       if (state.series.weight && e.weight != null) parts.push(`⚖️ ${e.weight} kg`);
-      if (state.series.fat && hasFat && e.fat != null) parts.push(`🩸 ${e.fat}%`);
+      if (state.series.fat && hasFat && e.fat != null) parts.push(`🧈 ${e.fat}%`);
       if (state.series.muscle && hasMuscle && e.muscle != null) parts.push(`💪 ${e.muscle}%`);
       const tip = document.getElementById(id + '_tip');
       if (!tip) return;
@@ -809,7 +809,7 @@ function renderBodyMeasurementsCard() {
   const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
 
   const weightCard = statCard('#eff6ff', '⚖️', weightVal, t('body_weight'),  '#3b82f6');
-  const fatCard    = statCard('#fef2f2', '🩸',  fatVal,    t('macro_fat'),    '#ef4444');
+  const fatCard    = statCard('#fef2f2', '🧈',  fatVal,    t('macro_fat'),    '#ef4444');
   const muscleCard = statCard('#f0fdf4', '💪',  muscleVal, t('body_muscle'),  '#16a34a');
 
   const dateChip = latest
@@ -835,7 +835,7 @@ function renderBodyMeasurementsCard() {
         </div>`;
         const fatCol = (e.fat != null)
           ? `<div style="display:flex;flex-direction:column;align-items:center;gap:1px;min-width:36px">
-              <span style="font-size:0.85rem">🩸</span>
+              <span style="font-size:0.85rem">🧈</span>
               <span style="font-size:0.8rem;font-weight:700;color:#ef4444">${e.fat}%</span>
               <span style="font-size:0.6rem;color:#9ca3af">${t('body_fat')}</span>
              </div>` : '';
@@ -907,7 +907,7 @@ function renderBodyMeasurementsCard() {
         <div>
           <div style="font-size:0.72rem;font-weight:600;color:#374151;margin-bottom:5px">% ${t('body_fat')}</div>
           <div style="display:flex;align-items:center;gap:7px;border:1.5px solid #e5e7eb;border-radius:10px;padding:0 11px;background:#fff;height:42px;box-sizing:border-box">
-            <span style="font-size:0.85rem;flex-shrink:0">🩸</span>
+            <span style="font-size:0.85rem;flex-shrink:0">🧈</span>
             <input type="text" inputmode="decimal" id="bm-fat" placeholder="e.g. 22.5"
               style="border:none;outline:none;font-size:0.78rem;background:transparent;color:#111;flex:1;min-width:0;width:100%;height:100%">
           </div>
@@ -1803,6 +1803,31 @@ function _allMeals() {
 let _wizardSwipeCleanup = null;
 function createPlan() {
   if (document.getElementById('wizard-overlay')?.classList.contains('open')) return;
+  const today = new Date().toISOString().split('T')[0];
+  openModal(`
+    <div class="modal-handle"></div>
+    <div class="modal-title">${t('prof_plan_start_title')}</div>
+    <p style="font-size:0.83rem;color:var(--text2);margin-bottom:14px">${t('prof_plan_start_desc')}</p>
+    <input type="date" id="createplan-start-date" value="${state.planStartDate || today}"
+      onclick="this.showPicker && this.showPicker()"
+      style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:0.92rem;background:var(--bg2);margin-bottom:18px;box-sizing:border-box">
+    <div style="display:flex;gap:10px">
+      <button onclick="closeModal()" class="btn btn-ghost" style="flex:1">${t('btn_cancel')}</button>
+      <button onclick="_confirmPlanStartDate()" class="btn btn-green" style="flex:1">${t('btn_next')}</button>
+    </div>
+  `);
+}
+
+function _confirmPlanStartDate() {
+  const dateEl = document.getElementById('createplan-start-date');
+  const dateStr = dateEl?.value || new Date().toISOString().split('T')[0];
+  state.planStartDate = dateStr;
+  saveState();
+  closeModal();
+  _openMealWizard();
+}
+
+function _openMealWizard() {
   _wizardExcluded = {};
   WIZARD_MEALS.forEach(m => {
     _wizardExcluded[m.key] = new Set(state.wizardExcluded?.[m.key] || []);
@@ -3495,16 +3520,13 @@ function renderWeek() {
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px">
           <div style="display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:10px;padding:4px 8px;border:1px solid var(--border)">
             <button onclick="shiftWeek(-1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">‹</button>
-            <button class="btn btn-ghost btn-sm" onclick="goToToday()">${t('week_today_btn')}</button>
             <button onclick="shiftWeek(1)" style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--text2);padding:2px 6px;min-height:36px">›</button>
           </div>
           ${weekRange ? `<div style="font-size:0.78rem;font-weight:700;color:var(--text2)">${weekRange}</div>` : ''}
           <div style="display:flex;gap:5px;margin-left:auto;align-items:center">
-            <button id="week-regen-btn" onclick="confirmRegenerateInline()" title="Δημιούργησε Ξανά"
-              style="display:flex;align-items:center;gap:5px;background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:background .15s;white-space:nowrap"
-              onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background=this.dataset.active==='1'?'var(--green)':'#3b82f6'">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-              <span class="week-btn-label">${t('week_regen')}</span>
+            <button id="week-create-plan-btn" onclick="createPlan()" title="${t('prof_create_plan_btn')}"
+              style="display:flex;align-items:center;gap:5px;background:var(--green);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:0.78rem;font-weight:700;cursor:pointer;white-space:nowrap">
+              <span class="week-btn-label">${t('prof_create_plan_btn')}</span>
             </button>
             <button class="btn btn-ghost btn-sm" onclick="exportPDF()" title="PDF">🖨️ <span class="week-btn-label">PDF</span></button>
             <button class="btn btn-ghost btn-sm" onclick="copyDay()" title="${t('week_copy_btn')}">📋</button>
@@ -7060,7 +7082,7 @@ function renderStatsPage() {
         <h3 style="margin-bottom:12px">${t('stats_body_progress')}</h3>
         <div style="display:flex;gap:6px;margin-bottom:8px">
           ${bodyStatCard('#eff6ff','⚖️',weightVal,t('body_weight'),'#3b82f6')}
-          ${bodyStatCard('#fef2f2','🩸',fatVal,t('body_fat'),'#ef4444')}
+          ${bodyStatCard('#fef2f2','🧈',fatVal,t('body_fat'),'#ef4444')}
           ${bodyStatCard('#f0fdf4','💪',muscleVal,t('body_muscle'),'#16a34a')}
         </div>
         ${dateChip}
