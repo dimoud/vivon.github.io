@@ -1556,8 +1556,7 @@ function _syncProteinSliderMax(kcal) {
 }
 
 // Runs on every 'input' tick while dragging — must stay cheap (label/color
-// text only). Does NOT touch state, storage, or the protein slider's max,
-// so it can't cause jank or make the other slider's thumb jump mid-drag.
+// text only). Does NOT touch state or storage, so dragging stays smooth.
 function previewGoalFromProfile(key, val) {
   const v = parseInt(val);
   const labels = { kcal: 'prof-kcal-val', protein: 'prof-prot-val', carbs: 'prof-carb-val', fat: 'prof-fat-val' };
@@ -1574,10 +1573,8 @@ function previewGoalFromProfile(key, val) {
 
 // Runs once on 'change' (drag released / arrow-key commit) — does the
 // actual state update, protein-ceiling resync, and save. Kept off the
-// per-tick 'input' handler because saveState()/autoSaveSettings() and the
-// protein max resync are too heavy to run dozens of times per drag, and
-// resyncing the protein slider's max mid-drag made its thumb visibly jump
-// even though the protein goal itself hadn't changed.
+// per-tick 'input' handler because saveState()/autoSaveSettings() are too
+// heavy to run dozens of times per drag.
 function commitGoalFromProfile(key, val) {
   let v = parseInt(val);
   if (key === 'protein') v = _clampProteinGoalInput(v, state.goals.kcal);
