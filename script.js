@@ -1831,7 +1831,7 @@ function getTodayPlanDayIndex() {
 
 // ── GOURMET IDS — defined before wizard so _renderWizardStep can use it ──
 const GOURMET_IDS = new Set([
-  'r48','r45','r40',
+  'r48','r45','r40','r68',
   'sm55','sm56','sm73',
   'cb_b4','cb_b5','cb_b6','cb_b7',
   'cb_l1','cb_l2','cb_l3','cb_l4','cb_l5','cb_l7','cb_l9','cb_l11','cb_l13','cb_l14','cb_l15',
