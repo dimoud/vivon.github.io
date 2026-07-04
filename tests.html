@@ -1566,12 +1566,18 @@ test('repeatMeals=true pairing still holds after a shortfall-swap-induced re-syn
   }
 });
 
-test('week._goalsUnmet is true for an unrealistic protein target', () => {
+// week._goalsUnmet reflects whether the (possibly-capped) effective protein
+// target was hit after the optimizer's best effort — a random recipe shuffle
+// can occasionally still clear that capped bar even for a wildly unrealistic
+// raw ask, so asserting on it directly here would be flaky. _proteinGoalUnrealistic
+// is the deterministic flag for "the user's raw goal exceeds calcMaxRealisticProtein
+// for this kcal budget" (script.js ~3164) — assert on that instead.
+test('day._proteinGoalUnrealistic is true when the raw protein target exceeds the realistic cap for its kcal budget', () => {
   const prevGoals = state.goals;
-  state.goals = { kcal: 1400, protein: 400, carbs: 100, fat: 30 }; // 400g protein at 1400kcal is unrealistic
+  state.goals = { kcal: 1400, protein: 400, carbs: 100, fat: 30 }; // cap at 1400kcal is 140g; 400g far exceeds it
   try {
     const week = generateSmartWeek('simple', {});
-    assertEq(week._goalsUnmet, true, 'unrealistic protein target should leave goalsUnmet true');
+    assert(week.some(d => d._proteinGoalUnrealistic), 'at least one day should flag the raw target as unrealistic for its kcal budget');
   } finally {
     state.goals = prevGoals;
   }

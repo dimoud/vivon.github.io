@@ -824,7 +824,7 @@ function renderBodyMeasurementsCard() {
   const muscleVal = (latest && latest.muscle != null) ? `${latest.muscle}%` : '—';
 
   const weightCard = statCard('#eff6ff', '⚖️', weightVal, t('body_weight'),  '#3b82f6');
-  const fatCard    = statCard('#fef2f2', '🧈',  fatVal,    t('macro_fat'),    '#ef4444');
+  const fatCard    = statCard('#fef2f2', '🧈',  fatVal,    t('body_fat'),    '#ef4444');
   const muscleCard = statCard('#f0fdf4', '💪',  muscleVal, t('body_muscle'),  '#16a34a');
 
   const dateChip = latest
@@ -1871,16 +1871,21 @@ function _confirmWeekDatePicker() {
   renderWeek();
 }
 
+// state.planStartDate is a bare "YYYY-MM-DD" string (from an <input
+// type="date">). `new Date(str)` parses that as UTC midnight, not local
+// midnight — in timezones ahead of UTC the instant can land on the previous
+// local calendar day, silently shifting every date computed from it back by
+// one day (wrong weekday/date shown, off-by-one day indices). Parse the
+// year/month/day components directly into a local-midnight Date instead.
+function _parseLocalDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 // Επιστρέφει τον δείκτη ημέρας (0-based) του προγράμματος που αντιστοιχεί στη σημερινή ημερομηνία, ή null αν δεν είναι εντός εύρους
 function getTodayPlanDayIndex() {
   if (!state.planStartDate || !state.week?.length) return null;
-  // state.planStartDate is a bare "YYYY-MM-DD" string. `new Date(str)` parses
-  // that as UTC midnight, not local midnight — in timezones ahead of UTC the
-  // instant can land on the previous local calendar day, silently shifting
-  // `start` back a day and off-by-one'ing every index below. Parse the
-  // year/month/day components directly into a local-midnight Date instead.
-  const [sy, sm, sd] = state.planStartDate.split('-').map(Number);
-  const start = new Date(sy, sm - 1, sd);
+  const start = _parseLocalDate(state.planStartDate);
   start.setHours(0, 0, 0, 0);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -3394,7 +3399,7 @@ function clearPrevExtra(dayIdx) {
 
 function formatPlanDay(dayOffset) {
   if (!state.planStartDate) return tFmt('week_day_prefix', { n: dayOffset + 1 });
-  const d = new Date(state.planStartDate);
+  const d = _parseLocalDate(state.planStartDate);
   d.setDate(d.getDate() + dayOffset);
   const days = tDaysShort();
   return `${days[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;
@@ -3903,7 +3908,7 @@ function renderWeek() {
   const dayNamesLong = tDays();
   function getDayTitle(di) {
     if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 });
-    const d = new Date(state.planStartDate);
+    const d = _parseLocalDate(state.planStartDate);
     d.setDate(d.getDate() + di);
     return dayNamesLong[d.getDay()];
   }
@@ -3992,8 +3997,8 @@ function renderWeek() {
 
   function getWeekRange() {
     if (!state.planStartDate) return '';
-    const start = new Date(state.planStartDate);
-    const end = new Date(state.planStartDate);
+    const start = _parseLocalDate(state.planStartDate);
+    const end = _parseLocalDate(state.planStartDate);
     end.setDate(end.getDate() + 6);
     const months = tMonths();
     return `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]} ${end.getFullYear()}`;
@@ -4190,7 +4195,7 @@ function renderWeek() {
         const dayNames7Short = tDaysShort();
         function getShortDayTitle(di) {
           if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 }).substring(0,2);
-          const d = new Date(state.planStartDate);
+          const d = _parseLocalDate(state.planStartDate);
           d.setDate(d.getDate() + di);
           return dayNames7Short[d.getDay()];
         }
@@ -4839,7 +4844,7 @@ function renderBuilderPage(typeFilter) {
   const applyDayIdx = Math.max(0, Math.min(state.week.length - 1, state._builderApplyDay || 0));
   state._builderApplyDay = applyDayIdx;
   const applyDayLabel = state.planStartDate
-    ? (() => { const d = new Date(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months = tMonths(); const dayNames = tDays(); return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
+    ? (() => { const d = _parseLocalDate(state.planStartDate); d.setDate(d.getDate() + applyDayIdx); const months = tMonths(); const dayNames = tDays(); return `${dayNames[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`; })()
     : state.week[applyDayIdx].label;
 
   document.getElementById('page-builder').innerHTML = `
@@ -6798,6 +6803,18 @@ function _pdfPersonBadge() {
   </div>`;
 }
 
+// ── PDF helper: discreet one-line quote, stacked 7mm under the person
+// badge (same fixed bottom-left block), left-aligned, no border/background ──
+function _pdfQuoteFooter() {
+  const q = getTodayQuote();
+  const translation = q.translationI18n[getLang()] || q.translationI18n.el;
+  return `<div style="position:fixed;bottom:3mm;left:7mm;font-size:7.5px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:100">
+    <span style="font-style:italic;color:#374151">«${q.text}»</span>
+    <span style="margin-left:4px">— ${q.author}</span>
+    <span style="margin-left:4px">· ${translation}</span>
+  </div>`;
+}
+
 // ── PDF ΕΚΤΥΠΩΣΗ ΗΜΕΡΑΣ ──
 function exportDayPDF(dayIdx) {
   const allRecipes = [...RECIPES_DB, ...state.customRecipes];
@@ -7260,8 +7277,8 @@ function exportPDF_week() {
 
   function getWeekRangePrint() {
     if (!state.planStartDate) return '';
-    const start = new Date(state.planStartDate);
-    const end = new Date(state.planStartDate);
+    const start = _parseLocalDate(state.planStartDate);
+    const end = _parseLocalDate(state.planStartDate);
     end.setDate(end.getDate() + 6);
     const months = tMonths();
     return `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]} ${end.getFullYear()}`;
@@ -7312,7 +7329,7 @@ function exportPDF_week() {
   const dayNamesAllP = tDays();
   function getPdfDayTitle(di) {
     if (!state.planStartDate) return tFmt('week_day_prefix', { n: di + 1 });
-    const d = new Date(state.planStartDate);
+    const d = _parseLocalDate(state.planStartDate);
     d.setDate(d.getDate() + di);
     return dayNamesAllP[d.getDay()];
   }
@@ -7381,6 +7398,7 @@ function exportPDF_week() {
 
   const summaryPage = `
     ${_pdfPersonBadge()}
+    ${_pdfQuoteFooter()}
     <div style="padding:5mm 5mm 4mm;font-family:'Helvetica Neue',Arial,sans-serif;background:#f8fafc;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid #e5e7eb;gap:10px">
         <div>
@@ -7414,7 +7432,7 @@ function exportPDF_week() {
           </div>
         </div>
       </div>
-      <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:6px;background:#fff;border-radius:8px;padding:6px 10px;border:1px solid #e5e7eb">
+      <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:4px;background:#fff;border-radius:8px;padding:4px 10px;border:1px solid #e5e7eb">
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;min-width:76px">
           ${printGauge(avgPctW, 66)}
           <div style="font-size:7px;font-weight:800;color:#111;margin-top:2px">${t('week_avg_intake')}</div>
@@ -7436,7 +7454,7 @@ function exportPDF_week() {
           <div style="font-size:6.5px;color:#9ca3af;margin-top:1px">${balSub}</div>
         </div>
       </div>
-      <div style="margin-bottom:6px">
+      <div style="margin-bottom:3px">
         ${weekTimetable}
       </div>
       <div style="display:flex;justify-content:flex-end;gap:5px;padding-left:34mm">

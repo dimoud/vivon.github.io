@@ -487,14 +487,14 @@ const RECIPES_DB = [
     servingI18n: { el: "Σέρβιρε το ρύζι σε πιάτο, από πάνω τον τόνο. Βάλε τη σαλάτα δίπλα με ελαιόλαδο και λεμόνι.", en: "Serve the rice on a plate, top with the tuna. Add the salad alongside with olive oil and lemon.", es: "Sirve el arroz en un plato, coloca el atún encima. Añade la ensalada al lado con aceite de oliva y limón.", fr: "Sers le riz dans une assiette, dispose le thon par-dessus. Ajoute la salade à côté avec de l'huile d'olive et du citron." }
   },
   {
-    id: "r18", name: "Κοτόσουπα με Ρύζι", nameI18n: { el: "Κοτόσουπα με Ρύζι", en: "Chicken Soup with Rice", es: "Sopa de pollo con arroz", fr: "Soupe de poulet au riz" }, meal: "lunch", emoji: "🍲",
+    id: "r18", name: "Κοτόσουπα", nameI18n: { el: "Κοτόσουπα", en: "Chicken Soup", es: "Sopa de pollo", fr: "Soupe de poulet" }, meal: "lunch", emoji: "🍲",
     ingredients: [
       { foodId: "f1", qty: 150 }, { foodId: "c2", qty: 120 },
-      { foodId: "v5", qty: 60 },  { foodId: "v6", qty: 60 }
+      { foodId: "v5", qty: 60 }
     ],
     tags: ["chicken", "rice", "vegetables"],
-    instructions: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει), καρότο και κολοκυθάκι.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.",
-    instructionsI18n: { el: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει), καρότο και κολοκυθάκι.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.", en: "1. Place the chicken whole or in pieces in a pot with water (to cover), carrot and courgette.\n2. Boil over medium heat for 40-45 minutes.\n3. Remove the chicken, cut into pieces and return to the pot.\n4. Add the rice and boil for another 15 minutes.\n5. Season with salt and pepper.", es: "1. Coloca el pollo entero o en trozos en una olla con agua (que lo cubra), zanahoria y calabacín.\n2. Hierve a fuego medio durante 40-45 minutos.\n3. Saca el pollo, córtalo en trozos y devuélvelo a la olla.\n4. Añade el arroz y hierve durante 15 minutos más.\n5. Sazona con sal y pimienta.", fr: "1. Place le poulet entier ou en morceaux dans une casserole avec de l'eau (pour couvrir), la carotte et la courgette.\n2. Fais bouillir à feu moyen pendant 40-45 minutes.\n3. Retire le poulet, coupe-le en morceaux et remets-le dans la casserole.\n4. Ajoute le riz et fais bouillir encore 15 minutes.\n5. Assaisonne avec du sel et du poivre." },
+    instructions: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει) και καρότο.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.",
+    instructionsI18n: { el: "1. Βάλε το κοτόπουλο ολόκληρο ή σε κομμάτια σε κατσαρόλα με νερό (να σκεπάζει) και καρότο.\n2. Βράσε σε μέτρια φωτιά για 40-45 λεπτά.\n3. Βγάλε το κοτόπουλο, κόψε σε κομμάτια και επέστρεψε στην κατσαρόλα.\n4. Πρόσθεσε το ρύζι και βράσε για ακόμα 15 λεπτά.\n5. Προσθέσε αλάτι και πιπέρι.", en: "1. Place the chicken whole or in pieces in a pot with water (to cover) and carrot.\n2. Boil over medium heat for 40-45 minutes.\n3. Remove the chicken, cut into pieces and return to the pot.\n4. Add the rice and boil for another 15 minutes.\n5. Season with salt and pepper.", es: "1. Coloca el pollo entero o en trozos en una olla con agua (que lo cubra) y zanahoria.\n2. Hierve a fuego medio durante 40-45 minutos.\n3. Saca el pollo, córtalo en trozos y devuélvelo a la olla.\n4. Añade el arroz y hierve durante 15 minutos más.\n5. Sazona con sal y pimienta.", fr: "1. Place le poulet entier ou en morceaux dans une casserole avec de l'eau (pour couvrir) et la carotte.\n2. Fais bouillir à feu moyen pendant 40-45 minutes.\n3. Retire le poulet, coupe-le en morceaux et remets-le dans la casserole.\n4. Ajoute le riz et fais bouillir encore 15 minutes.\n5. Assaisonne avec du sel et du poivre." },
     serving: "Σέρβιρε ζεστό σε βαθύ πιάτο. Στύψε χυμό λεμονιού από πάνω. Ιδανικό για κρύες μέρες ή μετά από άσκηση.",
     servingI18n: { el: "Σέρβιρε ζεστό σε βαθύ πιάτο. Στύψε χυμό λεμονιού από πάνω. Ιδανικό για κρύες μέρες ή μετά από άσκηση.", en: "Serve hot in a deep plate. Squeeze lemon juice on top. Ideal for cold days or after exercise.", es: "Sirve caliente en un plato hondo. Exprime zumo de limón por encima. Ideal para días fríos o después del ejercicio.", fr: "Sers chaud dans une assiette creuse. Presse du jus de citron par-dessus. Idéal pour les jours froids ou après l'exercice." }
   },
@@ -674,7 +674,7 @@ const RECIPES_DB = [
   },
   // ─── ΝΕΕΣ ΣΥΝΤΑΓΕΣ ΣΝΑΚ ───
   {
-    id: "r50", name: "Cottage + Ριζογκοφρέτες", nameI18n: { el: "Cottage + Ριζογκοφρέτες", en: "Cottage + Rice Cakes", es: "Cottage + tortas de arroz", fr: "Cottage + galettes de riz" }, meal: "snack", emoji: "🧀",
+    id: "r50", name: "Cottage + Ριζογκοφρέτες", nameI18n: { el: "Cottage + Ριζογκοφρέτες", en: "Cottage + Rice Cakes", es: "Cottage + tortas de arroz", fr: "Cottage + galettes de riz" }, meal: "snack", emoji: "🧀", side: true,
     ingredients: [{ foodId: "c7", qty: 3 }, { foodId: "f8", qty: 100 }],
     tags: ["dairy"],
     instructions: "1. Βάλε το cottage cheese σε μικρό μπολ.\n2. Βάλε τις ριζογκοφρέτες δίπλα.",
@@ -798,7 +798,7 @@ const RECIPES_DB = [
     servingI18n: { el: "Στάξε το μέλι και πασπάλισε με κανέλα.", en: "Drizzle the honey and sprinkle with cinnamon.", es: "Chorrea la miel y espolvorea con canela.", fr: "Verse le miel et saupoudre de cannelle." }
   },
   {
-    id: "r59", name: "Cottage Cheese με Φρούτο", nameI18n: { el: "Cottage Cheese με Φρούτο", en: "Cottage Cheese with Fruit", es: "Requesón con fruta", fr: "Cottage cheese aux fruits" }, meal: "snack", emoji: "🍑",
+    id: "r59", name: "Cottage Cheese με Φρούτο", nameI18n: { el: "Cottage Cheese με Φρούτο", en: "Cottage Cheese with Fruit", es: "Requesón con fruta", fr: "Cottage cheese aux fruits" }, meal: "snack", emoji: "🍑", side: true,
     ingredients: [{ foodId: "f8", qty: 200 }, { foodId: "fr3", qty: 150 }],
     tags: ["dairy", "fruit"],
     instructions: "1. Βάλε το cottage cheese σε μπολ.\n2. Κόψε το φρούτο σε κομμάτια και πρόσθεσε από πάνω.",
@@ -852,7 +852,7 @@ const RECIPES_DB = [
     servingI18n: { el: "Ανακάτεψε ελαφρά όλα τα υλικά πριν το φας.", en: "Gently mix everything together before eating.", es: "Mezcla todo suavemente antes de comer.", fr: "Mélange légèrement le tout avant de manger." }
   },
   {
-    id: "r65", name: "Popcorn Snack", nameI18n: { el: "Popcorn Snack", en: "Popcorn Snack", es: "Snack de palomitas", fr: "Snack popcorn" }, meal: "snack", emoji: "🍿",
+    id: "r65", name: "Popcorn Snack", nameI18n: { el: "Popcorn Snack", en: "Popcorn Snack", es: "Snack de palomitas", fr: "Snack popcorn" }, meal: "snack", emoji: "🍿", side: true,
     ingredients: [{ foodId: "c22", qty: 40 }],
     tags: [],
     instructions: "1. Ψήσε το ποπ κορν χωρίς βούτυρο (air-popped ή σε κατσαρόλα με ελάχιστο λάδι).\n2. Συνόδεψε με μια κρύα Coca Cola Zero.",
