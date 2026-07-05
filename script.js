@@ -7990,6 +7990,21 @@ function renderSettingsFeedback() {
         </a>
         <div style="text-align:center;font-size:0.82rem;color:#92400e;font-weight:700;margin-top:14px">${t('donate_thanks')}</div>
       </div>
+
+      <div class="card card-lg fade-in" style="margin-bottom:14px;border-color:var(--red)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div style="width:40px;height:40px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+          <div>
+            <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('delete_account_title')}</div>
+            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('delete_account_subtitle')}</div>
+          </div>
+        </div>
+        <button id="delete-account-btn" onclick="handleDeleteAccount()"
+          style="width:100%;padding:13px;border-radius:12px;background:transparent;color:var(--red);border:1.5px solid var(--red);font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s"
+          onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
+          ${t('delete_account_btn')}
+        </button>
+      </div>
     </div>`;
 
   selectFeedbackType('general');

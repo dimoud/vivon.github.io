@@ -469,6 +469,33 @@
     // SIGNED_OUT event will fire → redirect to index.html
   };
 
+  // ── Delete account (permanent) ─────────────────────────────
+
+  window.handleDeleteAccount = async function () {
+    const confirmed = window.confirm(t('delete_account_confirm'));
+    if (!confirmed) return;
+
+    const btn = document.getElementById('delete-account-btn');
+    if (btn) { btn.disabled = true; btn.textContent = t('delete_account_deleting'); }
+
+    const { error } = await sbDeleteAccount();
+    if (error) {
+      window.alert(t('delete_account_error') + (error.message ? `\n(${error.message})` : ''));
+      if (btn) { btn.disabled = false; btn.textContent = t('delete_account_btn'); }
+      return;
+    }
+
+    if (typeof _saveTimer !== 'undefined') {
+      try { clearTimeout(_saveTimer); _saveTimer = null; } catch(e) {}
+    }
+    if (typeof _syncOwner !== 'undefined') {
+      try { _syncOwner = null; } catch(e) {}
+    }
+    try { localStorage.removeItem('nutriApp_v2'); } catch (e) {}
+    await sbSignOut();
+    // SIGNED_OUT event will fire → redirect to index.html
+  };
+
   // ── Language switcher inside register form ────────────────
 
   let _langPickSelectedLang = null;

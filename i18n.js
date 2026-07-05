@@ -29,6 +29,14 @@ const I18N = {
   drawer_settings:  { el: 'Ρυθμίσεις',    en: 'Settings',    es: 'Ajustes',     fr: 'Paramètres' },
   drawer_pdf:       { el: 'Εξαγωγή PDF',  en: 'Export PDF',  es: 'Exportar PDF',fr: 'Exporter PDF' },
   drawer_logout:    { el: 'Αποσύνδεση',   en: 'Sign out',    es: 'Cerrar sesión',fr: 'Déconnexion' },
+
+  // ── Delete account ──
+  delete_account_title:     { el: 'Διαγραφή λογαριασμού', en: 'Delete account', es: 'Eliminar cuenta', fr: 'Supprimer le compte' },
+  delete_account_subtitle:  { el: 'Διαγράψτε μόνιμα τον λογαριασμό και όλα τα δεδομένα σας. Αυτή η ενέργεια δεν αναιρείται.', en: 'Permanently delete your account and all your data. This action cannot be undone.', es: 'Elimina permanentemente tu cuenta y todos tus datos. Esta acción no se puede deshacer.', fr: 'Supprimez définitivement votre compte et toutes vos données. Cette action est irréversible.' },
+  delete_account_btn:       { el: '🗑️ Διαγραφή λογαριασμού', en: '🗑️ Delete account', es: '🗑️ Eliminar cuenta', fr: '🗑️ Supprimer le compte' },
+  delete_account_deleting:  { el: 'Διαγραφή...', en: 'Deleting...', es: 'Eliminando...', fr: 'Suppression...' },
+  delete_account_confirm:   { el: 'Είστε σίγουροι; Ο λογαριασμός σας και όλα τα δεδομένα σας θα διαγραφούν ΜΟΝΙΜΑ και δεν μπορούν να ανακτηθούν.', en: 'Are you sure? Your account and all your data will be PERMANENTLY deleted and cannot be recovered.', es: '¿Estás seguro? Tu cuenta y todos tus datos se eliminarán PERMANENTEMENTE y no se podrán recuperar.', fr: 'Êtes-vous sûr ? Votre compte et toutes vos données seront supprimés DÉFINITIVEMENT et ne pourront pas être récupérés.' },
+  delete_account_error:     { el: '❌ Η διαγραφή απέτυχε. Δοκιμάστε ξανά.', en: '❌ Deletion failed. Please try again.', es: '❌ La eliminación falló. Inténtalo de nuevo.', fr: '❌ La suppression a échoué. Veuillez réessayer.' },
   drawer_plan:      { el: 'Σχεδιαστής',   en: 'Planner',     es: 'Planificador',fr: 'Planificateur' },
 
   // ── Sidebar ──

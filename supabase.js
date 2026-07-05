@@ -27,6 +27,25 @@ async function sbSignOut() {
   await _supabase.auth.signOut();
 }
 
+async function sbDeleteAccount() {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) return { error: { message: 'Not signed in' } };
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/delete-account`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) return { error: { message: body.error || 'Delete failed' } };
+    return { error: null };
+  } catch (e) {
+    return { error: { message: String(e) } };
+  }
+}
+
 const APP_URL = 'https://www.vivon.top/';
 
 async function sbResetPassword(email) {
