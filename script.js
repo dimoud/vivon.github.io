@@ -1361,6 +1361,15 @@ function _renderProfileInto(target) {
         </button>
       </div>` : ''}
 
+      <!-- ΔΙΑΓΡΑΦΗ ΛΟΓΑΡΙΑΣΜΟΥ -->
+      <div style="text-align:center;margin-top:6px">
+        <button id="delete-account-btn" onclick="handleDeleteAccount()"
+          style="background:none;border:none;cursor:pointer;font-size:0.78rem;font-weight:600;color:var(--text3);padding:8px;transition:color 0.15s"
+          onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">
+          ${t('delete_account_btn')}
+        </button>
+      </div>
+
     </div>`;
 }
 
@@ -1789,22 +1798,43 @@ function triggerPhotoUpload() {
   document.getElementById('photo-input').click();
 }
 
+const PHOTO_MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // raw file picked by the user
+const PHOTO_AVATAR_SIZE = 400; // stored square avatar is downscaled to this, so the
+                                // final base64 (persisted in the DB row + localStorage
+                                // on every save) stays small regardless of source photo size
+
 function handlePhotoUpload(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 250 * 1024) {
-    showToast('❌ Η φωτογραφία δεν μπορεί να υπερβαίνει τα 250KB');
+  if (file.size > PHOTO_MAX_UPLOAD_BYTES) {
+    showToast('❌ Η φωτογραφία δεν μπορεί να υπερβαίνει τα 8MB');
     input.value = '';
     return;
   }
   const reader = new FileReader();
   reader.onload = (e) => {
-    state.profile.photoUrl = e.target.result;
-    saveState();
-    renderProfile();
-    updateSidebarAvatar();
-    showToast('✅ Φωτογραφία αποθηκεύτηκε');
+    const img = new Image();
+    img.onload = () => {
+      const size = PHOTO_AVATAR_SIZE;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Cover-crop to a square so the avatar isn't stretched/squished
+      const srcSize = Math.min(img.width, img.height);
+      const sx = (img.width - srcSize) / 2;
+      const sy = (img.height - srcSize) / 2;
+      ctx.drawImage(img, sx, sy, srcSize, srcSize, 0, 0, size, size);
+      state.profile.photoUrl = canvas.toDataURL('image/jpeg', 0.85);
+      saveState();
+      renderProfile();
+      updateSidebarAvatar();
+      showToast('✅ Φωτογραφία αποθηκεύτηκε');
+    };
+    img.onerror = () => showToast('❌ Μη έγκυρη εικόνα');
+    img.src = e.target.result;
   };
+  reader.onerror = () => showToast('❌ Σφάλμα ανάγνωσης αρχείου');
   reader.readAsDataURL(file);
 }
 
@@ -7990,21 +8020,6 @@ function renderSettingsFeedback() {
         </a>
         <div style="text-align:center;font-size:0.82rem;color:#92400e;font-weight:700;margin-top:14px">${t('donate_thanks')}</div>
       </div>
-
-      <div class="card card-lg fade-in" style="margin-bottom:14px;border-color:var(--red)">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-          <div style="width:40px;height:40px;border-radius:10px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
-          <div>
-            <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('delete_account_title')}</div>
-            <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('delete_account_subtitle')}</div>
-          </div>
-        </div>
-        <button id="delete-account-btn" onclick="handleDeleteAccount()"
-          style="width:100%;padding:13px;border-radius:12px;background:transparent;color:var(--red);border:1.5px solid var(--red);font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s"
-          onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
-          ${t('delete_account_btn')}
-        </button>
-      </div>
     </div>`;
 
   selectFeedbackType('general');
@@ -8242,6 +8257,38 @@ function _addSwipeDismiss(el, onDismiss, { directions = ['down'], threshold = 72
     el.removeEventListener('touchend',   onEnd);
   };
 }
+
+/* ── MOBILE RANGE-SLIDER GUARD ──
+   On touch devices, tapping anywhere on a native <input type="range"> track
+   jumps the value straight to that point — a scroll attempt that grazes a
+   slider silently corrupts the user's goals. Desktop (mouse) drag-from-track
+   is intentional native behavior and is left untouched.
+   This delegated, capture-phase touchstart runs before the browser applies
+   the jump: if the touch doesn't start on/near the thumb, we preventDefault
+   so the tap has no effect and the gesture falls through as a page scroll. */
+(function () {
+  const THUMB_RADIUS = 20; // half of the 26px thumb + touch-target slack
+  function isCoarsePointer() {
+    return window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  }
+  document.addEventListener('touchstart', function (e) {
+    const el = e.target;
+    if (!el || el.tagName !== 'INPUT' || el.type !== 'range') return;
+    if (!isCoarsePointer()) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const min = parseFloat(el.min || '0');
+    const max = parseFloat(el.max || '100');
+    const val = parseFloat(el.value);
+    const ratio = max > min ? (val - min) / (max - min) : 0;
+    const thumbX = rect.left + ratio * rect.width;
+    if (Math.abs(touch.clientX - thumbX) > THUMB_RADIUS) {
+      e.preventDefault();
+    }
+  }, { passive: false, capture: true });
+})();
 
 /* ── HISTORY API (back-button support) ── */
 function _historyPushTab(tab) {

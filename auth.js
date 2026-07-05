@@ -471,17 +471,33 @@
 
   // ── Delete account (permanent) ─────────────────────────────
 
-  window.handleDeleteAccount = async function () {
-    const confirmed = window.confirm(t('delete_account_confirm'));
-    if (!confirmed) return;
+  window.handleDeleteAccount = function () {
+    if (typeof openModal !== 'function') return;
+    openModal(`
+      <div style="padding:4px 4px 20px">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--red-bg,#fee2e2);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--red,#ef4444)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </div>
+        <h3 style="font-size:1.05rem;font-weight:800;text-align:center;margin-bottom:8px">${t('delete_account_title')}</h3>
+        <div style="font-size:0.88rem;color:var(--text2);line-height:1.6;text-align:center;margin-bottom:22px">${t('delete_account_confirm')}</div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">${t('btn_cancel')}</button>
+          <button id="delete-account-confirm-btn" class="btn btn-red" style="flex:1" onclick="_confirmDeleteAccount()">
+            ${t('delete_account_btn')}
+          </button>
+        </div>
+      </div>
+    `);
+  };
 
-    const btn = document.getElementById('delete-account-btn');
+  window._confirmDeleteAccount = async function () {
+    const btn = document.getElementById('delete-account-confirm-btn');
     if (btn) { btn.disabled = true; btn.textContent = t('delete_account_deleting'); }
 
     const { error } = await sbDeleteAccount();
     if (error) {
-      window.alert(t('delete_account_error') + (error.message ? `\n(${error.message})` : ''));
-      if (btn) { btn.disabled = false; btn.textContent = t('delete_account_btn'); }
+      if (typeof closeModal === 'function') closeModal();
+      if (typeof showToast === 'function') showToast(t('delete_account_error'), 3500);
       return;
     }
 
@@ -492,6 +508,7 @@
       try { _syncOwner = null; } catch(e) {}
     }
     try { localStorage.removeItem('nutriApp_v2'); } catch (e) {}
+    if (typeof closeModal === 'function') closeModal();
     await sbSignOut();
     // SIGNED_OUT event will fire → redirect to index.html
   };
