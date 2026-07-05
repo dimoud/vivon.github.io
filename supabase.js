@@ -31,7 +31,7 @@ async function sbDeleteAccount() {
   const { data: { session } } = await _supabase.auth.getSession();
   if (!session) return { error: { message: 'Not signed in' } };
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/delete-account`, {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/delete_acount`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
