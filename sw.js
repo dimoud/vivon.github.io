@@ -31,6 +31,8 @@ self.addEventListener('fetch', (event) => {
 
   // Only same-origin GETs. Supabase, analytics and CDN requests go straight to the network.
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Don't cache the APK download.
+  if (url.pathname.endsWith('.apk')) return;
 
   event.respondWith(
     fetch(req)

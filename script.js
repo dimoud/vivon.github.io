@@ -7806,11 +7806,36 @@ function renderSettingsPage() {
       <div id="settings-supplements-content" style="display:none"></div>
       <div id="settings-language-content" style="display:none"></div>
       <div id="settings-feedback-content" style="display:none"></div>
+      ${renderAppDownloadCard()}
     </div>`;
   renderProfileInto(document.getElementById('settings-profile-content'));
   renderSettingsSupplements();
   renderSettingsLanguage();
   renderSettingsFeedback();
+}
+
+// Android app (APK) download card — hidden when already running inside the installed app
+function renderAppDownloadCard() {
+  const inApp = document.referrer.startsWith('android-app://') ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if (inApp) return '';
+  return `
+    <div class="card card-lg fade-in" style="margin-top:16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:40px;height:40px;border-radius:10px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('app_download_title')}</div>
+          <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('app_download_subtitle')}</div>
+        </div>
+      </div>
+      <a href="/app/VIVON.apk" download="VIVON.apk" style="
+        display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;border-radius:12px;
+        background:var(--green);color:#fff;font-weight:800;font-size:0.95rem;text-decoration:none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ${t('app_download_btn')}
+      </a>
+      <div style="font-size:0.72rem;color:var(--text3);margin-top:10px;line-height:1.45">${t('app_download_note')}</div>
+    </div>`;
 }
 
 function renderSettingsSupplements() {
