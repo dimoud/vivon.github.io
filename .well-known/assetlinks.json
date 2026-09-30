@@ -4,7 +4,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "top.vivon.twa",
-      "sha256_cert_fingerprints": ["REPLACE_WITH_SHA256_FROM_PWABUILDER"]
+      "sha256_cert_fingerprints": ["E0:C1:EC:9D:66:A5:6E:60:46:F2:7D:21:DF:C4:E6:82:0C:CA:B7:8E:37:B8:09:A3:05:09:B2:D7:D0:62:11:01"]
     }
   }
 ]
