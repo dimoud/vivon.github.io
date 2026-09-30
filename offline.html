@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <title>VIVON — Εκτός σύνδεσης</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+           font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #fff; color: #222;
+           text-align: center; padding: 24px; box-sizing: border-box; }
+    img { width: 96px; height: 96px; }
+    h1 { font-size: 20px; margin: 16px 0 8px; }
+    p { color: #666; margin: 4px 0; }
+    button { margin-top: 20px; padding: 12px 28px; border: 0; border-radius: 10px; background: #b08a3e;
+             color: #fff; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="VIVON">
+    <h1>Δεν υπάρχει σύνδεση</h1>
+    <p>Ελέγξτε το internet σας και δοκιμάστε ξανά.</p>
+    <p lang="en">You're offline. Check your connection and try again.</p>
+    <button onclick="location.reload()">Δοκιμή ξανά / Retry</button>
+  </main>
+</body>
+</html>
