@@ -7806,12 +7806,241 @@ function renderSettingsPage() {
       <div id="settings-supplements-content" style="display:none"></div>
       <div id="settings-language-content" style="display:none"></div>
       <div id="settings-feedback-content" style="display:none"></div>
+      ${renderPlanShareCardShell()}
       ${renderAppDownloadCard()}
     </div>`;
+  renderPlanShareMine();
   renderProfileInto(document.getElementById('settings-profile-content'));
   renderSettingsSupplements();
   renderSettingsLanguage();
   renderSettingsFeedback();
+}
+
+// ── PLAN SHARING ──
+// A user publishes a share code; any signed-in user who enters it gets a copy
+// of the owner's current week (meals only) plus the custom recipes/foods those
+// meals use. Server side: plan_shares table + get_shared_plan() RPC
+// (migrations/plan_sharing.sql) — no other data of the owner is exposed.
+const SHARE_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 32 chars, no 0/O/1/I
+
+function generateShareCode() {
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  // 256 % 32 === 0, so the modulo has no bias
+  return Array.from(bytes, b => SHARE_CODE_ALPHABET[b % SHARE_CODE_ALPHABET.length]).join('');
+}
+
+function normalizeShareCode(input) {
+  const c = String(input ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  return c.length === 8 ? c : null;
+}
+
+function formatShareCode(code) {
+  return code ? `${code.slice(0, 4)}-${code.slice(4)}` : '';
+}
+
+// Pure: builds the recipient's new { week, customRecipes, customFoods } from a
+// shared plan. Inputs are never mutated. Shared custom foods/recipes are added
+// to the recipient's lists; an identical existing copy is reused, and an id
+// clash with different content gets a fresh id (meals/ingredients remapped).
+function mergeSharedPlan(current, shared) {
+  const clone = o => JSON.parse(JSON.stringify(o));
+  const customFoods   = clone(current.customFoods || []);
+  const customRecipes = clone(current.customRecipes || []);
+  const usedIds = new Set([...customFoods, ...customRecipes].map(x => x.id));
+  let seq = 0;
+  const freshId = prefix => {
+    let id;
+    do { id = `${prefix}${Date.now()}_${++seq}`; } while (usedIds.has(id));
+    usedIds.add(id);
+    return id;
+  };
+  const sameContent = (a, b) => JSON.stringify({ ...a, id: null }) === JSON.stringify({ ...b, id: null });
+  // Adds item to list (unless an identical copy exists) and returns the id to use
+  const adopt = (list, item, prefix) => {
+    const twin = list.find(x => sameContent(x, item));
+    if (twin) return twin.id;
+    if (usedIds.has(item.id)) item = { ...item, id: freshId(prefix) };
+    else usedIds.add(item.id);
+    list.push(item);
+    return item.id;
+  };
+
+  const foodMap = {};
+  (shared.customFoods || []).forEach(f => { foodMap[f.id] = adopt(customFoods, clone(f), 'cf_'); });
+
+  const recipeMap = {};
+  (shared.customRecipes || []).forEach(r => {
+    const rc = clone(r);
+    if (Array.isArray(rc.ingredients)) {
+      rc.ingredients.forEach(ing => { if (foodMap[ing.foodId]) ing.foodId = foodMap[ing.foodId]; });
+    }
+    recipeMap[r.id] = adopt(customRecipes, rc, 'cr_');
+  });
+
+  const sharedWeek = Array.isArray(shared.week) ? shared.week : [];
+  const baseWeek = (current.week && current.week.length) ? current.week : EMPTY_WEEK;
+  const week = clone(baseWeek).map((day, i) => {
+    const src = sharedWeek[i];
+    const meals = (src && Array.isArray(src.meals) ? clone(src.meals) : []).map(m => {
+      if (m.recipeId && recipeMap[m.recipeId]) m.recipeId = recipeMap[m.recipeId];
+      m.done = false;
+      return m;
+    });
+    return { ...day, meals };
+  });
+
+  return { week, customRecipes, customFoods };
+}
+
+let _pendingSharedPlan = null;
+
+function renderPlanShareCardShell() {
+  return `
+    <div class="card card-lg fade-in" id="plan-share-card" style="margin-top:16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:40px;height:40px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+        <div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text)">${t('share_title')}</div>
+          <div style="font-size:0.75rem;color:var(--text3);margin-top:2px">${t('share_subtitle')}</div>
+        </div>
+      </div>
+      <div id="plan-share-mine" style="font-size:0.8rem;color:var(--text3)">…</div>
+      <div style="border-top:1px solid var(--border);margin:16px 0 14px"></div>
+      <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:8px">${t('share_have_code')}</div>
+      <div style="display:flex;gap:8px">
+        <input id="plan-share-input" type="text" inputmode="text" autocapitalize="characters" autocomplete="off" maxlength="12"
+          placeholder="XXXX-XXXX"
+          style="flex:1;min-width:0;padding:11px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:1rem;letter-spacing:0.08em;text-transform:uppercase;background:var(--bg2);box-sizing:border-box">
+        <button class="btn btn-green" id="plan-share-import-btn" onclick="importSharedPlanFromInput()" style="flex-shrink:0">${t('share_import_btn')}</button>
+      </div>
+    </div>`;
+}
+
+async function renderPlanShareMine() {
+  const el = document.getElementById('plan-share-mine');
+  const user = sbGetCurrentUser();
+  if (!el || !user) return;
+  let code = null;
+  try {
+    code = await sbGetMyShareCode(user.id);
+  } catch (e) {
+    console.error(e);
+    el.textContent = t('share_error');
+    return;
+  }
+  if (code) {
+    el.innerHTML = `
+      <div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:8px">${t('share_your_code')}</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span style="font-family:monospace;font-size:1.35rem;font-weight:800;letter-spacing:0.12em;color:var(--text);padding:6px 12px;background:var(--bg2);border-radius:10px">${esc(formatShareCode(code))}</span>
+        <button class="btn btn-ghost" onclick="copyMyShareCode('${esc(code)}')">${t('share_copy_btn')}</button>
+      </div>
+      <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;line-height:1.45">${t('share_privacy_note')}</div>
+      <button onclick="revokeMyShareCode()" style="margin-top:8px;background:none;border:0;padding:0;color:var(--red, #dc2626);font-size:0.78rem;font-weight:700;cursor:pointer">${t('share_revoke_btn')}</button>`;
+  } else {
+    el.innerHTML = `
+      <button class="btn btn-green" onclick="createMyShareCode()" style="width:100%">${t('share_create_btn')}</button>
+      <div style="font-size:0.72rem;color:var(--text3);margin-top:8px;line-height:1.45">${t('share_privacy_note')}</div>`;
+  }
+}
+
+async function createMyShareCode() {
+  const user = sbGetCurrentUser();
+  if (!user) return;
+  try {
+    await sbCreateShareCode(user.id);
+  } catch (e) {
+    console.error(e);
+    showToast(t('share_error'), 3000);
+  }
+  renderPlanShareMine();
+}
+
+async function revokeMyShareCode() {
+  const user = sbGetCurrentUser();
+  if (!user) return;
+  try {
+    await sbDeleteShareCode(user.id);
+    showToast(t('share_revoked'));
+  } catch (e) {
+    console.error(e);
+    showToast(t('share_error'), 3000);
+  }
+  renderPlanShareMine();
+}
+
+async function copyMyShareCode(code) {
+  try {
+    await navigator.clipboard.writeText(formatShareCode(code));
+    showToast(t('share_copied'));
+  } catch (e) {
+    showToast(formatShareCode(code), 4000);
+  }
+}
+
+async function importSharedPlanFromInput() {
+  const input = document.getElementById('plan-share-input');
+  const btn = document.getElementById('plan-share-import-btn');
+  const code = normalizeShareCode(input?.value);
+  if (!code) { showToast(t('share_invalid_code'), 2800); return; }
+  if (btn) btn.disabled = true;
+  try {
+    const data = await sbFetchSharedPlan(code);
+    if (!data || !Array.isArray(data.week)) { showToast(t('share_not_found'), 3000); return; }
+    _pendingSharedPlan = data;
+    openModal(`
+      <div class="modal-handle"></div>
+      <div class="modal-title">${t('share_confirm_title')}</div>
+      <p style="font-size:0.85rem;color:var(--text2);margin-bottom:18px;line-height:1.5">${t('share_confirm_text').replace('{code}', esc(formatShareCode(code)))}</p>
+      <div style="display:flex;gap:10px">
+        <button onclick="_pendingSharedPlan=null;closeModal()" class="btn btn-ghost" style="flex:1">${t('btn_cancel')}</button>
+        <button onclick="_askAdaptSharedPlan()" class="btn btn-green" style="flex:1">${t('share_confirm_btn')}</button>
+      </div>`);
+  } catch (e) {
+    console.error(e);
+    showToast(t('share_error'), 3000);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+// Second step, in the same modal: offer to scale portions to the recipient's
+// own calorie goal. Nothing is applied until Yes/No — dismissing = cancel.
+function _askAdaptSharedPlan() {
+  const content = document.getElementById('modal-content');
+  if (!_pendingSharedPlan || !content) { closeModal(); return; }
+  content.innerHTML = `
+    <div class="modal-handle"></div>
+    <div class="modal-title">${t('share_adapt_title')}</div>
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:18px;line-height:1.5">${t('share_adapt_text').replace('{kcal}', esc(state.goals?.kcal ?? ''))}</p>
+    <div style="display:flex;gap:10px">
+      <button onclick="_finishSharedPlanImport(false)" class="btn btn-ghost" style="flex:1">${t('share_adapt_no')}</button>
+      <button onclick="_finishSharedPlanImport(true)" class="btn btn-green" style="flex:1">${t('share_adapt_yes')}</button>
+    </div>`;
+}
+
+function _finishSharedPlanImport(adapt) {
+  const shared = _pendingSharedPlan;
+  _pendingSharedPlan = null;
+  if (!shared) { closeModal(); return; }
+  const merged = mergeSharedPlan(state, shared);
+  state.week = merged.week;
+  state.customRecipes = merged.customRecipes;
+  state.customFoods = merged.customFoods;
+  if (!state.planCreated) {
+    state.planCreated = true;
+    if (!state.planStartDate) state.planStartDate = new Date().toISOString().split('T')[0];
+  }
+  if (adapt) state.week.forEach((_, i) => optimizeSingleDay(i));
+  saveState();
+  const input = document.getElementById('plan-share-input');
+  if (input) input.value = '';
+  closeModal();
+  showToast(t(adapt ? 'share_done_adapted' : 'share_done'), 2800);
+  if (typeof updatePlanCreatedUI === 'function') updatePlanCreatedUI();
+  _refreshAfterMealEdit(state.currentDay);
+  navigateTo('today');
 }
 
 // Android app (APK) download card — hidden when already running inside the installed app

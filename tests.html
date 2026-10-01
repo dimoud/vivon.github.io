@@ -2493,6 +2493,126 @@ suite('Auth / App split — redirect flow');
 })();
 
 // ══════════════════════════════════════════════════════════════════
+// SUITE — Plan sharing (share code helpers + mergeSharedPlan)
+// ══════════════════════════════════════════════════════════════════
+suite('Plan sharing');
+
+function _mkWeek(mealsPerDay) {
+  return [1,2,3,4,5,6,7].map((d, i) => ({ day: d, label: `Day ${d}`, meals: mealsPerDay[i] || [] }));
+}
+
+test('normalizeShareCode — strips dash/space, uppercases', () => {
+  assertEq(normalizeShareCode(' vx7k-2p9m '), 'VX7K2P9M', 'normalized');
+});
+
+test('normalizeShareCode — rejects wrong length / empty', () => {
+  assertEq(normalizeShareCode('ABC'), null, 'too short');
+  assertEq(normalizeShareCode(''), null, 'empty');
+  assertEq(normalizeShareCode(null), null, 'null');
+});
+
+test('formatShareCode — XXXX-XXXX', () => {
+  assertEq(formatShareCode('VX7K2P9M'), 'VX7K-2P9M', 'formatted');
+});
+
+test('generateShareCode — 8 chars, unambiguous alphabet, round-trips through normalize', () => {
+  for (let i = 0; i < 50; i++) {
+    const c = generateShareCode();
+    assert(/^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{8}$/.test(c), 'bad code ' + c);
+    assertEq(normalizeShareCode(formatShareCode(c)), c, 'round-trip');
+  }
+});
+
+test('mergeSharedPlan — copies meals per day, keeps recipient day fields', () => {
+  const current = { week: _mkWeek([]).map(d => ({ ...d, stepsDone: true, extraKcal: 200 })), customRecipes: [], customFoods: [] };
+  const shared = { week: _mkWeek([[{ time: '08:00', type: 'breakfast', recipeId: 'r1', scaleFactor: 1.2 }]]), customRecipes: [], customFoods: [] };
+  const out = mergeSharedPlan(current, shared);
+  assertEq(out.week.length, 7, 'days');
+  assertEq(out.week[0].meals.length, 1, 'day 1 meals');
+  assertEq(out.week[0].meals[0].recipeId, 'r1', 'built-in recipe id kept');
+  assertEq(out.week[0].meals[0].scaleFactor, 1.2, 'scaleFactor kept');
+  assertEq(out.week[0].stepsDone, true, 'recipient stepsDone kept');
+  assertEq(out.week[0].extraKcal, 200, 'recipient extraKcal kept');
+  assertEq(out.week[1].meals.length, 0, 'day 2 empty');
+});
+
+test('mergeSharedPlan — resets done flags', () => {
+  const current = { week: _mkWeek([]), customRecipes: [], customFoods: [] };
+  const shared = { week: _mkWeek([[{ type: 'lunch', standardId: 's1', done: true }]]), customRecipes: [], customFoods: [] };
+  const out = mergeSharedPlan(current, shared);
+  assertEq(out.week[0].meals[0].done, false, 'done reset');
+  assertEq(out.week[0].meals[0].standardId, 's1', 'standardId kept');
+});
+
+test('mergeSharedPlan — does not mutate inputs', () => {
+  const current = { week: _mkWeek([[{ type: 'lunch', recipeId: 'old' }]]), customRecipes: [{ id: 'cr_1', name: 'Mine' }], customFoods: [] };
+  const shared = { week: _mkWeek([[{ type: 'lunch', recipeId: 'cr_1', done: true }]]), customRecipes: [{ id: 'cr_1', name: 'Theirs', ingredients: [] }], customFoods: [] };
+  const before = JSON.stringify({ current, shared });
+  mergeSharedPlan(current, shared);
+  assertEq(JSON.stringify({ current, shared }), before, 'inputs unchanged');
+});
+
+test('mergeSharedPlan — imports referenced custom recipes and foods', () => {
+  const current = { week: _mkWeek([]), customRecipes: [], customFoods: [] };
+  const shared = {
+    week: _mkWeek([[{ type: 'dinner', recipeId: 'cr_9' }]]),
+    customRecipes: [{ id: 'cr_9', name: 'Bowl', ingredients: [{ foodId: 'cf_5', g: 100 }, { foodId: 'f1', g: 50 }] }],
+    customFoods: [{ id: 'cf_5', name: 'Sauce', kcal: 100 }],
+  };
+  const out = mergeSharedPlan(current, shared);
+  assertEq(out.customRecipes.length, 1, 'recipe imported');
+  assertEq(out.customRecipes[0].id, 'cr_9', 'id kept when free');
+  assertEq(out.customRecipes[0].ingredients[1].foodId, 'f1', 'built-in food id untouched');
+  assertEq(out.customFoods.length, 1, 'food imported');
+  assertEq(out.customFoods[0].id, 'cf_5', 'food id kept when free');
+});
+
+test('mergeSharedPlan — identical recipe already present is not duplicated', () => {
+  const r = { id: 'cr_9', name: 'Bowl', ingredients: [] };
+  const current = { week: _mkWeek([]), customRecipes: [JSON.parse(JSON.stringify(r))], customFoods: [] };
+  const shared = { week: _mkWeek([[{ type: 'dinner', recipeId: 'cr_9' }]]), customRecipes: [r], customFoods: [] };
+  const out = mergeSharedPlan(current, shared);
+  assertEq(out.customRecipes.length, 1, 'no duplicate');
+  assertEq(out.week[0].meals[0].recipeId, 'cr_9', 'same id');
+});
+
+test('mergeSharedPlan — recipe id collision with different content gets a new id', () => {
+  const current = { week: _mkWeek([]), customRecipes: [{ id: 'cr_9', name: 'Mine', ingredients: [] }], customFoods: [] };
+  const shared = { week: _mkWeek([[{ type: 'dinner', recipeId: 'cr_9' }], [{ type: 'lunch', recipeId: 'cr_9' }]]),
+                   customRecipes: [{ id: 'cr_9', name: 'Theirs', ingredients: [] }], customFoods: [] };
+  const out = mergeSharedPlan(current, shared);
+  assertEq(out.customRecipes.length, 2, 'both kept');
+  const mine = out.customRecipes.find(x => x.name === 'Mine');
+  const theirs = out.customRecipes.find(x => x.name === 'Theirs');
+  assertEq(mine.id, 'cr_9', 'mine untouched');
+  assert(theirs.id !== 'cr_9' && theirs.id.startsWith('cr_'), 'theirs remapped: ' + theirs.id);
+  assertEq(out.week[0].meals[0].recipeId, theirs.id, 'day 1 meal remapped');
+  assertEq(out.week[1].meals[0].recipeId, theirs.id, 'day 2 meal remapped');
+});
+
+test('mergeSharedPlan — food id collision remaps the recipe ingredient', () => {
+  const current = { week: _mkWeek([]), customRecipes: [], customFoods: [{ id: 'cf_5', name: 'Mine' }] };
+  const shared = {
+    week: _mkWeek([[{ type: 'dinner', recipeId: 'cr_9' }]]),
+    customRecipes: [{ id: 'cr_9', name: 'Bowl', ingredients: [{ foodId: 'cf_5', g: 100 }] }],
+    customFoods: [{ id: 'cf_5', name: 'Theirs' }],
+  };
+  const out = mergeSharedPlan(current, shared);
+  const theirsFood = out.customFoods.find(f => f.name === 'Theirs');
+  assert(theirsFood && theirsFood.id !== 'cf_5', 'food remapped');
+  const rec = out.customRecipes.find(r => r.name === 'Bowl');
+  assertEq(rec.ingredients[0].foodId, theirsFood.id, 'ingredient points to remapped food');
+});
+
+test('mergeSharedPlan — tolerates missing/short shared week', () => {
+  const current = { week: _mkWeek([[{ type: 'lunch', recipeId: 'old' }]]), customRecipes: [], customFoods: [] };
+  const out = mergeSharedPlan(current, { week: [{ meals: [{ type: 'lunch', recipeId: 'r2' }] }] });
+  assertEq(out.week.length, 7, 'still 7 days');
+  assertEq(out.week[0].meals[0].recipeId, 'r2', 'day 1 replaced');
+  assertEq(out.week[3].meals.length, 0, 'missing days emptied');
+});
+
+// ══════════════════════════════════════════════════════════════════
 // Render results
 // ══════════════════════════════════════════════════════════════════
 (async function render() {

@@ -319,6 +319,42 @@ async function sbSetAILastCall(userId) {
   } catch(e) {}
 }
 
+// ── PLAN SHARING ──────────────────────────────────────────────
+// plan_shares: one code per user (RLS: own row only). get_shared_plan(code)
+// is a security-definer RPC that returns only the owner's current week meals
+// and the custom recipes/foods they use. See migrations/plan_sharing.sql.
+
+async function sbGetMyShareCode(userId) {
+  const { data, error } = await _supabase.from('plan_shares').select('code').eq('user_id', userId).maybeSingle();
+  if (error) throw new Error(`[plan_shares] ${error.message}`);
+  return data ? data.code : null;
+}
+
+async function sbCreateShareCode(userId) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateShareCode();
+    const { error } = await _supabase.from('plan_shares').insert({ user_id: userId, code });
+    if (!error) return code;
+    if (error.code !== '23505') throw new Error(`[plan_shares] ${error.message}`);
+    // Unique violation: the user already has a code, or (rarely) the code is taken — retry
+    const existing = await sbGetMyShareCode(userId);
+    if (existing) return existing;
+  }
+  throw new Error('[plan_shares] could not allocate a share code');
+}
+
+async function sbDeleteShareCode(userId) {
+  const { error } = await _supabase.from('plan_shares').delete().eq('user_id', userId);
+  if (error) throw new Error(`[plan_shares] ${error.message}`);
+}
+
+// Returns { week, customRecipes, customFoods } or null when the code is unknown
+async function sbFetchSharedPlan(code) {
+  const { data, error } = await _supabase.rpc('get_shared_plan', { p_code: code });
+  if (error) throw new Error(`[get_shared_plan] ${error.message}`);
+  return data;
+}
+
 // ── WEEK KEY HELPER ───────────────────────────────────────────
 
 function getISOWeekKey() {
